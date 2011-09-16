@@ -1,0 +1,28 @@
+*** Creating Trace Output File '.\Flash\Adc_Polling.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\flash\startup_lpc178x.o"'
+### List of Objects: adding '".\flash\core_cm3.o"'
+### List of Objects: adding '".\flash\system_lpc177x_8x.o"'
+### List of Objects: adding '".\flash\debug_frmwrk.o"'
+### List of Objects: adding '".\flash\lpc178x_adc.o"'
+### List of Objects: adding '".\flash\lpc178x_clkpwr.o"'
+### List of Objects: adding '".\flash\lpc178x_gpdma.o"'
+### List of Objects: adding '".\flash\lpc178x_pinsel.o"'
+### List of Objects: adding '".\flash\lpc178x_uart.o"'
+### List of Objects: adding '".\flash\adc_polling.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M3 ".\flash\startup_lpc178x.o" ".\flash\core_cm3.o" ".\flash\system_lpc177x_8x.o" ".\flash\debug_frmwrk.o" ".\flash\lpc178x_adc.o" ".\flash\lpc178x_clkpwr.o" ".\flash\lpc178x_gpdma.o" ".\flash\lpc178x_pinsel.o" ".\flash\lpc178x_uart.o" ".\flash\adc_polling.o" --library_type=microlib --strict --scatter ".\Flash\Adc_Polling.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Flash\Adc_Polling.map" -o ".\Flash\Adc_Polling.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\Flash\Adc_Polling.axf'
+### ADS-LD Command File: '.\Flash\Adc_Polling.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\Flash\Adc_Polling.lnp', Handle=0x00000700
+### Writing '.lnp' file
+### ADS-LD Command file '.\Flash\Adc_Polling.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

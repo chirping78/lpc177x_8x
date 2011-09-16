@@ -1,0 +1,11 @@
+.\Flash\lpc177x_8x_mci.o: ..\..\..\..\Drivers\source\lpc177x_8x_mci.c
+.\Flash\lpc177x_8x_mci.o: ..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\lpc177x_8x.h
+.\Flash\lpc177x_8x_mci.o: ..\..\..\..\Core\CM3\CoreSupport\core_cm3.h
+.\Flash\lpc177x_8x_mci.o: C:\Keil\ARM\RV31\INC\stdint.h
+.\Flash\lpc177x_8x_mci.o: ..\..\..\..\Core\CM3\CoreSupport\core_cmInstr.h
+.\Flash\lpc177x_8x_mci.o: ..\..\..\..\Core\CM3\CoreSupport\core_cmFunc.h
+.\Flash\lpc177x_8x_mci.o: ..\..\..\..\Drivers\include\lpc_types.h
+.\Flash\lpc177x_8x_mci.o: ..\..\..\..\Drivers\include\lpc177x_8x_mci.h
+.\Flash\lpc177x_8x_mci.o: ..\..\..\..\Drivers\include\lpc177x_8x_gpdma.h
+.\Flash\lpc177x_8x_mci.o: ..\..\..\..\Drivers\include\lpc177x_8x_clkpwr.h
+.\Flash\lpc177x_8x_mci.o: ..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\system_LPC177x_8x.h

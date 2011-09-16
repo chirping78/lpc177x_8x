@@ -1,0 +1,28 @@
+*** Creating Trace Output File '.\RAM\Adc_Polling.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\ram\startup_lpc178x.o"'
+### List of Objects: adding '".\ram\core_cm3.o"'
+### List of Objects: adding '".\ram\system_lpc178x.o"'
+### List of Objects: adding '".\ram\debug_frmwrk.o"'
+### List of Objects: adding '".\ram\lpc178x_adc.o"'
+### List of Objects: adding '".\ram\lpc178x_clkpwr.o"'
+### List of Objects: adding '".\ram\lpc178x_gpdma.o"'
+### List of Objects: adding '".\ram\lpc178x_pinsel.o"'
+### List of Objects: adding '".\ram\lpc178x_uart.o"'
+### List of Objects: adding '".\ram\adc_polling.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M3 ".\ram\startup_lpc178x.o" ".\ram\core_cm3.o" ".\ram\system_lpc178x.o" ".\ram\debug_frmwrk.o" ".\ram\lpc178x_adc.o" ".\ram\lpc178x_clkpwr.o" ".\ram\lpc178x_gpdma.o" ".\ram\lpc178x_pinsel.o" ".\ram\lpc178x_uart.o" ".\ram\adc_polling.o" --library_type=microlib --strict --scatter ".\RAM\Adc_Polling.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\RAM\Adc_Polling.map" -o ".\RAM\Adc_Polling.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\RAM\Adc_Polling.axf'
+### ADS-LD Command File: '.\RAM\Adc_Polling.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\RAM\Adc_Polling.lnp', Handle=0x00000490
+### Writing '.lnp' file
+### ADS-LD Command file '.\RAM\Adc_Polling.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

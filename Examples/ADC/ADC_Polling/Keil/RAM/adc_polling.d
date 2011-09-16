@@ -1,0 +1,10 @@
+.\RAM\adc_polling.o: ..\Adc_Polling.c
+.\RAM\adc_polling.o: ..\..\..\..\Drivers\include\lpc178x_adc.h
+.\RAM\adc_polling.o: ..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC178x\LPC178x.h
+.\RAM\adc_polling.o: ..\..\..\..\Core\CM3\CoreSupport\core_cm3.h
+.\RAM\adc_polling.o: C:\Keil\ARM\RV31\INC\stdint.h
+.\RAM\adc_polling.o: ..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC178x\system_LPC178x.h
+.\RAM\adc_polling.o: ..\..\..\..\Drivers\include\lpc_types.h
+.\RAM\adc_polling.o: ..\..\..\..\Drivers\include\lpc178x_pinsel.h
+.\RAM\adc_polling.o: ..\..\..\..\Drivers\include\debug_frmwrk.h
+.\RAM\adc_polling.o: ..\..\..\..\Drivers\include\lpc178x_uart.h

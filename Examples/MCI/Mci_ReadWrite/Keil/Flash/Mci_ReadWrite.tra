@@ -1,0 +1,28 @@
+*** Creating Trace Output File '.\Flash\Mci_ReadWrite.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\flash\startup_lpc177x_8x.o"'
+### List of Objects: adding '".\flash\system_lpc177x_8x.o"'
+### List of Objects: adding '".\flash\core_cm3.o"'
+### List of Objects: adding '".\flash\lpc177x_8x_pinsel.o"'
+### List of Objects: adding '".\flash\lpc177x_8x_clkpwr.o"'
+### List of Objects: adding '".\flash\lpc177x_8x_mci.o"'
+### List of Objects: adding '".\flash\lpc177x_8x_gpdma.o"'
+### List of Objects: adding '".\flash\debug_frmwrk.o"'
+### List of Objects: adding '".\flash\lpc177x_8x_uart.o"'
+### List of Objects: adding '".\flash\mci_readwrite.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M3 ".\flash\startup_lpc177x_8x.o" ".\flash\system_lpc177x_8x.o" ".\flash\core_cm3.o" ".\flash\lpc177x_8x_pinsel.o" ".\flash\lpc177x_8x_clkpwr.o" ".\flash\lpc177x_8x_mci.o" ".\flash\lpc177x_8x_gpdma.o" ".\flash\debug_frmwrk.o" ".\flash\lpc177x_8x_uart.o" ".\flash\mci_readwrite.o" --library_type=microlib --strict --scatter ".\Flash\Mci_ReadWrite.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Flash\Mci_ReadWrite.map" -o ".\Flash\Mci_ReadWrite.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\Flash\Mci_ReadWrite.axf'
+### ADS-LD Command File: '.\Flash\Mci_ReadWrite.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\Flash\Mci_ReadWrite.lnp', Handle=0x00000268
+### Writing '.lnp' file
+### ADS-LD Command file '.\Flash\Mci_ReadWrite.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

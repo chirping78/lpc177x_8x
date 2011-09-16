@@ -1,0 +1,89 @@
+/***********************************************************************
+* $Id$		abstract.txt		2011-06-02		
+* @file		UART\Uart_Rs485Slave\abstract.txt 
+* @brief	Description of the RS485_Slave example.
+* @date		02. June. 2011
+* @author	NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+**********************************************************************/ 
+  
+@Example description:
+	Purpose:
+		This example describes how to use RS485 functionality on UART of LPC1788
+		in slave mode.
+	Process:	
+		RS485 function on UART acts as slave mode on RS485 bus.
+		RS485 Slave device in this example can operate in separate mode
+		as following:
+			- Slave device always receives all frames on RS485 bus, regardless
+			  data frame (9 bit mode with parity stick '0') or slave address
+			  frame (9 bit mode with parity stick '1').
+			- Slave device does not always receive all frames on RS485 bus. In this
+			  case, only slave address frame can trigger an interrupt event,
+			  then slave device can accept the following data frame by determine that
+			  slave address frame is its own address or not(implemented by software).
+			- Slave device is in auto slave address detection mode. In this mode,
+			  only slave address frame with slave address value that matched with
+			  pre-configured slave address will be accepted automatically (by hardware)
+			  and trigger an interrupt callback event to handle following data frames.
+				
+@Directory contents:
+	\Keil:	includes RVMDK (Keil)project and configuration files 
+	\EWARM: includes EWARM (IAR) project and configuration files
+
+	Uart_Rs485Slave.c: Main program
+
+@How to run:
+	Hardware configuration:		
+		This example was tested on:
+			LPC1788 OEM Board rev A and OEM Base Board rev A
+				Jumpers: Optional
+				
+		RS485 Connection:
+			Pls see the 'Transceiver_Master.png' in this directory for wiring information.
+
+		Pin Map:
+							EA Board
+			P0.10			J3.20
+			P0.11			J3.11
+
+			P1.19			J3.33
+	
+	Running mode:
+		This example can run on RAM/ROM mode.
+					
+		Note: If want to burn hex file to board by using Flash Magic, these jumpers need
+			to be connected:
+			1. LPC1788 OEM Board rev A and OEM Base Board rev A
+				- JP20: 1-2: ON
+						3-4: ON
+			(Using UART0 on USB serial port
+			Sure that you choose correct COM port number - Pls reference at:
+			"Device Manager" -> "Ports(COM & LPT)" -> "USB Serial Port (COMx)")
+		    
+		    2. LPC1788 IAR Start Kit Rev.B
+				- RST_E: ON
+				- ISP_E: ON
+	
+	Step to run:
+		- Step 1: Build example.
+		- Step 2: Burn hex file into board (if run on ROM mode)
+		- Step 3: Connect UART on this board to COM port on your computer
+		- Step 4: Connect RS485 between master board and slave board (using ADM485)
+		- Step 5: Run example and using Serial display to monitor the communication between master and slave.
+		Note: The RS485 slave device must initialize first.
+

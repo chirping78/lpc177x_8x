@@ -1,0 +1,11 @@
+.\Flash\adc_dma.o: ..\Adc_Dma.c
+.\Flash\adc_dma.o: ..\..\..\..\Drivers\include\lpc178x_adc.h
+.\Flash\adc_dma.o: ..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC178x\LPC177x_8x.h
+.\Flash\adc_dma.o: ..\..\..\..\Core\CM3\CoreSupport\core_cm3.h
+.\Flash\adc_dma.o: C:\Keil\ARM\RV31\INC\stdint.h
+.\Flash\adc_dma.o: ..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC178x\system_LPC177x_8x.h
+.\Flash\adc_dma.o: ..\..\..\..\Drivers\include\lpc_types.h
+.\Flash\adc_dma.o: ..\..\..\..\Drivers\include\lpc178x_pinsel.h
+.\Flash\adc_dma.o: ..\..\..\..\Drivers\include\lpc178x_gpdma.h
+.\Flash\adc_dma.o: ..\..\..\..\Drivers\include\debug_frmwrk.h
+.\Flash\adc_dma.o: ..\..\..\..\Drivers\include\lpc178x_uart.h
