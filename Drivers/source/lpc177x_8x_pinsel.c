@@ -88,7 +88,7 @@ void PINSEL_ConfigPin ( uint8_t portnum, uint8_t pinnum, uint8_t funcnum)
 {
 	uint32_t *pPIN = NULL;
 	pPIN = PIN_GetPointer(portnum, pinnum);
-	*pPIN &= 0x00000007;//Clear function bits
+	*pPIN &= ~0x00000007;//Clear function bits
 	*pPIN |= funcnum;
 }
 
@@ -109,7 +109,7 @@ void PINSEL_SetPinMode ( uint8_t portnum, uint8_t pinnum, PinSel_BasicMode moden
 	uint32_t *pPIN = NULL;
 	pPIN = PIN_GetPointer(portnum, pinnum);
 	*(uint32_t *)pPIN &= ~(3<<3);//Clear function bits
-	*(uint32_t *)pPIN |= modenum;
+	*(uint32_t *)pPIN |= (modenum << 3);
 }
 
 /*********************************************************************//**

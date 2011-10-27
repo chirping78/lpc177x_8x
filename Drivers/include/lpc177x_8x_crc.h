@@ -71,9 +71,9 @@ typedef enum
 
 typedef enum
 {
-	CRC_WR_8BIT = 0,				/** 8-bit write: 1-cycle operation */
-	CRC_WR_16BIT,					/** 16-bit write: 2-cycle operation */
-	CRC_WR_32BIT					/** 32-bit write: 4-cycle operation */
+	CRC_WR_8BIT = 1,				/** 8-bit write: 1-cycle operation */
+	CRC_WR_16BIT = 2,					/** 16-bit write: 2-cycle operation */
+	CRC_WR_32BIT = 4,					/** 32-bit write: 4-cycle operation */
 }CRC_WR_SIZE;
 
 /* Public Functions ----------------------------------------------------------- */

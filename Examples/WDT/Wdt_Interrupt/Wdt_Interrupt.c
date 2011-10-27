@@ -28,6 +28,7 @@
 #include "lpc177x_8x_pinsel.h"
 #include "debug_frmwrk.h"
 #include "lpc177x_8x_gpio.h"
+#include "bsp.h"
 
 /* Example group ----------------------------------------------------------- */
 /** @defgroup WDT_Interrupt	Watchdog Interrupt Mode
@@ -36,9 +37,15 @@
  */
 
 /************************** PRIVATE DEFINITIONS *************************/
+#if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD) 
+#define	LED_WDT_INDICATOR_PORT		(1)
+#define	LED_WDT_INDICATOR_PIN		(13)
+#define	LED_WDT_INDICATOR_VAL		(1 << LED_WDT_INDICATOR_PIN)
+#else
 #define	LED_WDT_INDICATOR_PORT		(0)
 #define	LED_WDT_INDICATOR_PIN		(13)
 #define	LED_WDT_INDICATOR_VAL		(1 << LED_WDT_INDICATOR_PIN)
+#endif
 
 
 //Watchodog time out in 10 seconds

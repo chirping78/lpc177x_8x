@@ -362,63 +362,49 @@
 
   <Group>
     <GroupName>Startup</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
       <GroupNumber>1</GroupNumber>
-      <FileNumber>1</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>121</TopLine>
-      <CurrentLine>131</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\startup\arm\startup_LPC177x_8x.s</PathWithFileName>
+      <PathWithFileName>..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\ARM\startup_LPC177x_8x.s</PathWithFileName>
       <FilenameWithoutPath>startup_LPC177x_8x.s</FilenameWithoutPath>
     </File>
   </Group>
 
   <Group>
     <GroupName>CMSIS-CM3</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
       <GroupNumber>2</GroupNumber>
-      <FileNumber>2</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>23</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>177</TopLine>
-      <CurrentLine>187</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\system_LPC177x_8x.c</PathWithFileName>
+      <PathWithFileName>..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\system_LPC177x_8x.c</PathWithFileName>
       <FilenameWithoutPath>system_LPC177x_8x.c</FilenameWithoutPath>
-    </File>
-    <File>
-      <GroupNumber>2</GroupNumber>
-      <FileNumber>3</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <Focus>0</Focus>
-      <ColumnNumber>40</ColumnNumber>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>710</TopLine>
-      <CurrentLine>710</CurrentLine>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\..\Core\CM3\CoreSupport\core_cm3.c</PathWithFileName>
-      <FilenameWithoutPath>core_cm3.c</FilenameWithoutPath>
     </File>
   </Group>
 
   <Group>
     <GroupName>Drivers</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
@@ -429,8 +415,8 @@
       <Focus>0</Focus>
       <ColumnNumber>23</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>555</TopLine>
-      <CurrentLine>555</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\..\Drivers\source\lpc177x_8x_pinsel.c</PathWithFileName>
       <FilenameWithoutPath>lpc177x_8x_pinsel.c</FilenameWithoutPath>
@@ -443,8 +429,8 @@
       <Focus>0</Focus>
       <ColumnNumber>5</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>236</TopLine>
-      <CurrentLine>236</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\..\Drivers\source\debug_frmwrk.c</PathWithFileName>
       <FilenameWithoutPath>debug_frmwrk.c</FilenameWithoutPath>
@@ -471,8 +457,8 @@
       <Focus>0</Focus>
       <ColumnNumber>5</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>158</TopLine>
-      <CurrentLine>158</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\..\Drivers\source\lpc177x_8x_clkpwr.c</PathWithFileName>
       <FilenameWithoutPath>lpc177x_8x_clkpwr.c</FilenameWithoutPath>
@@ -499,8 +485,8 @@
       <Focus>0</Focus>
       <ColumnNumber>19</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>139</TopLine>
-      <CurrentLine>139</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\..\Drivers\source\lpc177x_8x_emc.c</PathWithFileName>
       <FilenameWithoutPath>lpc177x_8x_emc.c</FilenameWithoutPath>
@@ -513,8 +499,8 @@
       <Focus>0</Focus>
       <ColumnNumber>51</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>115</TopLine>
-      <CurrentLine>115</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\..\Drivers\source\lpc177x_8x_timer.c</PathWithFileName>
       <FilenameWithoutPath>lpc177x_8x_timer.c</FilenameWithoutPath>
@@ -527,8 +513,8 @@
       <Focus>0</Focus>
       <ColumnNumber>25</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>294</TopLine>
-      <CurrentLine>294</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\..\BoardSupport\nandflash_k9f1g08u0a.c</PathWithFileName>
       <FilenameWithoutPath>nandflash_k9f1g08u0a.c</FilenameWithoutPath>
@@ -537,7 +523,7 @@
 
   <Group>
     <GroupName>Main</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
@@ -548,8 +534,8 @@
       <Focus>0</Focus>
       <ColumnNumber>17</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>159</TopLine>
-      <CurrentLine>172</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Emc_NandFlashDemo.c</PathWithFileName>
       <FilenameWithoutPath>Emc_NandFlashDemo.c</FilenameWithoutPath>
@@ -558,7 +544,7 @@
 
   <Group>
     <GroupName>Readme</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
@@ -567,10 +553,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>11</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>15</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\abstract.txt</PathWithFileName>
       <FilenameWithoutPath>abstract.txt</FilenameWithoutPath>

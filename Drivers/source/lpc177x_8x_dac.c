@@ -70,7 +70,9 @@ void DAC_Init(uint8_t DAC_Id)
 	 * Init DAC pin connect
 	 * AOUT on P0.26
 	 */
-	PINSEL_ConfigPin(0, 26, 2);
+	PINSEL_ConfigPin(0, 26, 2);								 
+
+	PINSEL_SetAnalogPinMode(0,26,ENABLE);
 
 	//Enable DAC for the pin
 	PINSEL_DacEnable(0, 26, ENABLE);

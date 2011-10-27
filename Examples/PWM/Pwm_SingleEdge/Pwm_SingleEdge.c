@@ -102,7 +102,7 @@ int c_entry(void)
 
 
 	/* Configure match value for each match channel */
-	channelVal = 30;
+	channelVal = 10;
 	for (pwmChannel = 1; pwmChannel < 7; pwmChannel++)
 	{
 		/* Set up match value */

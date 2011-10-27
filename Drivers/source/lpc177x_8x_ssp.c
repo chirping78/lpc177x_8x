@@ -336,8 +336,8 @@ int32_t SSP_ReadWrite (LPC_SSP_TypeDef *SSPx, SSP_DATA_SETUP_Type *dataCfg, \
 			rdata16 = (uint16_t *)dataCfg->rx_data;
 			wdata16 = (uint16_t *)dataCfg->tx_data;
 		}
-		while ((dataCfg->tx_cnt != dataCfg->length) || (dataCfg->rx_cnt != dataCfg->length)){
-			if ((SSPx->SR & SSP_SR_TNF) && (dataCfg->tx_cnt != dataCfg->length)){
+		while ((dataCfg->tx_cnt < dataCfg->length) || (dataCfg->rx_cnt < dataCfg->length)){
+			if ((SSPx->SR & SSP_SR_TNF) && (dataCfg->tx_cnt < dataCfg->length)){
 				// Write data to buffer
 				if(dataCfg->tx_data == NULL){
 					if (dataword == 0){
@@ -368,7 +368,7 @@ int32_t SSP_ReadWrite (LPC_SSP_TypeDef *SSPx, SSP_DATA_SETUP_Type *dataCfg, \
 			}
 
 			// Check for any data available in RX FIFO
-			while ((SSPx->SR & SSP_SR_RNE) && (dataCfg->rx_cnt != dataCfg->length)){
+			while ((SSPx->SR & SSP_SR_RNE) && (dataCfg->rx_cnt < dataCfg->length)){
 				// Read data from SSP data
 				tmp = SSP_ReceiveData(SSPx);
 
@@ -407,7 +407,7 @@ int32_t SSP_ReadWrite (LPC_SSP_TypeDef *SSPx, SSP_DATA_SETUP_Type *dataCfg, \
 	// Interrupt mode ----------------------------------------------------------------------
 	else if (xfType == SSP_TRANSFER_INTERRUPT){
 
-		while ((SSPx->SR & SSP_SR_TNF) && (dataCfg->tx_cnt != dataCfg->length)){
+		while ((SSPx->SR & SSP_SR_TNF) && (dataCfg->tx_cnt < dataCfg->length)){
 			// Write data to buffer
 			if(dataCfg->tx_data == NULL){
 				if (dataword == 0){
@@ -435,7 +435,7 @@ int32_t SSP_ReadWrite (LPC_SSP_TypeDef *SSPx, SSP_DATA_SETUP_Type *dataCfg, \
 			}
 
 			// Check for any data available in RX FIFO
-			while ((SSPx->SR & SSP_SR_RNE) && (dataCfg->rx_cnt != dataCfg->length)){
+			while ((SSPx->SR & SSP_SR_RNE) && (dataCfg->rx_cnt < dataCfg->length)){
 				// Read data from SSP data
 				tmp = SSP_ReceiveData(SSPx);
 
@@ -458,7 +458,7 @@ int32_t SSP_ReadWrite (LPC_SSP_TypeDef *SSPx, SSP_DATA_SETUP_Type *dataCfg, \
 		}
 
 		// If there more data to sent or receive
-		if ((dataCfg->rx_cnt != dataCfg->length) || (dataCfg->tx_cnt != dataCfg->length)){
+		if ((dataCfg->rx_cnt < dataCfg->length) || (dataCfg->tx_cnt < dataCfg->length)){
 			// Enable all interrupt
 			SSPx->IMSC = SSP_IMSC_BITMASK;
 		} else {

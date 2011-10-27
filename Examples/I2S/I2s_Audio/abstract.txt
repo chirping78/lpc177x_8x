@@ -29,12 +29,13 @@
 	Process:
 		I2S setup:
 			- wordwidth: 16 bits
-			- stereo mode
+			- mono mode
 			- master mode for TX
 			- frequency = 44.1Khz (maximum is 96kHz)
       - enable transmit interrupt mode
       - Irq TXFIFO depth = 4
-    Using external I2S DAC IC: UDA1134ATS to display audio sound via headphone.
+    Using I2S DAC IC: UDA1380 to display audio sound via headphone.	Disable/Enable
+	SYSCLK of UDA1380 by update macro UDA1380_SYSCLK_USED.
     Audio data will be copy in tx_buffer to send to TXFIFO register, after half of 
     buffer have been sent already, call I2S_Callback() function to re-fill data.
 
@@ -54,25 +55,12 @@
 	Hardware configuration:		
 		This example was tested on:
 			1. LPC1788 OEM Board rev A and OEM Base Board rev A
-			2. LPC1788 IAR Start Kit Rev.B
-				- 3.3VA_E	:ON
-				- VREG		:ON
-				- IO_E		:ON
-				- PWR_SEL	:depends on power source selection
 		(Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
 			
 		I2S connection:
-			Pls see UDA1134ATS.png file to know how to connect I2S ports with external I2S DAC IC. 
-        		+ I2S_TX_CLK (P0.7) connects with UDA1134-pin1-BCK
-        		+ I2S_TX_WS (P0.8) connects with UDA1134-pin2-WS
-        		+ I2S_TX_SDA (P0.9) connects with UDA1134-pin3-DATA
-        
-			Pin-map
-								OEM board		IAR board
-				I2S_TX_CLK		J5.17			  EXT-7
-				I2S_TX_WS		J3.19			  EXT-8
-				I2S_TX_SDA		J5.18			  EXT-9	
-	
+			    + JP 25~27: 2-3
+				+ If SYSCLK is used for UDA1380: set JP28 ON. 
+        	
 	Running mode:
 		This example can run only on ROM mode.
 					

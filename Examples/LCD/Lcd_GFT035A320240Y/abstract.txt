@@ -27,8 +27,12 @@
 		  This example project describes how to test LCD module on LPC1788 IAR KickStart Rev.B board		  
 	Process:	
 		  The IAR, NXP and Onlimex logos appear on the LCD and the LCD hardware cursor moves as the 
-		  board moves(the acceleration sensor is used).
-		  It shows basic use of I/O, timer, interrupt and LCD controllers.
+		  board moves(the acceleration sensor is used).  		
+
+		  The LCD driver support all bpp values. The example tests with 16bpp and 24bpp (1 pixel can
+		  take 3 or 4 bytes). Define the value of LOGO_BPP and BMP_BYTES_PP to determine the running mode.
+
+		  This example shows basic use of I/O, interrupt and LCD controllers.
 		  
 		  This code is referenced from IAR source code.
 

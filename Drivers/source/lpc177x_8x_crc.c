@@ -95,11 +95,11 @@ void CRC_Reset(void)
 uint32_t CRC_CalcDataChecksum(uint32_t data, CRC_WR_SIZE SizeType)
 {
 	if(SizeType == CRC_WR_8BIT)
-		LPC_CRC->WR_DATA_BYTE = (uint8_t)data;
+		LPC_CRC->WR_DATA_BYTE.DATA = (uint8_t)data;
 	else if(SizeType == CRC_WR_16BIT)
-		LPC_CRC->WR_DATA_WORD = (uint16_t)data;
+		LPC_CRC->WR_DATA_WORD.DATA = (uint16_t)data;
 	else
-		LPC_CRC->WR_DATA_DWORD = data;
+		LPC_CRC->WR_DATA_DWORD.DATA = data;
 	return(LPC_CRC->SUM);
 }
 
@@ -113,27 +113,39 @@ uint32_t CRC_CalcDataChecksum(uint32_t data, CRC_WR_SIZE SizeType)
 				- CRC_WR_32BIT: 32-bit write
  * @return 		block data checksum result
  **********************************************************************/
-uint32_t CRC_CalcBlockChecksum(void *blockdata, uint32_t blocksize, CRC_WR_SIZE SizeType)
+uint32_t CRC_CalcBlockChecksum(void *block_data, uint32_t block_size, CRC_WR_SIZE data_size)
 {
-#if (SizeType == CRC_WR_8BIT)
-        uint8_t *reg, *data;
-        reg = (uint8_t *)&(LPC_CRC->WR_DATA_BYTE);
-        data = (uint8_t *)blockdata;
-#elif (SizeType == CRC_WR_16BIT)
-        uint16_t *reg, *data;
-        reg = (uint16_t *)&(LPC_CRC->WR_DATA_WORD);
-        data = (uint16_t *)blockdata;
-#else
-        uint32_t *reg, *data;
-        reg =  (uint32_t *)&(LPC_CRC->WR_DATA_DWORD);
-        data = (uint32_t *)blockdata;
-#endif
-    while(blocksize !=0)
-    {
-		*reg = *data;
-		(data)++;
-		blocksize--;
-    }
+   	uint32_t idx = 0;
+	uint8_t  *data = (uint8_t*) block_data;
+	
+	while(block_size !=0) {
+		
+	  switch(data_size) {
+	  	
+	    case CRC_WR_8BIT:
+		{
+		   uint8_t *tmp = data;
+        	   LPC_CRC->WR_DATA_BYTE.DATA = *tmp;
+             	   data++;
+		}
+		break;
+	    case CRC_WR_16BIT:
+		{
+		   uint16_t *tmp = (uint16_t*)data;
+             	   LPC_CRC->WR_DATA_WORD.DATA = *tmp;
+             	   data +=2;
+		}
+		 break;
+	    default:
+		{
+		   uint32_t *tmp = (uint32_t*)data;
+            	   LPC_CRC->WR_DATA_DWORD.DATA = *tmp;
+            	   data += 4;
+		}
+		break;
+	  }
+	  block_size--;
+	}
 	return(LPC_CRC->SUM);
 }
 

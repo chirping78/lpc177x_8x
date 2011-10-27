@@ -162,83 +162,63 @@ volatile uint32_t txBlockCnt=0, rxBlockCnt=0;
 uint32_t MCI_SettingDma(uint8_t* memBuf, uint32_t ChannelNum, uint32_t DMAMode )
 {
 	uint32_t tempDgb;
+	GPDMA_Channel_CFG_Type GPDMACfg;
+
+	// Transfer size
+	GPDMACfg.TransferSize = DMA_MCI_SIZE;
+	// Transfer width
+	GPDMACfg.TransferWidth = GPDMA_WIDTH_WORD;
+	// Transfer type
+	GPDMACfg.TransferType = DMAMode;
+	// Linker List Item - unused
+	GPDMACfg.DMALLI = 0;
 	
 	/* USB RAM is used for test.
 	Please note, Ethernet has its own SRAM, but GPDMA can't access
 	that. GPDMA can access USB SRAM and IRAM. Ethernet DMA controller can 
 	access both IRAM and Ethernet SRAM. */
-	if ( ChannelNum == 0 )
+	GPDMACfg.ChannelNum = ChannelNum;
+	
+	if ( DMAMode == GPDMA_TRANSFERTYPE_M2P_DEST_CTRL )
 	{
-		LPC_GPDMA->IntTCClear = 0x01;   
-		LPC_GPDMA->IntErrClr = 0x01;
-		if ( DMAMode == GPDMA_TRANSFERTYPE_M2P )
-		{
-			/* Ch0 set for M2P transfer from mempry to MCI FIFO. */
-			LPC_GPDMACH0->CSrcAddr = (uint32_t) memBuf;
-			LPC_GPDMACH0->CDestAddr = (uint32_t)&LPC_MCI->FIFO;
+		/* Ch0 set for M2P transfer from mempry to MCI FIFO. */
+		// Source memory
+		GPDMACfg.SrcMemAddr = (uint32_t)memBuf;
+		// Destination memory
+		GPDMACfg.DstMemAddr = (uint32_t)&LPC_MCI->FIFO;
+
+		// Source connection 
+		GPDMACfg.SrcConn = 0;
+		// Destination connection 
+		GPDMACfg.DstConn = GPDMA_CONN_MCI;
 			
-			/* The burst size is set to 8, the size is 8 bit too. */
-			/* Terminal Count Int enable */
-			tempDgb = (DMA_MCI_SIZE & 0x0FFF) | (0x02 << 12) | (0x02 << 15)
-										| (0x02 << 18) | (0x02 << 21) | (1 << 26) | 0x80000000;
-			LPC_GPDMACH0->CControl = (DMA_MCI_SIZE & 0x0FFF) | (0x02 << 12) | (0x02 << 15)
-										| (0x02 << 18) | (0x02 << 21) | (1 << 26) | 0x80000000;
-		}
-		else if ( DMAMode == GPDMA_TRANSFERTYPE_P2M )
-		{
-			/* Ch0 set for P2M transfer from MCI FIFO to memory. */
-			LPC_GPDMACH0->CSrcAddr = (uint32_t)&LPC_MCI->FIFO;
-			LPC_GPDMACH0->CDestAddr = (uint32_t) memBuf;
-			
-			/* The burst size is set to 8, the size is 8 bit too. */
-			/* Terminal Count Int enable */
-			LPC_GPDMACH0->CControl = (DMA_MCI_SIZE & 0x0FFF) | (0x02 << 12) | (0x02 << 15)
-										| (0x02 << 18) | (0x02 << 21) | (1 << 27) | 0x80000000;
-		}
-		else
-		{
-			return ( FALSE );
-		}
 	}
-	else if ( ChannelNum == 1 )
-	{   
-		LPC_GPDMA->IntTCClear = 0x02;   
-		LPC_GPDMA->IntErrClr = 0x02;
-		
-		if ( DMAMode == GPDMA_TRANSFERTYPE_M2P )
-		{
-			/* Ch1 set for M2P transfer from memory to MCI FIFO. */
-			LPC_GPDMACH1->CSrcAddr = (uint32_t) memBuf;
-			LPC_GPDMACH1->CDestAddr = (uint32_t)&LPC_MCI->FIFO;
-			
-			/* The burst size is set to 8, the size is 8 bit too. */
-			/* Terminal Count Int enable */
-			LPC_GPDMACH1->CControl = (DMA_MCI_SIZE & 0x0FFF) | (0x02 << 12) | (0x02 << 15)
-										| (0x02 << 18) | (0x02 << 21) | (1 << 26) | 0x80000000;
-		}
-		else if ( DMAMode == GPDMA_TRANSFERTYPE_P2M )
-		{
-			/* Ch1 set for P2M transfer from MCI_FIFO to memory. */
-			LPC_GPDMACH1->CSrcAddr = (uint32_t)&LPC_MCI->FIFO;
-			LPC_GPDMACH1->CDestAddr = (uint32_t) memBuf;
-			
-			/* The burst size is set to 8, the size is 8 bit too. */
-			/* Terminal Count Int enable */
-			LPC_GPDMACH1->CControl = (DMA_MCI_SIZE & 0x0FFF) | (0x02 << 12) | (0x02 << 15)
-										| (0x02 << 18) | (0x02 << 21) | (1 << 27) | 0x80000000;
-		}
-		else
-		{
-			return ( FALSE );
-		}
+	else if ( DMAMode == GPDMA_TRANSFERTYPE_P2M_SRC_CTRL )
+	{
+		/* Ch0 set for P2M transfer from MCI FIFO to memory. */
+		// Source memory
+		GPDMACfg.SrcMemAddr = (uint32_t)&LPC_MCI->FIFO;
+		// Destination memory
+		GPDMACfg.DstMemAddr = (uint32_t)memBuf;
+
+		// Source connection 
+		GPDMACfg.SrcConn = GPDMA_CONN_MCI;
+		// Destination connection
+		GPDMACfg.DstConn = 0;
 	}
 	else
 	{
 		return ( FALSE );
 	}
 
-	LPC_GPDMA->Config = 0x01;	/* Enable DMA channels, little endian */
-	while ( !(LPC_GPDMA->Config & 0x01) );    
+	// Setup channel with given parameter
+	GPDMA_Setup(&GPDMACfg);
+
+	// Enable GPDMA channel 
+	GPDMA_ChannelCmd(ChannelNum, ENABLE);
+
+	/* Enable GPDMA interrupt */
+	NVIC_EnableIRQ(DMA_IRQn);
 	
 	return (TRUE);
 }
@@ -822,6 +802,35 @@ uint32_t MCI_Init(uint8_t powerActiveLevel )
 	uint32_t i, retval;
 
 	MCI_CardType = MCI_CARD_UNKNOWN;
+
+	// Following block of code added to ensure card VCC drops to zero
+    // before card is initialized
+  
+   // Force all MCI control pins to basic I/O mode
+   LPC_IOCON->P1_2  &= ~0x1F; /* SD_CLK @ P1.2 */
+   LPC_IOCON->P1_3  &= ~0x1F; /* SD_CMD @ P1.3 */
+   LPC_IOCON->P1_5  &= ~0x1F; /* SD_PWR @ P1.5 */
+   LPC_IOCON->P1_6  &= ~0x1F; /* SD_DAT_0 @ P1.6 */
+   LPC_IOCON->P1_7  &= ~0x1F; /* SD_DAT_1 @ P1.7 */
+   LPC_IOCON->P1_11 &= ~0x1F; /* SD_DAT_2 @ P1.11 */
+   LPC_IOCON->P1_12 &= 0x1F; /* SD_DAT_3 @ P1.12 */
+
+   // Set all MCI pins to outputs
+   LPC_GPIO1->DIR |= 0x18EC;
+  
+   // Force all pins low (except power control pin)
+   LPC_GPIO1->CLR = 0x1000;
+   LPC_GPIO1->CLR = 0x0800;
+   LPC_GPIO1->CLR = 0x0080;
+   LPC_GPIO1->CLR = 0x0040;
+  
+   LPC_GPIO1->SET = 0x0020;
+  
+   LPC_GPIO1->CLR = 0x0008;
+   LPC_GPIO1->CLR = 0x0004;
+
+   // Crude delay of 50ms at 120MHz
+   for ( i = 0; i < 0x100000; i++ );
 
 	LPC_SC->PCONP |= ( 1 << 28 );			/* Enable clock to the MCI block */
 
@@ -1796,6 +1805,7 @@ uint32_t MCI_Cmd_SelectCard( void )
  ****************************************************************************/
 uint32_t MCI_GetCardStatus(uint32_t* cardStatus)
 {
+	uint32_t i;
 	uint32_t retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
@@ -1843,6 +1853,7 @@ uint32_t MCI_GetCardStatus(uint32_t* cardStatus)
 		}
 
 		retryCount--;
+		for ( i = 0; i < 0x10; i++ );
 	}
 
 	return retval;
@@ -2184,10 +2195,6 @@ uint32_t MCI_WriteBlock(uint8_t* memblock, uint32_t blockNum, uint32_t numOfBloc
 	uint32_t i, blockCnt;
 	uint32_t DataCtrl = 0;
 
-#if MCI_DMA_ENABLED
-	GPDMA_Channel_CFG_Type GPDMACfg;
-#endif
-
 	dataSrcBlock = memblock;
 
 	LPC_MCI->CLEAR = 0x7FF;
@@ -2222,10 +2229,8 @@ uint32_t MCI_WriteBlock(uint8_t* memblock, uint32_t blockNum, uint32_t numOfBloc
 	//for(blockCnt = 0; blockCnt < numOfBlock; blockCnt++)
 	{
 #if MCI_DMA_ENABLED
-		MCI_SettingDma((uint8_t*) dataSrcBlock, 0, GPDMA_TRANSFERTYPE_M2P);
+		MCI_SettingDma((uint8_t*) dataSrcBlock, MCI_DMA_WRITE_CHANNEL, GPDMA_TRANSFERTYPE_M2P_DEST_CTRL);
 		
-		LPC_GPDMACH0->CConfig |= 0xC001 | (0x00 << 1) | (0x01 << 6) | (0x05 << 11);
-
 		/* Write, block transfer, DMA, and data length */
 		DataCtrl |= MCI_DATACTRL_ENABLE | MCI_DATACTRL_DIR_TO_CARD 
 						| MCI_DATACTRL_DMA_ENABLE | MCI_DTATCTRL_BLOCKSIZE(DATA_BLOCK_LEN);
@@ -2273,10 +2278,6 @@ uint32_t MCI_ReadBlock(uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBloc
 	uint32_t i, blockCnt;
 	uint32_t DataCtrl = 0;
 
-#if MCI_DMA_ENABLED
-	GPDMA_Channel_CFG_Type GPDMACfg;
-#endif
-
 	dataDestBlock = destBlock;
 
 	LPC_MCI->CLEAR = 0x7FF;
@@ -2311,10 +2312,7 @@ uint32_t MCI_ReadBlock(uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBloc
 	//for(blockCnt = 0; blockCnt < numOfBlock; blockCnt++)
 	{		
 #if MCI_DMA_ENABLED
-		MCI_SettingDma((uint8_t*) dataDestBlock, 0, GPDMA_TRANSFERTYPE_P2M);
-		
-		LPC_GPDMACH0->CConfig |= 0xC001 | (0x00 << 1) | (0x01 << 6) | (0x05 << 11);
-
+		MCI_SettingDma((uint8_t*) dataDestBlock, MCI_DMA_READ_CHANNEL, GPDMA_TRANSFERTYPE_P2M_SRC_CTRL);
 
 		/* Write, block transfer, DMA, and data length */
 		DataCtrl |= MCI_DATACTRL_ENABLE | MCI_DATACTRL_DIR_FROM_CARD

@@ -29,6 +29,7 @@
 #include "debug_frmwrk.h"
 #include "lpc177x_8x_gpio.h"
 #include "lpc177x_8x_exti.h"
+#include "bsp.h"
 
 /* Example group ----------------------------------------------------------- */
 /** @defgroup Adc_Burst		ADC Burst
@@ -39,9 +40,6 @@
 /************************** PRIVATE DEFINITIONS ***********************/
 #define LPC177x_8x_ADC_INJECT_TEST
 #define LPC177x_8x_ADC_BURST_MULTI
-
-#define _ADC_INT			ADC_ADINTEN2
-#define _ADC_CHANNEL		ADC_CHANNEL_2
 
 #ifdef LPC177x_8x_ADC_BURST_MULTI
 #define _ADC_INT_n			ADC_ADINTEN3
@@ -54,9 +52,14 @@
 
 #ifdef LPC177x_8x_ADC_INJECT_TEST
 #define GPIO_INT	(1<<10)
+#if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
+#define LED_PORT	(1)			// P1.18 (LED USB Host) is used as polling LED when inject other ADC channel
+#define LED_PIN		(1<<18)
+#else
 #define LED_PORT	(0)			// P0.13 (LED USB Host) is used as polling LED when inject other ADC channel
 #define LED_PIN		(1<<13)
 #endif
+#endif /* (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)*/
 
 /************************** PRIVATE VARIABLES *************************/
 uint8_t menu1[] =
@@ -155,7 +158,8 @@ int c_entry(void)
 	* Init ADC pin connect
 	* AD0.2 on P0.25
 	*/
-	PINSEL_ConfigPin(0, 25, 1);
+	PINSEL_ConfigPin(BRD_ADC_PREPARED_CH_PORT, BRD_ADC_PREPARED_CH_PIN, BRD_ADC_PREPARED_CH_FUNC_NO);
+	PINSEL_SetAnalogPinMode(BRD_ADC_PREPARED_CH_PORT,BRD_ADC_PREPARED_CH_PIN,ENABLE);
 
 #ifdef LPC177x_8x_ADC_BURST_MULTI
 	/*
@@ -163,6 +167,8 @@ int c_entry(void)
 	* AD0.3 on P0.26
 	*/
 	PINSEL_ConfigPin(0, 26, 1);
+    PINSEL_SetAnalogPinMode(0,26,ENABLE);
+
 #endif
 
 	/* Configuration for ADC:
@@ -171,7 +177,7 @@ int c_entry(void)
 	*  ADC conversion rate = 400KHz
 	*/
 	ADC_Init(LPC_ADC, 400000);
-	ADC_ChannelCmd(LPC_ADC,_ADC_CHANNEL,ENABLE);
+	ADC_ChannelCmd(LPC_ADC,BRD_ADC_PREPARED_CHANNEL,ENABLE);
 
 #ifdef LPC177x_8x_ADC_BURST_MULTI
 	ADC_ChannelCmd(LPC_ADC,_ADC_CHANNEL_n,ENABLE);
@@ -199,8 +205,8 @@ int c_entry(void)
 
 	while(1)
 	{
-		adc_value =  ADC_ChannelGetData(LPC_ADC,_ADC_CHANNEL);
-		_DBG("ADC value on channel 2: ");
+		adc_value =  ADC_ChannelGetData(LPC_ADC,BRD_ADC_PREPARED_CHANNEL);
+		_DBG("ADC value on channel "); _DBD(BRD_ADC_PREPARED_CHANNEL); _DBG(": ");
 		_DBD32(adc_value);
 		_DBG_("");
 

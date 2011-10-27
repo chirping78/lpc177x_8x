@@ -87,6 +87,10 @@ extern "C"
 #define GPDMA_TRANSFERTYPE_P2M 		((2UL))
 /** Source peripheral to destination peripheral - DMA control */
 #define GPDMA_TRANSFERTYPE_P2P 		((3UL))
+/** Memory to peripheral - Destination peripheral control */
+#define GPDMA_TRANSFERTYPE_M2P_DEST_CTRL 		((5UL))
+/** Peripheral to memory - Source peripheral control */
+#define GPDMA_TRANSFERTYPE_P2M_SRC_CTRL 		((6UL))
 
 /** Burst size in Source and Destination definitions */
 #define GPDMA_BSIZE_1 	((0UL)) /**< Burst size = 1 */

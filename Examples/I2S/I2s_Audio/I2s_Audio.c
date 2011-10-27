@@ -25,6 +25,7 @@
 **********************************************************************/
 #include "lpc177x_8x_i2s.h"
 #include "lpc177x_8x_pinsel.h"
+#include "uda1380.h"
 
 /** @defgroup I2S_Audio	I2S Audio
  * @ingroup I2S_Examples
@@ -92,13 +93,12 @@ void I2S_Callback(void)
  **********************************************************************/
 void I2S_IRQHandler()
 {
-	uint32_t txlevel,i, test;
+	uint32_t txlevel,i;
 	txlevel = I2S_GetLevel(LPC_I2S,I2S_TX_MODE);
 	if(txlevel <= 4)
 	{
 		for(i=0;i<8-txlevel;i++)
 		{
-			test = *(uint32_t *)(tx_buffer + buffer_offset);
 			LPC_I2S->TXFIFO = *(uint32_t *)(tx_buffer + buffer_offset);
 			tx_offset +=4;
 			buffer_offset +=4;
@@ -148,16 +148,17 @@ int c_entry (void) {                       /* Main Program */
 
 	Buffer_Init();
 
-
-/* Initialize I2S peripheral ------------------------------------*/
+    /* Initialize I2S peripheral ------------------------------------*/
 	/* Pin configuration:
 	 * Assign:	- P0.7 as I2STX_CLK
 	 * 			- P0.8 as I2STX_WS
 	 * 			- P0.9 as I2STX_SDA
+	 *          - P1.16 as I2SMCLK
 	 */
 	PINSEL_ConfigPin(0,7,1);
 	PINSEL_ConfigPin(0,8,1);
 	PINSEL_ConfigPin(0,9,1);
+	PINSEL_ConfigPin(1,16,2);
 
 	I2S_Init(LPC_I2S);
 
@@ -180,7 +181,7 @@ int c_entry (void) {                       /* Main Program */
 	/* Clock Mode Config*/
 	I2S_ClkConfig.clksel = I2S_CLKSEL_FRDCLK;
 	I2S_ClkConfig.fpin = I2S_4PIN_DISABLE;
-	I2S_ClkConfig.mcena = I2S_MCLK_DISABLE;
+	I2S_ClkConfig.mcena = I2S_MCLK_ENABLE;
 	I2S_ModeConfig(LPC_I2S,&I2S_ClkConfig,I2S_TX_MODE);
 
 	I2S_FreqConfig(LPC_I2S, 44100, I2S_TX_MODE);
@@ -190,8 +191,15 @@ int c_entry (void) {                       /* Main Program */
 	/* TX FIFO depth is 4 */
 	I2S_IRQConfig(LPC_I2S,I2S_TX_MODE,4);
 	I2S_IRQCmd(LPC_I2S,I2S_TX_MODE,ENABLE);
+
+	for(i = 0; i <0x1000000; i++);
+
+	Uda1380_Init(200000, 44100);
+	
 	I2S_Start(LPC_I2S);
+
 	NVIC_EnableIRQ(I2S_IRQn);
+
 
 	while(1);
 	return 0;

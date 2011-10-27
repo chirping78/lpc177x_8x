@@ -121,13 +121,13 @@ int c_entry(void)
 		case '2':
 			CRC_Init(CRC_POLY_CRC16);
 			_DBG("CRC-16 Result: ");
-			result = CRC_CalcBlockChecksum(BlockData, BLOCK_SIZE, CRC_WR_8BIT);
+			result = CRC_CalcBlockChecksum(BlockData, BLOCK_SIZE/2, CRC_WR_16BIT);
 			_DBH32(result);_DBG_("");
 			break;
 		case '3':
 			CRC_Init(CRC_POLY_CRC32);
 			_DBG("CRC-32 Result: ");
-			result = CRC_CalcBlockChecksum(BlockData, BLOCK_SIZE, CRC_WR_8BIT);
+			result = CRC_CalcBlockChecksum(BlockData, BLOCK_SIZE/4, CRC_WR_32BIT);
 			_DBH32(result);_DBG_("");
 			break;
 		case'q':

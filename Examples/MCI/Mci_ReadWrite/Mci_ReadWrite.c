@@ -228,6 +228,9 @@ int main (void)
 		_DBG("Write ");_DBD(WRITE_BLOCK_NUM);_DBG(" Blocks successfully!!!\n\r");
 	}
 
+	// Delay 500ms
+	for ( i = 0; i < 0x500000; i++ );
+
 	retVal = MCI_ReadBlock(rdBuf, 0, WRITE_BLOCK_NUM);
 	if(retVal != MCI_FUNC_OK)
 	{

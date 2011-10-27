@@ -135,6 +135,7 @@ int c_entry(void)
 	/* Settings for AD input pin
 	 */
 	PINSEL_ConfigPin (BRD_ADC_PREPARED_CH_PORT, BRD_ADC_PREPARED_CH_PIN, BRD_ADC_PREPARED_CH_FUNC_NO);
+	PINSEL_SetAnalogPinMode(BRD_ADC_PREPARED_CH_PORT,BRD_ADC_PREPARED_CH_PIN,ENABLE);
 
 	/*  Configuration for ADC :
 	 * 	ADC conversion rate = 400KHz

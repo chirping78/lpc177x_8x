@@ -67,20 +67,23 @@ void CLKPWR_SetCLKDiv (uint8_t ClkType, uint8_t DivVal)
 	switch(ClkType)
 	{
 	case CLKPWR_CLKTYPE_CPU:
-		LPC_SC->CCLKSEL = DivVal;
+		LPC_SC->CCLKSEL &= ~(0x1F);
+		LPC_SC->CCLKSEL |= DivVal & 0x1F;
 		SystemCoreClockUpdate(); //Update clock
 		break;
 	case CLKPWR_CLKTYPE_PER:
-		LPC_SC->PCLKSEL = DivVal;
+		LPC_SC->PCLKSEL &= ~(0x1F);
+		LPC_SC->PCLKSEL |= DivVal & 0x1F;
 		SystemCoreClockUpdate(); //Update clock
 		break;
 	case CLKPWR_CLKTYPE_EMC:
-		LPC_SC->EMCCLKSEL = DivVal;
+		LPC_SC->EMCCLKSEL &= ~(0x01);
+		LPC_SC->EMCCLKSEL |= DivVal & 0x01;
 		SystemCoreClockUpdate(); //Update clock
 		break;
 	case CLKPWR_CLKTYPE_USB:
 		LPC_SC->USBCLKSEL &= ~(0x0000001F);
-		LPC_SC->USBCLKSEL |= DivVal;
+		LPC_SC->USBCLKSEL |= DivVal & 0x1F;
 		break;
 	default:
 		while(1);//Error Loop;

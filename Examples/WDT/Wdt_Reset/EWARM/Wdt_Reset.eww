@@ -4,9 +4,6 @@
   <project>
     <path>$WS_DIR$\Wdt_Reset.ewp</path>
   </project>
-  <project>
-    <path>$WS_DIR$\..\..\Wdt_WindowMode\EWARM\Wdt_WindowMode.ewp</path>
-  </project>
   <batchBuild/>
 </workspace>
 

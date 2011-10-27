@@ -30,6 +30,11 @@
 		Plug the card to the slot, LPC1788 will read the ID of the card and show it 
 		to a serial terminal on a PC.
 		It can be used with SD card, micro SD card (with adapter) or MMC card.
+                This example passed with:
+                    -  Panasonic SD card 16MB.
+                    -  PNY SD-MO2G.
+                    -  Canon SD Memory Card SDC-32M
+                    -  KINGMAX MMC Mobile 1GB.
 		 				
 @Directory contents:
 	\EWARM: includes EWARM (IAR) project and configuration files

@@ -120,8 +120,9 @@
 				- ISP_E: ON
 	
 	Step to run:
-		- Step 1: Build example.
-		- Step 2: Burn hex file into board (if run on ROM mode)
-		- Step 3: Connect UART0\1\2 on this board to COM port on your computer
-		- Step 4: Configure hardware and serial display as above instruction 
-		- Step 5: Run example, observe SSP transfer result on serial display
+		- Step 1: Choose the SSP component by #define _SSP_NO_USING
+		- Step 2: Build example.
+		- Step 3: Burn hex file into board (if run on ROM mode)
+		- Step 4: Connect UART0\1\2 on this board to COM port on your computer
+		- Step 5: Configure hardware and serial display as above instruction 
+		- Step 6: Run example, observe SSP transfer result on serial display

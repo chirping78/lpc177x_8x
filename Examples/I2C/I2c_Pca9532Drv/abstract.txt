@@ -28,7 +28,7 @@
 	Process:
 		I2C Clock Rate is set at 200K.
 		
-		PCA8581 Slave address is 0xC0 (8-bit format)
+		PCA9532 Slave address is 0xC0 (8-bit format)
 		
 		After initialize and enable I2C, PCA9532 should be configured to blink 
 		LEDs connected at specific frequencies, alway OFF or ON.

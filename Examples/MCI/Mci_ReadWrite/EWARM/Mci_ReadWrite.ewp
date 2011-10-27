@@ -87,7 +87,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.20.4.52756</state>
+          <state>6.20.2.52635</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -294,9 +294,9 @@
         <option>
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..</state>
-          <state>$PROJ_DIR$\..\..\..\..\Core\CM3\CoreSupport</state>
-          <state>$PROJ_DIR$\..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x</state>
-          <state>$PROJ_DIR$\..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\startup\iar</state>
+          <state>$PROJ_DIR$\..\..\..\..\Core\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Include</state>
+          <state>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\IAR</state>
           <state>$PROJ_DIR$\..\..\..\..\Drivers\include</state>
           <state>$PROJ_DIR$\..\..\..\..\BoardSupport</state>
         </option>
@@ -691,7 +691,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\linker\ldscript_irom_iar.icf</state>
+          <state>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\linker\ldscript_irom_iar.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -986,7 +986,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.20.4.52756</state>
+          <state>6.20.2.52635</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1193,9 +1193,9 @@
         <option>
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..</state>
-          <state>$PROJ_DIR$\..\..\..\..\Core\CM3\CoreSupport</state>
-          <state>$PROJ_DIR$\..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x</state>
-          <state>$PROJ_DIR$\..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\startup\iar</state>
+          <state>$PROJ_DIR$\..\..\..\..\Core\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Include</state>
+          <state>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\IAR</state>
           <state>$PROJ_DIR$\..\..\..\..\Drivers\include</state>
           <state>$PROJ_DIR$\..\..\..\..\BoardSupport</state>
         </option>
@@ -1590,7 +1590,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\linker\ldscript_iram_iar.icf</state>
+          <state>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\linker\ldscript_iram_iar.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1803,10 +1803,7 @@
   <group>
     <name>CMSIS-CM3</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\Core\CM3\CoreSupport\core_cm3.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\system_LPC177x_8x.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\system_LPC177x_8x.c</name>
     </file>
   </group>
   <group>
@@ -1845,7 +1842,7 @@
   <group>
     <name>Startup</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\startup\iar\startup_LPC177x_8x.s</name>
+      <name>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\IAR\startup_LPC177x_8x.s</name>
     </file>
   </group>
 </project>

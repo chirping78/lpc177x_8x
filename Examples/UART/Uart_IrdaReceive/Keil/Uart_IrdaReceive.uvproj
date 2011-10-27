@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\Core\CM3\CoreSupport;..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x;..\..\..\..\Drivers\include;..\..\Uart_IrdaReceive;..\..\..\..\BoardSupport</IncludePath>
+              <IncludePath>..\..\..\..\Drivers\include;..\..\Uart_IrdaReceive;..\..\..\..\BoardSupport;..\..\..\..\Core\CMSIS\Include;..\..\..\..\Core\Device\NXP\LPC177x_8x\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -389,7 +389,7 @@
             <File>
               <FileName>startup_LPC177x_8x.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\startup\arm\startup_LPC177x_8x.s</FilePath>
+              <FilePath>..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\ARM\startup_LPC177x_8x.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -397,14 +397,9 @@
           <GroupName>CMSIS-CM3</GroupName>
           <Files>
             <File>
-              <FileName>core_cm3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\Core\CM3\CoreSupport\core_cm3.c</FilePath>
-            </File>
-            <File>
               <FileName>system_LPC177x_8x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\system_LPC177x_8x.c</FilePath>
+              <FilePath>..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\system_LPC177x_8x.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -918,7 +913,7 @@
               <MiscControls></MiscControls>
               <Define>__RAM_MODE__</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\Core\CM3\CoreSupport;..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x;..\..\..\..\Drivers\include;..\..\Uart_IrdaReceive;..\..\..\..\BoardSupport</IncludePath>
+              <IncludePath>..\..\..\..\Drivers\include;..\..\Uart_IrdaReceive;..\..\..\..\BoardSupport;..\..\..\..\Core\CMSIS\Include;..\..\..\..\Core\Device\NXP\LPC177x_8x\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -961,7 +956,7 @@
             <File>
               <FileName>startup_LPC177x_8x.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\startup\arm\startup_LPC177x_8x.s</FilePath>
+              <FilePath>..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\ARM\startup_LPC177x_8x.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -969,14 +964,9 @@
           <GroupName>CMSIS-CM3</GroupName>
           <Files>
             <File>
-              <FileName>core_cm3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\Core\CM3\CoreSupport\core_cm3.c</FilePath>
-            </File>
-            <File>
               <FileName>system_LPC177x_8x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\Core\CM3\DeviceSupport\NXP\LPC177x_8x\system_LPC177x_8x.c</FilePath>
+              <FilePath>..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\system_LPC177x_8x.c</FilePath>
             </File>
           </Files>
         </Group>

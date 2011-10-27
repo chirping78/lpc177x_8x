@@ -33,6 +33,13 @@
 		serial terminal on a PC. Especially, the read/write function with and without 
 		DMA support is working well.
 		It can be used with SD card, micro SD card (with adapter) or MMC card.
+		
+                This example passed with:
+                    -  Panasonic SD card 16MB.
+                    -  PNY SD-MO2G.
+                    -  Canon SD Memory Card SDC-32M
+                    -  KINGMAX MMC Mobile 1GB.
+
 		 				
 @Directory contents:
 	\EWARM: includes EWARM (IAR) project and configuration files

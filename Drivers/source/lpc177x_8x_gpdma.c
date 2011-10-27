@@ -132,7 +132,7 @@ const LPC_GPDMACH_TypeDef *pGPDMACh[8] = {
  */
 const uint8_t GPDMA_LUTPerBurst[] = {
 		0,							// Reserved
-		GPDMA_BSIZE_32,				// SD Card
+		GPDMA_BSIZE_8,				// SD Card
 		GPDMA_BSIZE_4,				// SSP0 Tx
 		GPDMA_BSIZE_4,				// SSP0 Rx
 		GPDMA_BSIZE_4,				// SSP1 Tx
@@ -289,6 +289,7 @@ Status GPDMA_Setup(GPDMA_Channel_CFG_Type *GPDMAChannelConfig)
 		break;
 	// Memory to peripheral
 	case GPDMA_TRANSFERTYPE_M2P:
+	case GPDMA_TRANSFERTYPE_M2P_DEST_CTRL:
 		// Assign physical source
 		pDMAch->CSrcAddr = GPDMAChannelConfig->SrcMemAddr;
 		// Assign peripheral destination address
@@ -304,6 +305,7 @@ Status GPDMA_Setup(GPDMA_Channel_CFG_Type *GPDMAChannelConfig)
 		break;
 	// Peripheral to memory
 	case GPDMA_TRANSFERTYPE_P2M:
+	case GPDMA_TRANSFERTYPE_P2M_SRC_CTRL:
 		// Assign peripheral source address
 		pDMAch->CSrcAddr = (uint32_t)GPDMA_LUTPerAddr[GPDMAChannelConfig->SrcConn];
 		// Assign memory destination address
@@ -353,7 +355,7 @@ Status GPDMA_Setup(GPDMA_Channel_CFG_Type *GPDMAChannelConfig)
 		{
 			LPC_SC->DMAREQSEL |= (1<<(GPDMAChannelConfig->DstConn - 16));
 		} else {
-			LPC_SC->DMAREQSEL &= ~(1<<(GPDMAChannelConfig->DstConn - 8));
+			LPC_SC->DMAREQSEL &= ~(1<<(GPDMAChannelConfig->DstConn));
 		}
 	}
 

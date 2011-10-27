@@ -14,11 +14,13 @@
  *
  *    $Revision: 24636 $
  **************************************************************************/
-#include "drv_glcd.h"
-
 #ifndef __LOGO_H
 #define __LOGO_H
 
-extern Bmp_t LogoPic;
+#include "lpc177x_8x_lcd.h"
 
+#define   LOGO_BPP       24
+
+#define   BMP_BYTES_PP   4			
+//#define   BMP_BYTES_PP   (LOGO_BPP/8)
 #endif // __LOGO_H

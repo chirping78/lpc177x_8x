@@ -248,7 +248,14 @@ void PWM_DeInit (uint8_t pwmId)
 	// Disable PWM control (timer, counter and PWM)
 	pPwm->TCR = 0x00;
 
-	CLKPWR_ConfigPPWR (CLKPWR_PCONP_PCPWM1, DISABLE);
+	if(pwmId == PWM_0)
+	{
+	   CLKPWR_ConfigPPWR (CLKPWR_PCONP_PCPWM0, DISABLE);
+	}
+	else if(pwmId == PWM_1)
+	{
+	   CLKPWR_ConfigPPWR (CLKPWR_PCONP_PCPWM1, DISABLE);
+	}
 }
 
 
