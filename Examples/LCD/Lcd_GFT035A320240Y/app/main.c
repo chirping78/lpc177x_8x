@@ -83,6 +83,8 @@
 #define _PWM_NO_USED    1
 #define _PWM_CHANNEL_NO 2
 
+#define _BACK_LIGHT_BASE_CLK (1000/2)
+
 uint8_t Smb380Id, Smb380Ver;
 
 extern uint8_t * LogoStream;
@@ -92,7 +94,7 @@ extern uint8_t * LogoPalette;
 Bmp_t LogoPic =
 {
   320,
-  240,
+  240, 
   LOGO_BPP,
   BMP_BYTES_PP,
   #if (LOGO_BPP == 2)
@@ -117,7 +119,16 @@ void DelayNS(uint32_t dly)
 		for (i = 0; i < 5000; i++);
 }
 
-void SetBackLight(uint8_t level)
+/*************************************************************************
+ * Function Name: Set LCD backlight
+ * Parameters: level     Backlight value
+ *
+ * Return: none
+ *
+ * Description: None
+ *
+ *************************************************************************/
+void SetBackLight(uint32_t level)
 {
   PWM_MATCHCFG_Type PWMMatchCfgDat;
   PWM_MatchUpdate(_PWM_NO_USED, _PWM_CHANNEL_NO, level, PWM_MATCH_UPDATE_NOW);
@@ -140,18 +151,32 @@ void SetBackLight(uint8_t level)
   PWM_Cmd(_PWM_NO_USED, ENABLE);
 }
 
-uint8_t GetBacklightVal (void) {
-  uint16_t val;
+/*************************************************************************
+ * Function Name: Get backlight value from user
+ * Parameters: none
+ *
+ * Return: none
+ *
+ * Description: backlight value
+ *
+ *************************************************************************/
+uint32_t GetBacklightVal (void) {
+  uint32_t val;
+  uint32_t backlight_off, pclk; 
 
   ADC_StartCmd(LPC_ADC, ADC_START_NOW);
 
   while (!(ADC_ChannelGetStatus(LPC_ADC, BRD_ADC_PREPARED_CHANNEL, ADC_DATA_DONE)));
 
   val = ADC_ChannelGetData(LPC_ADC, BRD_ADC_PREPARED_CHANNEL);
-		  
-  val = (val >> 4) & 0xFF;
-  
-  return val;
+
+  val = (val >> 7) & 0x3F;
+
+  pclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_PER);
+  backlight_off = pclk/(_BACK_LIGHT_BASE_CLK*20);
+  val =  val* (pclk*9/(_BACK_LIGHT_BASE_CLK*20))/0x3F;
+	    
+  return backlight_off + val;
 }
 
 
@@ -173,7 +198,8 @@ uint8_t GetBacklightVal (void) {
   uint32_t xs, ys;
   uint32_t xe, ye, weight;
   SMB380_Data_t XYZT;
-  uint8_t pwmChannel, channelVal, backlight;
+  uint8_t pwmChannel, channelVal;
+  uint32_t backlight;
   PWM_TIMERCFG_Type PWMCfgDat;
   PWM_MATCHCFG_Type PWMMatchCfgDat;
   LCD_Cursor_Config_Type cursor_config;
@@ -191,7 +217,8 @@ uint8_t GetBacklightVal (void) {
   PWM_ChannelConfig(_PWM_NO_USED, _PWM_CHANNEL_NO, PWM_CHANNEL_SINGLE_EDGE);
 
   // Set MR0
-  PWM_MatchUpdate(_PWM_NO_USED, 0, 256, PWM_MATCH_UPDATE_NOW);
+  pclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_PER);
+  PWM_MatchUpdate(_PWM_NO_USED, 0,pclk/_BACK_LIGHT_BASE_CLK, PWM_MATCH_UPDATE_NOW);
   PWMMatchCfgDat.IntOnMatch = DISABLE;
   PWMMatchCfgDat.MatchChannel = 0;
   PWMMatchCfgDat.ResetOnMatch = ENABLE;

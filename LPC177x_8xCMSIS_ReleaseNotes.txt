@@ -1,3 +1,62 @@
+RELEASE LPC177x_8xCMSIS_111028
+
+***** Implementations and Improvements ****
+1. Add CRP definition to IAR project settings.
+2. Add example for USB Audio Device and USB HID Device.
+3. Update example I2S_Audio to use UDA1380 instead of UDA1334. 
+4. Update the stop condition of reading/writing data in SSP_ReadWrite.
+5. Disable digital function on the pin which is used to get input value from potentiometer in ADC examples, Ethernet
+examples.
+6. Disable digital function on the pin P0.26 when DAC is used.
+7. Update function CLKPWR_SetCLKDiv so that it only sets divide value on Clock Selection & Division Registers.
+8. Update function PWM_DeInit so that it disables the given PWM peripheral.
+9. Update function SystemCoreClockUpdate so that it can handle the case divide value is 0.
+10. Create LCD driver and update LCD example so that it can handle bpp values.
+11. Update the example Adc_Burst & Wdt_Interrupt so that it uses the right ADC Channel and LED Port in case of IAR board.
+12. Documentation: update the CHM and examples descriptions
+
+
+***** Known Issues: In this package contains some examples that can not verify now ****
+
+1./ ADC > Adc_Burst
+2./ CAN > Can_SelfTest
+Maybe they will be removed when release for customers.
+ 
+ 
+==========================================================================================================
+==========================================================================================================
+RELEASE LPC177x_8xCMSIS_110929
+
+***** Implementations and Improvements ****
+1. Version up CMSIS v2.10.
+   - Update the latest version of CMSIS-DSP library with new features:
+       + Cortex-M0 support.
+       + Little endian support.
+       + Support for Cortex-M4 based devices without FPU.
+   - Change the structure of Core folder: There are 2 sub-folder.
+       + CMSIS folder: contains
+          - Documentation Folder: Contains CMSIS documentation.
+          - DSP_Lib Folder: MDK project files, Examples and source files etc.. to build the CMSIS DSP Software Library for Cortex-M0, Cortex-M3, Cortex-M4 processors.
+          - Include Folder: CMSIS Core Support and CMSIS DSP Include Files.
+          - Lib Folder: CMSIS DSP Binaries
+       + Device folder: provides LPC177x_8x device supporting files that allow user can access definition for all device peripherals. It also include startup file for ARM/GCC/IAR compiler.
+2. Fix the problem that Card Identification sometimes is failed.
+3. Update DMA usage in MCI driver.
+3. Add an example for USBHostLite which runs on EA board.
+4. Solve the issue on PINSEL_ConfigPin function & PINSEL_SetPinMode function whose logic are wrong.
+5. Solve the issue on function CRC_CalcBlockChecksum whose parameter makes compile-time decisions.
+6. Update the definition of LPC_CRC_TypeDef more clearly.
+
+***** Known Issues: In this package contains some examples that can not verify now ****
+
+1./ ADC > Adc_Burst
+2./ CAN > Can_SelfTest
+Maybe they will be removed when release for customers.
+ 
+ 
+==========================================================================================================
+==========================================================================================================
+
 RELEASE LPC177x_8xCMSIS_110829
 
 ***** Implementations and Improvements ****
