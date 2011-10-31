@@ -138,8 +138,12 @@ typedef int32_t(*PFI)();
 /* External data/function define */
 #define EXTERN extern
 
+#if !defined(MAX)
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#endif
+#if !defined(MIN)
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#endif
 
 /**
  * @}
