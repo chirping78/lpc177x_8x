@@ -23,12 +23,26 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _EMC
 
 #include "lpc177x_8x_emc.h"
 #include "lpc177x_8x_clkpwr.h"
 #include "lpc177x_8x_pinsel.h"
 
-
+/* Peripheral group ----------------------------------------------------------- */
+/** @addtogroup EMC
+ * @{
+ */
+ 
+/** @defgroup EMC_Public_Functions
+ * @{
+ */
+ 
 /*********************************************************************//**
  * @brief 		EMC initialize
  * @param[in]	None
@@ -1006,7 +1020,14 @@ void EMC_SetStaMemoryParameter(uint32_t index ,EMC_STA_MEM_PAR par, uint32_t val
 			break;
 	}
 }
-
+/**
+ * @}
+ */
+ 
+ /**
+ * @}
+ */
+#endif /*_EMC*/
 
 
 

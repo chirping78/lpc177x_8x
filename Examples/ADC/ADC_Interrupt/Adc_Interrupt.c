@@ -48,6 +48,7 @@ uint8_t menu1[] =
 " Use ADC with 12-bit resolution rate of 400KHz, read in INTERRUPT mode\n\r"
 " To get ADC channel value and display via UART interface\n\r"
 " Turn the potentiometer to see how ADC value changes\n\r"
+" Press q to stop the demo\n\r"
 "********************************************************************************\n\r";
 uint32_t adc_value;
 
@@ -89,11 +90,12 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main ADC program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	uint32_t tmp;
+    uint8_t  quit;
 
 	/* Initialize debug via UART0
 	 * – 115200bps
@@ -137,16 +139,20 @@ int c_entry(void)
 		_DBG(" is: "); _DBD32(adc_value); _DBG_("");
 
 		for(tmp = 0; tmp < 1000000; tmp++);
+	    if(_DG_NONBLOCK(&quit) &&
+			(quit == 'Q' || quit == 'q'))
+			break;
 	}
+    _DBG_("Demo termination!!!");
 
 	ADC_DeInit(LPC_ADC);
-	return (0);
 }
 
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 /**

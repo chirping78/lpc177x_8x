@@ -79,9 +79,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void)
+void c_entry (void)
 {
 	uint32_t i;
   	volatile uint32_t *wr_ptr;
@@ -174,12 +174,12 @@ int c_entry (void)
 
 	_DBG_("Verifying complete, testing terminated!");
         while(1);
-	return 0;
 }
 
 int main(void)
 {
- 	return c_entry();
+	c_entry();
+	return 0;
 }
 /*****************************************************************************
 **                            End Of File

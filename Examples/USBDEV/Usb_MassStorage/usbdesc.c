@@ -15,7 +15,13 @@
  *
  *      Copyright (c) 2005-2009 Keil Software.
  *---------------------------------------------------------------------------*/
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
 
+#ifdef _USB_DEV_MASS_STORAGE
 #include "lpc_types.h"
 
 #include "usb.h"
@@ -167,4 +173,4 @@ const uint8_t USB_StringDescriptor[] = {
  * @}
  */
  
-
+#endif /*_USB_DEV_MASS_STORAGE*/

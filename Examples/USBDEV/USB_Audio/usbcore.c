@@ -21,7 +21,12 @@
  *                Reworked Endpoint0
  *          V1.00 Initial Version
  *----------------------------------------------------------------------------*/
-
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _USB_DEV_AUDIO
 #include "lpc_types.h"
 
 #include "usb.h"
@@ -58,9 +63,6 @@ extern MSC_CSW CSW;
 
 #if (USB_VENDOR)
 #include "vendor.h"
-#endif
-#ifndef __IAR_SYSTEMS_ICC__
-#pragma diag_suppress 111,177,1441
 #endif
 
 
@@ -375,7 +377,6 @@ __inline uint32_t USB_ReqGetDescriptor (void) {
         default:
           return (FALSE);
       }
-      break;
     default:
       return (FALSE);
   }
@@ -1111,5 +1112,5 @@ out_class_ok:                                                            /* requ
 /**
  * @}
  */
- 
+#endif /*_USB_DEV_AUDIO*/
 

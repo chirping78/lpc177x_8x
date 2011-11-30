@@ -95,9 +95,9 @@ void delay (void)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void)
+void c_entry (void)
 {
 	GPIO_Init();
 	
@@ -124,7 +124,6 @@ int c_entry (void)
 		delay();
 	}
 	
-	GPIO_Deinit();
 }
 
 
@@ -135,7 +134,8 @@ int c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 /*

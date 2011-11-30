@@ -24,13 +24,15 @@
 * use without further testing or modification.
 **********************************************************************/
 #include <stdio.h>
-
+#include <string.h>
+#include "lpc_types.h"
 #include "debug_frmwrk.h"
 #include "lpc177x_8x_gpio.h"
 #include "lpc177x_8x_nvic.h"
 #include "lpc177x_8x_systick.h"
 #include "lpc177x_8x_clkpwr.h"
 #include "bsp.h"
+
 
 
 /** @defgroup NVIC_VectorTableRelocation	NVIC Vector Table Relocation
@@ -75,7 +77,7 @@ void SysTick_Handler(void)
 	SYSTICK_ClearCounterFlag();
 
 	GPIO_OutputValue(BRD_LED_1_CONNECTED_PORT, BRD_LED_1_CONNECTED_MASK, Cur_State);
-	Cur_State = !Cur_State;
+	Cur_State = (Cur_State == ENABLE)? DISABLE:ENABLE;
 }
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
@@ -93,10 +95,12 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void)
+void c_entry (void)
 {
+    uint8_t* pDest = 	(uint8_t*)VTOR_OFFSET;
+	uint8_t* pSource = NULL;
 	GPIO_Init();
 	
 	/* Initialize debug via UART0
@@ -125,10 +129,13 @@ int c_entry (void)
 	 * Aligned: 256 words
 	 */
 
-#ifdef __RAM_MODE__//Run in RAM mode
-  memcpy(VTOR_OFFSET, 0x10000000, 256*4);
+
+#if (__RAM_MODE__==1)//Run in RAM mode
+  pSource =  (void*)0x10000000;
+  memcpy(pDest,pSource , 256*4);
 #else
-  memcpy(VTOR_OFFSET, 0x00000000, 256*4);
+  pSource = (void*)0x00000000;
+  memcpy(pDest,pSource , 256*4);
 #endif
 
 	_DBG_(" If Vector Table remapping is successful, LED P2.10 will blink by using\n\r SysTick interrupt");
@@ -144,9 +151,6 @@ int c_entry (void)
 
 	while(1);
 
-	GPIO_Deinit();
-
-	return 1;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -156,7 +160,8 @@ int c_entry (void)
  file, and that startup code will setup stacks and data */
 int main(void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 

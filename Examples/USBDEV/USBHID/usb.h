@@ -1,28 +1,45 @@
 /*----------------------------------------------------------------------------
  *      U S B  -  K e r n e l
  *----------------------------------------------------------------------------
- * Name:    usb.h
- * Purpose: USB Definitions
- * Version: V1.20
+ *      Name:    USB.H
+ *      Purpose: USB Definitions
+ *      Version: V1.10
  *----------------------------------------------------------------------------
  *      This software is supplied "AS IS" without any warranties, express,
  *      implied or statutory, including but not limited to the implied
  *      warranties of fitness for purpose, satisfactory quality and
  *      noninfringement. Keil extends you a royalty-free right to reproduce
  *      and distribute executable files created using this software for use
- *      on NXP Semiconductors LPC family microcontroller devices only. Nothing 
+ *      on NXP Semiconductors LPC family microcontroller devices only. Nothing
  *      else gives you the right to use this software.
  *
- * Copyright (c) 2009 Keil - An ARM Company. All rights reserved.
+ *      Copyright (c) 2005-2009 Keil Software.
  *---------------------------------------------------------------------------*/
 
 #ifndef __USB_H__
 #define __USB_H__
 
 
+#if defined   (  __GNUC__  )
+#define __packed __attribute__((__packed__))
+#endif
+
+
+#if defined     (  __CC_ARM  )
 typedef __packed union {
+#elif defined   (  __GNUC__  )
+typedef union __packed {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed union {
+#endif
   uint16_t W;
+#if defined     (  __CC_ARM  )
   __packed struct {
+#elif defined   (  __GNUC__  )
+  struct __packed {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+  __packed struct {
+#endif
     uint8_t L;
     uint8_t H;
   } WB;
@@ -46,8 +63,20 @@ typedef __packed union {
 #define REQUEST_TO_OTHER           3
 
 /* bmRequestType Definition */
+#if defined     (  __CC_ARM  )
 typedef __packed union _REQUEST_TYPE {
-  __packed struct _BM {
+#elif defined   (  __GNUC__  )
+typedef union __packed _REQUEST_TYPE {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed union _REQUEST_TYPE {
+#endif
+#if defined     (  __CC_ARM  )
+	__packed struct _BM {
+#elif defined   (  __GNUC__  )
+	struct __packed _BM {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+	__packed struct _BM {
+#endif
     uint8_t Recipient : 5;
     uint8_t Type      : 2;
     uint8_t Dir       : 1;
@@ -78,27 +107,33 @@ typedef __packed union _REQUEST_TYPE {
 #define USB_FEATURE_REMOTE_WAKEUP              1
 
 /* USB Default Control Pipe Setup Packet */
+#if defined     (  __CC_ARM  )
 typedef __packed struct _USB_SETUP_PACKET {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _USB_SETUP_PACKET {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _USB_SETUP_PACKET {
+#endif
   REQUEST_TYPE bmRequestType;
-  uint8_t      bRequest;
+  uint8_t         bRequest;
   WORD_BYTE    wValue;
   WORD_BYTE    wIndex;
-  uint16_t     wLength;
+  uint16_t         wLength;
 } USB_SETUP_PACKET;
 
 
 /* USB Descriptor Types */
-#define USB_DEVICE_DESCRIPTOR_TYPE                  1
-#define USB_CONFIGURATION_DESCRIPTOR_TYPE           2
-#define USB_STRING_DESCRIPTOR_TYPE                  3
-#define USB_INTERFACE_DESCRIPTOR_TYPE               4
-#define USB_ENDPOINT_DESCRIPTOR_TYPE                5
-#define USB_DEVICE_QUALIFIER_DESCRIPTOR_TYPE        6
-#define USB_OTHER_SPEED_CONFIG_DESCRIPTOR_TYPE      7
-#define USB_INTERFACE_POWER_DESCRIPTOR_TYPE         8
+#define USB_DEVICE_DESCRIPTOR_TYPE             1
+#define USB_CONFIGURATION_DESCRIPTOR_TYPE      2
+#define USB_STRING_DESCRIPTOR_TYPE             3
+#define USB_INTERFACE_DESCRIPTOR_TYPE          4
+#define USB_ENDPOINT_DESCRIPTOR_TYPE           5
+#define USB_DEVICE_QUALIFIER_DESCRIPTOR_TYPE   6
+#define USB_OTHER_SPEED_CONFIG_DESCRIPTOR_TYPE 7
+#define USB_INTERFACE_POWER_DESCRIPTOR_TYPE    8
 #define USB_OTG_DESCRIPTOR_TYPE                     9
 #define USB_DEBUG_DESCRIPTOR_TYPE                  10
-#define USB_INTERFACE_ASSOCIATION_DESCRIPTOR_TYPE  11 
+#define USB_INTERFACE_ASSOCIATION_DESCRIPTOR_TYPE  11
 
 /* USB Device Classes */
 #define USB_DEVICE_CLASS_RESERVED              0x00
@@ -146,17 +181,23 @@ typedef __packed struct _USB_SETUP_PACKET {
 #define USB_ENDPOINT_USAGE_RESERVED            0x30
 
 /* USB Standard Device Descriptor */
+#if defined     (  __CC_ARM  )
 typedef __packed struct _USB_DEVICE_DESCRIPTOR {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _USB_DEVICE_DESCRIPTOR {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _USB_DEVICE_DESCRIPTOR {
+#endif
   uint8_t  bLength;
   uint8_t  bDescriptorType;
-  uint16_t bcdUSB;
+  uint16_t  bcdUSB;
   uint8_t  bDeviceClass;
   uint8_t  bDeviceSubClass;
   uint8_t  bDeviceProtocol;
   uint8_t  bMaxPacketSize0;
-  uint16_t idVendor;
-  uint16_t idProduct;
-  uint16_t bcdDevice;
+  uint16_t  idVendor;
+  uint16_t  idProduct;
+  uint16_t  bcdDevice;
   uint8_t  iManufacturer;
   uint8_t  iProduct;
   uint8_t  iSerialNumber;
@@ -164,10 +205,16 @@ typedef __packed struct _USB_DEVICE_DESCRIPTOR {
 } USB_DEVICE_DESCRIPTOR;
 
 /* USB 2.0 Device Qualifier Descriptor */
+#if defined     (  __CC_ARM  )
 typedef __packed struct _USB_DEVICE_QUALIFIER_DESCRIPTOR {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _USB_DEVICE_QUALIFIER_DESCRIPTOR {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _USB_DEVICE_QUALIFIER_DESCRIPTOR {
+#endif
   uint8_t  bLength;
   uint8_t  bDescriptorType;
-  uint16_t bcdUSB;
+  uint16_t  bcdUSB;
   uint8_t  bDeviceClass;
   uint8_t  bDeviceSubClass;
   uint8_t  bDeviceProtocol;
@@ -177,10 +224,16 @@ typedef __packed struct _USB_DEVICE_QUALIFIER_DESCRIPTOR {
 } USB_DEVICE_QUALIFIER_DESCRIPTOR;
 
 /* USB Standard Configuration Descriptor */
+#if defined     (  __CC_ARM  )
 typedef __packed struct _USB_CONFIGURATION_DESCRIPTOR {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _USB_CONFIGURATION_DESCRIPTOR {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _USB_CONFIGURATION_DESCRIPTOR {
+#endif
   uint8_t  bLength;
   uint8_t  bDescriptorType;
-  uint16_t wTotalLength;
+  uint16_t  wTotalLength;
   uint8_t  bNumInterfaces;
   uint8_t  bConfigurationValue;
   uint8_t  iConfiguration;
@@ -189,7 +242,13 @@ typedef __packed struct _USB_CONFIGURATION_DESCRIPTOR {
 } USB_CONFIGURATION_DESCRIPTOR;
 
 /* USB Standard Interface Descriptor */
+#if defined     (  __CC_ARM  )
 typedef __packed struct _USB_INTERFACE_DESCRIPTOR {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _USB_INTERFACE_DESCRIPTOR {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _USB_INTERFACE_DESCRIPTOR {
+#endif
   uint8_t  bLength;
   uint8_t  bDescriptorType;
   uint8_t  bInterfaceNumber;
@@ -202,24 +261,42 @@ typedef __packed struct _USB_INTERFACE_DESCRIPTOR {
 } USB_INTERFACE_DESCRIPTOR;
 
 /* USB Standard Endpoint Descriptor */
+#if defined     (  __CC_ARM  )
 typedef __packed struct _USB_ENDPOINT_DESCRIPTOR {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _USB_ENDPOINT_DESCRIPTOR {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _USB_ENDPOINT_DESCRIPTOR {
+#endif
   uint8_t  bLength;
   uint8_t  bDescriptorType;
   uint8_t  bEndpointAddress;
   uint8_t  bmAttributes;
-  uint16_t wMaxPacketSize;
+  uint16_t  wMaxPacketSize;
   uint8_t  bInterval;
 } USB_ENDPOINT_DESCRIPTOR;
 
 /* USB String Descriptor */
+#if defined     (  __CC_ARM  )
 typedef __packed struct _USB_STRING_DESCRIPTOR {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _USB_STRING_DESCRIPTOR {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _USB_STRING_DESCRIPTOR {
+#endif
   uint8_t  bLength;
   uint8_t  bDescriptorType;
-  uint16_t bString/*[]*/;
+  uint16_t  bString/*[]*/;
 } USB_STRING_DESCRIPTOR;
 
 /* USB Common Descriptor */
+#if defined     (  __CC_ARM  )
 typedef __packed struct _USB_COMMON_DESCRIPTOR {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _USB_COMMON_DESCRIPTOR {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _USB_COMMON_DESCRIPTOR {
+#endif
   uint8_t  bLength;
   uint8_t  bDescriptorType;
 } USB_COMMON_DESCRIPTOR;

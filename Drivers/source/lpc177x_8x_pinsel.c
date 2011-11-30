@@ -28,6 +28,12 @@
 /** @addtogroup PINSEL
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _PINSEL
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_pinsel.h"
@@ -234,8 +240,8 @@ void PINSEL_SetAnalogPinMode (uint8_t portnum, uint8_t pinnum, uint8_t enable)
 	uint8_t condition = 0;
 
 	condition = ((portnum == 0) && (pinnum == 12)) || ((portnum == 0) && (pinnum == 13))
-					| ((portnum == 0) && (pinnum <= 26) && (pinnum >= 23))
-					| ((portnum == 1) && (pinnum == 30)) || ((portnum == 1) && (pinnum == 31));
+					|| ((portnum == 0) && (pinnum <= 26) && (pinnum >= 23))
+					|| ((portnum == 1) && (pinnum == 30)) || ((portnum == 1) && (pinnum == 31));
 
 	if(!condition)
 	{
@@ -332,7 +338,6 @@ void PINSEL_SetFilter (uint8_t portnum, uint8_t pinnum, uint8_t enable)
 
 	}
 
-	*pPIN = *pPIN;
 
 	return;
 }
@@ -340,6 +345,7 @@ void PINSEL_SetFilter (uint8_t portnum, uint8_t pinnum, uint8_t enable)
 /**
  * @}
  */
+#endif /*_PINSEL*/
 
 /**
  * @}

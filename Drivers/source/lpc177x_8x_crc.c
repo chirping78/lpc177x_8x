@@ -23,12 +23,16 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
-
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _CRC
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_crc.h"
 #include "lpc177x_8x_clkpwr.h"
-
 
 /* Private Variables ----------------------------------------------------------- */
 volatile CRC_Type crc_cur_type;
@@ -115,7 +119,6 @@ uint32_t CRC_CalcDataChecksum(uint32_t data, CRC_WR_SIZE SizeType)
  **********************************************************************/
 uint32_t CRC_CalcBlockChecksum(void *block_data, uint32_t block_size, CRC_WR_SIZE data_size)
 {
-   	uint32_t idx = 0;
 	uint8_t  *data = (uint8_t*) block_data;
 	
 	while(block_size !=0) {
@@ -152,6 +155,7 @@ uint32_t CRC_CalcBlockChecksum(void *block_data, uint32_t block_size, CRC_WR_SIZ
 /**
  * @}
  */
+#endif /*_CRC*/
 
 /**
  * @}

@@ -28,11 +28,17 @@
 /** @addtogroup ADC
  * @{
  */
-
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _ADC
+ 
 /* Includes ------------------------------------------------------------------- */
+#include "lpc_types.h"
 #include "lpc177x_8x_adc.h"
 #include "lpc177x_8x_clkpwr.h"
-
 
 /* Public Functions ----------------------------------------------------------- */
 /** @addtogroup ADC_Public_Functions
@@ -297,6 +303,7 @@ FlagStatus	ADC_GlobalGetStatus(LPC_ADC_TypeDef *ADCx, uint32_t StatusType)
 /**
  * @}
  */
+#endif /*_ADC*/
 
 /**
  * @}

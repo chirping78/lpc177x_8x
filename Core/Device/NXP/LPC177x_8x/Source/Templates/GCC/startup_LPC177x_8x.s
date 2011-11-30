@@ -120,6 +120,10 @@ __cs3_interrupt_vector_cortex_m:
 
     .thumb
 
+	.section ".crp"
+	.globl  CRP_Value
+CRP_Value:
+	.long	0xFFFFFFFF
 
 /* Reset Handler */
 

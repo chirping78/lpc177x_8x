@@ -146,16 +146,16 @@ typedef struct Wdt_Config
  * @{
  */
 
-uint8_t WWDT_Init(uint32_t TimeOut);
-uint8_t WWDT_Start(uint32_t TimeOut);
+int8_t WWDT_Init(uint32_t TimeOut);
+int8_t WWDT_Start(uint32_t TimeOut);
 void WWDT_SetMode(uint8_t mode, FunctionalState NewState);
 void WWDT_SetTimerConstant(uint32_t constVal);
 void WWDT_Enable(FunctionalState NewState);
 void WWDT_Cmd(FunctionalState NewState);
-uint8_t WWDT_SetWarningRaw(uint32_t warnVal);
-uint8_t WWDT_SetWarning(uint32_t WarnTime);
-uint8_t WWDT_SetWindowRaw(uint32_t wndVal);
-uint8_t WWDT_SetWindow(uint32_t WindowedTime);
+int8_t WWDT_SetWarningRaw(uint32_t warnVal);
+int8_t WWDT_SetWarning(uint32_t WarnTime);
+int8_t WWDT_SetWindowRaw(uint32_t wndVal);
+int8_t WWDT_SetWindow(uint32_t WindowedTime);
 void WWDT_UpdateTimeOut(uint32_t TimeOut);
 FlagStatus WWDT_GetStatus (uint8_t Status);
 void WWDT_ClearStatusFlag (uint8_t flag);

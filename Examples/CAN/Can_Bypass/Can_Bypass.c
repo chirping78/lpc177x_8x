@@ -58,10 +58,9 @@ uint32_t CANRxCount, CANTxCount = 0;
 
 /************************** PRIVATE FUNCTIONS *************************/
 void CAN_IRQHandler(void);
-
 void CAN_InitMessage(void);
 void PrintMessage(CAN_MSG_Type* msg);
-void print_menu();
+void print_menu(void);
 
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
@@ -195,12 +194,10 @@ void print_menu()
 /*********************************************************************//**
  * @brief		c_entry: Main CAN program body
  * @param[in]	none
- * @return 		int
+ * @return 		none
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
-	uint32_t temp;
-	uint8_t ch;
 
 	/* Initialize debug via UART0
 	 * – 115200bps
@@ -296,7 +293,8 @@ int c_entry(void)
  file, and that startup code will setup stacks and data */
 int main(void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 /**

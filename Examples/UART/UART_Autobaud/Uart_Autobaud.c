@@ -37,7 +37,7 @@
 /************************** PRIVATE DEFINITIONS *************************/
 /* Macro UART test number, chose what UART will be tested, should be 0..2*/
 /* But recommend just use 0/1/2 because these UART were supported on EA-LPC1788 board */
-#define UART_TEST_NUM		1
+#define UART_TEST_NUM		0
 #if (UART_TEST_NUM == 0)
 #define	_LPC_UART			(LPC_UART_TypeDef *)LPC_UART0
 #define _UART_IRQ			UART0_IRQn
@@ -69,7 +69,7 @@ uint8_t menu1[]=
 "  + Press ESC to terminate\n\r"
 "********************************************************************************\n\r";
 
-uint8_t menu2[] = "\n\rUART Polling demo terminated!";
+uint8_t menu2[] = "\n\rUART Auto-Baudrate demo terminated!";
 
 
 /* Synchronous Flag */
@@ -151,9 +151,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main UART program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	// UART Configuration structure variable
 	UART_CFG_Type UARTConfigStruct;
@@ -303,7 +303,6 @@ int c_entry(void)
 
     /* Loop forever */
     while(1);
-    return 1;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -313,7 +312,8 @@ int c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

@@ -51,7 +51,7 @@
  * @ingroup LCD_Examples
  * @{
  */
- 
+
 #define LCD_VRAM_BASE_ADDR_UPPER 	((uint32_t)SDRAM_BASE_ADDR + 0x00100000)
 #define LCD_VRAM_BASE_ADDR_LOWER 	(LCD_VRAM_BASE_ADDR_UPPER + 1024*768*4)
 #define LCD_CURSOR_BASE_ADDR 	((uint32_t)0x20088800)
@@ -88,13 +88,14 @@
 uint8_t Smb380Id, Smb380Ver;
 
 extern uint8_t * LogoStream;
+#if (LOGO_BPP == 2)
 extern uint8_t * LogoPalette;
-
+#endif
 
 Bmp_t LogoPic =
 {
   320,
-  240, 
+  240,
   LOGO_BPP,
   BMP_BYTES_PP,
   #if (LOGO_BPP == 2)
@@ -103,13 +104,9 @@ Bmp_t LogoPic =
   NULL,
   #endif
   (uint8_t *)&LogoStream,
-  "Logos picture"
+  ( uint8_t *)"Logos picture"
 };
 
-#if (_CURR_USING_BRD != _IAR_OLIMEX_BOARD)
-//dummy function, defined to avoid linking error when define wrong board
-void SDRAMInit( void ){}  
-#endif
 
 void DelayNS(uint32_t dly)
 {
@@ -138,7 +135,7 @@ void SetBackLight(uint32_t level)
   PWMMatchCfgDat.StopOnMatch = DISABLE;
   PWM_ConfigMatch(_PWM_NO_USED, &PWMMatchCfgDat);
 
-  
+
   /* Enable PWM Channel Output */
   PWM_ChannelCmd(_PWM_NO_USED, _PWM_CHANNEL_NO, ENABLE);
 
@@ -162,7 +159,7 @@ void SetBackLight(uint32_t level)
  *************************************************************************/
 uint32_t GetBacklightVal (void) {
   uint32_t val;
-  uint32_t backlight_off, pclk; 
+  uint32_t backlight_off, pclk;
 
   ADC_StartCmd(LPC_ADC, ADC_START_NOW);
 
@@ -175,21 +172,21 @@ uint32_t GetBacklightVal (void) {
   pclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_PER);
   backlight_off = pclk/(_BACK_LIGHT_BASE_CLK*20);
   val =  val* (pclk*9/(_BACK_LIGHT_BASE_CLK*20))/0x3F;
-	    
+
   return backlight_off + val;
 }
 
 
 /*************************************************************************
- * Function Name: main
+ * Function Name: c_entry
  * Parameters: none
  *
  * Return: none
  *
- * Description: main
+ * Description: entry
  *
  *************************************************************************/
-  int main(void)
+  void c_entry(void)
 {
   typedef uint32_t ram_unit;
   uint32_t i, pclk;
@@ -198,7 +195,6 @@ uint32_t GetBacklightVal (void) {
   uint32_t xs, ys;
   uint32_t xe, ye, weight;
   SMB380_Data_t XYZT;
-  uint8_t pwmChannel, channelVal;
   uint32_t backlight;
   PWM_TIMERCFG_Type PWMCfgDat;
   PWM_MATCHCFG_Type PWMMatchCfgDat;
@@ -212,7 +208,7 @@ uint32_t GetBacklightVal (void) {
   PWMCfgDat.PrescaleOption = PWM_TIMER_PRESCALE_TICKVAL;
   PWMCfgDat.PrescaleValue = 1;
   PWM_Init(_PWM_NO_USED, PWM_MODE_TIMER, (void *) &PWMCfgDat);
-  
+
   PINSEL_ConfigPin (2, 1, 1);
   PWM_ChannelConfig(_PWM_NO_USED, _PWM_CHANNEL_NO, PWM_CHANNEL_SINGLE_EDGE);
 
@@ -228,8 +224,8 @@ uint32_t GetBacklightVal (void) {
   /***************/
   /** Initialize ADC */
   /***************/
-  PINSEL_ConfigPin (BRD_ADC_PREPARED_CH_PORT, 
-  					BRD_ADC_PREPARED_CH_PIN, 
+  PINSEL_ConfigPin (BRD_ADC_PREPARED_CH_PORT,
+  					BRD_ADC_PREPARED_CH_PIN,
   					BRD_ADC_PREPARED_CH_FUNC_NO);
   PINSEL_SetAnalogPinMode(BRD_ADC_PREPARED_CH_PORT,BRD_ADC_PREPARED_CH_PIN,ENABLE);
 
@@ -241,9 +237,10 @@ uint32_t GetBacklightVal (void) {
   /** Initialize LCD */
   /***************/
   LCD_Enable (FALSE);
-  
+#if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
   // SDRAM Init	= check right board to avoid linking error
   SDRAMInit();
+#endif
 
   lcd_config.big_endian_byte = 0;
   lcd_config.big_endian_pixel = 0;
@@ -266,7 +263,7 @@ uint32_t GetBacklightVal (void) {
   lcd_config.lcd_bpp = LCD_BPP_16;
   #elif (LOGO_BPP == 2)
   lcd_config.lcd_bpp = LCD_BPP_2;
-  #else 
+  #else
   while(1);
   #endif
   lcd_config.lcd_type = LCD_TFT;
@@ -306,10 +303,10 @@ uint32_t GetBacklightVal (void) {
   LCD_FillRect (LCD_PANEL_UPPER,xs, xe + weight, ye, ye + weight, color);
   LCD_FillRect (LCD_PANEL_UPPER,xs, xs + weight, ys, ye + weight, color);
   LCD_FillRect (LCD_PANEL_UPPER,xe, xe + weight, ys, ye + weight, color);
-  
+
   // Draw cursor
   LCD_Cursor_Enable(DISABLE, 0);
-  
+
   cursor_config.baseaddress = LCD_CURSOR_BASE_ADDR;
   cursor_config.framesync = 1;
   cursor_config.size32 = 0;
@@ -359,10 +356,13 @@ uint32_t GetBacklightVal (void) {
 
     LCD_Move_Cursor(cursor_x, cursor_y);
   }
-  while(1);
-  return 1;
 }
 
+int main (void)
+{
+   c_entry();
+   return 0;
+}
 
 /**
  * @}

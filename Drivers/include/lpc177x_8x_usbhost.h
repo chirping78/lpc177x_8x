@@ -50,7 +50,7 @@
 /*********************************************************************//**
  *  USB HOST GENERAL DEFINITIONS
  **********************************************************************/
-#define HOST_BASE_ADDR		0x20004000
+#define HOST_BASE_ADDR		LPC_PERI_RAM_BASE
 
 #define  DESC_LENGTH(x)  x[0]
 #define  DESC_TYPE(x)    x[1]

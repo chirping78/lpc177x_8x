@@ -22,7 +22,12 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
-
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _DBGFWK
 #include "debug_frmwrk.h"
 #include "lpc177x_8x_pinsel.h"
 
@@ -42,6 +47,7 @@ void (*_db_hex_16_)(LPC_UART_TypeDef *UARTx, uint16_t hexn);
 void (*_db_hex_32_)(LPC_UART_TypeDef *UARTx, uint32_t hexn);
 
 uint8_t (*_db_get_char)(LPC_UART_TypeDef *UARTx);
+Bool (*_db_get_char_nonblocking)(LPC_UART_TypeDef *UARTx, uint8_t* c);
 uint8_t (*_db_get_val)(LPC_UART_TypeDef *UARTx, uint8_t option, uint8_t numCh, uint32_t * val);
 
 
@@ -70,6 +76,22 @@ uint8_t UARTGetChar (LPC_UART_TypeDef *UARTx)
 
 	return(tmp);
 }
+/*********************************************************************//**
+ * @brief		Get a character to UART port in non-blocking mode
+ * @param[in]	     UARTx	Pointer to UART peripheral
+  * @param[out]	c	character value that returned
+ * @return		TRUE (there is a character for procesisng)/FALSE
+ **********************************************************************/
+
+Bool UARTGetCharInNonBlock(LPC_UART_TypeDef *UARTx, uint8_t* c)
+{	
+    if(c == NULL)
+        return FALSE;		
+    if(UART_Receive(UARTx, c, 1, NONE_BLOCKING))
+        return TRUE;	
+    return FALSE;
+}
+
 
 /*********************************************************************//**
  * @brief		Get a character to UART port
@@ -311,7 +333,7 @@ void UARTPutDec32(LPC_UART_TypeDef *UARTx, uint32_t decnum)
 	uint8_t c7=(decnum/1000000)%10;
 	uint8_t c8=(decnum/10000000)%10;
 	uint8_t c9=(decnum/100000000)%10;
-	uint8_t c10=(decnum/100000000)%10;
+	uint8_t c10=(decnum/1000000000)%10;
 	UARTPutChar(UARTx, '0'+c10);
 	UARTPutChar(UARTx, '0'+c9);
 	UARTPutChar(UARTx, '0'+c8);
@@ -549,5 +571,6 @@ void debug_frmwrk_init(void)
 	_db_dec_32 = UARTPutDec32;
 	_db_get_char = UARTGetChar;
 	_db_get_val = UARTGetValue;
+	_db_get_char_nonblocking = UARTGetCharInNonBlock;
 }
-
+#endif /*_DBGFWK*/

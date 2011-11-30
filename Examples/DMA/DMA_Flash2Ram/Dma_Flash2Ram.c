@@ -33,6 +33,8 @@
 /************************** PRIVATE DEFINTIONS*************************/
 /** DMA transfer size */
 #define DMA_SIZE		16
+/** DMA channel */
+#define DMA_CHANNEL_NO   0
 
 /************************** PRIVATE VARIABLES *************************/
 uint8_t menu[]=
@@ -70,7 +72,6 @@ __IO uint32_t Channel0_Err;
 void DMA_IRQHandler (void);
 
 void print_menu(void);
-void Buffer_Init(void);
 void Error_Loop(void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
@@ -81,17 +82,17 @@ void Error_Loop(void);
  **********************************************************************/
 void DMA_IRQHandler (void)
 {
-	// check GPDMA interrupt on channel 0
-	if (GPDMA_IntGetStatus(GPDMA_STAT_INT, 0)){ //check interrupt status on channel 0
+	// check GPDMA interrupt on channel DMA_CHANNEL_NO
+	if (GPDMA_IntGetStatus(GPDMA_STAT_INT, DMA_CHANNEL_NO)){ //check interrupt status on channel DMA_CHANNEL_NO
 		// Check counter terminal status
-		if(GPDMA_IntGetStatus(GPDMA_STAT_INTTC, 0)){
+		if(GPDMA_IntGetStatus(GPDMA_STAT_INTTC, DMA_CHANNEL_NO)){
 			// Clear terminate counter Interrupt pending
-			GPDMA_ClearIntPending (GPDMA_STATCLR_INTTC, 0);
+			GPDMA_ClearIntPending (GPDMA_STATCLR_INTTC, DMA_CHANNEL_NO);
 				Channel0_TC++;
 		}
-		if (GPDMA_IntGetStatus(GPDMA_STAT_INTERR, 0)){
+		if (GPDMA_IntGetStatus(GPDMA_STAT_INTERR, DMA_CHANNEL_NO)){
 			// Clear error counter Interrupt pending
-			GPDMA_ClearIntPending (GPDMA_STATCLR_INTERR, 0);
+			GPDMA_ClearIntPending (GPDMA_STATCLR_INTERR, DMA_CHANNEL_NO);
 			Channel0_Err++;
 		}
 	}
@@ -149,9 +150,9 @@ void Error_Loop(void)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	GPDMA_Channel_CFG_Type GPDMACfg;
 
@@ -177,8 +178,8 @@ int c_entry(void)
 	GPDMA_Init();
 
 	// Setup GPDMA channel --------------------------------
-	// channel 0
-	GPDMACfg.ChannelNum = 0;
+	// channel DMA_CHANNEL_NO
+	GPDMACfg.ChannelNum = DMA_CHANNEL_NO;
 	// Source memory
 	GPDMACfg.SrcMemAddr = (uint32_t)DMASrc_Buffer;
 	// Destination memory
@@ -203,10 +204,10 @@ int c_entry(void)
 	/* Reset Error counter */
 	Channel0_Err = 0;
 
-	_DBG_("Start transfer...");
+	_DBG("Start transfer on channel "); _DBD(DMA_CHANNEL_NO);_DBG_("");
 
-	// Enable GPDMA channel 0
-	GPDMA_ChannelCmd(0, ENABLE);
+	// Enable GPDMA channel DMA_CHANNEL_NO
+	GPDMA_ChannelCmd(DMA_CHANNEL_NO, ENABLE);
 
 	/* Enable GPDMA interrupt */
 	NVIC_EnableIRQ(DMA_IRQn);
@@ -223,7 +224,6 @@ int c_entry(void)
 
     /* Loop forever */
     while(1);
-    return 1;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -232,7 +232,8 @@ int c_entry(void)
  toolsets, the entry point is through __start() in the crt0_gnu.asm
  file, and that startup code will setup stacks and data */
 int main(void) {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 /**

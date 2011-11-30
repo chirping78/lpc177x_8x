@@ -31,7 +31,7 @@
 		Transferred block is initialized by defining const array 'DMAScr_Buffer'. This buffer
 		will be burned into flash when compile. Received block data is 'DMADest_Buffer' will be 
 		stored in ram when compile.
-		GPDMA channel 0 is configured in this example.
+		The channel which will be used is indicated by DMA_CHANNEL_NO macro.
 		Transfer size is 16 words.
 		After transferring completed, "Buffer_Verify()" will be called to compare data block in 
 		memory source and destination. If not similar, program will enter infinite loop.

@@ -39,7 +39,7 @@ extern "C"
 #endif
 
 
-#define DP83848C_MII_ADDR			0x0100				//Default PHY device address
+#define DP83848C_MII_ADDR			0x01		//Default PHY device address
 #define EMAC_PHY_DEFAULT_ADDR		DP83848C_MII_ADDR
 
 
@@ -122,7 +122,6 @@ extern "C"
 
 #define EMAC_PHY_ID1_CRIT				(DP83848C_PHY_ID1)
 #define EMAC_PHY_ID2_CRIT				(DP83848C_PHY_ID2_CRIT)
-
 
 #ifdef __cplusplus
 }

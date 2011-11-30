@@ -1,6 +1,6 @@
 /******************************************************************
  *****                                                        *****
- *****  Name: Emac_EsayWeb.c                                       *****
+ *****  Name: Emac_EsayWeb.c                                  *****
  *****  Ver.: 1.0                                             *****
  *****  Date: 07/05/2001                                      *****
  *****  Auth: Andreas Dannenberg                              *****
@@ -18,6 +18,8 @@
 #endif
 #define extern            // Keil: Line added for modular project management
 
+#include "stdio.h"
+#include "string.h"
 #include "bsp.h"
 
 #include "easyweb.h"
@@ -45,6 +47,7 @@
 /** @defgroup EMAC_EasyWeb	EMAC Easy Web
  * @ingroup EMAC_Examples
  * @{
+ */
 
 /*********************************************************************//**
  * @brief		Initialization for timer
@@ -87,10 +90,11 @@ void TC_Init(void)
 /*********************************************************************//**
  * @brief		Main program body
  * @param[in]	None
- * @return		int
+ * @return		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
+
 	TC_Init();
 
 	/* Select P0.25 as AD0.2
@@ -110,7 +114,7 @@ int c_entry(void)
 	HTTPStatus = 0;                                // clear HTTP-server's flag register
 
 	TCPLocalPort = TCP_PORT_HTTP;                  // set port we want to listen to
-
+																	 
 	while (1)                                      // repeat forever
 	{
 		if (!(SocketStatus & SOCK_ACTIVE))
@@ -119,7 +123,9 @@ int c_entry(void)
 		DoNetworkStuff();                                      // handle network and easyWEB-stack
 	                                                       // events
 		HTTPServer();
+
 	}
+
 }
 
 // This function implements a very simple dynamic HTTP-server.
@@ -278,10 +284,11 @@ void InsertDynamicValues(void)
  **********************************************************************/
 int main(void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 
-/*
+/**
  * @}
 */

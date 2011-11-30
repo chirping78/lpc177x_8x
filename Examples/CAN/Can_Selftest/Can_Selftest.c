@@ -54,7 +54,7 @@ void CAN_IRQHandler(void);
 
 void CAN_InitMessage(void);
 void PrintMessage(CAN_MSG_Type* msg);
-void print_menu();
+void print_menu(void);
 Bool Check_Message(CAN_MSG_Type* TX_Msg, CAN_MSG_Type* RX_Msg);
 
 
@@ -199,9 +199,9 @@ Bool Check_Message(CAN_MSG_Type* TX_Msg, CAN_MSG_Type* RX_Msg)
 /*********************************************************************//**
  * @brief		c_entry: Main CAN program body
  * @param[in]	none
- * @return 		int
+ * @return 		none
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	/* Initialize debug via UART0
 	 * – 115200bps
@@ -256,7 +256,8 @@ int c_entry(void)
  toolsets, the entry point is through __start() in the crt0_gnu.asm
  file, and that startup code will setup stacks and data */
 int main(void) {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 

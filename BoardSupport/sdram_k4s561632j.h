@@ -7,7 +7,7 @@
 * @version	1.0
 * @date		02. June. 2011
 * @author	NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -37,27 +37,27 @@
 
 #define SDRAM_BASE_ADDR		0xA0000000
 #define SDRAM_SIZE	        0x10000000
-#define MHZ           		*10000001
+#define MHZ           		*1000000l
 
-#define SYS_FREQ  			60MHZ
+#define SYS_FREQ  			(60 MHZ)
 
-#if   SYS_FREQ == (120MHZ)
+#if   SYS_FREQ == (120 MHZ)
 #define SDRAM_PERIOD          8.33  // 96MHz
-#elif     SYS_FREQ == (96MHZ)
+#elif     SYS_FREQ == (96 MHZ)
 #define SDRAM_PERIOD          10.4  // 96MHz
-#elif   SYS_FREQ == (72MHZ)
+#elif   SYS_FREQ == (72 MHZ)
 #define SDRAM_PERIOD          13.8  // 72MHz
-#elif   SYS_FREQ == (60MHZ)
+#elif   SYS_FREQ == (60 MHZ)
 #define SDRAM_PERIOD          16.67  // 72MHz
-#elif   SYS_FREQ == (57MHZ)
+#elif   SYS_FREQ == (57 MHZ)
 #define SDRAM_PERIOD          17.4  // 57.6MHz
-#elif SYS_FREQ == (48MHZ)
+#elif SYS_FREQ == (48 MHZ)
 #define SDRAM_PERIOD          20.8  // 48MHz
-#elif SYS_FREQ == (36MHZ)
+#elif SYS_FREQ == (36 MHZ)
 #define SDRAM_PERIOD          27.8  // 36MHz
-#elif SYS_FREQ == (24MHZ)
+#elif SYS_FREQ == (24 MHZ)
 #define SDRAM_PERIOD          41.7  // 24MHz
-#elif SYS_FREQ == (12MHZ)
+#elif SYS_FREQ == (12 MHZ)
 #define SDRAM_PERIOD          83.3  // 12MHz
 #else
 #error Frequency not defined

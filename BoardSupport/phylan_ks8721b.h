@@ -40,7 +40,7 @@ extern "C"
 #endif
 
 
-#define KS8721B_MII_ADDR			0x0100				//Default PHY device address
+#define KS8721B_MII_ADDR			0x01		//Default PHY device address
 #define EMAC_PHY_DEFAULT_ADDR		KS8721B_MII_ADDR
 
 

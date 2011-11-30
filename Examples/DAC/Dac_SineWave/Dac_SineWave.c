@@ -23,6 +23,7 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
+#include "LPC177x_8x.h"
 #include "lpc177x_8x_dac.h"
 #include "lpc177x_8x_gpdma.h"
 #include "lpc177x_8x_clkpwr.h"
@@ -61,9 +62,9 @@ GPDMA_Channel_CFG_Type GPDMACfg;
 /*********************************************************************//**
  * @brief		c_entry: Main DAC program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	DAC_CONVERTER_CFG_Type DAC_ConverterConfigStruct;
 	GPDMA_LLI_Type DMA_LLI_Struct;
@@ -205,7 +206,6 @@ int c_entry(void)
 
 	while(1);
 
-	return 1;
 }
 /* With ARM and GHS toolsets, the entry point is main() - this will
    allow the linker to generate wrapper code to setup stacks, allocate
@@ -214,7 +214,8 @@ int c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 /**

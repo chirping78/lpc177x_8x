@@ -40,7 +40,7 @@ extern "C"
 #endif
 
 
-#define LAN8720_MII_ADDR			0x0100				//Default PHY device address
+#define LAN8720_MII_ADDR			0x01		//Default PHY device address
 #define EMAC_PHY_DEFAULT_ADDR		LAN8720_MII_ADDR
 
 

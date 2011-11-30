@@ -447,9 +447,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main UART-RS485 program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	// UART Configuration structure variable
 	UART_CFG_Type UARTConfigStruct;
@@ -463,7 +463,7 @@ int c_entry(void)
 	uint8_t buffer[10];
 	uint32_t tmp;
 
-	uint32_t rs485Irq;
+	IRQn_Type rs485Irq;
 
 	// UART0 section ----------------------------------------------------
 	// Initialize UART0 pin connect
@@ -623,7 +623,6 @@ int c_entry(void)
 		}
 	}
 
-	return 1;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -633,7 +632,8 @@ int c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

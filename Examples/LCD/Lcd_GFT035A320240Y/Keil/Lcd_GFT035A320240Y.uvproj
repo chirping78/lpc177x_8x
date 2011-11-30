@@ -340,7 +340,7 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>1</wLevel>
+            <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <VariousControls>
               <MiscControls></MiscControls>
@@ -549,6 +549,26 @@
               <FileName>lpc177x_8x_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\Drivers\source\lpc177x_8x_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdram_is42s32800d.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\sdram_is42s32800d.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdram_mt48lc8m32lfb5.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\sdram_mt48lc8m32lfb5.c</FilePath>
+            </File>
+            <File>
+              <FileName>lpc177x_8x_emc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\Drivers\source\lpc177x_8x_emc.c</FilePath>
+            </File>
+            <File>
+              <FileName>lpc177x_8x_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\Drivers\source\lpc177x_8x_timer.c</FilePath>
             </File>
           </Files>
         </Group>

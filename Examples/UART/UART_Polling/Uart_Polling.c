@@ -22,7 +22,7 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
- 
+#include "LPC177x_8x.h"
 #include "lpc177x_8x_uart.h"
 #include "lpc177x_8x_pinsel.h"
 
@@ -87,9 +87,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main UART program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	// UART Configuration structure variable
 	UART_CFG_Type UARTConfigStruct;
@@ -97,7 +97,7 @@ int c_entry(void)
 	UART_FIFO_CFG_Type UARTFIFOConfigStruct;
 
 	uint32_t idx, len;
-	__IO FlagStatus exitflag;
+	FlagStatus exitflag;
 	uint8_t buffer[10];
 
 #if (UART_TEST_NUM == 0)
@@ -204,7 +204,6 @@ int c_entry(void)
 
     /* Loop forever */
     while(1);
-    return 1;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -214,7 +213,8 @@ int c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

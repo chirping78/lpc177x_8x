@@ -22,7 +22,12 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
-
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _I2C
 #include "pca9532.h"
 #include "lpc177x_8x_i2c.h"
 #include "lpc177x_8x_pinsel.h"
@@ -84,8 +89,7 @@ int Pca9532_LedOutputControl(pca9532_Configure_st_t* settings)
 	// Check if the LED level is in range. Unless set it to default
 	for (cnt = 0; cnt < NUMBER_OF_ONCHIP_LEDS; cnt++)
 	{
-		settings->led_settings[cnt] = ((settings->led_settings[cnt] >= PCA9532_LED_MAX_LEVEL)
-											||(settings->led_settings[cnt] < 0)) ?
+		settings->led_settings[cnt] = ((settings->led_settings[cnt] >= PCA9532_LED_MAX_LEVEL)) ?
 											PCA9532_LED_LEVEL_DEFAULT : settings->led_settings[cnt];
 	}
 
@@ -177,7 +181,7 @@ int Pca9532_LedOutputControl(pca9532_Configure_st_t* settings)
 	}
 
 }
-
+#endif /*_I2C*/
 /*********************************************************************************
 **                            End Of File
 *********************************************************************************/

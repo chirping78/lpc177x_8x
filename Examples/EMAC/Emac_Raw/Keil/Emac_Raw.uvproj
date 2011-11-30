@@ -136,7 +136,7 @@
             <RestoreToolbox>1</RestoreToolbox>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>1</TargetSelection>
+          <TargetSelection>7</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -150,7 +150,7 @@
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
             <InitializationFile>.\Flash.ini</InitializationFile>
-            <Driver>BIN\UL2CM3.DLL</Driver>
+            <Driver>Segger\JL2CM3.dll</Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -160,9 +160,9 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4096</DriverSelection>
+            <DriverSelection>4099</DriverSelection>
           </Flash1>
-          <Flash2>BIN\UL2CM3.DLL</Flash2>
+          <Flash2>Segger\JL2CM3.dll</Flash2>
           <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
         </Utilities>
@@ -494,6 +494,11 @@
               <FileName>lpc177x_8x_timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\Drivers\source\lpc177x_8x_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>phylan.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\phylan.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1017,6 +1022,11 @@
               <FileName>lpc177x_8x_timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\Drivers\source\lpc177x_8x_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>phylan.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\phylan.c</FilePath>
             </File>
           </Files>
         </Group>

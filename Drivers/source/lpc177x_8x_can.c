@@ -28,7 +28,13 @@
 /** @addtogroup CAN
  * @{
  */
-
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _CAN
+ 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_can.h"
 #include "lpc177x_8x_clkpwr.h"
@@ -1564,11 +1570,11 @@ Status CAN_SendMsg (uint8_t canId, CAN_MSG_Type *CAN_Msg)
 
 		if(CAN_Msg->format == EXT_ID_FORMAT)
 		{
-			pCan->TFI1 |= (1 << 31); //set bit FF
+			pCan->TFI1 |= (((uint32_t)1) << 31); //set bit FF
 		}
 		else
 		{
-			pCan->TFI1 &= ~(1 << 31);
+			pCan->TFI1 &= ~(((uint32_t)1) << 31);
 		}
 
 		/* Write CAN ID*/
@@ -1611,11 +1617,11 @@ Status CAN_SendMsg (uint8_t canId, CAN_MSG_Type *CAN_Msg)
 
 		if(CAN_Msg->format == EXT_ID_FORMAT)
 		{
-			pCan->TFI2 |= (1 << 31); //set bit FF
+			pCan->TFI2 |= (((uint32_t)1) << 31); //set bit FF
 		}
 		else
 		{
-			pCan->TFI2 &= ~(1 << 31);
+			pCan->TFI2 &= ~(((uint32_t)1) << 31);
 		}
 
 		/* Write CAN ID*/
@@ -1658,11 +1664,11 @@ Status CAN_SendMsg (uint8_t canId, CAN_MSG_Type *CAN_Msg)
 
 		if(CAN_Msg->format == EXT_ID_FORMAT)
 		{
-			pCan->TFI3 |= (1 << 31); //set bit FF
+			pCan->TFI3 |= (((uint32_t)1) << 31); //set bit FF
 		}
 		else
 		{
-			pCan->TFI3 &= ~(1 << 31);
+			pCan->TFI3 &= ~(((uint32_t)1) << 31);
 		}
 
 		/* Write CAN ID*/
@@ -2176,7 +2182,7 @@ uint32_t CAN_FullCANPendGetStatus(FullCAN_IC_Type type)
 /**
  * @}
  */
-
+#endif /*_CAN*/
 
 /**
  * @}

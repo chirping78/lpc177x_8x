@@ -81,9 +81,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void)
+void c_entry (void)
 {
 
 	/* Initialize debug via UART0
@@ -126,9 +126,9 @@ int c_entry (void)
 
 	// Enter target power down mode
 	CLKPWR_DeepPowerDown();
+	_DBG_("\n\r-------- I'm wake up! -------- ");
 
 	while(1);
-	return 1;
 }
 
 
@@ -139,7 +139,8 @@ int c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

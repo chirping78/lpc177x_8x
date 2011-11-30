@@ -23,7 +23,7 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
-
+#include "LPC177x_8x.h"
 #include "lpc177x_8x_gpio.h"
 #include "lpc177x_8x_systick.h"
 #include "lpc177x_8x_pinsel.h"
@@ -82,9 +82,9 @@ void SysTick_Handler(void)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void)
+void c_entry (void)
 {
 	GPIO_Init();
 	
@@ -140,9 +140,6 @@ int c_entry (void)
 
 	while(1);
 	
-	GPIO_Deinit();
-
-	return 1;
 }
 
 
@@ -153,7 +150,8 @@ int c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

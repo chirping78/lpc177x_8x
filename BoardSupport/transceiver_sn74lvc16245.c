@@ -28,7 +28,12 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
-
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _GPIO
 #include "transceiver_sn74lvc16245.h"
 
 
@@ -143,7 +148,6 @@ void sn74x_DeInit(uint8_t port3Grp)
  **********************************************************************/
 void sn74x_SetDataDir(uint8_t dataDir)
 {
-	uint8_t portCntrl;
 	uint32_t val = 0;
 
 	switch (dataDir)
@@ -166,7 +170,7 @@ void sn74x_SetDataDir(uint8_t dataDir)
 
 	return;
 }
-
+#endif /*_GPIO*/
 /*********************************************************************************
 **                            End Of File
 *********************************************************************************/

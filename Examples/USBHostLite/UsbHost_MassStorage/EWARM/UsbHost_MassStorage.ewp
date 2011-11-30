@@ -3,7 +3,7 @@
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
-    <name>FLASH</name>
+    <name>Flash</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -17,15 +17,15 @@
         <debug>1</debug>
         <option>
           <name>ExePath</name>
-          <state>FLASH\Exe</state>
+          <state>Flash\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>FLASH\Obj</state>
+          <state>Flash\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>FLASH\List</state>
+          <state>Flash\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -691,7 +691,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\linker\ldscript_irom_iar.icf</state>
+          <state>$PROJ_DIR$\..\..\..\..\makesection\makerule\linker\ldscript_irom_iar.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -902,7 +902,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>RAM</name>
+    <name>Ram</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -916,15 +916,15 @@
         <debug>1</debug>
         <option>
           <name>ExePath</name>
-          <state>RAM\Exe</state>
+          <state>Ram\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>RAM\Obj</state>
+          <state>Ram\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>RAM\List</state>
+          <state>Ram\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -1590,7 +1590,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\linker\ldscript_iram_iar.icf</state>
+          <state>$PROJ_DIR$\..\..\..\..\makesection\makerule\linker\ldscript_iram_iar.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>

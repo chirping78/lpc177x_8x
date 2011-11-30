@@ -28,6 +28,7 @@
 #include "lpc177x_8x_gpio.h"
 #include "lpc177x_8x_pinsel.h"
 #include "system_LPC177x_8x.h"
+#include "phylan.h"
 
 /* For debugging... */
 #include "debug_frmwrk.h"
@@ -55,8 +56,8 @@
 	ENABLE_WOL flag is used to test power down and WOL functionality.
 	BOUNCE_RX flag needs to be set to 1 when WOL is being tested.
 */
-#define TX_ONLY				1
-#define BOUNCE_RX			0
+#define TX_ONLY				0
+#define BOUNCE_RX			1
 
 #define ENABLE_WOL			1
 #define ENABLE_HASH			1
@@ -130,6 +131,11 @@ uint8_t __attribute__ ((aligned (4))) gRxBuf[TX_PACKET_SIZE + 0x10];
 /* EMAC address */
 uint8_t EMACAddr[] = {MYMAC_6, MYMAC_5, MYMAC_4, MYMAC_3, MYMAC_2, MYMAC_1};
 //uint8_t EMACAddr[] = {MYMAC_1, MYMAC_2, MYMAC_3, MYMAC_4, MYMAC_5, MYMAC_6};
+
+#if ENABLE_HASH
+uint8_t MulticastAddr[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};		 //multicast addresst: start with 0x01
+#endif
+
 /* Tx, Rx Counters */
 __IO uint32_t RXOverrunCount = 0;
 __IO uint32_t RXErrorCount = 0;
@@ -153,7 +159,6 @@ __IO uint32_t WOLCount = 0;
 
 /************************** PRIVATE FUNCTON **********************************/
 /* Interrupt service routines */
-void ENET_IRQHandler (void);
 #if TX_ONLY
 void EINT0_Init(void);
 void EINT0_IRQHandler(void);
@@ -166,26 +171,14 @@ void Usr_Init_Emac(void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
- * @brief		Ethernet service routine handler
+ * @brief		Ethernet error handler
  * @param[in]	None
  * @return 		None
  **********************************************************************/
-void ENET_IRQHandler (void)
+
+void ErrorReceiveCallback(int32_t errCode)
 {
-	EMAC_PACKETBUF_Type RxDatbuf;
-	uint32_t RxLen;
-
-	/* EMAC Ethernet Controller Interrupt function. */
-	uint32_t int_stat;
-	// Get EMAC interrupt status
-	while ((int_stat = (LPC_EMAC->IntStatus & LPC_EMAC->IntEnable)) != 0)
-	{
-		// Clear interrupt status
-		LPC_EMAC->IntClear = int_stat;
-		/* scan interrupt status source */
-
-		/* ---------- receive overrun ------------*/
-		if((int_stat & EMAC_INT_RX_OVERRUN))
+  	if((errCode & EMAC_OVERRUN_ERR))
 		{
 			RXOverrunCount++;
 			_DBG_("Rx overrun");
@@ -200,92 +193,65 @@ void ENET_IRQHandler (void)
 		 * but simply a statement by the chip regarding the status of
 		 * the received frame
 		 */
-		if ((int_stat & EMAC_INT_RX_ERR))
+		if ((errCode & (EMAC_ALIGN_ERR | EMAC_RANGE_ERR | EMAC_LENGTH_ERR | 
+			                    EMAC_SYMBOL_ERR| EMAC_CRC_ERR | EMAC_RX_NO_DESC_ERR)))
 		{
-			if (EMAC_CheckReceiveDataStatus(EMAC_RINFO_RANGE_ERR) == RESET){
 				RXErrorCount++;
 				_DBG_("Rx error: ");
-			}
 		}
 
-		/* ---------- RX Finished Process Descriptors ----------*/
-		if ((int_stat & EMAC_INT_RX_FIN))
-		{
-			RxFinishedCount++;
-			_DBG_("Rx finish");
-		}
-
-		/* ---------- Receive Done -----------------------------*/
-		/* Note: All packets are greater than (TX_PACKET_SIZE + 4)
-		 * will be ignore!
-		 */
-		if ((int_stat & EMAC_INT_RX_DONE))
-		{
-			/* Packet received, check if packet is valid. */
-			if (EMAC_CheckReceiveIndex()){
-				if (!EMAC_CheckReceiveDataStatus(EMAC_RINFO_LAST_FLAG)){
-					goto rel;
-				}
-				// Get data size, trip out 4-bytes CRC field, note that length in (-1) style format
-				RxLen = EMAC_GetReceiveDataSize() - 3;
-				// Note that packet added 4-bytes CRC created by yourself
-				if ((RxLen > (TX_PACKET_SIZE + 4)) || (EMAC_CheckReceiveDataStatus(EMAC_RINFO_ERR_MASK))) {
-					/* Invalid frame, ignore it and free buffer */
-					goto rel;
-				}
-				ReceiveLength = RxLen;
-				// Valid Frame, just copy it
-				RxDatbuf.pbDataBuf = (uint32_t *)gRxBuf;
-				RxDatbuf.ulDataLen = RxLen;
-				EMAC_ReadPacketBuffer(&RxDatbuf);
-				PacketReceived = TRUE;
-
-		rel:
-				/* Release frame from EMAC buffer */
-				EMAC_UpdateRxConsumeIndex();
-			}
-			_DBG_("Rx done");
-			RxDoneCount++;
-		}
 
 		/*------------------- Transmit Underrun -----------------------*/
-		if ((int_stat & EMAC_INT_TX_UNDERRUN))
+		if ((errCode & EMAC_UNDERRUN_ERR))
 		{
 			TXUnderrunCount++;
 			_DBG_("Tx under-run");
 		}
 
 		/*------------------- Transmit Error --------------------------*/
-		if ((int_stat & EMAC_INT_TX_ERR))
+		if ((errCode & (EMAC_LATE_COLLISION_ERR | EMAC_EXCESSIVE_COLLISION_ERR | 
+			                  EMAC_EXCESSIVE_DEFER_ERR| EMAC_TX_NO_DESC_ERR)))
 		{
 			TXErrorCount++;
 			_DBG_("Tx error");
 		}
 
-		/* ----------------- TX Finished Process Descriptors ----------*/
-		if ((int_stat & EMAC_INT_TX_FIN))
-		{
-			TxFinishedCount++;
-			_DBG_("Tx finish");
-		}
-
-		/* ----------------- Transmit Done ----------------------------*/
-		if ((int_stat & EMAC_INT_TX_DONE))
-		{
-			TxDoneCount++;
-			_DBG_("Tx done");
-		}
 #if ENABLE_WOL
 		/* ------------------ Wakeup Event Interrupt ------------------*/
 		/* Never gone here since interrupt in this
 		 * functionality has been disable, even if in wake-up mode
 		 */
-		if ((int_stat & EMAC_INT_WAKEUP))
+		if ((errCode & EMAC_INT_WAKEUP))
 		{
 			WOLCount++;
 		}
 #endif
-	}
+}
+ /*********************************************************************//**
+  * @brief		 Handle the received frame
+  * @param[in]	 None
+  * @return 	 None
+  **********************************************************************/
+ void FrameReceiveCallback(uint16_t* pData, uint32_t size)
+{
+  _DBG_("Rx done");
+  RxDoneCount++;
+  PacketReceived = TRUE;
+
+  if(size > TX_PACKET_SIZE + 0x10)
+     ErrorReceiveCallback(EMAC_INT_RX_ERR);
+
+  memcpy(gRxBuf, pData,size); 
+  ReceiveLength = size;
+}
+ /*********************************************************************//**
+  * @brief		 Process transmit-finish-event
+  * @param[in]	 None
+  * @return 	 None
+  **********************************************************************/
+void TransmitFinishCallback(void)
+{
+  _DBG_("Tx done");
 }
 
 #if TX_ONLY
@@ -315,12 +281,21 @@ void PacketGen( uint8_t *txptr )
   uint32_t BodyLength = TX_PACKET_SIZE - 14;
 
   /* Dest address */
+#if TX_ONLY && ENABLE_HASH
+ *(txptr+0) = MulticastAddr[0];
+ *(txptr+1) = MulticastAddr[1];
+ *(txptr+2) = MulticastAddr[2];
+ *(txptr+3) = MulticastAddr[3];
+ *(txptr+4) = MulticastAddr[4];
+ *(txptr+5) = MulticastAddr[5];
+#else
   *(txptr+0) = EMAC_DST_ADDR56 & 0xFF;
   *(txptr+1) = (EMAC_DST_ADDR56 >> 0x08) & 0xFF;
   *(txptr+2) = EMAC_DST_ADDR34 & 0xFF;
   *(txptr+3) = (EMAC_DST_ADDR34 >> 0x08) & 0xFF;
   *(txptr+4) = EMAC_DST_ADDR12 & 0xFF;
   *(txptr+5) = (EMAC_DST_ADDR12 >> 0x08) & 0xFF;
+#endif
 
   /* Src address */
   *(txptr+6) = EMAC_ADDR56 & 0xFF;
@@ -477,20 +452,23 @@ void Usr_Init_Emac(void)
 			  EMACAddr[3],  EMACAddr[4],  EMACAddr[5]);
 	DB;
 
-	Emac_Config.Mode = EMAC_MODE_AUTO;
+	Emac_Config.PhyCfg.Mode = EMAC_MODE_AUTO;
 	Emac_Config.pbEMAC_Addr = EMACAddr;
+	Emac_Config.bPhyAddr = EMAC_PHY_DEFAULT_ADDR;
+	Emac_Config.nMaxFrameSize = 1536;
+	Emac_Config.pfnPHYInit = PHY_Init;
+	Emac_Config.pfnPHYReset = PHY_Reset;
+	Emac_Config.pfnFrameReceive = FrameReceiveCallback;
+	Emac_Config.pfnErrorReceive = ErrorReceiveCallback;
+	Emac_Config.pfnTransmitFinish = TransmitFinishCallback;
+	Emac_Config.pfnSoftInt = NULL;
+	Emac_Config.pfnWakeup = NULL;
 	// Initialize EMAC module with given parameter
 	while (EMAC_Init(&Emac_Config) == ERROR){
 		// Delay for a while then continue initializing EMAC module
 		_DBG_("Error during initializing EMAC, restart after a while");
 		for (i = 0x100000; i; i--);
 	}
-	// Enable all interrupt
-	EMAC_IntCmd((EMAC_INT_RX_OVERRUN | EMAC_INT_RX_ERR | EMAC_INT_RX_FIN \
-			| EMAC_INT_RX_DONE | EMAC_INT_TX_UNDERRUN | EMAC_INT_TX_ERR \
-			| EMAC_INT_TX_FIN | EMAC_INT_TX_DONE), ENABLE);
-	NVIC_SetPriority(ENET_IRQn, 0);
-	NVIC_EnableIRQ(ENET_IRQn);
 	_DBG_("Initialize EMAC complete");
 }
 
@@ -516,9 +494,6 @@ int c_entry (void)
 	uint8_t *rxptr;
 #endif
 
-#if ENABLE_HASH
-	uint8_t dstAddr[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
-#endif
 	NVIC_SetPriorityGrouping(4);  //sets PRIGROUP to 3:2 (XXX:YY)
 
 	//Init LED
@@ -546,7 +521,8 @@ int c_entry (void)
 #endif
 
 #if ENABLE_HASH
-	EMAC_SetHashFilter(dstAddr, ENABLE);
+	EMAC_SetHashFilter(MulticastAddr, ENABLE);
+    EMAC_SetFilterMode(EMAC_RFC_UCAST_HASH_EN|EMAC_RFC_MCAST_HASH_EN,ENABLE);
 #endif
 
 
@@ -612,6 +588,12 @@ int c_entry (void)
 #endif										/* endif ENABLE_WOL */
 
 #if BOUNCE_RX
+
+#if ENABLE_HASH
+		EMAC_SetHashFilter(MulticastAddr, ENABLE);
+		EMAC_SetFilterMode(EMAC_RFC_UCAST_HASH_EN|EMAC_RFC_MCAST_HASH_EN,ENABLE);
+#endif
+
 	while( 1 )
 	{
 		LED_Blink(BLINK_LED_PIN);
@@ -622,7 +604,12 @@ int c_entry (void)
 
 			/* Reverse Source and Destination, then copy the body */
 			memcpy( (uint8_t *)txptr, (uint8_t *)(rxptr+6), 6);
-			memcpy( (uint8_t *)(txptr+6), (uint8_t *)rxptr, 6);
+			*(txptr+6) = EMAC_ADDR56 & 0xFF;
+            *(txptr+7) = (EMAC_ADDR56 >> 0x08) & 0xFF;
+            *(txptr+8) = EMAC_ADDR34 & 0xFF;
+            *(txptr+9) = (EMAC_ADDR34 >> 0x08) & 0xFF;
+            *(txptr+10) = EMAC_ADDR12 & 0xFF;
+            *(txptr+11) = (EMAC_ADDR12 >> 0x08) & 0xFF;
 			memcpy( (uint8_t *)(txptr+12), (uint8_t *)(rxptr+12), (ReceiveLength - 12));
 
 			_DBG_("Send packet");
@@ -632,7 +619,6 @@ int c_entry (void)
 
 			EMAC_WritePacketBuffer(&DataPacket);
 
-			EMAC_UpdateTxProduceIndex();
 		}
 	}
 #endif	/* endif BOUNCE_RX */
@@ -664,8 +650,6 @@ int c_entry (void)
 
 		EMAC_WritePacketBuffer(&DataPacket);
 
-		EMAC_UpdateTxProduceIndex();
-
 		//for ( j = 0; j < 0x200000; j++ );	/* delay */
 	}
 #endif	/* endif TX_ONLY */
@@ -682,7 +666,8 @@ int c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 /*****************************************************************************

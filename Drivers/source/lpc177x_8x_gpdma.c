@@ -28,6 +28,12 @@
 /** @addtogroup GPDMA
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _GPDMA
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_gpdma.h"
@@ -42,7 +48,6 @@
  * @brief Lookup Table of Connection Type matched with
  * Peripheral Data (FIFO) register base address
  */
-#ifdef __IAR_SYSTEMS_ICC__
 volatile const void *GPDMA_LUTPerAddr[] = {
 		0,								// Revered
 		(&LPC_MCI->FIFO),				// SD Card
@@ -77,42 +82,7 @@ volatile const void *GPDMA_LUTPerAddr[] = {
 		(&LPC_TIM3->MR0),				// MAT3.0
 		(&LPC_TIM3->MR1),				// MAT3.1
 };
-#else
-const uint32_t GPDMA_LUTPerAddr[] = {
-		0, 											// Reversed
-		((uint32_t)&LPC_MCI->FIFO),					// SD Card
-		((uint32_t)&LPC_SSP0->DR),					// SSP0 Tx
-		((uint32_t)&LPC_SSP0->DR),					// SSP0 Rx
-		((uint32_t)&LPC_SSP1->DR),					// SSP1 Tx
-		((uint32_t)&LPC_SSP1->DR),					// SSP1 Rx
-		((uint32_t)&LPC_SSP2->DR),					// SSP2 Tx
-		((uint32_t)&LPC_SSP2->DR),					// SSP2 Rx
-		((uint32_t)&LPC_ADC->GDR),					// ADC
-		((uint32_t)&LPC_DAC->CR),					// DAC
-		((uint32_t)&LPC_UART0->/*RBTHDLR.*/THR),	// UART0 Tx
-		((uint32_t)&LPC_UART0->/*RBTHDLR.*/RBR),	// UART0 Rx
-		((uint32_t)&LPC_UART1->/*RBTHDLR.*/THR),	// UART1 Tx
-		((uint32_t)&LPC_UART1->/*RBTHDLR.*/RBR),	// UART1 Rx
-		((uint32_t)&LPC_UART2->/*RBTHDLR.*/THR),	// UART2 Tx
-		((uint32_t)&LPC_UART2->/*RBTHDLR.*/RBR),	// UART2 Rx
-		((uint32_t)&LPC_TIM0->MR0),					// MAT0.0
-		((uint32_t)&LPC_TIM0->MR1),					// MAT0.1
-		((uint32_t)&LPC_TIM1->MR0),					// MAT1.0
-		((uint32_t)&LPC_TIM1->MR1),					// MAT1.1
-		((uint32_t)&LPC_TIM2->MR0),					// MAT2.0
-		((uint32_t)&LPC_TIM2->MR1),					// MAT2.1
-		((uint32_t)&LPC_I2S->TXFIFO), 				// I2S Tx
-		((uint32_t)&LPC_I2S->RXFIFO), 				// I2S Rx
-		0,											// Reverse
-		0,											// Reverse
-		((uint32_t)&LPC_UART3->/*RBTHDLR.*/THR),	// UART3 Tx
-		((uint32_t)&LPC_UART3->/*RBTHDLR.*/RBR),	// UART3 Rx
-		((uint32_t)&LPC_UART4->/*RBTHDLR.*/THR),	// UART4 Tx
-		((uint32_t)&LPC_UART4->/*RBTHDLR.*/RBR),	// UART4 Rx
-		((uint32_t)&LPC_TIM3->MR0),					// MAT3.0
-		((uint32_t)&LPC_TIM3->MR1),					// MAT3.1
-};
-#endif
+
 /**
  * @brief Lookup Table of GPDMA Channel Number matched with
  * GPDMA channel pointer
@@ -467,7 +437,7 @@ void GPDMA_ClearIntPending(GPDMA_StateClear_Type type, uint8_t channel)
  * @}
  */
 
-//#endif /* _GPDMA */
+#endif /* _GPDMA */
 
 /**
  * @}

@@ -57,7 +57,7 @@ void SysTick_Handler(void)
 
 	//toggle GPIO pin
 	GPIO_OutputValue(PIO_PORT_USED, PIO_PIN_VALUE, Cur_State);
-	Cur_State = !Cur_State;
+	Cur_State = (Cur_State == ENABLE) ? DISABLE:ENABLE;
 }
 
 
@@ -65,9 +65,9 @@ void SysTick_Handler(void)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void)
+void c_entry (void)
 {
 	GPIO_Init();
 	
@@ -85,9 +85,6 @@ int c_entry (void)
 
 	while(1);
 	
-	GPIO_Deinit();
-
-	return 1;
 }
 
 
@@ -98,7 +95,8 @@ int c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

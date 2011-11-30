@@ -14,16 +14,20 @@
  *****        LPC2478 EMAC Ethernet controller                *****
  *****                                                        *****
  ******************************************************************/
-
+#include <stdio.h>
 #include "EMAC.h"
 #include "tcpip.h"
 #include "LPC177x_8x.h"
 #include "lpc177x_8x_emac.h"
 #include "lpc177x_8x_pinsel.h"
 #include "lpc177x_8x_clkpwr.h"
+#include "phylan.h"
 
-uint16_t *rptr;
-static uint16_t *tptr;
+static uint16_t *rptr = NULL;
+static uint32_t rx_size[EMAC_MAX_FRAME_NUM];
+static uint16_t* rx_ptr[EMAC_MAX_FRAME_NUM];
+static uint8_t rx_done = 0, read_done = 0;
+
 
 // configure port-pins for use with LAN-controller,
 // reset it and send the configuration-sequence
@@ -55,8 +59,17 @@ void Init_EMAC(void)
 	PINSEL_ConfigPin(1,16,1);
 	PINSEL_ConfigPin(1,17,1);
 
-	Emac_Config.Mode = EMAC_MODE_AUTO;
+	Emac_Config.PhyCfg.Mode= EMAC_MODE_AUTO;
 	Emac_Config.pbEMAC_Addr = EMACAddr;
+	Emac_Config.bPhyAddr = EMAC_PHY_DEFAULT_ADDR;
+	Emac_Config.nMaxFrameSize = 1536;
+	Emac_Config.pfnPHYInit = PHY_Init;
+	Emac_Config.pfnPHYReset = PHY_Reset;
+	Emac_Config.pfnFrameReceive = FrameReceiveCallback;
+	Emac_Config.pfnErrorReceive = ErrorReceiveCallback;
+	Emac_Config.pfnTransmitFinish = NULL;
+	Emac_Config.pfnSoftInt = NULL;
+	Emac_Config.pfnWakeup = NULL;
 	// Initialize LPC_EMAC module with given parameter
 	while (EMAC_Init(&Emac_Config) == ERROR)
 	{
@@ -65,15 +78,39 @@ void Init_EMAC(void)
 	}
 
 }
+// save the pointer to received frame buffer,
+/*********************************************************************//**
+ * @brief		
+ * @param[in]	
+ * @return		
+ **********************************************************************/
+void FrameReceiveCallback(uint16_t* pData, uint32_t size)
+{
 
+  rx_ptr[rx_done] = pData;
+  rx_size[rx_done] = size;
+  rx_done++;
+  if(rx_done >= EMAC_MAX_FRAME_NUM)
+     rx_done = 0;
+}
 
+// handle errors
+/*********************************************************************//**
+ * @brief		
+ * @param[in]	
+ * @return		
+ **********************************************************************/
+void ErrorReceiveCallback(int32_t errCode)
+{
+  
+}
 // reads a word in little-endian byte order from RX_BUFFER
 /*********************************************************************//**
  * @brief		
  * @param[in]	
  * @return		
  **********************************************************************/
-uint16_t ReadFrame_EMAC(void)
+uint16_t ReadHalfWord_EMAC(void)
 {
 	return (*rptr++);
 }
@@ -86,14 +123,13 @@ uint16_t ReadFrame_EMAC(void)
  * @param[in]	
  * @return		
  **********************************************************************/
-uint16_t ReadFrameBE_EMAC(void)
+uint16_t ReadHalfWordBE_EMAC(void)
 {
   uint16_t ReturnValue;
 
   ReturnValue = SwapBytes (*rptr++);
   return (ReturnValue);
 }
-
 
 // copies bytes from frame port to MCU-memory
 // NOTES: * an odd number of byte may only be transfered
@@ -104,13 +140,13 @@ uint16_t ReadFrameBE_EMAC(void)
  * @param[in]	
  * @return		
  **********************************************************************/
-void CopyFromFrame_EMAC(void *Dest, uint16_t Size)
+void ReadFrame_EMAC(void *Dest, uint16_t Size)
 {
 	uint16_t * piDest;
 	piDest = Dest;
 	while (Size > 1)
 	{
-		*piDest++ = ReadFrame_EMAC();
+		*piDest++ = ReadHalfWord_EMAC();
 		Size -= 2;
 	}
 
@@ -119,7 +155,7 @@ void CopyFromFrame_EMAC(void *Dest, uint16_t Size)
 	/* check for leftover byte...
 	the LAN-Controller will return 0
 	for the highbyte*/
-		*(uint8_t *)piDest = (char)ReadFrame_EMAC();
+		*(uint8_t *)piDest = (char)ReadHalfWord_EMAC();
 	}
 }
 
@@ -136,11 +172,10 @@ void DummyReadFrame_EMAC(uint16_t Size)
 
 	while (Size > 1)
 	{
-		ReadFrame_EMAC();
+		ReadHalfWord_EMAC();
 		Size -= 2;
 	}
 }
-
 // Reads the length of the received ethernet frame and checks if the
 // destination address is a broadcast message or not
 // returns the frame length
@@ -151,10 +186,11 @@ void DummyReadFrame_EMAC(uint16_t Size)
  **********************************************************************/
 uint16_t StartReadFrame(void)
 {
-	uint16_t RxLen;
-	RxLen = EMAC_GetReceiveDataSize();
-	rptr = (uint16_t *)EMAC_GetReadPacketBuffer();
-	return(RxLen);
+	rptr = rx_ptr[read_done];
+	read_done++;
+	if(read_done >= EMAC_MAX_FRAME_NUM)
+	   read_done = 0;
+	return(rx_size[read_done]);
 }
 
 /*********************************************************************//**
@@ -164,9 +200,8 @@ uint16_t StartReadFrame(void)
  **********************************************************************/
 void EndReadFrame(void)
 {
- 	EMAC_UpdateRxConsumeIndex();
+ 	rx_size[read_done] = 0;
 }
-
 /*********************************************************************//**
  * @brief		
  * @param[in]	
@@ -174,7 +209,7 @@ void EndReadFrame(void)
  **********************************************************************/
 unsigned int CheckFrameReceived(void)
 {
-	if (EMAC_CheckReceiveIndex() == TRUE)
+	if (rx_done != read_done)
 	{
 		return (1);
 	}
@@ -182,17 +217,6 @@ unsigned int CheckFrameReceived(void)
 	{
 	return (0);
 	}
-}
-
-// requests space in LPC_EMAC memory for storing an outgoing frame
-/*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
- **********************************************************************/
-void RequestSend(uint16_t FrameSize)
-{
-	tptr = (uint16_t *)EMAC_RequestSend(FrameSize);
 }
 
 // check if ethernet controller is ready to accept the
@@ -204,42 +228,21 @@ void RequestSend(uint16_t FrameSize)
  **********************************************************************/
 unsigned int Rdy4Tx(void)
 {
-/* the ethernet controller transmits much faster than the CPU can load its buffers */
-	return (1);
+	return ((EMAC_GetBufferSts(EMAC_TX_BUFF) == EMAC_BUFF_EMPTY) ? 1:0);
 }
 
 
-// writes a word in little-endian byte order to TX_BUFFER
 /*********************************************************************//**
  * @brief		
  * @param[in]	
  * @return		
  **********************************************************************/
-void WriteFrame_EMAC(uint16_t Data)
+void SendFrame(void *Source, unsigned int Size)
 {
-	*tptr++ = Data;
-}
-
-// copies bytes from MCU-memory to frame port
-// NOTES: * an odd number of byte may only be transfered
-//          if the frame is written to the end!
-//        * MCU-memory MUST start at word-boundary
-/*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
- **********************************************************************/
-void CopyToFrame_EMAC(void *Source, unsigned int Size)
-{
-	uint16_t * piSource;
-
-	piSource = Source;
-	Size = (Size + 1) & 0xFFFE;    // round Size up to next even number
-	while (Size > 0)
-	{
-		WriteFrame_EMAC(*piSource++);
-		Size -= 2;
-	}
-	EMAC_UpdateTxProduceIndex();
+	EMAC_PACKETBUF_Type packet;
+	packet.pbDataBuf = Source;
+	packet.ulDataLen =  Size;
+	EMAC_WritePacketBuffer(&packet);
+	//EMAC_Transmit(Source,Size);
 }
 

@@ -190,7 +190,7 @@ typedef  struct  file_entry {
 
 int32_t  FAT_Init        (void);
 uint8_t  FAT_GetFATType (void);
-int32_t  FILE_Open(uint8_t  *file_name, uint8_t   flags);
+int32_t  FILE_Open(void  *file_name, uint8_t   flags);
 uint32_t FILE_Read(int32_t   fd, volatile  uint8_t  *buffer, uint32_t   num_bytes);
 uint32_t FILE_Write(int32_t   fd,volatile  uint8_t  *buffer,uint32_t   num_bytes);
 void     FILE_Close(int32_t   fd);

@@ -694,7 +694,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\linker\ldscript_irom_iar.icf</state>
+          <state>$PROJ_DIR$\..\..\..\..\makesection\makerule\linker\ldscript_irom_iar.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -912,6 +912,9 @@
   </group>
   <group>
     <name>Common</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\BoardSupport\phylan.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\common\printf-stdarg.c</name>
     </file>

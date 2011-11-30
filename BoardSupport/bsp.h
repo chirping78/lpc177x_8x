@@ -57,8 +57,6 @@
 #define _RUNNING_NANDFLASH_K9F1G08U0C	(1)
 #define _RUNNING_NANDFLASH_K9F1G08U0A	(2)
 
-#define _CUR_USING_NANDFLASH			(_RUNNING_NANDFLASH_NONE)
-
 #if (_CURR_USING_BRD == _QVGA_BOARD)
 //Driver for PHY of LAN DP83848C IC
 #include "phylan_dp83848c.h"
@@ -194,6 +192,9 @@
 
 #endif
 
+#ifndef _CUR_USING_NANDFLASH
+#define _CUR_USING_NANDFLASH			(_RUNNING_NANDFLASH_NONE)
+#endif
 
 #endif//BSP_H
 

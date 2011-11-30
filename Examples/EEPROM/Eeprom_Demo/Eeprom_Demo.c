@@ -49,41 +49,63 @@ uint8_t menu[]=
 " This example used to demo EEPROM operation on LPC177x_8x.\n\r"
 " A 'Hello' sentence will be written into EEPROM memory, then read back and check.\n\r"
 "********************************************************************************\n\r";
-uint8_t read_buffer[];
-uint8_t write_buffer[]="NXP Semiconductor LPC177x_8x-CortexM3 \n\r\t--- HELLO WORLD!!!---";
 
+#ifdef __IAR_SYSTEMS_ICC__
+#pragma data_alignment=4
+uint8_t read_buffer[EEPROM_PAGE_SIZE*2];
+#pragma data_alignment=4
+uint8_t write_buffer[]="NXP Semiconductor LPC177x_8x-CortexM3 \n\r\t--- HELLO WORLD!!! ---";
+#else
+uint8_t __attribute__ ((aligned (4))) read_buffer[EEPROM_PAGE_SIZE*2];
+uint8_t __attribute__ ((aligned (4))) write_buffer[]="NXP Semiconductor LPC177x_8x-CortexM3 \n\r\t--- HELLO WORLD!!! ---";
+#endif
 
 /************************** PRIVATE FUNCTIONS *************************/
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void) {                       /* Main Program */
+void c_entry (void) {                       /* Main Program */
 	uint32_t i;
 	uint8_t count;
+        uint8_t error = 0;
 
 	debug_frmwrk_init();
 	_DBG(menu);
 	EEPROM_Init();
 
 	count = sizeof(write_buffer);
+        count &= 0xFC;
 
 	_DBG_("Write data to EEPROM");
-	EEPROM_Write(PAGE_OFFSET,PAGE_ADDR,(void*)write_buffer,MODE_8_BIT,count);
+	EEPROM_Write(PAGE_OFFSET,PAGE_ADDR,(void*)write_buffer,MODE_8_BIT,count/1);
 
 	_DBG_("Read data from EEPROM");
-	EEPROM_Read(PAGE_OFFSET,PAGE_ADDR,(void*)read_buffer,MODE_8_BIT,count);
+	EEPROM_Read(PAGE_OFFSET,PAGE_ADDR,(void*)read_buffer,MODE_16_BIT,count/2);
 
 	//display eeprom data
 	for(i=0;i<count;i++)
 	{
-		_DBC(read_buffer[i]);
+                if(read_buffer[i] != write_buffer[i])
+                {
+                    _DBG("Difference at position ");_DBD(i);_DBG_("");
+                    error = 1;
+                }
 	}
-
-	_DBG_("");
-	_DBG_("Demo is terminated");
+        
+	if(error)
+          _DBG_("ERROR!!!!");
+        else
+        {
+          for(i=0;i<count;i++)
+          {
+            _DBC(read_buffer[i]);
+          }
+        _DBG_("");
+	  _DBG_("Demo is terminated");
+        }
 
 	while(1);
 
@@ -96,7 +118,8 @@ int c_entry (void) {                       /* Main Program */
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

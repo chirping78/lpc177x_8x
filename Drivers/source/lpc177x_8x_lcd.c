@@ -23,6 +23,12 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _LCD
 
 #include "lpc177x_8x_clkpwr.h"
 #include "lpc177x_8x_pinsel.h"
@@ -37,8 +43,6 @@ static uint8_t bits_per_pixel[] = {  1, 2, 4, 8, 16, 32, 16, 16  };
 uint32_t rect[1024];
 
 
-static void LCD_ClockSel(uint32_t clock_sel);
-static void LCD_SetPanelClock(uint8_t clkdiv);
 static void LCD_SetHorizontalTiming(LCD_HConfig_Type* pConfig);
 static void LCD_SetVertialTiming(LCD_VConfig_Type* pConfig);
 static void LCD_SetPolarity(LCD_TYPES lcd_type, LCD_POLARITY_Type* pConfig);
@@ -206,7 +210,7 @@ void LCD_SetPolarity(LCD_TYPES lcd_type, LCD_POLARITY_Type* pConfig)
     LPC_LCD->POL |= (pConfig->cpl - 1)<<16;
 
     if(lcd_type == LCD_STN_COLOR || lcd_type == LCD_STN_MONOCHROME)
-	LPC_LCD->POL | (pConfig->acb & 0x1F) << 6;
+	LPC_LCD->POL |= (pConfig->acb & 0x1F) << 6;
     }
 
 /*********************************************************************//**
@@ -327,7 +331,7 @@ void LCD_Enable (Bool bEna)
  **********************************************************************/
 void LCD_SetPalette (const uint8_t* pPallete)
 {
-	uint32_t i, j;
+	uint32_t i;
 	uint32_t size = (0x01 << bits_per_pixel[lcd_config.lcd_bpp])/2 ;
 	uint32_t * pDst = (uint32_t *)LPC_LCD->PAL;
 	uint32_t * pInput = (uint32_t*) pPallete;
@@ -384,7 +388,7 @@ uint32_t LCD_GetBitOffset(uint32_t x, uint32_t y)
  **********************************************************************/
 void LCD_SetImage(LCD_PANEL panel, const uint8_t *pPain)
 {
-	uint32_t i, j;
+	uint32_t i;
 	uint32_t * pWordDst = NULL;
 	uint8_t* pByteDst = NULL;
 	uint32_t bytes_num;
@@ -437,7 +441,7 @@ void LCD_LoadPic (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up,
   uint32_t i, j, k, inc;
   uint32_t * pWordData = NULL;
   uint8_t*   pByteData = NULL;
-  uint32_t tmp = 0, bitOffset;
+  uint32_t  bitOffset;
   uint8_t*   pByteSrc = (uint8_t*) pBmp->pPicStream;
   uint32_t X_LeftHold = X_Left;
   uint8_t  bpp = bits_per_pixel[lcd_config.lcd_bpp];
@@ -525,7 +529,6 @@ void LCD_FillRect (LCD_PANEL panel, uint32_t startx,uint32_t endx,
                                         LcdPixel_t color)
 {
    uint32_t x, xs, xe, ys, ye;
-   uint32_t * pData = NULL;
    uint8_t  bpp,  pixels_per_word;
    uint32_t word_val, mask;
    uint32_t max_vsize = 0;
@@ -706,5 +709,8 @@ void LCD_Cursor_SetImage (const uint32_t *pCursor, int cursor, int size)
 /**
  * @}
  */
+ 
+#endif /*_LCD*/
+
 
 

@@ -20,15 +20,18 @@
 
 // prototypes
 void           Init_EMAC(void);
-uint16_t ReadFrameBE_EMAC(void);
+uint16_t       ReadHalfWordBE_EMAC(void);
 void           CopyToFrame_EMAC(void *Source, unsigned int Size);
 void           CopyFromFrame_EMAC(void *Dest, uint16_t Size);
 void           DummyReadFrame_EMAC(uint16_t Size);
-uint16_t StartReadFrame(void);
+void           ReadFrame_EMAC(void *Dest, uint16_t Size);
+uint16_t       StartReadFrame(void);
 void           EndReadFrame(void);
 unsigned int   CheckFrameReceived(void);
-void           RequestSend(uint16_t FrameSize);
 unsigned int   Rdy4Tx(void);
+void           SendFrame(void *Source, unsigned int Size);
+void           FrameReceiveCallback(uint16_t* pData, uint32_t size);
+void           ErrorReceiveCallback(int32_t errCode);
 
 #endif
 

@@ -25,7 +25,7 @@
 **********************************************************************/
 
 /* Peripheral group ----------------------------------------------------------- */
-/** @defgroup  Sdram_MT48LC8M32FLB5	Sdram MT48LC8M32FLB5
+/** @defgroup  Sdram_IS42S32800D	Sdram IS42S32800D
  * @ingroup LPC177x_8xCMSIS_Board_Support
  * @{
  */

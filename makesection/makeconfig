@@ -1,0 +1,30 @@
+########################################################################
+#
+# Configuration file for "make" session. 
+#
+########################################################################
+
+########################################################################
+#
+# Note: 
+# Add path of "tools" directory (in this folder) 
+# to the HEAD of SYSTEM PATH variable
+#
+########################################################################
+
+DEVICE				=LPC177x_8x
+MANUFACTURE			=NXP
+TOOL 				=gnu
+DEBUG_MODE			=1
+
+
+GNU_INSTALL_ROOT	=C:/Program Files (x86)/CodeSourcery/Sourcery G++ Lite
+GNU_VERSION			=4.3.3
+IAR_INSTALL_ROOT	=C:/Program Files (x86)/IAR Systems/Embedded Workbench 6.0 Kickstart
+KEIL_INSTALL_ROOT	=C:/Keil
+
+GNU_INC_DIR         =-I'$(GNU_INSTALL_ROOT)/arm-none-eabi/include'
+GNU_INC_DIR         += -I'$(GNU_INSTALL_ROOT)/arm-none-eabi/include/sys'
+GNU_INC_DIR         += -I'$(GNU_INSTALL_ROOT)/arm-none-eabi/include/machine'
+
+TOOLDIRINC          =$(GNU_INC_DIR)

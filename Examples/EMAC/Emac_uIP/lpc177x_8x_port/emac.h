@@ -36,5 +36,8 @@
 BOOL_8 tapdev_init(void);
 UNS_32 tapdev_read(void * pPacket);
 BOOL_8 tapdev_send (void *pPacket, UNS_32 size);
+void   tapdev_frame_receive_cb(uint16_t* pData, uint32_t size);
+void   tapdev_error_receive_cb(int32_t errCode);
+
 
 #endif

@@ -1,7 +1,11 @@
 #include "Cursor.h"
 
+#ifdef __IAR_SYSTEMS_ICC__
 #pragma data_alignment=4
-const unsigned char Cursor[(CURSOR_H_SIZE/4)*CURSOR_H_SIZE] = 
+const unsigned char Cursor[(CURSOR_H_SIZE/4)*CURSOR_H_SIZE] =
+#else
+const unsigned char __attribute__ ((aligned (4))) Cursor[(CURSOR_H_SIZE/4)*CURSOR_H_SIZE] =
+#endif
 {
 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,

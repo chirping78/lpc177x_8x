@@ -39,12 +39,12 @@
  * it is not used in this example, so this memory section can be used for general purpose
  * memory
  */
-#define I2S_BUFFER_SRC			LPC_AHBRAM1_BASE //0x20004000UL
+#define I2S_BUFFER_SRC			LPC_PERI_RAM_BASE //0x20000000UL
 /** I2S Buffer Destination Address is (AHBRAM1_BASE + 0x100UL) that used for USB RAM purpose, but
  * it is not used in this example, so this memory section can be used for general purpose
  * memory
  */
-#define I2S_BUFFER_DST			(I2S_BUFFER_SRC+0x1000UL) //0x20041000
+#define I2S_BUFFER_DST			(I2S_BUFFER_SRC+0x1000UL) //0x20001000
 
 #define RXFIFO_EMPTY		0
 #define TXFIFO_FULL			8
@@ -169,9 +169,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void)
+void c_entry (void)
 {
 	I2S_MODEConf_Type I2S_ClkConfig;
 	I2S_CFG_Type I2S_ConfigStruct;
@@ -298,7 +298,6 @@ int c_entry (void)
 		_DBG_("Verify Buffer: ERROR...");
 	}
 	while(1);
-	return 0;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -308,7 +307,8 @@ int c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

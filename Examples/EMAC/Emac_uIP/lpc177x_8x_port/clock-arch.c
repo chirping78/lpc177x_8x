@@ -18,9 +18,7 @@ void SysTick_Handler (void)
 /* Timer init */
 void clock_init(void)
 {
-	uint32_t cclk;
 	Ticks = 0;
-	cclk = CLKPWR_GetCLK (CLKPWR_CLKTYPE_CPU);
 	// NXP: Initialize System tick timer
 	// Generate interrupt each SYSTICK_PERIOD microsecond
 	if (SysTick_Config((SystemCoreClock/CLOCK_CONF_SECOND))){

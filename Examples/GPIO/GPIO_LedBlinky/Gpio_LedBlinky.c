@@ -74,9 +74,9 @@ void Delay (unsigned long tick)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void)
+void c_entry (void)
 {
 	uint8_t value = 0;
 	uint32_t cclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_CPU);
@@ -96,7 +96,6 @@ int c_entry (void)
 		Delay(500);
 	}
 
-	GPIO_Deinit();
 }
 
 
@@ -107,7 +106,8 @@ int c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 /*

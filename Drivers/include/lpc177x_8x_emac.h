@@ -35,7 +35,6 @@
 
 #include "LPC177x_8x.h"
 #include "lpc_types.h"
-#include "bsp.h"
 
 
 #ifdef __cplusplus
@@ -126,7 +125,7 @@ extern "C"
 
 /* PHY Support Register */
 #define EMAC_SUPP_SPEED			0x00000100  	/**< Reduced MII Logic Current Speed   */
-#define EMAC_SUPP_RES_RMII      0x00000800  	/**< Reset Reduced MII Logic           */
+//#define EMAC_SUPP_RES_RMII      0x00000800  	/**< Reset Reduced MII Logic           */
 
 /* Test Register */
 #define EMAC_TEST_SHCUT_PQUANTA  0x00000001  	/**< Shortcut Pause Quanta             */
@@ -320,7 +319,7 @@ extern "C"
 #define EMAC_TX_FRAME_TOUT       0x00100000  /**< Frame Transmit timeout count      */
 
 /* EMAC variables located in 16K Ethernet SRAM */
-#define RX_DESC_BASE        0x20004000
+#define RX_DESC_BASE        LPC_PERI_RAM_BASE
 #define RX_STAT_BASE        (RX_DESC_BASE + EMAC_NUM_RX_FRAG*8)
 #define TX_DESC_BASE        (RX_STAT_BASE + EMAC_NUM_RX_FRAG*8)
 #define TX_STAT_BASE        (TX_DESC_BASE + EMAC_NUM_TX_FRAG*8)
@@ -446,6 +445,25 @@ extern "C"
 #define EMAC_MODE_100M_FULL			(3)		/**< 100Mbps FullDuplex mode */
 #define EMAC_MODE_100M_HALF			(4)		/**< 100Mbps HalfDuplex mode */
 
+/* EMAC User Buffers*/
+#define EMAC_MAX_FRAME_SIZE          (0x600)  /* 1536 */
+#define EMAC_MAX_FRAME_NUM           (2)
+
+/* EMAC Error Codes */
+#define EMAC_ALIGN_ERR				( 1 << 0)
+#define EMAC_RANGE_ERR				( 1 << 1)
+#define EMAC_LENGTH_ERR				( 1 << 2)
+#define EMAC_SYMBOL_ERR				( 1 << 3)
+#define EMAC_CRC_ERR				( 1 << 4)
+#define EMAC_RX_NO_DESC_ERR			( 1 << 5)
+#define EMAC_OVERRUN_ERR			( 1 << 6)
+#define EMAC_LATE_COLLISION_ERR		( 1 << 7)
+#define EMAC_EXCESSIVE_COLLISION_ERR ( 1 << 8)
+#define EMAC_EXCESSIVE_DEFER_ERR     ( 1 << 9)
+#define EMAC_UNDERRUN_ERR			( 1 << 10)
+#define EMAC_TX_NO_DESC_ERR			( 1 << 11)
+#define EMAC_FILTER_FAILED_ERR      ( 1 << 12)
+
 
 /**
  * @}
@@ -466,27 +484,79 @@ typedef struct {
 	uint32_t *pbDataBuf;		/**< A word-align data pointer to data buffer */
 } EMAC_PACKETBUF_Type;
 
-
 /**
- * @brief EMAC configuration structure definition
+ * @brief PHY Configuration structure definition
  */
 typedef struct {
-	uint32_t	Mode;						/**< Supported EMAC PHY device speed, should be one of the following:
+   uint32_t	Mode;						/**< Supported EMAC PHY device speed, should be one of the following:
 											- EMAC_MODE_AUTO
 											- EMAC_MODE_10M_FULL
 											- EMAC_MODE_10M_HALF
 											- EMAC_MODE_100M_FULL
 											- EMAC_MODE_100M_HALF
 											*/
-	uint8_t 	*pbEMAC_Addr;				/**< Pointer to EMAC Station address that contains 6-bytes
-											of MAC address, it must be sorted in order (bEMAC_Addr[0]..[5])
-											*/
-} EMAC_CFG_Type;
+} EMAC_PHY_CFG_Type;
 
 
 /** EMAC Call back function type definition */
-typedef void (EMAC_IntCBSType)(void);
+typedef int32_t (PHY_INIT_FUNC)(EMAC_PHY_CFG_Type* pPhyCfg);
+typedef int32_t (PHY_RESET_FUNC)(void);
+typedef void (EMAC_FRAME_RECV_FUNC)(uint16_t* pData, uint32_t size);
+typedef void (EMAC_TRANSMIT_FINISH_FUNC)(void);
+typedef void (EMAC_ERR_RECV_FUNC)(int32_t ulErrCode);
+typedef void (EMAC_WAKEUP_FUNC)(void);
+typedef void (SOFT_INT_FUNC)(void);
 
+/**
+ * @brief EMAC configuration structure definition
+ */
+typedef struct {
+    EMAC_PHY_CFG_Type PhyCfg;               /* PHY Configuration */
+    uint8_t           bPhyAddr;                    /* 5-bit PHY Address field */	
+    uint8_t 	*pbEMAC_Addr;				/**< Pointer to EMAC Station address that contains 6-bytes
+											of MAC address, it must be sorted in order (bEMAC_Addr[0]..[5])
+											*/
+    uint16_t     nMaxFrameSize;              /* maximum frame length */
+    PHY_INIT_FUNC *pfnPHYInit;               /* point to the funtion which will be called to initialize PHY */
+    PHY_RESET_FUNC *pfnPHYReset;             /* point to the function which will be called to reset PHY */
+    EMAC_FRAME_RECV_FUNC *pfnFrameReceive;     /* point to the function which will be called when a frame is received*/
+    EMAC_TRANSMIT_FINISH_FUNC* pfnTransmitFinish;  /*point to the function which will be called when transmit finished*/
+    EMAC_ERR_RECV_FUNC    *pfnErrorReceive;     /* point to an array of functions which will be called error occur. */
+	                                           /* Errors:
+											                     EMAC_ALIGN_ERR 
+														EMAC_RANGE_ERR
+														EMAC_LENGTH_ERR
+														EMAC_SYMBOL_ERR 
+														EMAC_CRC_ERR
+														EMAC_RX_NO_DESC_ERR
+														EMAC_OVERRUN_ERR
+														EMAC_LATE_COLLISION_ERR
+														EMAC_EXCESSIVE_COLLISION_ERR
+														EMAC_EXCESSIVE_DEFER_ERR
+														EMAC_UNDERRUN_ERR
+														EMAC_TX_NO_DESC_ERR
+											      */
+    EMAC_WAKEUP_FUNC *pfnWakeup;               /* point to the function which will be called when receiving wakeup interrupt */
+    SOFT_INT_FUNC *pfnSoftInt;				  /* point to the function which will be called when the interrupt caused by software occurs */					   
+} EMAC_CFG_Type;
+
+/**
+ * @brief EMAC Buffer status definition
+ */
+typedef enum {
+   EMAC_BUFF_EMPTY,                /* buffer is empty */
+   EMAC_BUFF_PARTIAL_FULL,         /* buffer contains some packets */
+   EMAC_BUFF_FULL,                 /* buffer is full */
+} EMAC_BUFF_STATUS;
+
+/**
+ * @brief EMAC Buffer Index definition
+ */
+
+typedef enum {
+	EMAC_TX_BUFF,                   /* transmit buffer */
+    EMAC_RX_BUFF,                   /* receive buffer */
+} EMAC_BUFF_IDX;
 
 /**
  * @}
@@ -497,31 +567,30 @@ typedef void (EMAC_IntCBSType)(void);
  * @{
  */
 
-
+/** Init/DeInit */
 int32_t EMAC_Init(EMAC_CFG_Type *EMAC_ConfigStruct);
 void EMAC_DeInit(void);
-int32_t EMAC_CheckPHYStatus(uint32_t ulPHYState);
-int32_t EMAC_SetPHYMode(uint32_t ulPHYMode);
-int32_t EMAC_UpdatePHYStatus(void);
+
+/** Send/Receive data */
+void EMAC_TxEnable( void );
+void EMAC_RxEnable( void );
 void EMAC_SetHashFilter(uint8_t dstMAC_addr[], FunctionalState NewState);
 int32_t EMAC_CRCCalc(uint8_t frame_no_fcs[], int32_t frame_len);
+void EMAC_WritePacketBuffer(EMAC_PACKETBUF_Type *pDataStruct);
+
+/** PHY Setup */
+void EMAC_Write_PHY (uint8_t PhyReg, uint16_t Value);
+uint16_t EMAC_Read_PHY (uint8_t PhyReg);
+void EMAC_SetFullDuplexMode(uint8_t full_duplex);
+void EMAC_SetPHYSpeed(uint8_t mode_100Mbps);
+
+/** Filter */
 void EMAC_SetFilterMode(uint32_t ulFilterMode, FunctionalState NewState);
 FlagStatus EMAC_GetWoLStatus(uint32_t ulWoLMode);
-void EMAC_WritePacketBuffer(EMAC_PACKETBUF_Type *pDataStruct);
-void EMAC_ReadPacketBuffer(EMAC_PACKETBUF_Type *pDataStruct);
-uint32_t EMAC_GetReadPacketBuffer(void);
-uint32_t EMAC_GetWritePacketBuffer(void);
-uint32_t EMAC_RequestSend(uint16_t FrameSize);
-void EMAC_StandardIRQHandler(void);
-void EMAC_SetupIntCBS(uint32_t ulIntType, EMAC_IntCBSType *pfnIntCb);
 void EMAC_IntCmd(uint32_t ulIntType, FunctionalState NewState);
 IntStatus EMAC_IntGetStatus(uint32_t ulIntType);
-int32_t EMAC_CheckReceiveIndex(void);
-int32_t EMAC_CheckTransmitIndex(void);
-FlagStatus EMAC_CheckReceiveDataStatus(uint32_t ulRxStatType);
-uint32_t EMAC_GetReceiveDataSize(void);
-void EMAC_UpdateRxConsumeIndex(void);
-void EMAC_UpdateTxProduceIndex(void);
+EMAC_BUFF_STATUS EMAC_GetBufferSts(EMAC_BUFF_IDX idx);
+
 
 /**
  * @}

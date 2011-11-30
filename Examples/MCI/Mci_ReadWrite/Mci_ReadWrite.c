@@ -18,7 +18,7 @@
  * use without further testing or modification.
  **********************************************************************/
 
-#include "lpc177x_8x.h"
+#include "LPC177x_8x.h"
 #include "lpc_types.h"
 #include "lpc177x_8x_mci.h"
 #include "lpc177x_8x_gpdma.h"
@@ -31,10 +31,10 @@
  * @{
  */
  
-
-#define DMA_SRC			0x20004000		/* This is the area original data is stored
+#define DMA_SIZE        (1000UL)
+#define DMA_SRC			LPC_PERI_RAM_BASE		/* This is the area original data is stored
 										or data to be written to the SD/MMC card. */
-#define DMA_DST			0x20005000		/* This is the area, after writing to the SD/MMC,
+#define DMA_DST			(DMA_SRC+DMA_SIZE)		/* This is the area, after writing to the SD/MMC,
 										data read from the SD/MMC card. */
 
 uint8_t mciRdWrMenu[]=
@@ -64,13 +64,26 @@ volatile uint8_t *ReadBlock  = (uint8_t *)(DMA_DST);
 uint8_t wrBuf[WRITE_LENGTH]; 
 uint8_t rdBuf[WRITE_LENGTH];
 
+
+#if MCI_DMA_ENABLED
+/******************************************************************************
+**  DMA Handler
+******************************************************************************/
+void DMA_IRQHandler (void)
+{
+   MCI_DMA_IRQHandler();
+}
+#endif
+
+
 /******************************************************************************
 **   Main Function  main()
 ******************************************************************************/
-int main (void)
+void c_entry (void)
 {
 	uint32_t i, j;
-	uint32_t retVal;
+	int32_t retVal = 0;
+	uint8_t error = 0;
 
 	st_Mci_CardId cidval;
 	en_Mci_CardType cardType;
@@ -126,10 +139,11 @@ int main (void)
 
 		case MCI_CARD_UNKNOWN:
 			_DBG_("No CARD is being plugged, Please check!!!");
-			while(1);
+			error = 1;
 			break;
 	}
-
+    if(error)
+    	while(1);
 	if (MCI_GetCID(&cidval) != MCI_FUNC_OK)
 	{
 		_DBG_("Get CID Failed");
@@ -266,9 +280,12 @@ int main (void)
 
 	while(1);
 
-	return 0;
 }
-
+int main(void)
+{
+   c_entry();
+   return 0;
+}
 /******************************************************************************
 **                            End Of File
 ******************************************************************************/

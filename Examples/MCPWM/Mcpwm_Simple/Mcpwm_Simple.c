@@ -22,6 +22,7 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
+#include "LPC177x_8x.h"
 #include "lpc177x_8x_mcpwm.h"
 #include "lpc177x_8x_pinsel.h"
 #include "lpc177x_8x_clkpwr.h"
@@ -116,9 +117,9 @@ void MCPWM_IRQHandler(void)
 /*********************************************************************//**
  * @brief		c_entry: Main MCPWM program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	// MCPWM Channel configuration data
 	MCPWM_CHANNEL_CFG_Type channelsetup[3];
@@ -291,8 +292,6 @@ int c_entry(void)
 #endif
 	}
 
-    /* Loop forever */
-    return 1;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -302,7 +301,8 @@ int c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 /**

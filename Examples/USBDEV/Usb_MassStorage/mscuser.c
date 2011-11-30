@@ -15,7 +15,13 @@
  *
  *      Copyright (c) 2005-2009 Keil Software.
  *---------------------------------------------------------------------------*/
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
 
+#ifdef _USB_DEV_MASS_STORAGE
 #include "LPC177x_8x.h"
 
 #include "lpc_types.h"
@@ -654,5 +660,5 @@ void MSC_BulkOut (void) {
 /**
  * @}
  */
- 
+#endif /*_USB_DEV_MASS_STORAGE*/
 

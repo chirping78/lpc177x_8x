@@ -28,6 +28,12 @@
 /** @addtogroup I2C
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _I2C
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_i2c.h"
@@ -67,9 +73,6 @@ static uint32_t I2C_MonitorBufferIndex;
 
 /* Get pointer to expected I2C */
 static LPC_I2C_TypeDef* I2C_GetPointer(en_I2C_unitId compId);
-
-/* Get I2C number */
-static int32_t I2C_getNum(LPC_I2C_TypeDef *I2Cx);
 
 /* Generate a start condition on I2C bus (in master mode only) */
 static uint32_t I2C_Start (LPC_I2C_TypeDef *I2Cx);
@@ -122,32 +125,6 @@ static LPC_I2C_TypeDef* I2C_GetPointer(en_I2C_unitId compId)
 	return pI2C;
 }
 
-
-/********************************************************************//**
- * @brief		Convert from I2C peripheral to number
- * @param[in]	I2Cx: I2C peripheral selected, should be:
- * 				- LPC_I2C0
- * 				- LPC_I2C1
- * 				- LPC_I2C2
- * @return 		I2C number, could be: 0..2
- *********************************************************************/
-static int32_t I2C_getNum(LPC_I2C_TypeDef *I2Cx)
-{
-	if (I2Cx == LPC_I2C0)
-	{
-		return (0);
-	}
-	else if (I2Cx == LPC_I2C1)
-	{
-		return (1);
-	}
-	else if (I2Cx == LPC_I2C2)
-	{
-		return (2);
-	}
-
-	return (-1);
-}
 
 /********************************************************************//**
  * @brief		Generate a start condition on I2C bus (in master mode only)
@@ -288,9 +265,9 @@ static void I2C_SetClock (LPC_I2C_TypeDef *I2Cx, uint32_t target_clock)
  * 				peripheral (Hz)
  * @return 		None
  *********************************************************************/
-void I2C_Init(uint8_t i2cId, uint32_t clockrate)
+void I2C_Init(en_I2C_unitId i2cId, uint32_t clockrate)
 {
-	uint32_t clkSetting, clkRate;
+	uint32_t clkSetting;
 
 	LPC_I2C_TypeDef* I2Cx = I2C_GetPointer(i2cId);
 
@@ -317,12 +294,7 @@ void I2C_Init(uint8_t i2cId, uint32_t clockrate)
 	CLKPWR_ConfigPPWR (clkSetting, ENABLE);
 
 	/* Set clock rate */
-	clkRate= CLKPWR_GetCLK(CLKPWR_CLKTYPE_PER) / clockrate;
-
-	/* Set the I2C clock value to register */
-	I2Cx->SCLH = (uint32_t)(clkRate / 2);
-
-	I2Cx->SCLL = (uint32_t)(clkRate - I2Cx->SCLH);
+	I2C_SetClock(I2Cx,clockrate);
 
     /* Set I2C operation to default */
     I2Cx->CONCLR = (I2C_I2CONCLR_AAC | I2C_I2CONCLR_STAC | I2C_I2CONCLR_I2ENC);
@@ -337,7 +309,7 @@ void I2C_Init(uint8_t i2cId, uint32_t clockrate)
  *				- LPC_I2C2
  * @return 		None
  **********************************************************************/
-void I2C_DeInit(uint8_t i2cId)
+void I2C_DeInit(en_I2C_unitId i2cId)
 {
 	uint32_t clkSetting;
 
@@ -378,7 +350,7 @@ void I2C_DeInit(uint8_t i2cId)
  * @param[in]	NewState New State of I2Cx peripheral's operation
  * @return 		none
  **********************************************************************/
-void I2C_Cmd(uint8_t i2cId, FunctionalState NewState)
+void I2C_Cmd(en_I2C_unitId i2cId, FunctionalState NewState)
 {
 	LPC_I2C_TypeDef* I2Cx = I2C_GetPointer(i2cId);
 
@@ -404,7 +376,7 @@ void I2C_Cmd(uint8_t i2cId, FunctionalState NewState)
  * 				- DISABLE: disable interrupt for this I2C peripheral
  * @return 		None
  **********************************************************************/
-void I2C_IntCmd (uint8_t i2cId, Bool NewState)
+void I2C_IntCmd (en_I2C_unitId i2cId, Bool NewState)
 {
 	IRQn_Type irq;
 
@@ -448,7 +420,7 @@ void I2C_IntCmd (uint8_t i2cId, Bool NewState)
  * 				- LPC_I2C2
  * @return 		None
  **********************************************************************/
-void I2C_MasterHandler(uint8_t i2cId)
+void I2C_MasterHandler(en_I2C_unitId i2cId)
 {
 	LPC_I2C_TypeDef* I2Cx = I2C_GetPointer(i2cId);
 
@@ -558,7 +530,7 @@ void I2C_MasterHandler(uint8_t i2cId)
 			case I2C_I2STAT_M_TX_ARB_LOST:
 				// update status
 				txrx_setup->status |= I2C_SETUP_STATUS_ARBF;
-
+				break;				
 			default:
 				goto retry;
 		}
@@ -658,7 +630,7 @@ void I2C_MasterHandler(uint8_t i2cId)
 			case I2C_I2STAT_M_RX_ARB_LOST:
 				// update status
 				txrx_setup->status |= I2C_SETUP_STATUS_ARBF;
-
+				break;
 			default:
 	retry:
 				// check if retransmission is available
@@ -678,7 +650,7 @@ void I2C_MasterHandler(uint8_t i2cId)
 				{
 	end_stage:
 					// Disable interrupt
-					I2C_IntCmd(i2cId, 0);
+					I2C_IntCmd(i2cId, FALSE);
 
 					// Send stop
 					I2C_Stop(I2Cx);
@@ -699,7 +671,7 @@ void I2C_MasterHandler(uint8_t i2cId)
  *  			- LPC_I2C2
  * @return 		None
  **********************************************************************/
-void I2C_SlaveHandler (uint8_t i2cId)
+void I2C_SlaveHandler (en_I2C_unitId i2cId)
 {
 	LPC_I2C_TypeDef* I2Cx = I2C_GetPointer(i2cId);
 
@@ -784,7 +756,7 @@ void I2C_SlaveHandler (uint8_t i2cId)
 		/* A Stop or a repeat start condition */
 		case I2C_I2STAT_S_RX_STA_STO_SLVREC_SLVTRX:
 			// Temporally lock the interrupt for timeout condition
-			I2C_IntCmd(i2cId, 0);
+			I2C_IntCmd(i2cId, FALSE);
 
 			I2Cx->CONCLR = I2C_I2CONCLR_SIC;
 			// enable time out
@@ -794,7 +766,7 @@ void I2C_SlaveHandler (uint8_t i2cId)
 				if (I2Cx->CONSET & I2C_I2CONSET_SI)
 				{
 					// re-Enable interrupt
-					I2C_IntCmd(i2cId, 1);
+					I2C_IntCmd(i2cId, TRUE);
 
 					break;
 				}
@@ -852,7 +824,7 @@ void I2C_SlaveHandler (uint8_t i2cId)
 		default:
 	s_int_end:
 			// Disable interrupt
-			I2C_IntCmd(i2cId, 0);
+			I2C_IntCmd(i2cId, FALSE);
 
 			I2Cx->CONCLR = I2C_I2CONCLR_AAC | I2C_I2CONCLR_SIC | I2C_I2CONCLR_STAC;
 
@@ -883,7 +855,7 @@ void I2C_SlaveHandler (uint8_t i2cId)
  * transmit data pointer, receive length and receive data pointer should be set
  * corresponding.
  **********************************************************************/
-Status I2C_MasterTransferData(uint8_t i2cId, I2C_M_SETUP_Type *TransferCfg,
+Status I2C_MasterTransferData(en_I2C_unitId i2cId, I2C_M_SETUP_Type *TransferCfg,
 																	I2C_TRANSFER_OPT_Type Opt)
 {
 	LPC_I2C_TypeDef* I2Cx = I2C_GetPointer(i2cId);
@@ -1046,7 +1018,7 @@ retry:
 				if (TransferCfg->rx_count < (TransferCfg->rx_length - 1))
 				{
 					// Issue an ACK signal for next data frame
-					CodeStatus = I2C_GetByte(I2Cx, &tmp, 1);
+					CodeStatus = I2C_GetByte(I2Cx, &tmp, TRUE);
 
 					if (CodeStatus != I2C_I2STAT_M_RX_DAT_ACK)
 					{
@@ -1068,7 +1040,7 @@ retry:
 				else
 				{
 					// Do not issue an ACK signal
-					CodeStatus = I2C_GetByte(I2Cx, &tmp, 0);
+					CodeStatus = I2C_GetByte(I2Cx, &tmp, FALSE);
 
 					if (CodeStatus != I2C_I2STAT_M_RX_DAT_NACK)
 					{
@@ -1118,7 +1090,7 @@ error:
 		I2Cx->CONCLR = I2C_I2CONCLR_SIC;
 		I2Cx->CONSET = I2C_I2CONSET_STA;
 
-		I2C_IntCmd(i2cId, 1);
+		I2C_IntCmd(i2cId, TRUE);
 
 		return (SUCCESS);
 	}
@@ -1157,7 +1129,7 @@ error:
  * value.
  * - In case of writing operation (from master): slave will ignore remain data from master.
  **********************************************************************/
-Status I2C_SlaveTransferData(uint8_t i2cId, I2C_S_SETUP_Type *TransferCfg,
+Status I2C_SlaveTransferData(en_I2C_unitId i2cId, I2C_S_SETUP_Type *TransferCfg,
 																	I2C_TRANSFER_OPT_Type Opt)
 {
 	LPC_I2C_TypeDef* I2Cx = I2C_GetPointer(i2cId);
@@ -1343,7 +1315,7 @@ s_error:
 		// Enable AA
 		I2Cx->CONSET = I2C_I2CONSET_AA;
 		I2Cx->CONCLR = I2C_I2CONCLR_SIC | I2C_I2CONCLR_STAC;
-		I2C_IntCmd(i2cId, 1);
+		I2C_IntCmd(i2cId, TRUE);
 
 		return (SUCCESS);
 	}
@@ -1363,7 +1335,7 @@ s_error:
 *               specified I2C slave address.
  * @return 		None
  **********************************************************************/
-void I2C_SetOwnSlaveAddr(uint8_t i2cId, I2C_OWNSLAVEADDR_CFG_Type *OwnSlaveAddrConfigStruct)
+void I2C_SetOwnSlaveAddr(en_I2C_unitId i2cId, I2C_OWNSLAVEADDR_CFG_Type *OwnSlaveAddrConfigStruct)
 {
 	LPC_I2C_TypeDef* I2Cx = I2C_GetPointer(i2cId);
 
@@ -1423,7 +1395,7 @@ void I2C_SetOwnSlaveAddr(uint8_t i2cId, I2C_OWNSLAVEADDR_CFG_Type *OwnSlaveAddrC
  * 				- DISABLE: Disable this function.
  * @return		None
  **********************************************************************/
-void I2C_MonitorModeConfig(uint8_t i2cId, uint32_t MonitorCfgType, FunctionalState NewState)
+void I2C_MonitorModeConfig(en_I2C_unitId i2cId, uint32_t MonitorCfgType, FunctionalState NewState)
 {
 	LPC_I2C_TypeDef* I2Cx = I2C_GetPointer(i2cId);
 
@@ -1449,7 +1421,7 @@ void I2C_MonitorModeConfig(uint8_t i2cId, uint32_t MonitorCfgType, FunctionalSta
  * 				- DISABLE: Disable monitor mode.
  * @return		None
  **********************************************************************/
-void I2C_MonitorModeCmd(uint8_t i2cId, FunctionalState NewState)
+void I2C_MonitorModeCmd(en_I2C_unitId i2cId, FunctionalState NewState)
 {
 	LPC_I2C_TypeDef* I2Cx = I2C_GetPointer(i2cId);
 
@@ -1484,7 +1456,7 @@ void I2C_MonitorModeCmd(uint8_t i2cId, FunctionalState NewState)
  * respond to the interrupt before the received data is overwritten by
  * new data.
  **********************************************************************/
-uint8_t I2C_MonitorGetDatabuffer(uint8_t i2cId)
+uint8_t I2C_MonitorGetDatabuffer(en_I2C_unitId i2cId)
 {
 	LPC_I2C_TypeDef* I2Cx = I2C_GetPointer(i2cId);
 
@@ -1506,7 +1478,7 @@ uint8_t I2C_MonitorGetDatabuffer(uint8_t i2cId)
  * respond to the interrupt before the received data is overwritten by
  * new data.
  **********************************************************************/
-BOOL_8 I2C_MonitorHandler(uint8_t i2cId, uint8_t *buffer, uint32_t size)
+BOOL_8 I2C_MonitorHandler(en_I2C_unitId i2cId, uint8_t *buffer, uint32_t size)
 {
 	LPC_I2C_TypeDef* I2Cx = I2C_GetPointer(i2cId);
 
@@ -1534,7 +1506,7 @@ BOOL_8 I2C_MonitorHandler(uint8_t i2cId, uint8_t *buffer, uint32_t size)
  * 				- TRUE	master transfer completed
  * 				- FALSE master transfer have not completed yet
  **********************************************************************/
-uint32_t I2C_MasterTransferComplete(uint8_t i2cId)
+uint32_t I2C_MasterTransferComplete(en_I2C_unitId i2cId)
 {
 	uint32_t retval;
 
@@ -1553,7 +1525,7 @@ uint32_t I2C_MasterTransferComplete(uint8_t i2cId)
  *				- LPC_I2C2
  * @return 		Complete status, could be: TRUE/FALSE
  **********************************************************************/
-uint32_t I2C_SlaveTransferComplete(uint8_t i2cId)
+uint32_t I2C_SlaveTransferComplete(en_I2C_unitId i2cId)
 {
 	uint32_t retval;
 
@@ -1564,7 +1536,7 @@ uint32_t I2C_SlaveTransferComplete(uint8_t i2cId)
 	return retval;
 }
 
-
+#endif /*_I2C*/
 
 /**
  * @}

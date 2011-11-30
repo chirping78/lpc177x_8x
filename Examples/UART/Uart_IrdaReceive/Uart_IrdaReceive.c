@@ -44,9 +44,9 @@
 /*********************************************************************//**
  * @brief		c_entry: Main UART program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	// UART Configuration structure variable
 	UART_CFG_Type UARTConfigStruct;
@@ -129,7 +129,6 @@ int c_entry(void)
 		Pca9532_LedOutputControl(&pca9532Cfg);
 	}
 
-    return 1;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -139,7 +138,8 @@ int c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

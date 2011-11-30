@@ -23,10 +23,9 @@
 # warranty that such application will be suitable for the specified 
 # use without further testing or modification. 
 ########################################################################
-
+PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =uart_fullmodem_test
-EXDIR		=UART/UART1_FullModem
-
+EXDIR		=UART/Uart_FullModem
 
 
 ########################################################################

@@ -40,7 +40,7 @@
 #define NOR_FLASH_BASE		0x80000000
 #define NOR_FLASH_SIZE		0x00100000
 
-#define GET_ADDR(addr)	(volatile uint16_t *)(NOR_FLASH_BASE | (addr<<1))
+#define GET_ADDR(addr)	(volatile uint16_t *)(NOR_FLASH_BASE | ((addr)<<1))
 
 #define SECTOR_SIZE		0x800	/* Must be 2048 words for 39VF160 */
 #define BLOCK_SIZE		0x8000	/* Must be 32K words for 39VF160  */

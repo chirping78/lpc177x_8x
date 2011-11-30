@@ -28,6 +28,12 @@
 /** @addtogroup RTC
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _RTC
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_rtc.h"
@@ -695,7 +701,7 @@ uint32_t RTC_ReadGPREG (LPC_RTC_TypeDef *RTCx, uint8_t Channel)
  * @}
  */
 
-
+#endif /*_RTC*/
 /**
  * @}
  */

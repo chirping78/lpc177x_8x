@@ -112,22 +112,22 @@ extern "C"
  * - MCPWM Control clear address
  */
 /** Stops/starts timer channel n */
-#define MCPWM_CON_RUN(n)		(((n>=0)&&(n<=2)) ? ((uint32_t)(1<<((n*8)+0))) : (0))
+#define MCPWM_CON_RUN(n)		((n < MCPWM_MAX_CHANNEL) ? ((uint32_t)(1<<((n*8)+0))) : (0))
 /** Edge/center aligned operation for channel n */
-#define MCPWM_CON_CENTER(n)		(((n>=0)&&(n<=2)) ? ((uint32_t)(1<<((n*8)+1))) : (0))
+#define MCPWM_CON_CENTER(n)		((n < MCPWM_MAX_CHANNEL) ? ((uint32_t)(1<<((n*8)+1))) : (0))
 /** Select polarity of the MCOAn and MCOBn pin */
-#define MCPWM_CON_POLAR(n)		(((n>=0)&&(n<=2)) ? ((uint32_t)(1<<((n*8)+2))) : (0))
+#define MCPWM_CON_POLAR(n)		((n < MCPWM_MAX_CHANNEL) ? ((uint32_t)(1<<((n*8)+2))) : (0))
 /** Control the dead-time feature for channel n */
-#define MCPWM_CON_DTE(n)		(((n>=0)&&(n<=2)) ? ((uint32_t)(1<<((n*8)+3))) : (0))
+#define MCPWM_CON_DTE(n)		((n < MCPWM_MAX_CHANNEL) ? ((uint32_t)(1<<((n*8)+3))) : (0))
 /** Enable/Disable update of functional register for channel n */
-#define MCPWM_CON_DISUP(n)		(((n>=0)&&(n<=2)) ? ((uint32_t)(1<<((n*8)+4))) : (0))
+#define MCPWM_CON_DISUP(n)		((n < MCPWM_MAX_CHANNEL) ? ((uint32_t)(1<<((n*8)+4))) : (0))
 
 /** Control the polarity for all 3 channels */
-#define MCPWM_CON_INVBDC		((uint32_t)(1<<29))
+#define MCPWM_CON_INVBDC		((uint32_t)((uint32_t)1<<29))
 /** 3-phase AC mode select */
-#define MCPWM_CON_ACMODE		((uint32_t)(1<<30))
+#define MCPWM_CON_ACMODE		((uint32_t)((uint32_t)1<<30))
 /** 3-phase DC mode select */
-#define MCPWM_CON_DCMODE		((uint32_t)(1<<31))
+#define MCPWM_CON_DCMODE		((uint32_t)((uint32_t)1<<31))
 
 /*********************************************************************//**
  * Macro defines for MCPWM Capture Control register
@@ -139,13 +139,13 @@ extern "C"
  * - MCPWM Capture control clear address
  */
 /** Enables/Disable channel (cap) capture event on a rising edge on MCI(mci) */
-#define MCPWM_CAPCON_CAPMCI_RE(cap,mci)	(((cap>=0)&&(cap<=2)&&(mci>=0)&&(mci<=2)) ? ((uint32_t)(1<<((cap*6)+(mci*2)+0))) : (0))
+#define MCPWM_CAPCON_CAPMCI_RE(cap,mci)	(((cap < MCPWM_MAX_CHANNEL)&&(mci < MCPWM_MAX_CHANNEL)) ? ((uint32_t)(1<<((cap*6)+(mci*2)+0))) : (0))
 /** Enables/Disable channel (cap) capture event on a falling edge on MCI(mci) */
-#define MCPWM_CAPCON_CAPMCI_FE(cap,mci)	(((cap>=0)&&(cap<=2)&&(mci>=0)&&(mci<=2)) ? ((uint32_t)(1<<((cap*6)+(mci*2)+1))) : (0))
+#define MCPWM_CAPCON_CAPMCI_FE(cap,mci)	(((cap < MCPWM_MAX_CHANNEL)&&(mci < MCPWM_MAX_CHANNEL)) ? ((uint32_t)(1<<((cap*6)+(mci*2)+1))) : (0))
 /** TC(n) is reset by channel (n) capture event */
-#define MCPWM_CAPCON_RT(n)				(((n>=0)&&(n<=2)) ? ((uint32_t)(1<<(18+(n)))) : (0))
+#define MCPWM_CAPCON_RT(n)				((n < MCPWM_MAX_CHANNEL) ? ((uint32_t)(1<<(18+(n)))) : (0))
 /** Hardware noise filter: channel (n) capture events are delayed */
-#define MCPWM_CAPCON_HNFCAP(n)			(((n>=0)&&(n<=2)) ? ((uint32_t)(1<<(21+(n)))) : (0))
+#define MCPWM_CAPCON_HNFCAP(n)			((n < MCPWM_MAX_CHANNEL) ? ((uint32_t)(1<<(21+(n)))) : (0))
 
 /*********************************************************************//**
  * Macro defines for MCPWM Interrupt register
@@ -160,11 +160,11 @@ extern "C"
  * - MCPWM Interrupt Flags clear address
  */
 /** Limit interrupt for channel (n) */
-#define MCPWM_INT_ILIM(n)	(((n>=0)&&(n<=2)) ? ((uint32_t)(1<<((n*4)+0))) : (0))
+#define MCPWM_INT_ILIM(n)	((n < MCPWM_MAX_CHANNEL) ? ((uint32_t)(1<<((n*4)+0))) : (0))
 /** Match interrupt for channel (n) */
-#define MCPWM_INT_IMAT(n)	(((n>=0)&&(n<=2)) ? ((uint32_t)(1<<((n*4)+1))) : (0))
+#define MCPWM_INT_IMAT(n)	((n < MCPWM_MAX_CHANNEL) ? ((uint32_t)(1<<((n*4)+1))) : (0))
 /** Capture interrupt for channel (n) */
-#define MCPWM_INT_ICAP(n)	(((n>=0)&&(n<=2)) ? ((uint32_t)(1<<((n*4)+2))) : (0))
+#define MCPWM_INT_ICAP(n)	((n < MCPWM_MAX_CHANNEL) ? ((uint32_t)(1<<((n*4)+2))) : (0))
 
 /** Fast abort interrupt */
 #define MCPWM_INT_ABORT		((uint32_t)(1<<15))
@@ -179,17 +179,17 @@ extern "C"
  * - MCPWM Count Control clear address
  */
 /** Counter(tc) advances on a rising edge on MCI(mci) pin */
-#define MCPWM_CNTCON_TCMCI_RE(tc,mci)	(((tc>=0)&&(tc<=2)&&(mci>=0)&&(mci<=2)) ? ((uint32_t)(1<<((6*tc)+(2*mci)+0))) : (0))
+#define MCPWM_CNTCON_TCMCI_RE(tc,mci)	(((tc < MCPWM_MAX_CHANNEL)&&(mci < MCPWM_MAX_CHANNEL)) ? ((uint32_t)(1<<((6*tc)+(2*mci)+0))) : (0))
 /** Counter(cnt) advances on a falling edge on MCI(mci) pin */
-#define MCPWM_CNTCON_TCMCI_FE(tc,mci)	(((tc>=0)&&(tc<=2)&&(mci>=0)&&(mci<=2)) ? ((uint32_t)(1<<((6*tc)+(2*mci)+1))) : (0))
+#define MCPWM_CNTCON_TCMCI_FE(tc,mci)	(((tc < MCPWM_MAX_CHANNEL)&&(mci < MCPWM_MAX_CHANNEL)) ? ((uint32_t)(1<<((6*tc)+(2*mci)+1))) : (0))
 /** Channel (n) is in counter mode */
-#define MCPWM_CNTCON_CNTR(n)			(((n>=0)&&(n<=2)) ? ((uint32_t)(1<<(29+n))) : (0))
+#define MCPWM_CNTCON_CNTR(n)			((n < MCPWM_MAX_CHANNEL) ? ((uint32_t)(1<<(29+n))) : (0))
 
 /*********************************************************************//**
  * Macro defines for MCPWM Dead-time register
  **********************************************************************/
 /** Dead time value x for channel n */
-#define MCPWM_DT(n,x)		(((n>=0)&&(n<=2)) ? ((uint32_t)((x&0x3FF)<<(n*10))) : (0))
+#define MCPWM_DT(n,x)		((n < MCPWM_MAX_CHANNEL) ? ((uint32_t)((x&0x3FF)<<(n*10))) : (0))
 
 /*********************************************************************//**
  * Macro defines for MCPWM Communication Pattern register
@@ -205,7 +205,7 @@ extern "C"
  * Macro defines for MCPWM Capture clear address register
  **********************************************************************/
 /** Clear the MCCAP (n) register */
-#define MCPWM_CAPCLR_CAP(n)		(((n>=0)&&(n<=2)) ? ((uint32_t)(1<<n)) : (0))
+#define MCPWM_CAPCLR_CAP(n)		((n < MCPWM_MAX_CHANNEL) ? ((uint32_t)(1<<n)) : (0))
 
 
 /**
@@ -222,7 +222,8 @@ typedef enum
 {
 	MCPWM_CHANNEL_0 = 0,
 	MCPWM_CHANNEL_1,
-	MCPWM_CHANNEL_2
+	MCPWM_CHANNEL_2,
+	MCPWM_MAX_CHANNEL,
 } en_MCPWM_Channel_Id;
 
 

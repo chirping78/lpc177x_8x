@@ -28,6 +28,12 @@
 /** @addtogroup QEI
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _QEI
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_qei.h"
@@ -287,7 +293,6 @@ void QEI_SetTimerReload(uint8_t qeiId, QEI_RELOADCFG_Type *QEIReloadStruct)
 	LPC_QEI_TypeDef* pQei = QEI_GetPointer(qeiId);
 	uint64_t pclk;
 
-	uint32_t ld = 0;
 
 	if (QEIReloadStruct->ReloadOption == QEI_TIMERRELOAD_TICKVAL)
 	{
@@ -578,7 +583,7 @@ uint32_t QEI_CalculateRPM(uint8_t qeiId, uint32_t ulVelCapValue, uint32_t ulPPR)
  * @}
  */
 
-
+#endif /*_QEI*/
 
 /**
  * @}

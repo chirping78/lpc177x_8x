@@ -28,6 +28,12 @@
 /** @addtogroup WWDT
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _WDT
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_wwdt.h"
@@ -49,9 +55,9 @@
  *
  * @return		None
  *********************************************************************/
-uint8_t WWDT_SetTimeOutRaw(uint32_t timeoutVal)
+int8_t WWDT_SetTimeOutRaw(uint32_t timeoutVal)
 {
-	uint8_t retval = 0;
+	int8_t retval = 0;
 
 	if(timeoutVal < WWDT_TIMEOUT_MIN)
 	{
@@ -78,7 +84,7 @@ uint8_t WWDT_SetTimeOutRaw(uint32_t timeoutVal)
  *
  * @return		WWDT_FUNC_OK if success
  *********************************************************************/
-uint8_t WWDT_SetTimeOut(uint32_t timeout)
+int8_t WWDT_SetTimeOut(uint32_t timeout)
 {
 	return WWDT_SetTimeOutRaw(WDT_GET_FROM_USEC(timeout));
 }
@@ -92,7 +98,7 @@ uint8_t WWDT_SetTimeOut(uint32_t timeout)
 *
 * @return	   WWDT_FUNC_OK if success
  **********************************************************************/
-uint8_t WWDT_Init(uint32_t TimeOut)
+int8_t WWDT_Init(uint32_t TimeOut)
 {
 	return WWDT_SetTimeOut(TimeOut);
 }
@@ -148,9 +154,9 @@ void WWDT_Configure(st_Wdt_Config wdtCfg)
  *
  * @return		WWDT_FUNC_OK if success
  **********************************************************************/
-uint8_t WWDT_Start(uint32_t TimeOut)
+int8_t WWDT_Start(uint32_t TimeOut)
 {
-	uint8_t retval = WWDT_FUNC_OK;
+	int8_t retval = WWDT_FUNC_OK;
 
 	retval = WWDT_SetTimeOut(TimeOut);
 
@@ -257,9 +263,9 @@ void WWDT_Cmd(FunctionalState NewState)
  *
  * @return		WWDT_FUNC_OK if success
  *********************************************************************/
-uint8_t WWDT_SetWarningRaw(uint32_t warnVal)
+int8_t WWDT_SetWarningRaw(uint32_t warnVal)
 {
-	uint8_t retval = WWDT_FUNC_OK;
+	int8_t retval = WWDT_FUNC_OK;
 
 	if(warnVal < WWDT_WARNINT_MIN)
 	{
@@ -285,7 +291,7 @@ uint8_t WWDT_SetWarningRaw(uint32_t warnVal)
  *
  * @return		WWDT_FUNC_OK if success
  *********************************************************************/
-uint8_t WWDT_SetWarning(uint32_t WarnTime)
+int8_t WWDT_SetWarning(uint32_t WarnTime)
 {
 	return WWDT_SetWarningRaw(WDT_GET_FROM_USEC(WarnTime));
 }
@@ -300,9 +306,9 @@ uint8_t WWDT_SetWarning(uint32_t WarnTime)
  *
  * @return		WWDT_FUNC_OK if success
  *********************************************************************/
-uint8_t WWDT_SetWindowRaw(uint32_t wndVal)
+int8_t WWDT_SetWindowRaw(uint32_t wndVal)
 {
-	uint8_t retval = WWDT_FUNC_OK;
+	int8_t retval = WWDT_FUNC_OK;
 
 	if(wndVal < WWDT_WINDOW_MIN)
 	{
@@ -329,7 +335,7 @@ uint8_t WWDT_SetWindowRaw(uint32_t wndVal)
  *
  * @return		WWDT_FUNC_OK if success
  *********************************************************************/
-uint8_t WWDT_SetWindow(uint32_t WindowedTime)
+int8_t WWDT_SetWindow(uint32_t WindowedTime)
 {
 	return WWDT_SetWindowRaw(WDT_GET_FROM_USEC(WindowedTime));
 }
@@ -378,6 +384,7 @@ FlagStatus WWDT_GetStatus (uint8_t Status)
 	{
 		return ((FlagStatus)(LPC_WDT->MOD & (1<<2)));
 	}
+	return RESET;
 }
 
 /********************************************************************//**
@@ -463,7 +470,7 @@ uint32_t WWDT_GetCurrentCount(void)
  * @}
  */
 
-
+#endif /*_WDT*/
 /**
  * @}
  */

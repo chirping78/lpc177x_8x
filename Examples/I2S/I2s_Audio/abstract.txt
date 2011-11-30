@@ -34,15 +34,10 @@
 			- frequency = 44.1Khz (maximum is 96kHz)
       - enable transmit interrupt mode
       - Irq TXFIFO depth = 4
-    Using I2S DAC IC: UDA1380 to display audio sound via headphone.	Disable/Enable
-	SYSCLK of UDA1380 by update macro UDA1380_SYSCLK_USED.
+    Using I2S DAC IC: UDA1380 to display audio sound via headphone.	
+    Disable/Enable SYSCLK of UDA1380 by update macro UDA1380_SYSCLK_USED.
     Audio data will be copy in tx_buffer to send to TXFIFO register, after half of 
     buffer have been sent already, call I2S_Callback() function to re-fill data.
-
-	This music data was sampled at: 
-		- 44100 bps
-		- 16 bit
-		- mono
 
 @Directory contents:
 	\EWARM: includes EWARM (IAR) project and configuration files
@@ -59,7 +54,7 @@
 			
 		I2S connection:
 			    + JP 25~27: 2-3
-				+ If SYSCLK is used for UDA1380: set JP28 ON. 
+			    + If SYSCLK is used for UDA1380: set JP28 ON. 
         	
 	Running mode:
 		This example can run only on ROM mode.

@@ -71,9 +71,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main ADC program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
     uint32_t FlashID;
     uint32_t i;
@@ -184,7 +184,6 @@ int c_entry(void)
 
     _DBG_("Verifying complete! Testing terminated!");
     while (1);
-    return 1;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -194,7 +193,8 @@ int c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

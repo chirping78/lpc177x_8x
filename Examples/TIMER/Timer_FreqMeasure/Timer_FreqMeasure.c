@@ -23,7 +23,7 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
-
+#include "LPC177x_8x.h"
 #include "lpc177x_8x_timer.h"
 #include "lpc177x_8x_pinsel.h"
 #include "debug_frmwrk.h"
@@ -102,9 +102,9 @@ void print_menu(void);
  **********************************************************************/
 void TIMER0_IRQHandler(void)
 {
-	if (TIM_GetIntCaptureStatus(_MEASURE_TIM, 0))
+	if (TIM_GetIntCaptureStatus(_MEASURE_TIM, TIM_MR0_INT))
 	{
-		TIM_ClearIntCapturePending(_MEASURE_TIM, 0);
+		TIM_ClearIntCapturePending(_MEASURE_TIM, TIM_MR0_INT);
 
 		if(first_capture == TRUE)
 		{
@@ -125,7 +125,7 @@ void TIMER0_IRQHandler(void)
 
 			done = TRUE;
 
-			capture = TIM_GetCaptureValue(_MEASURE_TIM, 0);
+			capture = TIM_GetCaptureValue(_MEASURE_TIM, TIM_COUNTER_INCAP0);
 		}
 	}
 }
@@ -138,9 +138,9 @@ void TIMER0_IRQHandler(void)
  **********************************************************************/
 void TIMER2_IRQHandler(void)
 {
-	if (TIM_GetIntCaptureStatus(_MEASURE_TIM, 0))
+	if (TIM_GetIntCaptureStatus(_MEASURE_TIM, TIM_MR0_INT))
 	{
-		TIM_ClearIntCapturePending(_MEASURE_TIM, 0);
+		TIM_ClearIntCapturePending(_MEASURE_TIM, TIM_MR0_INT);
 
 		if(first_capture == TRUE)
 		{
@@ -161,7 +161,7 @@ void TIMER2_IRQHandler(void)
 
 			done = TRUE;
 
-			capture = TIM_GetCaptureValue(_MEASURE_TIM, 0);
+			capture = TIM_GetCaptureValue(_MEASURE_TIM, TIM_COUNTER_INCAP0);
 		}
 	}
 }
@@ -183,9 +183,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main TIMER program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	TIM_MATCHCFG_Type TIM_MatchConfigStruct;
 	uint8_t idx;
@@ -353,16 +353,13 @@ int c_entry(void)
 
 		while((_DG != 'c') && (_DG != 'C'));
 	}
-
-	while (1);
-
-	return 1;
 }
 
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 

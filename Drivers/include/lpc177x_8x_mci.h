@@ -149,11 +149,12 @@ support all the SD and MMC card. */
 	2						4
 	1						2
 */
-
+/* This is the size of the buffer of origin data */
+#define MCI_DMA_SIZE            (1000UL)
 /* This is the area original data is stored or data to be written to the SD/MMC card. */
-#define MCI_DMA_SRC_ADDR		0x20004000
+#define MCI_DMA_SRC_ADDR		LPC_PERI_RAM_BASE
 /* This is the area, after reading from the SD/MMC*/
-#define MCI_DMA_DST_ADDR		0x20005000
+#define MCI_DMA_DST_ADDR		(MCI_DMA_SRC_ADDR + MCI_DMA_SIZE)
 
 
 /* To simplify the programming, please note that, BLOCK_LENGTH is a multiple
@@ -323,35 +324,38 @@ typedef struct mci_cid
  * @{
  */
 
-uint32_t MCI_Init(uint8_t powerActiveLevel );
+int32_t MCI_Init(uint8_t powerActiveLevel );
 void  MCI_SendCmd( uint32_t CmdIndex, uint32_t Argument, uint32_t ExpectResp, uint32_t AllowTimeout );
-uint32_t MCI_GetCmdResp( uint32_t CmdIndex, uint32_t NeedRespFlag, uint32_t *CmdRespStatus );
-uint32_t MCI_CmdResp(uint32_t CmdIndex, uint32_t Argument,
+int32_t MCI_GetCmdResp( uint32_t CmdIndex, uint32_t NeedRespFlag, uint32_t *CmdRespStatus );
+int32_t MCI_CmdResp(uint32_t CmdIndex, uint32_t Argument,
 								uint32_t ExpectResp, uint32_t *CmdResp, uint32_t AllowTimeout);
 
 void  MCI_Set_MCIClock( uint32_t clockrate );
-uint32_t MCI_SetBusWidth( uint32_t width );
-uint32_t MCI_Acmd_SendOpCond(uint8_t hcsVal);
-uint32_t MCI_CardInit( void );
+int32_t MCI_SetBusWidth( uint32_t width );
+int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal);
+int32_t MCI_CardInit( void );
 en_Mci_CardType MCI_GetCardType(void);
-uint32_t MCI_CardReset( void );
-uint32_t MCI_Cmd_SendIfCond(void);
-uint32_t MCI_GetCID(st_Mci_CardId* cidValue);
-uint32_t MCI_SetCardAddress( void );
-uint32_t MCI_GetCSD(uint32_t* csdVal);
-uint32_t MCI_Cmd_SelectCard( void );
-uint32_t MCI_GetCardStatus(uint32_t* cardStatus);
+int32_t MCI_CardReset( void );
+int32_t MCI_Cmd_SendIfCond(void);
+int32_t MCI_GetCID(st_Mci_CardId* cidValue);
+int32_t MCI_SetCardAddress( void );
+uint32_t MCI_GetCardAddress(void);
+int32_t MCI_GetCSD(uint32_t* csdVal);
+int32_t MCI_Cmd_SelectCard( void );
+int32_t MCI_GetCardStatus(int32_t* cardStatus);
 uint32_t MCI_GetDataXferEndState(void);
-uint32_t MCI_SetBlockLen( uint32_t blockLength );
-uint32_t MCI_Acmd_SendBusWidth( uint32_t buswidth );
-uint32_t MCI_Cmd_StopTransmission( void );
+int32_t MCI_SetBlockLen( uint32_t blockLength );
+int32_t MCI_Acmd_SendBusWidth( uint32_t buswidth );
+int32_t MCI_Cmd_StopTransmission( void );
 
-uint32_t MCI_Cmd_WriteBlock(uint32_t blockNum, uint32_t numOfBlock);
-uint32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock);
+int32_t MCI_Cmd_WriteBlock(uint32_t blockNum, uint32_t numOfBlock);
+int32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock);
 
-uint32_t MCI_WriteBlock(uint8_t* memblock, uint32_t blockNum, uint32_t numOfBlock);
-uint32_t MCI_ReadBlock(uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBlock);
-
+int32_t MCI_WriteBlock(uint8_t* memblock, uint32_t blockNum, uint32_t numOfBlock);
+int32_t MCI_ReadBlock(uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBlock);
+#if MCI_DMA_ENABLED
+void     MCI_DMA_IRQHandler (void);
+#endif
 
 /**
  * @}

@@ -22,7 +22,7 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
- 
+#include "lpc_types.h"
 #include "lpc177x_8x_wwdt.h"
 #include "lpc177x_8x_pinsel.h"
 #include "debug_frmwrk.h"
@@ -91,14 +91,12 @@ void DoWdtValidFeed(void)
 /*********************************************************************//**
  * @brief		c_entry: Main WDT program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
-	uint32_t delay, cnt, wdtReset;
-	uint32_t wdt_CntVal = 0;
+	uint32_t cnt, wdtReset;
 
-	uint32_t val = 0;
 
 	/* Initialize debug via UART0
 	 * – 115200bps
@@ -148,7 +146,6 @@ int c_entry(void)
 
 	for(cnt = 0; cnt < 256; cnt++);
 
-	wdt_CntVal = WWDT_GetCurrentCount();
 
 	WWDT_FeedStdSeq();
 
@@ -162,13 +159,13 @@ int c_entry(void)
 
 	while(1);
 
-	return 1;
 }
 
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 

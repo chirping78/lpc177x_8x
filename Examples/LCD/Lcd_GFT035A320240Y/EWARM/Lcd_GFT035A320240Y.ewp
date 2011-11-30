@@ -694,7 +694,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\linker\ldscript_irom_iar.icf</state>
+          <state>$PROJ_DIR$\..\..\..\..\makesection\makerule\linker\ldscript_irom_iar.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -937,6 +937,9 @@
       <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_clkpwr.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_emc.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_i2c.c</name>
     </file>
     <file>
@@ -949,7 +952,16 @@
       <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_pwm.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_timer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\BoardSupport\sdram_is42s32800d.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\BoardSupport\sdram_k4s561632j.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\BoardSupport\sdram_mt48lc8m32lfb5.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\BoardSupport\sensor_smb380.c</name>

@@ -28,6 +28,12 @@
 /** @addtogroup PWM
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _PWM
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_pwm.h"
@@ -196,7 +202,6 @@ void PWM_Init(uint8_t pwmId, uint32_t PWMTimerCounterMode, void *PWM_ConfigStruc
 	{
 		//Trap the error
 		while(1);
-		return;
 	}
 
 	// Get peripheral clock of PWM1
@@ -560,6 +565,7 @@ void PWM_ChannelCmd(uint8_t pwmId, uint8_t PWMChannel, FunctionalState NewState)
  * @}
  */
 
+#endif /*_PWM*/
 /**
  * @}
  */

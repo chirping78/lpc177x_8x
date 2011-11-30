@@ -26,7 +26,7 @@
 
 #ifndef USBHOST_UART_H
 #define USBHOST_UART_H
-
+#include "lpc_types.h"
 /*
 **************************************************************************************************************
 *                                           INCLUDE HEADER FILES
@@ -64,7 +64,7 @@
 
 void  UART_PrintChar (      uint8_t   ch);
 void  UART_PrintStr  (const uint8_t  *str);
-void  UART_Printf(const uint8_t  *format, ...);
+void  UART_Printf(const void  *format, ...);
 
 /**
  * @}

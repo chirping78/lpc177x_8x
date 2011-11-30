@@ -6,7 +6,7 @@
 * @version	1.0
 * @date		22. August. 2011
 * @author	NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -22,7 +22,14 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
-
+#include "bsp.h"
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#if (_CURR_USING_BRD == _EA_PA_BOARD)
+#ifdef _EMC
 
 #include "bsp.h"
 #include "lpc177x_8x_emc.h"
@@ -31,7 +38,11 @@
 #include "lpc177x_8x_timer.h"
 #include "sdram_is42s32800d.h"
 
-#if (_CURR_USING_BRD == _EA_PA_BOARD)
+/* Public Functions ----------------------------------------------------------- */
+/** @addtogroup Sdram_IS42S32800D
+ * @{
+ */
+
 
 /*********************************************************************
  * @brief		Calculate refresh timer (the multiple of 16 CCLKs)
@@ -60,7 +71,7 @@ uint32_t NS2CLK(uint32_t freq,uint32_t time){
  **********************************************************************/
 void SDRAMInit( void )
 {
-	uint32_t i, dwtemp;
+	uint32_t i;
 	TIM_TIMERCFG_Type TIM_ConfigStruct;
 	uint32_t emc_freq;
 
@@ -106,13 +117,18 @@ void SDRAMInit( void )
 	LPC_EMC->DynamicControl    = 0x00000083; /* Issue MODE command */
 
 	//Timing for 48/60/72MHZ Bus
-	dwtemp = *((volatile uint32_t *)(SDRAM_BASE_ADDR | (0x22<<(2+2+9)))); /* 4 burst, 2 CAS latency */
 	LPC_EMC->DynamicControl    = 0x00000000; /* Issue NORMAL command */
 
 	//[re]enable buffers
 	LPC_EMC->DynamicConfig0    = 0x00084480; /* 256MB, 8Mx32, 4 banks, row=12, column=9 */
 }
-#endif
+
+#endif /*_EMC*/
+#endif /*(_CURR_USING_BRD == _EA_PA_BOARD)*/
+/**
+ * @}
+ */
+
 /*********************************************************************************
 **                            End Of File
 *********************************************************************************/

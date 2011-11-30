@@ -166,86 +166,23 @@ typedef enum {                                   // type of last frame sent. use
   TCP_DATA_FRAME
 } TLastFrameSent;
 
-// constants
-#ifdef extern                                    // Keil: declarations for modular programming
-const uint16_t MyIP[] =                    // "MYIP1.MYIP2.MYIP3.MYIP4"
-{
-  MYIP_1 + (MYIP_2 << 8),                        // use 'unsigned int' to
-  MYIP_3 + (MYIP_4 << 8)                         // achieve word alignment
-};
 
-const uint16_t SubnetMask[] =              // "SUBMASK1.SUBMASK2.SUBMASK3.SUBMASK4"
-{
-  SUBMASK_1 + (SUBMASK_2 << 8),                  // use 'unsigned int' to
-  SUBMASK_3 + (SUBMASK_4 << 8)                   // achieve word alignment
-};
 
-const uint16_t GatewayIP[] =               // "GWIP1.GWIP2.GWIP3.GWIP4"
-{
-  GWIP_1 + (GWIP_2 << 8),                        // use 'unsigned int' to
-  GWIP_3 + (GWIP_4 << 8)                         // achieve word alignment
-};
-#else
-extern const uint16_t MyIP[2];             // "MYIP1.MYIP2.MYIP3.MYIP4"
-extern const uint16_t SubnetMask[2];       // "SUBMASK1.SUBMASK2.SUBMASK3.SUBMASK4"
-extern const uint16_t GatewayIP[2];        // "GWIP1.GWIP2.GWIP3.GWIP4"
-extern const uint8_t MyMAC[6];             // "M1-M2-M3-M4-M5-M6"
-#endif
 
-// easyWEB's internal variables
-extern TTCPStateMachine TCPStateMachine;         // perhaps the most important var at all ;-)
-extern TLastFrameSent LastFrameSent;             // retransmission type
-
-extern uint16_t ISNGenHigh;                // upper word of our Initial Sequence Number
-extern unsigned long TCPSeqNr;                   // next sequence number to send
-extern unsigned long TCPUNASeqNr;                // last unaknowledged sequence number
-                                                 // incremented AFTER sending data
-extern unsigned long TCPAckNr;                   // next seq to receive and ack to send
-                                                 // incremented AFTER receiving data
-extern uint8_t TCPTimer;                   // inc'd each 262ms
-extern uint8_t RetryCounter;               // nr. of retransmissions
-
-// properties of the just received frame
-extern uint16_t RecdFrameLength;           // EMAC reported frame length
-extern uint16_t RecdFrameMAC[3];           // 48 bit MAC
-extern uint16_t RecdFrameIP[2];            // 32 bit IP
-extern uint16_t RecdIPFrameLength;         // 16 bit IP packet length
-
-// the next 3 buffers must be word-aligned!
-// (here the 'RecdIPFrameLength' above does that)
-#if defined ( __CC_ARM   )
-extern uint16_t __align(4) _TxFrame1[(ETH_HEADER_SIZE + IP_HEADER_SIZE + TCP_HEADER_SIZE + MAX_TCP_TX_DATA_SIZE)/2];
-extern uint16_t __align(4) _TxFrame2[(ETH_HEADER_SIZE + MAX_ETH_TX_DATA_SIZE)/2];
-extern uint16_t __align(4) _RxTCPBuffer[MAX_TCP_RX_DATA_SIZE/2]; // space for incoming TCP-data
-#elif defined ( __ICCARM__ )
-#pragma data_alignment=4
-extern uint16_t _TxFrame1[(ETH_HEADER_SIZE + IP_HEADER_SIZE + TCP_HEADER_SIZE + MAX_TCP_TX_DATA_SIZE)/2];
-#pragma data_alignment=4
-extern uint16_t _TxFrame2[(ETH_HEADER_SIZE + MAX_ETH_TX_DATA_SIZE)/2];
-#pragma data_alignment=4
-extern uint16_t _RxTCPBuffer[MAX_TCP_RX_DATA_SIZE/2]; // space for incoming TCP-data
-#elif defined   (  __GNUC__  )
-extern uint16_t __attribute__ ((aligned (4))) _TxFrame1[(ETH_HEADER_SIZE + IP_HEADER_SIZE + TCP_HEADER_SIZE + MAX_TCP_TX_DATA_SIZE)/2];
-extern uint16_t __attribute__ ((aligned (4))) _TxFrame2[(ETH_HEADER_SIZE + MAX_ETH_TX_DATA_SIZE)/2];
-extern uint16_t __attribute__ ((aligned (4))) _RxTCPBuffer[MAX_TCP_RX_DATA_SIZE/2]; // space for incoming TCP-data
-#endif
-#define TxFrame1      ((uint8_t *)_TxFrame1)
-#define TxFrame2      ((uint8_t *)_TxFrame2)
-#define RxTCPBuffer   ((uint8_t *)_RxTCPBuffer)
-
-extern uint16_t TxFrame1Size;              // bytes to send in TxFrame1
-extern uint8_t TxFrame2Size;               // bytes to send in TxFrame2
-
-extern uint8_t TransmitControl;
 #define SEND_FRAME1                    0x01
 #define SEND_FRAME2                    0x02
 
-extern uint8_t TCPFlags;
 #define TCP_ACTIVE_OPEN                0x01      // easyWEB shall initiate a connection
 #define IP_ADDR_RESOLVED               0x02      // IP sucessfully resolved to MAC
 #define TCP_TIMER_RUNNING              0x04
 #define TIMER_TYPE_RETRY               0x08
 #define TCP_CLOSE_REQUESTED            0x10
+
+// variables
+extern uint16_t TCPLocalPort;              // TCP ports
+extern uint8_t SocketStatus;
+extern uint16_t TCPRxDataCount;            // nr. of bytes rec'd
+extern uint16_t TCPTxDataCount;            // nr. of bytes to send
 
 // prototypes
 void DoNetworkStuff(void);
@@ -264,6 +201,8 @@ void PrepareTCP_FRAME(uint16_t TCPCode);
 void PrepareTCP_DATA_FRAME(void);
 
 // general help functions
+uint8_t* GetFrame1Buffer(void);
+uint8_t* GetRxBuffer(void);
 void SendFrame1(void);
 void SendFrame2(void);
 void TCPStartRetryTimer(void);
@@ -292,17 +231,6 @@ void TCPClockHandler(void) __irq ;
 void TCPClockHandler(void) ;
 #endif
 
-// easyWEB-API global vars and flags
-extern uint16_t TCPRxDataCount;            // nr. of bytes rec'd
-extern uint16_t TCPTxDataCount;            // nr. of bytes to send
-
-extern uint16_t TCPLocalPort;              // TCP ports
-extern uint16_t TCPRemotePort;
-
-extern uint16_t RemoteMAC[3];              // MAC and IP of current TCP-session
-extern uint16_t RemoteIP[2];
-
-extern uint8_t SocketStatus;
 #define SOCK_ACTIVE                    0x01      // state machine NOT closed
 #define SOCK_CONNECTED                 0x02      // user may send & receive data
 #define SOCK_DATA_AVAILABLE            0x04      // new data available
@@ -317,8 +245,8 @@ extern uint8_t SocketStatus;
 #define SOCK_ERR_ETHERNET              0x50      // network interface error (timeout)
 
 // easyWEB-API buffer-pointers
-#define TCP_TX_BUF      ((uint8_t *)TxFrame1 + ETH_HEADER_SIZE + IP_HEADER_SIZE + TCP_HEADER_SIZE)
-#define TCP_RX_BUF      ((uint8_t *)RxTCPBuffer)
+#define TCP_TX_BUF      GetFrame1Buffer()
+#define TCP_RX_BUF      GetRxBuffer()
 
 #endif
 

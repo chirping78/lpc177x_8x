@@ -1,3 +1,42 @@
+RELEASE LPC177x_8xCMSIS_111130
+
+***** Implementations and Improvements ****
+1. GNU toolchain support.
+2. Remove warnings in all projects.
+3. Update function TIM_Init so that the timer mode is set by CTCR register instead of CCR register.
+4. Update the EMAC driver to fix some problems and make the driver clearer.
+     - Move PHY driver  to a separate file. (phylan.c/.h).
+     - Update the driver of EMAC:
+        + Make functions for reading/writing PHY setting to public so that they can be used by PHY driver.
+        + Create new APIs for:
+           -  Set full/half duplex mode.
+           -  Set the PHY speed.
+        + Remove the APIs for checking Transmit/Receive Index. Create 2 new APIs for check the status of send/receive buffer instead.
+        + Remove the APIs for getting received packet information. Create new API to get the whole frame information instead.
+        + Add more information to structure EMAC_CFG_Type.
+     - Fix some problems:
+        + Add new divide values to EMAC_clkdiv so that is can support cclk > 70MHz.
+        + Remove setting on LPC_EMAC->SUPP and definition EMAC_SUPP_RES_RMII.
+        + Change the setting of the transmit buffer size. It must be in (size-1) encoding.
+        + Fix the problem that usage of Imperfect hash filtering function is incorrectly.
+5. Change from [#include "lpc177x_8x.h"] to [#include "LPC177x_8x.h"].
+6. Update driver/example EMAC,MCI,USBHost, I2S, USBDEV & linker file for IAR projects so that it can run on chips with low on-chip SRAM.
+7. Update DMA2Flash example so that is can test with other DMA channel easier.
+8. Update CRC_Demo example to define __RAM_MODE__ instead of _RAM_MODE__.
+9. Update function UARTPutDec32 so that it prints the 32-bit number correctly.
+10. Add IAP example.
+11. Update the EEPROM size to 4032 instead of 4096.
+12. Update functions EEPROM_Read & EEPROM_Write so that it doesn't make compile decision basing on function parameters.
+13. Documentation: add the guideline for using GNU toolchain to .chm file.
+
+***** Known Issues: In this package contains some examples that can not verify now ****
+
+1./ ADC > Adc_Burst
+2./ CAN > Can_SelfTest
+Maybe they will be removed when release for customers. 
+ 
+==========================================================================================================
+==========================================================================================================
 RELEASE LPC177x_8xCMSIS_111028
 
 ***** Implementations and Improvements ****

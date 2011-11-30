@@ -28,12 +28,17 @@
 /** @addtogroup DAC
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _DAC
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_dac.h"
 #include "lpc177x_8x_clkpwr.h"
 #include "lpc177x_8x_pinsel.h"
-
 
 /* Private Functions ---------------------------------------------------------- */
 
@@ -176,7 +181,7 @@ uint8_t DAC_IsIntRequested(uint8_t DAC_Id)
 /**
  * @}
  */
-
+#endif /*_DAC*/
 
 /**
  * @}

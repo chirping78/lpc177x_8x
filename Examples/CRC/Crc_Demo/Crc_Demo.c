@@ -81,9 +81,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main ADC program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	uint32_t result, i;
 	/* Initialize debug via UART0
@@ -137,6 +137,7 @@ int c_entry(void)
 			break;
 		default:
 			_DBG_("Invalid input, pls type again!");
+			break;
 		}
 	}
 	while(1);
@@ -145,7 +146,8 @@ int c_entry(void)
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 

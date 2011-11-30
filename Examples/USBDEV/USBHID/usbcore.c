@@ -21,6 +21,13 @@
  *                Reworked Endpoint0
  *          V1.00 Initial Version
  *----------------------------------------------------------------------------*/
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+
+#ifdef _USB_DEV_HID
 #include "lpc_types.h"
 
 #include "usb.h"
@@ -59,9 +66,6 @@ extern MSC_CSW CSW;
 #include "vendor.h"
 #endif
 
-#ifndef __IAR_SYSTEMS_ICC__
-#pragma diag_suppress 111,1441
-#endif
 
 
 /** @addtogroup USBDEV_HIDUsbCore
@@ -1109,5 +1113,5 @@ out_class_ok:                                                            /* requ
 /**
  * @}
  */
- 
+#endif /*_USB_DEV_HID*/
 

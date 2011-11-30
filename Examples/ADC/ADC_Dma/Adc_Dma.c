@@ -53,6 +53,7 @@ uint8_t  menu1[] =
 " The ADC value is handled by DMA function\n\r"
 " The content here is displayed by UART interface\n\r"
 " Turn the potentiometer to see how ADC value changes\n\r"
+" Press q to stop the demo\n\r"
 "***********************************************************************\n\r";
 
 /* Terminal Counter flag for Channel 0 */
@@ -111,12 +112,13 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main ADC program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	GPDMA_Channel_CFG_Type GPDMACfg;
 	uint32_t adc_value, tmp;
+	uint8_t  quit;
 
 	/* Initialize debug via UART0
 	 * – 115200bps
@@ -212,16 +214,21 @@ int c_entry(void)
 
 		/* Reset Error counter */
 		Channel0_Err = 0;
+
+		if(_DG_NONBLOCK(&quit) &&
+			(quit == 'Q' || quit == 'q'))
+			break;
 	}
+    _DBG_("Demo termination!!!");
 
 	ADC_DeInit(LPC_ADC);
-	return 1;
 }
 
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 /**

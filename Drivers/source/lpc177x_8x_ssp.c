@@ -28,6 +28,12 @@
 /** @addtogroup SSP
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _SSP
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_ssp.h"
@@ -617,6 +623,7 @@ void SSP_DMACmd(LPC_SSP_TypeDef *SSPx, uint32_t DMAMode, FunctionalState NewStat
  * @}
  */
 
+#endif /*_SSP*/
 /**
  * @}
  */

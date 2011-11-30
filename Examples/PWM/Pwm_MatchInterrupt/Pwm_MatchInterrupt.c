@@ -79,9 +79,9 @@ void PWM0_IRQHandler(void)
 /*********************************************************************//**
  * @brief		c_entry: Main PWM program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	uint8_t pwmChannel, channelVal;
 	PWM_TIMERCFG_Type PWMCfgDat;
@@ -207,7 +207,6 @@ int c_entry(void)
 			PWM_MatchUpdate(_USING_PWM_NO, 1, long_duty, PWM_MATCH_UPDATE_NOW);
 		}
 	}
-    return 1;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -217,7 +216,8 @@ int c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

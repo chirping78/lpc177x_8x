@@ -22,11 +22,83 @@
 #include "lpc177x_8x_nvic.h"
 #include "lpc177x_8x_emac.h"
 
+
+#if defined ( __CC_ARM   )
+uint16_t __align(4) _TxFrame1[(ETH_HEADER_SIZE + IP_HEADER_SIZE + TCP_HEADER_SIZE + MAX_TCP_TX_DATA_SIZE)/2];
+uint16_t __align(4) _TxFrame2[(ETH_HEADER_SIZE + MAX_ETH_TX_DATA_SIZE)/2];
+uint16_t __align(4) _RxTCPBuffer[MAX_TCP_RX_DATA_SIZE/2]; // space for incoming TCP-data
+#elif defined ( __ICCARM__ )
+#pragma data_alignment=4
+uint16_t _TxFrame1[(ETH_HEADER_SIZE + IP_HEADER_SIZE + TCP_HEADER_SIZE + MAX_TCP_TX_DATA_SIZE)/2];
+#pragma data_alignment=4
+uint16_t _TxFrame2[(ETH_HEADER_SIZE + MAX_ETH_TX_DATA_SIZE)/2];
+#pragma data_alignment=4
+uint16_t _RxTCPBuffer[MAX_TCP_RX_DATA_SIZE/2]; // space for incoming TCP-data
+#else
+uint16_t __attribute__ ((aligned (4))) _TxFrame1[(ETH_HEADER_SIZE + IP_HEADER_SIZE + TCP_HEADER_SIZE + MAX_TCP_TX_DATA_SIZE)/2];
+uint16_t __attribute__ ((aligned (4))) _TxFrame2[(ETH_HEADER_SIZE + MAX_ETH_TX_DATA_SIZE)/2];
+uint16_t __attribute__ ((aligned (4))) _RxTCPBuffer[MAX_TCP_RX_DATA_SIZE/2]; // space for incoming TCP-data
+#endif
+
+uint16_t TxFrame1Size;              // bytes to send in TxFrame1
+uint8_t TxFrame2Size;               // bytes to send in TxFrame2
+uint8_t TransmitControl;
+uint8_t TCPFlags;
+uint16_t TCPRemotePort;
+
+uint16_t RemoteMAC[3];              // MAC and IP of current TCP-session
+uint16_t RemoteIP[2];
+
+
+// constants
+const uint16_t MyIP[] =                    // "MYIP1.MYIP2.MYIP3.MYIP4"
+{
+  MYIP_1 + (MYIP_2 << 8),                        // use 'unsigned int' to
+  MYIP_3 + (MYIP_4 << 8)                         // achieve word alignment
+};
+
+const uint16_t SubnetMask[] =              // "SUBMASK1.SUBMASK2.SUBMASK3.SUBMASK4"
+{
+  SUBMASK_1 + (SUBMASK_2 << 8),                  // use 'unsigned int' to
+  SUBMASK_3 + (SUBMASK_4 << 8)                   // achieve word alignment
+};
+
+const uint16_t GatewayIP[] =               // "GWIP1.GWIP2.GWIP3.GWIP4"
+{
+  GWIP_1 + (GWIP_2 << 8),                        // use 'unsigned int' to
+  GWIP_3 + (GWIP_4 << 8)                         // achieve word alignment
+};
 const uint8_t MyMAC[6] =   // "M1-M2-M3-M4-M5-M6"
 {
   MYMAC_1, MYMAC_2, MYMAC_3,
   MYMAC_4, MYMAC_5, MYMAC_6
 };
+
+
+// easyWEB's internal variables
+TTCPStateMachine TCPStateMachine;         // perhaps the most important var at all ;-)
+TLastFrameSent LastFrameSent;             // retransmission type
+
+uint16_t ISNGenHigh;                // upper word of our Initial Sequence Number
+unsigned long TCPSeqNr;                   // next sequence number to send
+unsigned long TCPUNASeqNr;                // last unaknowledged sequence number
+                                                 // incremented AFTER sending data
+unsigned long TCPAckNr;                   // next seq to receive and ack to send
+                                                 // incremented AFTER receiving data
+uint8_t TCPTimer;                   // inc'd each 262ms
+uint8_t RetryCounter;               // nr. of retransmissions
+
+// properties of the just received frame
+uint16_t RecdFrameLength;           // EMAC reported frame length
+uint16_t RecdFrameMAC[3];           // 48 bit MAC
+uint16_t RecdFrameIP[2];            // 32 bit IP
+uint16_t RecdIPFrameLength;         // 16 bit IP packet length
+
+
+#define TxFrame1      ((uint8_t *)_TxFrame1)
+#define TxFrame2      ((uint8_t *)_TxFrame2)
+#define RxTCPBuffer   ((uint8_t *)_RxTCPBuffer)
+
 
 // easyWEB-API function
 // initalizes the LAN-controller, reset flags, starts timer-ISR
@@ -163,11 +235,9 @@ void TCPTransmitTxBuffer(void)
  **********************************************************************/
 unsigned int IsBroadcast(void) {
   uint16_t RecdDestMAC[3];         // 48 bit MAC
-
   RecdFrameLength = StartReadFrame();
-
-  CopyFromFrame_EMAC(&RecdDestMAC,  6);           // receive DA to see if it was a broadcast
-  CopyFromFrame_EMAC(&RecdFrameMAC, 6);           // store SA (for our answer)
+  ReadFrame_EMAC(&RecdDestMAC,6);               // receive DA to see if it was a broadcast
+  ReadFrame_EMAC(&RecdFrameMAC,6);               // store SA (for our answer)
 
   if ((RecdDestMAC[0] == 0xFFFF) &&
       (RecdDestMAC[1] == 0xFFFF) &&
@@ -313,8 +383,6 @@ void DoNetworkStuff(void)
 
 	if (TransmitControl & SEND_FRAME2)
 	{
-		RequestSend(TxFrame2Size);
-
 		if (Rdy4Tx())                                // NOTE: when using a very fast MCU, maybe
 			SendFrame2();                              // the EMAC isn't ready yet, include
 		else 
@@ -330,7 +398,6 @@ void DoNetworkStuff(void)
 	if (TransmitControl & SEND_FRAME1)
 	{
 		PrepareTCP_DATA_FRAME();                     // build frame w/ actual SEQ, ACK....
-		RequestSend(TxFrame1Size);
 
 		if (Rdy4Tx())                                // EMAC ready to accept our frame?
 			SendFrame1();                              // (see note above)
@@ -356,16 +423,16 @@ void ProcessEthBroadcastFrame(void)
 {
   uint16_t TargetIP[2];
 
-  if (ReadFrameBE_EMAC() == FRAME_ARP)           // get frame type, check for ARP
-    if (ReadFrameBE_EMAC() == HARDW_ETH10)       // Ethernet frame
-      if (ReadFrameBE_EMAC() == FRAME_IP)        // check protocol
-        if (ReadFrameBE_EMAC() == IP_HLEN_PLEN)  // check HLEN, PLEN
-          if (ReadFrameBE_EMAC() == OP_ARP_REQUEST)
+  if (ReadHalfWordBE_EMAC() == FRAME_ARP)           // get frame type, check for ARP
+    if (ReadHalfWordBE_EMAC() == HARDW_ETH10)       // Ethernet frame
+      if (ReadHalfWordBE_EMAC() == FRAME_IP)        // check protocol
+        if (ReadHalfWordBE_EMAC() == IP_HLEN_PLEN)  // check HLEN, PLEN
+          if (ReadHalfWordBE_EMAC() == OP_ARP_REQUEST)
           {
             DummyReadFrame_EMAC(6);              // ignore sender's hardware address
-            CopyFromFrame_EMAC(&RecdFrameIP, 4); // read sender's protocol address
+            ReadFrame_EMAC(&RecdFrameIP, 4); // read sender's protocol address
             DummyReadFrame_EMAC(6);              // ignore target's hardware address
-            CopyFromFrame_EMAC(&TargetIP, 4);    // read target's protocol address
+            ReadFrame_EMAC(&TargetIP, 4);    // read target's protocol address
             if (!memcmp(&MyIP, &TargetIP, 4))    // is it for us?
               PrepareARP_ANSWER();               // yes->create ARP_ANSWER frame
           }
@@ -384,35 +451,35 @@ void ProcessEthIAFrame(void)
   uint16_t TargetIP[2];
   uint8_t ProtocolType;
 
-  switch (ReadFrameBE_EMAC())                     // get frame type
+  switch (ReadHalfWordBE_EMAC())                     // get frame type
   {
     case FRAME_ARP :                             // check for ARP
     {
       if ((TCPFlags & (TCP_ACTIVE_OPEN | IP_ADDR_RESOLVED)) == TCP_ACTIVE_OPEN)
-        if (ReadFrameBE_EMAC() == HARDW_ETH10)         // check for the right prot. etc.
-          if (ReadFrameBE_EMAC() == FRAME_IP)
-            if (ReadFrameBE_EMAC() == IP_HLEN_PLEN)
-              if (ReadFrameBE_EMAC() == OP_ARP_ANSWER)
+        if (ReadHalfWordBE_EMAC() == HARDW_ETH10)         // check for the right prot. etc.
+          if (ReadHalfWordBE_EMAC() == FRAME_IP)
+            if (ReadHalfWordBE_EMAC() == IP_HLEN_PLEN)
+              if (ReadHalfWordBE_EMAC() == OP_ARP_ANSWER)
               {
                 TCPStopTimer();                       // OK, now we've the MAC we wanted ;-)
-                CopyFromFrame_EMAC(&RemoteMAC, 6);    // extract opponents MAC
+                ReadFrame_EMAC(&RemoteMAC, 6);    // extract opponents MAC
                 TCPFlags |= IP_ADDR_RESOLVED;
               }
       break;
     }
     case FRAME_IP :                                        // check for IP-type
     {
-      if ((ReadFrameBE_EMAC() & 0xFF00 ) == IP_VER_IHL)     // IPv4, IHL=5 (20 Bytes Header)
+      if ((ReadHalfWordBE_EMAC() & 0xFF00 ) == IP_VER_IHL)     // IPv4, IHL=5 (20 Bytes Header)
       {                                                    // ignore Type Of Service
-        RecdIPFrameLength = ReadFrameBE_EMAC();             // get IP frame's length
-        ReadFrameBE_EMAC();                                 // ignore identification
+        RecdIPFrameLength = ReadHalfWordBE_EMAC();             // get IP frame's length
+        ReadHalfWordBE_EMAC();                                 // ignore identification
 
-        if (!(ReadFrameBE_EMAC() & (IP_FLAG_MOREFRAG | IP_FRAGOFS_MASK)))  // only unfragm. frames
+        if (!(ReadHalfWordBE_EMAC() & (IP_FLAG_MOREFRAG | IP_FRAGOFS_MASK)))  // only unfragm. frames
         {
-          ProtocolType = ReadFrameBE_EMAC() & 0xFF;         // get protocol, ignore TTL
-          ReadFrameBE_EMAC();                               // ignore checksum
-          CopyFromFrame_EMAC(&RecdFrameIP, 4);              // get source IP
-          CopyFromFrame_EMAC(&TargetIP, 4);                 // get destination IP
+          ProtocolType = ReadHalfWordBE_EMAC() & 0xFF;         // get protocol, ignore TTL
+          ReadHalfWordBE_EMAC();                               // ignore checksum
+          ReadFrame_EMAC(&RecdFrameIP, 4);              // get source IP
+          ReadFrame_EMAC(&TargetIP, 4);                 // get destination IP
 
           if (!memcmp(&MyIP, &TargetIP, 4))                // is it for us?
             switch (ProtocolType) {
@@ -439,8 +506,8 @@ void ProcessICMPFrame(void)
 {
   uint16_t ICMPTypeAndCode;
 
-  ICMPTypeAndCode = ReadFrameBE_EMAC();           // get Message Type and Code
-  ReadFrameBE_EMAC();                             // ignore ICMP checksum
+  ICMPTypeAndCode = ReadHalfWordBE_EMAC();           // get Message Type and Code
+  ReadHalfWordBE_EMAC();                             // ignore ICMP checksum
 
   switch (ICMPTypeAndCode >> 8) {                // check type
     case ICMP_ECHO :                             // is echo request?
@@ -469,18 +536,18 @@ void ProcessTCPFrame(void)
   uint8_t TCPHeaderSize;                   // real TCP header length
   uint16_t NrOfDataBytes;                  // real number of data
 
-  TCPSegSourcePort = ReadFrameBE_EMAC();                    // get ports
-  TCPSegDestPort = ReadFrameBE_EMAC();
+  TCPSegSourcePort = ReadHalfWordBE_EMAC();                    // get ports
+  TCPSegDestPort = ReadHalfWordBE_EMAC();
 
   if (TCPSegDestPort != TCPLocalPort) return;              // drop segment if port doesn't match
 
-  TCPSegSeq = (uint32_t)ReadFrameBE_EMAC() << 16;      // get segment sequence nr.
-  TCPSegSeq |= ReadFrameBE_EMAC();
+  TCPSegSeq = (uint32_t)ReadHalfWordBE_EMAC() << 16;      // get segment sequence nr.
+  TCPSegSeq |= ReadHalfWordBE_EMAC();
 
-  TCPSegAck = (uint32_t)ReadFrameBE_EMAC() << 16;      // get segment acknowledge nr.
-  TCPSegAck |= ReadFrameBE_EMAC();
+  TCPSegAck = (uint32_t)ReadHalfWordBE_EMAC() << 16;      // get segment acknowledge nr.
+  TCPSegAck |= ReadHalfWordBE_EMAC();
 
-  TCPCode = ReadFrameBE_EMAC();                             // get control bits, header length...
+  TCPCode = ReadHalfWordBE_EMAC();                             // get control bits, header length...
 
   TCPHeaderSize = (TCPCode & DATA_OFS_MASK) >> 10;         // header length in bytes
   NrOfDataBytes = RecdIPFrameLength - IP_HEADER_SIZE - TCPHeaderSize;     // seg. text length
@@ -674,7 +741,7 @@ void ProcessTCPFrame(void)
           if (!(SocketStatus & SOCK_DATA_AVAILABLE))       // rx data-buffer empty?
           {
             DummyReadFrame_EMAC(6);                        // ignore window, checksum, urgent pointer
-            CopyFromFrame_EMAC(RxTCPBuffer, NrOfDataBytes);// fetch data and
+            ReadFrame_EMAC(RxTCPBuffer, NrOfDataBytes);// fetch data and
             TCPRxDataCount = NrOfDataBytes;                // ...tell the user...
             SocketStatus |= SOCK_DATA_AVAILABLE;           // indicate the new data to user
             TCPAckNr += NrOfDataBytes;
@@ -715,6 +782,7 @@ void ProcessTCPFrame(void)
         TCPAckNr++;                              // ACK remote's FIN flag
         PrepareTCP_FRAME(TCP_CODE_ACK);
       }
+      break;
     }
   }
 }
@@ -815,7 +883,7 @@ void PrepareICMP_ECHO_REPLY(void)
   *(uint16_t *)&TxFrame2[ICMP_TYPE_CODE_OFS] = SWAPB(ICMP_ECHO_REPLY << 8);
   *(uint16_t *)&TxFrame2[ICMP_CHKSUM_OFS] = 0;                   // initialize checksum field
 
-  CopyFromFrame_EMAC(&TxFrame2[ICMP_DATA_OFS], ICMPDataCount);        // get data to echo...
+  ReadFrame_EMAC(&TxFrame2[ICMP_DATA_OFS], ICMPDataCount);        // get data to echo...
   *(uint16_t *)&TxFrame2[ICMP_CHKSUM_OFS] = CalcChecksum(&TxFrame2[IP_DATA_OFS], ICMPDataCount + ICMP_HEADER_SIZE, 0);
 
   TxFrame2Size = ETH_HEADER_SIZE + IP_HEADER_SIZE + ICMP_HEADER_SIZE + ICMPDataCount;
@@ -1076,6 +1144,25 @@ void TIMER0_IRQHandler(void)
 }
 
 // easyWEB internal function
+/*********************************************************************//**
+ * @brief		
+ * @param[in]	
+ * @return		
+ **********************************************************************/
+uint8_t* GetFrame1Buffer(void)
+{
+    return ((uint8_t *)_TxFrame1 + ETH_HEADER_SIZE + IP_HEADER_SIZE + TCP_HEADER_SIZE);
+}
+/*********************************************************************//**
+ * @brief		
+ * @param[in]	
+ * @return		
+ **********************************************************************/
+uint8_t* GetRxBuffer(void)
+{
+    return ((uint8_t *)_RxTCPBuffer);
+}
+
 // transfers the contents of 'TxFrame1'-Buffer to the EMAC
 /*********************************************************************//**
  * @brief		
@@ -1084,7 +1171,7 @@ void TIMER0_IRQHandler(void)
  **********************************************************************/
 void SendFrame1(void)
 {
-  CopyToFrame_EMAC(TxFrame1, TxFrame1Size);
+  SendFrame(TxFrame1, TxFrame1Size);
 }
 
 // easyWEB internal function
@@ -1096,7 +1183,7 @@ void SendFrame1(void)
  **********************************************************************/
 void SendFrame2(void)
 {
-  CopyToFrame_EMAC(TxFrame2, TxFrame2Size);
+  SendFrame(TxFrame2, TxFrame2Size);
 }
 
 // easyWEB internal function

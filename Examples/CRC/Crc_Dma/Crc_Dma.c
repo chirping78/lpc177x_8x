@@ -113,9 +113,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main ADC program body
  * @param[in]	None
- * @return 		int
+ * @return 	None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	uint32_t result, i;
 	GPDMA_Channel_CFG_Type GPDMACfg;
@@ -195,7 +195,8 @@ int c_entry(void)
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 

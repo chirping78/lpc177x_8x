@@ -82,9 +82,9 @@ void DMA_IRQHandler (void)
 /*********************************************************************//**
  * @brief		c_entry: Main DAC program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	DAC_CONVERTER_CFG_Type DAC_ConverterConfigStruct;
 	uint32_t dac_value = 0;
@@ -177,7 +177,6 @@ int c_entry(void)
 		GPDMA_Setup(&GPDMACfg);
 	}
 
-	return 1;
 }
 /* With ARM and GHS toolsets, the entry point is main() - this will
    allow the linker to generate wrapper code to setup stacks, allocate
@@ -186,7 +185,8 @@ int c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

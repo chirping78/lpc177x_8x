@@ -23,6 +23,7 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
+#include "lpc_types.h"
 #include "lpc177x_8x_can.h"
 #include "lpc177x_8x_pinsel.h"
 #include "debug_frmwrk.h"
@@ -76,8 +77,6 @@ EFF_GPR_Entry EFF_GPR_Table[6];
 /* CAN interrupt service routine */
 void CAN_IRQHandler(void);
 
-void CAN_PinCfg(void);
-void CAN_InitMessage(void);
 void CAN_SetupAFTable(void);
 void CAN_InitAFMessage(void);
 void PrintMessage(CAN_MSG_Type* msg);
@@ -474,9 +473,9 @@ void print_menu()
 /*********************************************************************//**
  * @brief		c_entry: Main CAN program body
  * @param[in]	none
- * @return 		int
+ * @return 		none
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	uint32_t i;
 	uint32_t cnt;
@@ -646,7 +645,6 @@ int c_entry(void)
 
 	while (1);
 
-	return 0;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -656,7 +654,8 @@ int c_entry(void)
  file, and that startup code will setup stacks and data */
 int main(void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 /**

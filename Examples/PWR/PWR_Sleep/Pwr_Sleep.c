@@ -77,9 +77,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void)
+void c_entry (void)
 {
 	/* Initialize debug via UART0
 	 * – 115200bps
@@ -96,21 +96,20 @@ int c_entry (void)
 	// Init WDT, IRC OSC, interrupt mode, timeout = 2000000 us = 2s
 	WWDT_Init(WWDT_TIMEOUT);
 
-	_DBG_("Press '1' to enter system in Deep Sleep mode");
+	_DBG_("Press '1' to enter system in Sleep mode");
 	while(_DG !='1');
 
 	NVIC_EnableIRQ(WDT_IRQn);
 	WWDT_Cmd(ENABLE);
 	WWDT_Start(WWDT_TIMEOUT);
 
-	_DBG_("Enter Deep Sleep mode!");
+	_DBG_("Enter Sleep mode!");
 	_DBG_("Wait 2s for WDT wake-up system...");
 
 	// Enter target into sleep mode
 	CLKPWR_Sleep();
 	_DBG_("\n\rSystem wake-up!\n\r");
 	while(1);
-	return 1;
 }
 
 
@@ -121,7 +120,8 @@ int c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

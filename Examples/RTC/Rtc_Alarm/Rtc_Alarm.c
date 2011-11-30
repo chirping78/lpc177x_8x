@@ -23,6 +23,7 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
+#include "LPC177x_8x.h"
 #include "lpc177x_8x_rtc.h"
 #include "debug_frmwrk.h"
 
@@ -101,9 +102,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main RTC program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	RTC_TIME_Type RTCFullTime;
 
@@ -169,7 +170,6 @@ int c_entry(void)
 
     /* Loop forever */
     while(1);
-    return 1;
 }
 
 
@@ -181,7 +181,8 @@ int c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

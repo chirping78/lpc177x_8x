@@ -28,6 +28,12 @@
 /** @addtogroup TIMER
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _TIM
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_timer.h"
@@ -38,7 +44,7 @@
 
 static uint32_t getPClock (uint32_t timernum);
 static uint32_t converUSecToVal (uint32_t timernum, uint32_t usec);
-static uint32_t converPtrToTimeNum (LPC_TIM_TypeDef *TIMx);
+static int32_t converPtrToTimeNum (LPC_TIM_TypeDef *TIMx);
 
 
 /*********************************************************************//**
@@ -81,9 +87,9 @@ uint32_t converUSecToVal (uint32_t timernum, uint32_t usec)
  * 				- LPC_TIM3: TIMER3 peripheral
  * @return 		The timer number (0 to 3) or -1 if register pointer is bad
  **********************************************************************/
-uint32_t converPtrToTimeNum (LPC_TIM_TypeDef *TIMx)
+int32_t converPtrToTimeNum (LPC_TIM_TypeDef *TIMx)
 {
-	uint32_t tnum = -1;
+	int32_t tnum = -1;
 
 	if (TIMx == LPC_TIM0)
 	{
@@ -278,8 +284,8 @@ void TIM_Init(LPC_TIM_TypeDef *TIMx, TIM_MODE_OPT TimerCounterMode, void *TIM_Co
 		CLKPWR_ConfigPPWR (CLKPWR_PCONP_PCTIM3, ENABLE);
 	}
 
-	TIMx->CCR &= ~TIM_CTCR_MODE_MASK;
-	TIMx->CCR |= TIM_TIMER_MODE;
+	TIMx->CTCR &= ~TIM_CTCR_MODE_MASK;
+	TIMx->CTCR |= TIM_TIMER_MODE;
 
 	TIMx->TC =0;
 	TIMx->PC =0;
@@ -302,7 +308,7 @@ void TIM_Init(LPC_TIM_TypeDef *TIMx, TIM_MODE_OPT TimerCounterMode, void *TIM_Co
 	{
 
 		pCounterCfg = (TIM_COUNTERCFG_Type *)TIM_ConfigStruct;
-		TIMx->CCR  &= ~TIM_CTCR_INPUT_MASK;
+		TIMx->CTCR  &= ~TIM_CTCR_INPUT_MASK;
 		if (pCounterCfg->CountInputSelect == TIM_COUNTER_INCAP1)
 			TIMx->CCR |= _BIT(2);
 	}
@@ -562,7 +568,7 @@ void TIM_Waitms(uint32_t time)
 /**
  * @}
  */
-
+#endif /*_TIM*/
 /**
  * @}
  */

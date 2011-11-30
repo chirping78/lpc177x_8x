@@ -23,7 +23,13 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
- 
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _EMC
+
 #include "nandflash_k9f1g08u0a.h"
 #include "lpc177x_8x_emc.h"
 #include "lpc177x_8x_clkpwr.h"
@@ -40,7 +46,6 @@ uint8_t InvalidBlockTable[NANDFLASH_NUMOF_BLOCK];
  **********************************************************************/
 void NandFlash_WaitForReady( void )
 {
-	uint8_t i;
 
 	while( FIO2PIN & (1 << 21) );		/* from high to low once */
 
@@ -239,18 +244,10 @@ Bool NandFlash_BlockErase( uint32_t blockNum )
  **********************************************************************/
 Bool NandFlash_ValidBlockCheck( void )
 {
-	volatile uint8_t *pCLE;
-	volatile uint8_t *pALE;
-	volatile uint8_t *pDATA;
 	uint32_t block, page;
 	Bool retValue = TRUE;
-	uint32_t curAddr, tmp;
 
 	uint8_t data = 0;
-
-	pCLE  = K9F1G_CLE;
-	pALE  = K9F1G_ALE;
-	pDATA = K9F1G_DATA;
 
 	for ( block = 0; block < NANDFLASH_NUMOF_BLOCK; block++ )
 	{
@@ -343,7 +340,7 @@ Bool NandFlash_PageProgram( uint32_t pageNum, uint32_t blockNum, uint8_t *bufPtr
  **********************************************************************/
 Bool NandFlash_PageRead( uint32_t pageNum, uint32_t blockNum, uint8_t *bufPtr )
 {
-	return (NandFlash_PageReadFromBeginning(pageNum, blockNum, bufPtr) != 0);
+	return ((NandFlash_PageReadFromBeginning(pageNum, blockNum, bufPtr) != 0) ? TRUE:FALSE);
 }
 
 /*********************************************************************//**
@@ -447,4 +444,4 @@ int NandFlash_ReadFromAddr(uint32_t addrInWholeNand, uint8_t* bufPtr, uint32_t s
 	return i;
 }
 
-
+#endif /*_EMC*/

@@ -312,9 +312,9 @@ void VirtualQEISignal_Init(void)
 /*********************************************************************//**
  * @brief		c_entry: Main QEI program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	QEI_CFG_Type QEIConfig;
 	QEI_RELOADCFG_Type ReloadConfig;
@@ -444,7 +444,6 @@ int c_entry(void)
 		}
 	}
 	
-    return 1;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -454,7 +453,8 @@ int c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

@@ -34,7 +34,7 @@
 #include "LPC177x_8x.h"
 #include "system_LPC177x_8x.h"
 
-#define __CLK_DIV(x,y) ((y == 0) ? 0: x/y)
+#define __CLK_DIV(x,y) (((y) == 0) ? 0: (x)/(y))
 
 /*
 //-------- <<< Use Configuration Wizard in Context Menu >>> ------------------
@@ -382,9 +382,13 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
     }
     else {
       if ((LPC_SC->CLKSRCSEL & 0x01) == 0) {    /* sysclk = irc_clk */
-          SystemCoreClock = __CLK_DIV(IRC_OSC * ((LPC_SC->PLL0STAT & 0x1F) + 1) , (LPC_SC->CCLKSEL & 0x1F));
-          PeripheralClock = __CLK_DIV(IRC_OSC * ((LPC_SC->PLL0STAT & 0x1F) + 1) , (LPC_SC->PCLKSEL & 0x1F));
-          EMCClock        = (IRC_OSC * ((LPC_SC->PLL0STAT & 0x1F) + 1) / ((LPC_SC->EMCCLKSEL & 0x01)+1));
+          uint8_t mul = ((LPC_SC->PLL0STAT & 0x1F) + 1);
+          uint8_t cpu_div = (LPC_SC->CCLKSEL & 0x1F);
+          uint8_t per_div = (LPC_SC->PCLKSEL & 0x1F);
+          uint8_t emc_div = (LPC_SC->EMCCLKSEL & 0x01)+1;
+          SystemCoreClock = __CLK_DIV(IRC_OSC * mul , cpu_div);
+          PeripheralClock = __CLK_DIV(IRC_OSC * mul , per_div);
+          EMCClock        = (IRC_OSC * mul) / emc_div;
       }
       else {                                        /* sysclk = osc_clk */
         if ((LPC_SC->SCS & 0x40) == 0) {
@@ -393,9 +397,13 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
           EMCClock 		  = 0;
         }
         else {
-          SystemCoreClock = __CLK_DIV(OSC_CLK * ((LPC_SC->PLL0STAT & 0x1F) + 1) , (LPC_SC->CCLKSEL & 0x1F));
-          PeripheralClock = __CLK_DIV(OSC_CLK * ((LPC_SC->PLL0STAT & 0x1F) + 1) , (LPC_SC->PCLKSEL & 0x1F));
-          EMCClock        = (OSC_CLK * ((LPC_SC->PLL0STAT & 0x1F) + 1) / ((LPC_SC->EMCCLKSEL & 0x01)+1));
+          uint8_t mul = ((LPC_SC->PLL0STAT & 0x1F) + 1);
+          uint8_t cpu_div = (LPC_SC->CCLKSEL & 0x1F);
+          uint8_t per_div = (LPC_SC->PCLKSEL & 0x1F);
+		  uint8_t emc_div = (LPC_SC->EMCCLKSEL & 0x01)+1;
+          SystemCoreClock = __CLK_DIV(OSC_CLK * mul , cpu_div);
+          PeripheralClock = __CLK_DIV(OSC_CLK * mul , per_div);
+          EMCClock        = OSC_CLK * mul / emc_div;
         }
       }
     }
@@ -410,11 +418,15 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
 		  break;
 	  case 4:
 	  case 6:
+            {
+                 uint8_t mul = ((LPC_SC->PLL0STAT & 0x1F) + 1);
+                 uint8_t usb_div = (LPC_SC->USBCLKSEL & 0x1F);
 		  if(LPC_SC->CLKSRCSEL & 0x01)	//pll_clk_in = main_osc
-			  USBClock = (OSC_CLK * ((LPC_SC->PLL0STAT & 0x1F) + 1) / (LPC_SC->USBCLKSEL & 0x1F));
+			  USBClock = OSC_CLK * mul / usb_div;
 		  else //pll_clk_in = irc_clk
-			  USBClock = (IRC_OSC * ((LPC_SC->PLL0STAT & 0x1F) + 1) / (LPC_SC->USBCLKSEL & 0x1F));
-		  break;
+			  USBClock = IRC_OSC * mul / usb_div;
+            }
+            break;
 	  default:
 		  USBClock = 0;  /* this should never happen! */
 	  }

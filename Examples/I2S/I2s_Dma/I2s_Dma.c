@@ -43,7 +43,7 @@
  * it is not used in this example, so this memory section can be used for general purpose
  * memory
  */
-#define DMA_SRC			LPC_AHBRAM1_BASE
+#define DMA_SRC			LPC_PERI_RAM_BASE
 /** DMA Source Address is (AHBRAM1_BASE + DMA_SIZE) that used for USB RAM purpose, but
  * it is not used in this example, so this memory section can be used for general purpose
  * memory
@@ -170,9 +170,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	uint32_t i;
 	GPDMA_Channel_CFG_Type GPDMACfg;
@@ -367,7 +367,6 @@ int c_entry(void)
 	_DBG_("Demo is terminated!!!");
 	I2S_DeInit(LPC_I2S);
 	while(1);
-	return 1;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -377,7 +376,8 @@ int c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

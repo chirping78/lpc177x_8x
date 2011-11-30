@@ -61,7 +61,7 @@ void delay (void);
 void EINT0_IRQHandler(void)
 {
 	  //clear the EINT0 flag
-	  EXTI_ClearEXTIFlag(0);
+	  EXTI_ClearEXTIFlag(EXTI_EINT0);
 
 }
 
@@ -92,9 +92,9 @@ void delay (void) {
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void)
+void c_entry (void)
 {
 	EXTI_InitTypeDef EXTICfg;
 
@@ -144,7 +144,6 @@ int c_entry (void)
 	// MCU will be here after waking up
 	_DBG_("\n\r-------- I'm wake up! -------- ");
 	while (1);
-	return 1;
 }
 
 
@@ -155,7 +154,8 @@ int c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

@@ -23,6 +23,8 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
+#include <stdio.h>
+#include <string.h>
 #include "lpc177x_8x_i2s.h"
 #include "lpc177x_8x_pinsel.h"
 #include "uda1380.h"
@@ -133,9 +135,9 @@ void Buffer_Init(void)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void) {                       /* Main Program */
+void c_entry (void) {                       /* Main Program */
 
 /* 		This code will set I2S in MASTER mode, 44100Hz, Mono,16bit
  * 		This example is used to test I2S transmit mode. There is an audio
@@ -202,7 +204,6 @@ int c_entry (void) {                       /* Main Program */
 
 
 	while(1);
-	return 0;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -212,7 +213,8 @@ int c_entry (void) {                       /* Main Program */
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

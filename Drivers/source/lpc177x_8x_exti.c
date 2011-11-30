@@ -28,6 +28,12 @@
 /** @addtogroup EXTI
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _EXTI
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_exti.h"
@@ -141,7 +147,7 @@ void EXTI_ClearEXTIFlag(EXTI_LINE_ENUM EXTILine)
 /**
  * @}
  */
-
+#endif /*_EXTI*/
 /**
  * @}
  */

@@ -23,7 +23,12 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
- 
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _EMC
 #include "norflash_sst39vf3201.h"
 #include "lpc177x_8x_emc.h"
 #include "lpc177x_8x_clkpwr.h"
@@ -207,6 +212,7 @@ uint32_t NORFLASHWriteWord( uint32_t Addr, uint16_t Data )
   return ( ToggleBitCheck( Addr, Data ) );
 }
 
+#endif /*_EMC*/
 /*********************************************************************************
 **                            End Of File
 *********************************************************************************/

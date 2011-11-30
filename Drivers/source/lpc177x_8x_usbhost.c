@@ -27,7 +27,12 @@
 /** @addtogroup USBHostLite
  * @{
  */
-
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _USBHost
 /*
 **************************************************************************************************************
 *                                            INCLUDE HEADER FILES
@@ -826,6 +831,7 @@ void  WriteBE32U (volatile  uint8_t  *pmem,
     pmem[1] = ((uint8_t *)&val)[0];
 }
 
+#endif /*_USBHost*/
 /**
 * @}
 */

@@ -341,32 +341,32 @@ typedef enum
  */
 
 /* I2C Init/DeInit functions ---------- */
-void I2C_Init(uint8_t i2cId, uint32_t clockrate);
-void I2C_DeInit(uint8_t i2cId);
-void I2C_Cmd(uint8_t i2cId, FunctionalState NewState);
+void I2C_Init(en_I2C_unitId i2cId, uint32_t clockrate);
+void I2C_DeInit(en_I2C_unitId i2cId);
+void I2C_Cmd(en_I2C_unitId i2cId, FunctionalState NewState);
 
 /* I2C transfer data functions -------- */
-Status I2C_MasterTransferData(uint8_t i2cId,
+Status I2C_MasterTransferData(en_I2C_unitId i2cId,
 				I2C_M_SETUP_Type *TransferCfg, I2C_TRANSFER_OPT_Type Opt);
-Status I2C_SlaveTransferData(uint8_t i2cId,
+Status I2C_SlaveTransferData(en_I2C_unitId i2cId,
 				I2C_S_SETUP_Type *TransferCfg, I2C_TRANSFER_OPT_Type Opt);
-uint32_t I2C_MasterTransferComplete(uint8_t i2cId);
-uint32_t I2C_SlaveTransferComplete(uint8_t i2cId);
+uint32_t I2C_MasterTransferComplete(en_I2C_unitId i2cId);
+uint32_t I2C_SlaveTransferComplete(en_I2C_unitId i2cId);
 
 
-void I2C_SetOwnSlaveAddr(uint8_t i2cId, I2C_OWNSLAVEADDR_CFG_Type *OwnSlaveAddrConfigStruct);
-uint8_t I2C_GetLastStatusCode(uint8_t i2cId);
+void I2C_SetOwnSlaveAddr(en_I2C_unitId i2cId, I2C_OWNSLAVEADDR_CFG_Type *OwnSlaveAddrConfigStruct);
+uint8_t I2C_GetLastStatusCode(en_I2C_unitId i2cId);
 
 /* I2C Monitor functions ---------------*/
-void I2C_MonitorModeConfig(uint8_t i2cId, uint32_t MonitorCfgType, FunctionalState NewState);
-void I2C_MonitorModeCmd(uint8_t i2cId, FunctionalState NewState);
-uint8_t I2C_MonitorGetDatabuffer(uint8_t i2cId);
-BOOL_8 I2C_MonitorHandler(uint8_t i2cId, uint8_t *buffer, uint32_t size);
+void I2C_MonitorModeConfig(en_I2C_unitId i2cId, uint32_t MonitorCfgType, FunctionalState NewState);
+void I2C_MonitorModeCmd(en_I2C_unitId i2cId, FunctionalState NewState);
+uint8_t I2C_MonitorGetDatabuffer(en_I2C_unitId i2cId);
+BOOL_8 I2C_MonitorHandler(en_I2C_unitId i2cId, uint8_t *buffer, uint32_t size);
 
 /* I2C Interrupt handler functions ------*/
-void I2C_IntCmd (uint8_t i2cId, Bool NewState);
-void I2C_MasterHandler (uint8_t i2cId);
-void I2C_SlaveHandler (uint8_t i2cId);
+void I2C_IntCmd (en_I2C_unitId i2cId, Bool NewState);
+void I2C_MasterHandler (en_I2C_unitId i2cId);
+void I2C_SlaveHandler (en_I2C_unitId i2cId);
 
 
 /**

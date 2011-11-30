@@ -46,7 +46,7 @@
  */
 
 /** \defgroup CMSIS_MISRA_Exceptions  CMSIS MISRA-C:2004 Compliance Exceptions
-  * @ingroup CMSIS
+  * @ingroup CMSIS_Core
   CMSIS violates following MISRA-C2004 Rules:
   
    - Violates MISRA 2004 Required Rule 8.5, object/function definition in header file.<br>
@@ -65,7 +65,7 @@
  *                 CMSIS definitions
  ******************************************************************************/
 /** \defgroup CMSIS_core_definitions CMSIS Core Definitions
-  * @ingroup CMSIS
+  * @ingroup CMSIS_Core
   This file defines all structures and symbols for CMSIS core:
    - CMSIS version number
    - Cortex-M core
@@ -171,7 +171,7 @@
  *                 Register Abstraction
  ******************************************************************************/
 /** \defgroup CMSIS_core_register CMSIS Core Register
-  * @ingroup CMSIS
+  * @ingroup CMSIS_Core
   Core Register contain:
   - Core Register
   - Core NVIC Register
@@ -871,7 +871,7 @@ typedef struct
  *                Hardware Abstraction Layer
  ******************************************************************************/
 /** \defgroup CMSIS_Core_FunctionInterface CMSIS Core Function Interface
-  * @ingroup CMSIS
+  * @ingroup CMSIS_Core
   Core Function Interface contains:
   - Core NVIC Functions
   - Core SysTick Functions

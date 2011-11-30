@@ -37,9 +37,9 @@
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	        None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void)
+void c_entry (void)
 {
 	uint32_t cnt = 0;
 
@@ -74,7 +74,6 @@ int c_entry (void)
 
 	while(1);
 
-	return 0;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -84,7 +83,8 @@ int c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 /**

@@ -691,7 +691,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\linker\ldscript_iram_iar.icf</state>
+          <state>$PROJ_DIR$\..\..\..\..\makesection\makerule\linker\ldscript_iram_iar.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1590,7 +1590,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\..\..\..\..\Core\Device\NXP\LPC177x_8x\Source\Templates\linker\ldscript_iram_iar.icf</state>
+          <state>$PROJ_DIR$\..\..\..\..\makesection\makerule\linker\ldscript_iram_iar.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>

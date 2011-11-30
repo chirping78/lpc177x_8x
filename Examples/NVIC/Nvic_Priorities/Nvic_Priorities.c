@@ -29,6 +29,7 @@
 #include "lpc177x_8x_pinsel.h"
 #include "lpc177x_8x_adc.h"
 #include "bsp.h"
+#include "debug_frmwrk.h"
 
 
 /** @defgroup NVIC_Priorities	NVIC Priorities
@@ -46,7 +47,6 @@
 /************************** PRIVATE FUNCTIONS *************************/
 void EINT0_IRQHandler(void);
 
-void print_menu(void);
 void delay (void);
 
 
@@ -61,7 +61,7 @@ void EINT0_IRQHandler(void)
 {
 	uint8_t i;
 
-	EXTI_ClearEXTIFlag(0);
+	EXTI_ClearEXTIFlag(EXTI_EINT0);
 
 	for (i = 0; i < 10; i++)
 	{
@@ -118,12 +118,11 @@ void delay (void)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void)
+void c_entry (void)
 {
 	EXTI_InitTypeDef EXTICfg;
-	int i = 0;
 	
 	GPIO_Init();
 
@@ -186,10 +185,6 @@ int c_entry (void)
 		/* Enable ADC in NVIC */
 		NVIC_EnableIRQ(ADC_IRQn);
 	}
-	
-	GPIO_Deinit();
-
-	return 1;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -198,7 +193,8 @@ int c_entry (void)
  toolsets, the entry point is through __start() in the crt0_gnu.asm
  file, and that startup code will setup stacks and data */
 int main(void) {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 

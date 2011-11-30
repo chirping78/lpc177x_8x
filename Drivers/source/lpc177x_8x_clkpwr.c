@@ -28,10 +28,15 @@
 /** @addtogroup CLKPWR
  * @{
  */
-
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _CLKPWR
+ 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_clkpwr.h"
-
 
 uint32_t USBFrequency = 0;
 
@@ -299,6 +304,8 @@ void CLKPWR_DeepPowerDown(void)
 /**
  * @}
  */
+ 
+#endif /*_CLKPWR*/
 
 /**
  * @}

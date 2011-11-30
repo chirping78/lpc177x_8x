@@ -15,7 +15,12 @@
  *
  * Copyright (c) 2009 Keil - An ARM Company. All rights reserved.
  *---------------------------------------------------------------------------*/
-
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _USB_DEV_VIRTUAL_COM
 #include "lpc_types.h"
 
 #include "usb.h"
@@ -389,4 +394,4 @@ void CDC_NotificationIn (void) {
 /**
  * @}
  */
-
+#endif /*_USB_DEV_VIRTUAL_COM*/

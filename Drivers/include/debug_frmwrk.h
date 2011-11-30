@@ -28,7 +28,7 @@
 
 #include "lpc177x_8x_uart.h"
 
-#define USED_UART_DEBUG_PORT	2
+#define USED_UART_DEBUG_PORT	0
 
 #define NUM_SKIPPED_ALLOWED			(10)
 
@@ -68,6 +68,7 @@
 #define _DBH32_(x)							_db_hex_32_(DEBUG_UART_PORT, x)
 
 #define _DG									_db_get_char(DEBUG_UART_PORT)
+#define _DG_NONBLOCK(c)                     _db_get_char_nonblocking(DEBUG_UART_PORT,c)
 #define _DGV(option, numCh, val)			_db_get_val(DEBUG_UART_PORT, option, numCh, val)
 
 //void  _printf (const  char *format, ...);
@@ -86,6 +87,7 @@ extern void (*_db_hex_16_)(LPC_UART_TypeDef *UARTx, uint16_t hexn);
 extern void (*_db_hex_32_)(LPC_UART_TypeDef *UARTx, uint32_t hexn);
 
 extern uint8_t (*_db_get_char)(LPC_UART_TypeDef *UARTx);
+extern Bool (*_db_get_char_nonblocking)(LPC_UART_TypeDef *UARTx, uint8_t* c);
 extern uint8_t (*_db_get_val)(LPC_UART_TypeDef *UARTx, uint8_t option, uint8_t numCh, uint32_t * val);
 
 uint8_t UARTGetValue (LPC_UART_TypeDef *UARTx, uint8_t option,
@@ -100,6 +102,7 @@ void UARTPutHex (LPC_UART_TypeDef *UARTx, uint8_t hexnum);
 void UARTPutHex16 (LPC_UART_TypeDef *UARTx, uint16_t hexnum);
 void UARTPutHex32 (LPC_UART_TypeDef *UARTx, uint32_t hexnum);
 uint8_t UARTGetChar (LPC_UART_TypeDef *UARTx);
+Bool UARTGetCharInNonBlock(LPC_UART_TypeDef *UARTx, uint8_t* c);
 void debug_frmwrk_init(void);
 
 #endif /* __DEBUG_FRMWRK_H_ */

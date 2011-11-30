@@ -27,7 +27,7 @@
 
 /* ##########################  Core Instruction Access  ######################### */
 /** \defgroup CMSIS_Core_InstructionInterface CMSIS Core Instruction Interface
-  * @ingroup CMSIS
+  * @ingroup CMSIS_Core
   Access to dedicated instructions
   @{
 */

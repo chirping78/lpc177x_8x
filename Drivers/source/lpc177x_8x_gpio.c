@@ -28,10 +28,19 @@
 /** @addtogroup GPIO
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _GPIO
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_gpio.h"
 #include "lpc177x_8x_clkpwr.h"
+
+/* definitions ------------------------------------------------------------------- */
+#define  GPIO_IS_ENABLED(x)    (((x) != 0)? ENABLE:DISABLE)
 
 /* Private Functions ---------------------------------------------------------- */
 
@@ -379,13 +388,13 @@ void GPIO_IntCmd(uint8_t portNum, uint32_t bitValue, uint8_t edgeState)
 FunctionalState GPIO_GetIntStatus(uint8_t portNum, uint32_t pinNum, uint8_t edgeState)
 {
 	if((portNum == 0) && (edgeState == 0))//Rising Edge
-		return (((LPC_GPIOINT->IO0IntStatR)>>pinNum)& 0x1);
+		return GPIO_IS_ENABLED(((LPC_GPIOINT->IO0IntStatR)>>pinNum)& 0x1);
 	else if ((portNum == 2) && (edgeState == 0))
-		return (((LPC_GPIOINT->IO2IntStatR)>>pinNum)& 0x1);
+		return GPIO_IS_ENABLED(((LPC_GPIOINT->IO2IntStatR)>>pinNum)& 0x1);
 	else if ((portNum == 0) && (edgeState == 1))//Falling Edge
-		return (((LPC_GPIOINT->IO0IntStatF)>>pinNum)& 0x1);
+		return GPIO_IS_ENABLED(((LPC_GPIOINT->IO0IntStatF)>>pinNum)& 0x1);
 	else if ((portNum == 2) && (edgeState == 1))
-		return (((LPC_GPIOINT->IO2IntStatF)>>pinNum)& 0x1);
+		return GPIO_IS_ENABLED(((LPC_GPIOINT->IO2IntStatF)>>pinNum)& 0x1);
 	else
 		//Error
 		while(1);
@@ -739,7 +748,7 @@ void FIO_ByteSetDir(uint8_t portNum, uint8_t byteNum, uint8_t bitValue, uint8_t 
 		// Output direction
 		if (dir)
 		{
-			if ((byteNum >= 0) && (byteNum <= 3))
+			if (byteNum <= 3)
 			{
 				pFIO->FIODIR[byteNum] |= bitValue;
 			}
@@ -747,7 +756,7 @@ void FIO_ByteSetDir(uint8_t portNum, uint8_t byteNum, uint8_t bitValue, uint8_t 
 		// Input direction
 		else
 		{
-			if ((byteNum >= 0) && (byteNum <= 3))
+			if (byteNum <= 3)
 			{
 				pFIO->FIODIR[byteNum] &= ~bitValue;
 			}
@@ -783,14 +792,14 @@ void FIO_ByteSetMask(uint8_t portNum, uint8_t byteNum, uint8_t bitValue, uint8_t
 		// Mask
 		if (maskValue)
 		{
-			if ((byteNum >= 0) && (byteNum <= 3))
+			if (byteNum <= 3)
 			{
 				pFIO->FIOMASK[byteNum] |= bitValue;
 			}
 		}
 		// Un-mask
 		else {
-			if ((byteNum >= 0) && (byteNum <= 3))
+			if (byteNum <= 3)
 			{
 				pFIO->FIOMASK[byteNum] &= ~bitValue;
 			}
@@ -818,7 +827,7 @@ void FIO_ByteSetValue(uint8_t portNum, uint8_t byteNum, uint8_t bitValue)
 	GPIO_Byte_TypeDef *pFIO = FIO_ByteGetPointer(portNum);
 
 	if (pFIO != NULL) {
-		if ((byteNum >= 0) && (byteNum <= 3))
+		if (byteNum <= 3)
 		{
 			pFIO->FIOSET[byteNum] = bitValue;
 		}
@@ -846,7 +855,7 @@ void FIO_ByteClearValue(uint8_t portNum, uint8_t byteNum, uint8_t bitValue)
 
 	if (pFIO != NULL)
 	{
-		if ((byteNum >= 0) && (byteNum <= 3))
+		if (byteNum <= 3)
 		{
 			pFIO->FIOCLR[byteNum] = bitValue;
 		}
@@ -869,7 +878,7 @@ uint8_t FIO_ByteReadValue(uint8_t portNum, uint8_t byteNum)
 
 	if (pFIO != NULL)
 	{
-		if ((byteNum >= 0) && (byteNum <= 3))
+		if (byteNum <= 3)
 		{
 			return (pFIO->FIOPIN[byteNum]);
 		}
@@ -881,7 +890,7 @@ uint8_t FIO_ByteReadValue(uint8_t portNum, uint8_t byteNum)
  * @}
  */
 
-//#endif /* _GPIO */
+#endif /* _GPIO */
 
 /**
  * @}

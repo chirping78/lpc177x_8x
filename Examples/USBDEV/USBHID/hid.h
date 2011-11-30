@@ -3,21 +3,25 @@
  *----------------------------------------------------------------------------
  *      Name:    HID.H
  *      Purpose: USB HID (Human Interface Device) Definitions
- *      Version: V1.20
+ *      Version: V1.10
  *----------------------------------------------------------------------------
  *      This software is supplied "AS IS" without any warranties, express,
  *      implied or statutory, including but not limited to the implied
  *      warranties of fitness for purpose, satisfactory quality and
  *      noninfringement. Keil extends you a royalty-free right to reproduce
  *      and distribute executable files created using this software for use
- *      on NXP Semiconductors LPC family microcontroller devices only. Nothing 
+ *      on NXP Semiconductors LPC family microcontroller devices only. Nothing
  *      else gives you the right to use this software.
  *
- * Copyright (c) 2009 Keil - An ARM Company. All rights reserved.
+ *      Copyright (c) 2005-2009 Keil Software.
  *---------------------------------------------------------------------------*/
 
 #ifndef __HID_H__
 #define __HID_H__
+
+#if defined   (  __GNUC__  )
+#define __packed __attribute__((__packed__))
+#endif
 
 
 /* HID Subclass Codes */
@@ -37,19 +41,38 @@
 
 
 /* HID Descriptor */
+#if defined     (  __CC_ARM  )
 typedef __packed struct _HID_DESCRIPTOR {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _HID_DESCRIPTOR {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+#pragma pack(1)
+typedef struct _HID_DESCRIPTOR {
+#endif
   uint8_t  bLength;
   uint8_t  bDescriptorType;
   uint16_t  bcdHID;
   uint8_t  bCountryCode;
   uint8_t  bNumDescriptors;
   /* Array of one or more descriptors */
+#if defined     (  __CC_ARM  )
   __packed struct _HID_DESCRIPTOR_LIST {
+#elif defined   (  __GNUC__  )
+  struct __packed _HID_DESCRIPTOR_LIST {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+#pragma pack(1)
+  struct _HID_DESCRIPTOR_LIST {
+#endif
     uint8_t  bDescriptorType;
     uint16_t  wDescriptorLength;
   } DescriptorList[1];
+#ifdef __IAR_SYSTEMS_ICC__
+#pragma pack()
+#endif
 } HID_DESCRIPTOR;
-
+#ifdef __IAR_SYSTEMS_ICC__
+#pragma pack()
+#endif
 
 /* HID Request Codes */
 #define HID_REQUEST_GET_REPORT          0x01

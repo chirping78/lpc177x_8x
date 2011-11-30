@@ -1219,7 +1219,7 @@ uint32_t  FAT_ChkEntType (volatile  uint8_t  *ent)
  * @return 		a file descriptor which is the INDEX+1 to the entry (on success).
  *                         error code (on fail)
  **********************************************************************/
-int32_t  FILE_Open (uint8_t  *file_name,
+int32_t  FILE_Open (void  *file_name,
                        uint8_t   flags)
 {
     int32_t   rc = 0;

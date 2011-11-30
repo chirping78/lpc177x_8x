@@ -7,7 +7,7 @@
 * @version	1.0
 * @date		02. June. 2011
 * @author	NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -23,7 +23,14 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
-
+#include "bsp.h"
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
+#ifdef _EMC
 #include "bsp.h"
 #include "lpc177x_8x_emc.h"
 #include "lpc177x_8x_clkpwr.h"
@@ -31,9 +38,13 @@
 #include "lpc177x_8x_timer.h"
 #include "sdram_k4s561632j.h"
 
-#if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
+/* Public Functions ----------------------------------------------------------- */
+/** @addtogroup Sdram_K4S561632J
+ * @{
+ */
+
 /*********************************************************************//**
- * @brief 		Initialize external SDRAM memory Micron MT48LC8M32LFB5
+ * @brief 		Initialize external SDRAM memory Micron K4S561632J
  *				256Mbit(8M x 32)
  * @param[in]	None
  * @return 		None
@@ -146,7 +157,13 @@ void SDRAMInit( void )
 	LPC_EMC->DynamicConfig0 |=(1<<19);
 	for(i = 100000; i;i--);
 }
-#endif
+#endif /*_EMC*/
+#endif /*(_CURR_USING_BRD == _QVGA_BOARD)*/
+
+/**
+ * @}
+ */
+
 /*********************************************************************************
 **                            End Of File
 *********************************************************************************/

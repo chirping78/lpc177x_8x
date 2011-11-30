@@ -23,12 +23,19 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _MCI
 
-#include "lpc177x_8x.h"
+#include "LPC177x_8x.h"
 #include "lpc_types.h"
 #include "lpc177x_8x_mci.h"
 #include "lpc177x_8x_gpdma.h"
 #include "lpc177x_8x_clkpwr.h"
+#include "lpc177x_8x_pinsel.h"
 
 #define DMA_MCI_SIZE				BLOCK_LENGTH
 
@@ -109,8 +116,8 @@ uint32_t dmaRdCh_TermianalCnt, dmaRdCh_ErrorCnt;
 
 uint32_t MCI_SettingDma(uint8_t* memBuf, uint32_t ChannelNum, uint32_t DMAMode );
 
-uint32_t MCI_ReadFifo(uint32_t * dest);
-uint32_t MCI_WriteFifo(uint32_t * src);
+int32_t MCI_ReadFifo(uint32_t * dest);
+int32_t MCI_WriteFifo(uint32_t * src);
 
 void MCI_TXEnable( void );
 void MCI_RXEnable( void );
@@ -123,7 +130,7 @@ void MCI_DataErrorProcess( void );
 void MCI_DATA_END_InterruptService( void );
 void MCI_FIFOInterruptService( void );
 
-uint32_t MCI_CheckStatus(void);
+int32_t MCI_CheckStatus(void);
 
 
 
@@ -161,7 +168,6 @@ volatile uint32_t txBlockCnt=0, rxBlockCnt=0;
  **********************************************************************/
 uint32_t MCI_SettingDma(uint8_t* memBuf, uint32_t ChannelNum, uint32_t DMAMode )
 {
-	uint32_t tempDgb;
 	GPDMA_Channel_CFG_Type GPDMACfg;
 
 	// Transfer size
@@ -233,7 +239,7 @@ uint32_t MCI_SettingDma(uint8_t* memBuf, uint32_t ChannelNum, uint32_t DMAMode )
  *
  * @note		This is only executed if DMA support is enabled
  **********************************************************************/
-void DMA_IRQHandler (void)
+void MCI_DMA_IRQHandler (void)
 {
 	// check GPDMA interrupt on channel 0
 	if (GPDMA_IntGetStatus(GPDMA_STAT_INT, MCI_DMA_WRITE_CHANNEL))
@@ -286,7 +292,7 @@ void DMA_IRQHandler (void)
  *
  * @return 		MCI_FUNC_OK
  *************************************************************************/
-uint32_t MCI_ReadFifo(uint32_t * dest) 
+int32_t MCI_ReadFifo(uint32_t * dest) 
 {
 	uint8_t i;
 
@@ -308,7 +314,7 @@ uint32_t MCI_ReadFifo(uint32_t * dest)
  *
  * @return 		MCI_FUNC_OK
  *************************************************************************/
-uint32_t MCI_WriteFifo(uint32_t * src)
+int32_t MCI_WriteFifo(uint32_t * src)
 {
 	uint8_t i;
 
@@ -412,9 +418,9 @@ void MCI_RXDisable( void )
  *
  * @return 		MCI_FUNC_OK if all success
  *************************************************************************/
-uint32_t MCI_CheckStatus(void)
+int32_t MCI_CheckStatus(void)
 {
-	uint32_t respValue, retval = MCI_FUNC_FAILED;
+	int32_t respValue, retval = MCI_FUNC_FAILED;
 
 	while (1)
 	{
@@ -764,7 +770,7 @@ void MCI_Set_MCIClock( uint32_t ClockRate )
  *
  * @return 		MCI_FUNC_OK in case of success
  *************************************************************************/
-uint32_t MCI_SetBusWidth( uint32_t width )
+int32_t MCI_SetBusWidth( uint32_t width )
 {
 	uint32_t i;
 
@@ -797,9 +803,9 @@ uint32_t MCI_SetBusWidth( uint32_t width )
  *
  * @return 		MCI_FUNC_OK in case of success
  ***************************************************************************/
-uint32_t MCI_Init(uint8_t powerActiveLevel )
+int32_t MCI_Init(uint8_t powerActiveLevel )
 {
-	uint32_t i, retval;
+	uint32_t i;
 
 	MCI_CardType = MCI_CARD_UNKNOWN;
 
@@ -904,7 +910,7 @@ uint32_t MCI_Init(uint8_t powerActiveLevel )
 
 	NVIC_EnableIRQ(MCI_IRQn);
 
-	retval = MCI_CardInit();
+	MCI_CardInit();
 
 	/* During the initialization phase, to simplify the process, the CMD related
 	interrupts are disabled. The DATA related interrupts are enabled when
@@ -952,7 +958,7 @@ void MCI_SetOutputMode(uint32_t mode)
  *
  * @param[in]	AllowTimeout allow timeout the command or not
  *
- * @return 		MCI_FUNC_OK in case of success
+ * @return 		None
  ***************************************************************************/
 void MCI_SendCmd(uint32_t CmdIndex, uint32_t Argument, uint32_t ExpectResp, uint32_t AllowTimeout)
 {
@@ -1022,7 +1028,7 @@ void MCI_SendCmd(uint32_t CmdIndex, uint32_t Argument, uint32_t ExpectResp, uint
  *
  * @return 		MCI_FUNC_OK in case of success
  ***************************************************************************/
-uint32_t MCI_GetCmdResp(uint32_t ExpectCmdData, uint32_t ExpectResp, uint32_t *CmdResp)
+int32_t MCI_GetCmdResp(uint32_t ExpectCmdData, uint32_t ExpectResp, uint32_t *CmdResp)
 {
 	uint32_t CmdRespStatus = 0;
 	uint32_t LastCmdIndex;
@@ -1128,11 +1134,10 @@ uint32_t MCI_GetCmdResp(uint32_t ExpectCmdData, uint32_t ExpectResp, uint32_t *C
  *
  * @return 		MCI_FUNC_OK in case of success
  ***************************************************************************/
-uint32_t MCI_CmdResp(uint32_t CmdIndex, uint32_t Argument,
+int32_t MCI_CmdResp(uint32_t CmdIndex, uint32_t Argument,
 								uint32_t ExpectResp, uint32_t *CmdResp, uint32_t AllowTimeout)
 {
-	uint32_t respStatus;
-	uint32_t respValue[4];
+	int32_t respStatus;
 
 	MCI_SendCmd(CmdIndex, Argument, ExpectResp, AllowTimeout);
 
@@ -1158,7 +1163,7 @@ uint32_t MCI_CmdResp(uint32_t CmdIndex, uint32_t Argument,
  *
  * @return 		Always MCI_FUNC_OK
  ***************************************************************************/
-uint32_t MCI_CardReset(void)
+int32_t MCI_CardReset(void)
 {
 	/* Because CMD0 command to put the device to idle state does not need response 
 	since, it's only sending commad */
@@ -1175,13 +1180,13 @@ uint32_t MCI_CardReset(void)
  *
  * @return 		MCI_FUNC_OK if all success
  ****************************************************************************/
-uint32_t MCI_Cmd_SendOpCond( void )
+int32_t MCI_Cmd_SendOpCond( void )
 {
 	uint32_t i, retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
 
-	uint32_t retval = MCI_FUNC_FAILED;
+	int32_t retval = MCI_FUNC_FAILED;
 
 	retryCount = 0x200;			/* reset retry counter */
 
@@ -1220,14 +1225,14 @@ uint32_t MCI_Cmd_SendOpCond( void )
  *
  * @return 		MCI_FUNC_OK if all success
  ****************************************************************************/
-uint32_t MCI_Cmd_SendIfCond(void)
+int32_t MCI_Cmd_SendIfCond(void)
 {
 	uint32_t i, retryCount;
 	uint32_t CmdArgument;
 	uint32_t respStatus;
 	uint32_t respValue[4];
 
-	uint32_t retval = MCI_FUNC_FAILED;
+	int32_t retval = MCI_FUNC_FAILED;
 
 	uint8_t voltageSupplied = 0x01;//in range 2.7-3.6V
 	uint8_t checkPattern = 0xAA;
@@ -1278,14 +1283,14 @@ uint32_t MCI_Cmd_SendIfCond(void)
  *
  * @return 		MCI_FUNC_OK if all success
  ****************************************************************************/
-uint32_t MCI_Cmd_SendACMD( void )
+int32_t MCI_Cmd_SendACMD( void )
 {
 	uint32_t i, retryCount;
 	uint32_t CmdArgument;
 	uint32_t respStatus;
 	uint32_t respValue[4];
 
-	uint32_t retval = MCI_FUNC_FAILED;
+	int32_t retval = MCI_FUNC_FAILED;
 
 	if (MCI_CardType == MCI_SD_CARD)
 	{
@@ -1338,13 +1343,13 @@ uint32_t MCI_Cmd_SendACMD( void )
  *				type, try this combination to see if we can communicate with
  *				a SD type.
  ****************************************************************************/
-uint32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
+int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
 {
 	uint32_t i, retryCount;
 	uint32_t respStatus, argument;
 	uint32_t respValue[4];
 
-	uint32_t retval = MCI_FUNC_FAILED;
+	int32_t retval = MCI_FUNC_FAILED;
 
 	argument = OCR_INDEX | (hcsVal << MCI_ACMD41_HCS_POS);
 
@@ -1401,12 +1406,12 @@ uint32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
  *
  * @param		None
  *
- * @return 		card type if all success
+ * @return 		MCI_FUNC_OK if success
  ****************************************************************************/
-uint32_t MCI_CardInit( void )
+int32_t MCI_CardInit( void )
 {
-	uint32_t CmdArgument;
-	uint32_t i, retval = MCI_FUNC_FAILED;
+	uint32_t i;
+	int32_t retval = MCI_FUNC_FAILED;
 
 	MCI_CardType = MCI_CARD_UNKNOWN;
 
@@ -1435,7 +1440,7 @@ uint32_t MCI_CardInit( void )
 		{
 			MCI_CardType = MCI_SD_CARD;//Support High Capacity
 
-			return MCI_CardType;	/* Found the card, it's a hD */
+			return MCI_FUNC_OK;	/* Found the card, it's a hD */
 		}
 	}
 
@@ -1446,7 +1451,7 @@ uint32_t MCI_CardInit( void )
 		{
 			MCI_CardType = MCI_SD_CARD;//Support Standard Capacity only
 
-			return MCI_CardType;	/* Found the card, it's a SD */
+			return MCI_FUNC_OK;	/* Found the card, it's a SD */
 		}
 	}
 
@@ -1463,12 +1468,12 @@ uint32_t MCI_CardInit( void )
 		{
 			MCI_CardType = MCI_MMC_CARD;
 
-			return MCI_CardType;	/* Found the card, it's a MMC */
+			return MCI_FUNC_OK;	/* Found the card, it's a MMC */
 		}
 	}
 
 	/* tried both MMC and SD card, give up */
-	return MCI_CardType;
+	return MCI_FUNC_OK;
 }
 
 
@@ -1494,7 +1499,7 @@ en_Mci_CardType MCI_GetCardType(void)
  *
  * @return 		MCI_FUNC_OK if all success
  ****************************************************************************/
-uint32_t MCI_GetCID(st_Mci_CardId* cidValue)
+int32_t MCI_GetCID(st_Mci_CardId* cidValue)
 {
 	uint32_t i, retryCount;
 	uint32_t respStatus;
@@ -1526,7 +1531,7 @@ uint32_t MCI_GetCID(st_Mci_CardId* cidValue)
 				cidValue->PRV = (respValue[2] >> MCI_CID_PRODUCTREVISION_ID_WPOS) & MCI_CID_PRODUCTREVISION_ID_WBMASK;
 
 				cidValue->PSN = (((respValue[2] >> MCI_CID_PRODUCTSERIALNUM_ID_H_WPOS) & MCI_CID_PRODUCTSERIALNUM_ID_H_WBMASK) << 8)
-											| (respValue[3] >> MCI_CID_PRODUCTSERIALNUM_ID_L_WPOS) & MCI_CID_PRODUCTSERIALNUM_ID_L_WBMASK;
+											| ((respValue[3] >> MCI_CID_PRODUCTSERIALNUM_ID_L_WPOS) & MCI_CID_PRODUCTSERIALNUM_ID_L_WBMASK);
 
 				cidValue->reserved = (respValue[3] >> MCI_CID_RESERVED_ID_WPOS) & MCI_CID_RESERVED_ID_WBMASK;
 
@@ -1599,14 +1604,14 @@ uint32_t MCI_GetCID(st_Mci_CardId* cidValue)
  *
  * @return 		MCI_FUNC_OK if all success
  ****************************************************************************/
-uint32_t MCI_SetCardAddress( void )
+int32_t MCI_SetCardAddress( void )
 {
 	uint32_t i, retryCount;
 	uint32_t respStatus;
 	uint32_t respValue;
 	uint32_t CmdArgument;
 
-	uint32_t retval = MCI_FUNC_FAILED;
+	int32_t retval = MCI_FUNC_FAILED;
 
 	/* If it's a SD card, SET_RELATIVE_ADDR is to get the address
 	from the card and use this value in RCA, if it's a MMC, set default
@@ -1664,7 +1669,7 @@ uint32_t MCI_SetCardAddress( void )
  *
  * @note		This function must be called after MCI_SetCardAddress() executing
  ****************************************************************************/
-uint32_t MCI_GetCardAddress(void)////Khoa_110519: should merge into the above func to get back the RCA of the card
+uint32_t MCI_GetCardAddress(void)
 {
 	return CardRCA;
 }
@@ -1681,7 +1686,7 @@ uint32_t MCI_GetCardAddress(void)////Khoa_110519: should merge into the above fu
  * @note		CMD9 (SEND_CSD) command should be sent only at standby state 
  *				(STBY) after CMD3
  ****************************************************************************/
-uint32_t MCI_GetCSD(uint32_t* csdVal)
+int32_t MCI_GetCSD(uint32_t* csdVal)
 {
 	uint32_t i, retryCount;
 	uint32_t respStatus;
@@ -1740,14 +1745,14 @@ uint32_t MCI_GetCSD(uint32_t* csdVal)
  *				The state will be inter-changed between STBY to TRANS by this 
  *				CMD7 command
  ****************************************************************************/
-uint32_t MCI_Cmd_SelectCard( void )
+int32_t MCI_Cmd_SelectCard( void )
 {
 	uint32_t i, retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
 	uint32_t CmdArgument;
 
-	uint32_t retval = MCI_FUNC_FAILED;
+	int32_t retval = MCI_FUNC_FAILED;
 
 	if (MCI_CardType == MCI_SD_CARD)
 	{
@@ -1803,7 +1808,7 @@ uint32_t MCI_Cmd_SelectCard( void )
  *
  * @return 		MCI_FUNC_OK if all success
  ****************************************************************************/
-uint32_t MCI_GetCardStatus(uint32_t* cardStatus)
+int32_t MCI_GetCardStatus(int32_t* cardStatus)
 {
 	uint32_t i;
 	uint32_t retryCount;
@@ -1811,7 +1816,7 @@ uint32_t MCI_GetCardStatus(uint32_t* cardStatus)
 	uint32_t respValue[4];
 	uint32_t CmdArgument;
 
-	uint32_t retval = MCI_FUNC_FAILED;
+	int32_t retval = MCI_FUNC_FAILED;
 
 	if (MCI_CardType == MCI_SD_CARD)
 	{
@@ -1872,13 +1877,13 @@ uint32_t MCI_GetCardStatus(uint32_t* cardStatus)
  * @note		CMD16 command should be sent after the card is selected by CMD7 
  *				(SELECT_CARD).
  ****************************************************************************/
-uint32_t MCI_SetBlockLen(uint32_t blockLength)
+int32_t MCI_SetBlockLen(uint32_t blockLength)
 {
 	uint32_t i, retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
 
-	uint32_t retval = MCI_FUNC_FAILED;
+	int32_t retval = MCI_FUNC_FAILED;
 
 	retryCount = 0x20;
 	while ( retryCount > 0 )
@@ -1930,13 +1935,13 @@ uint32_t MCI_SetBlockLen(uint32_t blockLength)
  *				- This command can only be transferred during TRANS state.
  *				- Since, it's a ACMD, CMD55 (APP_CMD) needs to be sent out first
  ****************************************************************************/
-uint32_t MCI_Acmd_SendBusWidth( uint32_t buswidth )
+int32_t MCI_Acmd_SendBusWidth( uint32_t buswidth )
 {
 	uint32_t i, retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
 
-	uint32_t retval = MCI_FUNC_FAILED;
+	int32_t retval = MCI_FUNC_FAILED;
 
 	retryCount = 0x20;			/* reset retry counter */
 
@@ -1996,13 +2001,13 @@ uint32_t MCI_GetDataXferEndState(void)
  *
  * @return 		MCI_FUNC_OK if all success
  ****************************************************************************/
-uint32_t MCI_Cmd_StopTransmission( void )
+int32_t MCI_Cmd_StopTransmission( void )
 {
 	uint32_t i, retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
 
-	uint32_t retval = MCI_FUNC_FAILED;
+	int32_t retval = MCI_FUNC_FAILED;
 
 	retryCount = 0x20;
 
@@ -2048,7 +2053,7 @@ uint32_t MCI_Cmd_StopTransmission( void )
  *
  * @note		These commands should be sent in TRANS state.
  ****************************************************************************/
-uint32_t MCI_Cmd_WriteBlock(uint32_t blockNum, uint32_t numOfBlock)
+int32_t MCI_Cmd_WriteBlock(uint32_t blockNum, uint32_t numOfBlock)
 {
 	uint32_t i, retryCount;
 	uint32_t respStatus;
@@ -2056,7 +2061,7 @@ uint32_t MCI_Cmd_WriteBlock(uint32_t blockNum, uint32_t numOfBlock)
 
 	uint32_t commandID;
 
-	uint32_t retval = MCI_FUNC_FAILED;
+	int32_t retval = MCI_FUNC_FAILED;
 
 	if (numOfBlock > 1)
 	{
@@ -2117,14 +2122,14 @@ uint32_t MCI_Cmd_WriteBlock(uint32_t blockNum, uint32_t numOfBlock)
  *
  * @note		These commands should be sent in TRANS state.
  ****************************************************************************/
-uint32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock)
+int32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock)
 {
 	uint32_t i, retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
 	uint32_t commandID;
 
-	uint32_t retval = MCI_FUNC_FAILED;
+	int32_t retval = MCI_FUNC_FAILED;
 
 	// To Do: Read Multi-Block
 	if (numOfBlock > 1)
@@ -2190,9 +2195,9 @@ uint32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock)
  *
  * @return 		MCI_FUNC_OK if all success
  ****************************************************************************/
-uint32_t MCI_WriteBlock(uint8_t* memblock, uint32_t blockNum, uint32_t numOfBlock)
+int32_t MCI_WriteBlock(uint8_t* memblock, uint32_t blockNum, uint32_t numOfBlock)
 {
-	uint32_t i, blockCnt;
+	uint32_t i;
 	uint32_t DataCtrl = 0;
 
 	dataSrcBlock = memblock;
@@ -2273,9 +2278,9 @@ uint32_t MCI_WriteBlock(uint8_t* memblock, uint32_t blockNum, uint32_t numOfBloc
  *
  * @return 		MCI_FUNC_OK if all success
  ****************************************************************************/
-uint32_t MCI_ReadBlock(uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBlock)
+int32_t MCI_ReadBlock(uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBlock)
 {
-	uint32_t i, blockCnt;
+	uint32_t i;
 	uint32_t DataCtrl = 0;
 
 	dataDestBlock = destBlock;
@@ -2357,6 +2362,7 @@ void MCI_PowerOff(void)
  * @}
  */
 
+#endif /*_MCI*/
 
 /*****************************************************************************
 **                            End Of File

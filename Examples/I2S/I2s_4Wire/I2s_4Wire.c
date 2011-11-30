@@ -22,6 +22,7 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
+#include "LPC177x_8x.h"
 #include "lpc177x_8x_i2s.h"
 #include "lpc177x_8x_pinsel.h"
 #include "debug_frmwrk.h"
@@ -40,7 +41,7 @@
  * it is not used in this example, so this memory section can be used for general purpose
  * memory
  */
-#define I2S_BUFFER_SRC			LPC_AHBRAM1_BASE
+#define I2S_BUFFER_SRC			LPC_PERI_RAM_BASE
 /** I2S Buffer Destination Address is (AHBRAM1_BASE + 0x100UL) that used for USB RAM purpose, but
  * it is not used in this example, so this memory section can be used for general purpose
  * memory
@@ -100,9 +101,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main I2S program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void) {
+void c_entry (void) {
 	uint32_t i;
 	uint8_t dummy=0;
 	I2S_MODEConf_Type I2S_ClkConfig;
@@ -228,7 +229,8 @@ int c_entry (void) {
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

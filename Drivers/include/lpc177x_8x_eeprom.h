@@ -63,7 +63,7 @@ extern "C"
 #define EEPROM_CMD_RDPREFETCH			(1<<3)
 
 #define EEPROM_PAGE_SIZE				64
-#define EEPROM_PAGE_NUM					64
+#define EEPROM_PAGE_NUM					63
 
 /*********************************************************************//**
  * Macro defines for EEPROM address register

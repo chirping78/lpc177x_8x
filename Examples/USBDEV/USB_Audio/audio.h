@@ -62,17 +62,17 @@
 
 
 /* Audio Descriptor Sizes */
-#define AUDIO_CONTROL_INTERFACE_DESC_SZ(n)      0x08+n
-#define AUDIO_STREAMING_INTERFACE_DESC_SIZE     0x07
-#define AUDIO_INPUT_TERMINAL_DESC_SIZE          0x0C
-#define AUDIO_OUTPUT_TERMINAL_DESC_SIZE         0x09
-#define AUDIO_MIXER_UNIT_DESC_SZ(p,n)           0x0A+p+n
-#define AUDIO_SELECTOR_UNIT_DESC_SZ(p)          0x06+p
-#define AUDIO_FEATURE_UNIT_DESC_SZ(ch,n)        0x07+(ch+1)*n
-#define AUDIO_PROCESSING_UNIT_DESC_SZ(p,n,x)    0x0D+p+n+x
-#define AUDIO_EXTENSION_UNIT_DESC_SZ(p,n)       0x0D+p+n
-#define AUDIO_STANDARD_ENDPOINT_DESC_SIZE       0x09
-#define AUDIO_STREAMING_ENDPOINT_DESC_SIZE      0x07
+#define AUDIO_CONTROL_INTERFACE_DESC_SZ(n)      (0x08+n)
+#define AUDIO_STREAMING_INTERFACE_DESC_SIZE     (0x07)
+#define AUDIO_INPUT_TERMINAL_DESC_SIZE          (0x0C)
+#define AUDIO_OUTPUT_TERMINAL_DESC_SIZE         (0x09)
+#define AUDIO_MIXER_UNIT_DESC_SZ(p,n)           (0x0A+p+n)
+#define AUDIO_SELECTOR_UNIT_DESC_SZ(p)          (0x06+p)
+#define AUDIO_FEATURE_UNIT_DESC_SZ(ch,n)        (0x07+(ch+1)*n)
+#define AUDIO_PROCESSING_UNIT_DESC_SZ(p,n,x)    (0x0D+p+n+x)
+#define AUDIO_EXTENSION_UNIT_DESC_SZ(p,n)       (0x0D+p+n)
+#define AUDIO_STANDARD_ENDPOINT_DESC_SIZE       (0x09)
+#define AUDIO_STREAMING_ENDPOINT_DESC_SIZE      (0x07)
 
 
 /* Audio Processing Unit Process Types */
@@ -189,11 +189,11 @@
 
 
 /* Audio Format Type Descriptor Sizes */
-#define AUDIO_FORMAT_TYPE_I_DESC_SZ(n)          0x08+(n*3)
-#define AUDIO_FORMAT_TYPE_II_DESC_SZ(n)         0x09+(n*3)
-#define AUDIO_FORMAT_TYPE_III_DESC_SZ(n)        0x08+(n*3)
-#define AUDIO_FORMAT_MPEG_DESC_SIZE             0x09
-#define AUDIO_FORMAT_AC3_DESC_SIZE              0x0A
+#define AUDIO_FORMAT_TYPE_I_DESC_SZ(n)          (0x08+(n*3))
+#define AUDIO_FORMAT_TYPE_II_DESC_SZ(n)         (0x09+(n*3))
+#define AUDIO_FORMAT_TYPE_III_DESC_SZ(n)        (0x08+(n*3))
+#define AUDIO_FORMAT_MPEG_DESC_SIZE             (0x09)
+#define AUDIO_FORMAT_AC3_DESC_SIZE              (0x0A)
 
 
 /* Audio Data Format Codes */

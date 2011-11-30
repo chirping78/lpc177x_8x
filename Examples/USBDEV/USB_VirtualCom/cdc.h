@@ -18,12 +18,16 @@
 
 #ifndef __CDC_H
 #define __CDC_H
-
+#include "lpc_types.h"
 
 /** @addtogroup USBDEV_Cdc
  * @{
  */
- 
+
+#if defined   (  __GNUC__  )
+#define __packed __attribute__((__packed__))
+#endif
+
 
 /*----------------------------------------------------------------------------
  *      Definitions  based on usbcdc11.pdf (www.usb.org)
@@ -178,7 +182,13 @@
 // Header functional descriptor
 // (usbcdc11.pdf, 5.2.3.1)
 // This header must precede any list of class-specific descriptors.
-typedef __packed struct _CDC_HEADER_DESCRIPTOR{
+#if defined     (  __CC_ARM  )
+typedef __packed struct _CDC_HEADER_DESCRIPTOR {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _CDC_HEADER_DESCRIPTOR {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _CDC_HEADER_DESCRIPTOR {
+#endif
   uint8_t bFunctionLength;                     // size of this descriptor in bytes
   uint8_t bDescriptorType;                     // CS_INTERFACE descriptor type
   uint8_t bDescriptorSubtype;                  // Header functional descriptor subtype
@@ -188,7 +198,13 @@ typedef __packed struct _CDC_HEADER_DESCRIPTOR{
 //Call management functional descriptor
 // (usbcdc11.pdf, 5.2.3.2)
 // Describes the processing of calls for the communication class interface.
+#if defined     (  __CC_ARM  )
 typedef __packed struct _CDC_CALL_MANAGEMENT_DESCRIPTOR {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _CDC_CALL_MANAGEMENT_DESCRIPTOR {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _CDC_CALL_MANAGEMENT_DESCRIPTOR {
+#endif
   uint8_t bFunctionLength;                     // size of this descriptor in bytes
   uint8_t bDescriptorType;                     // CS_INTERFACE descriptor type
   uint8_t bDescriptorSubtype;                  // call management functional descriptor subtype
@@ -199,7 +215,13 @@ typedef __packed struct _CDC_CALL_MANAGEMENT_DESCRIPTOR {
 // Abstract control management functional descriptor
 // (usbcdc11.pdf, 5.2.3.3)
 // Describes the command supported by the communication interface class with the Abstract Control Model subclass code.
+#if defined     (  __CC_ARM  )
 typedef __packed struct _CDC_ABSTRACT_CONTROL_MANAGEMENT_DESCRIPTOR {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _CDC_ABSTRACT_CONTROL_MANAGEMENT_DESCRIPTOR {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _CDC_ABSTRACT_CONTROL_MANAGEMENT_DESCRIPTOR {
+#endif
   uint8_t bFunctionLength;                     // size of this descriptor in bytes
   uint8_t bDescriptorType;                     // CS_INTERFACE descriptor type
   uint8_t bDescriptorSubtype;                  // abstract control management functional descriptor subtype
@@ -209,7 +231,13 @@ typedef __packed struct _CDC_ABSTRACT_CONTROL_MANAGEMENT_DESCRIPTOR {
 // Union functional descriptors
 // (usbcdc11.pdf, 5.2.3.8)
 // Describes the relationship between a group of interfaces that can be considered to form a functional unit.
+#if defined     (  __CC_ARM  )
 typedef __packed struct _CDC_UNION_DESCRIPTOR {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _CDC_UNION_DESCRIPTOR {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _CDC_UNION_DESCRIPTOR {
+#endif
   uint8_t bFunctionLength;                     // size of this descriptor in bytes
   uint8_t bDescriptorType;                     // CS_INTERFACE descriptor type
   uint8_t bDescriptorSubtype;                  // union functional descriptor subtype
@@ -218,7 +246,13 @@ typedef __packed struct _CDC_UNION_DESCRIPTOR {
 
 // Union functional descriptors with one slave interface
 // (usbcdc11.pdf, 5.2.3.8)
+#if defined     (  __CC_ARM  )
 typedef __packed struct _CDC_UNION_1SLAVE_DESCRIPTOR {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _CDC_UNION_1SLAVE_DESCRIPTOR {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _CDC_UNION_1SLAVE_DESCRIPTOR {
+#endif
   CDC_UNION_DESCRIPTOR sUnion;              // Union functional descriptor
   uint8_t                 bSlaveInterfaces[1]; // Slave interface 0
 } CDC_UNION_1SLAVE_DESCRIPTOR;
@@ -226,7 +260,13 @@ typedef __packed struct _CDC_UNION_1SLAVE_DESCRIPTOR {
 //  Line coding structure
 //  Format of the data returned when a GetLineCoding request is received
 // (usbcdc11.pdf, 6.2.13)
+#if defined     (  __CC_ARM  )
 typedef __packed struct _CDC_LINE_CODING {
+#elif defined   (  __GNUC__  )
+typedef struct __packed _CDC_LINE_CODING {
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+typedef __packed struct _CDC_LINE_CODING {
+#endif
   uint32_t dwDTERate;                          // Data terminal rate in bits per second
   uint8_t  bCharFormat;                        // Number of stop bits
   uint8_t  bParityType;                        // Parity bit type

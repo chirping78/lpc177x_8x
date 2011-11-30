@@ -77,9 +77,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry (void)
+void c_entry (void)
 {
 	/* Initialize debug via UART0
 	 * – 115200bps
@@ -99,7 +99,7 @@ int c_entry (void)
 
 	PINSEL_ConfigPin(2,10,2);
 
-	SCB->ICSR |=(1<<31); 	//changes NMI exception state to pending
+	SCB->ICSR |=(((uint32_t)1)<<31); 	//changes NMI exception state to pending
 
 	_DBG_("Press '1' to enter system in PowerDown mode");
 	while(_DG !='1');
@@ -114,7 +114,6 @@ int c_entry (void)
 	debug_frmwrk_init();
 	_DBG_("\n\rSystem waked-up!");
 	while(1);
-	return 1;
 }
 
 
@@ -125,7 +124,8 @@ int c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

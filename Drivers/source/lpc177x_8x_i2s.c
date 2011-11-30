@@ -28,11 +28,19 @@
 /** @addtogroup I2S
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _I2S
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_i2s.h"
 #include "lpc177x_8x_clkpwr.h"
 
+/* definitions ---------------------------------------------------------- */
+#define    I2S_IS_ENABLED(x)   ((x)? ENABLE:DISABLE)
 /* Private Functions ---------------------------------------------------------- */
 
 static uint8_t i2s_GetWordWidth(LPC_I2S_TypeDef *I2Sx, uint8_t TRMode);
@@ -487,9 +495,9 @@ FunctionalState I2S_GetIRQStatus(LPC_I2S_TypeDef *I2Sx,uint8_t TRMode)
 {
 
 	if(TRMode == I2S_TX_MODE)
-		return ((I2Sx->IRQ >> 1)&0x01);
+		return I2S_IS_ENABLED((I2Sx->IRQ >> 1)&0x01);
 	else
-		return ((I2Sx->IRQ)&0x01);
+		return I2S_IS_ENABLED((I2Sx->IRQ)&0x01);
 }
 
 /********************************************************************//**
@@ -512,6 +520,7 @@ uint8_t I2S_GetIRQDepth(LPC_I2S_TypeDef *I2Sx,uint8_t TRMode)
  * @}
  */
 
+#endif /*_I2S*/
 
 /**
  * @}

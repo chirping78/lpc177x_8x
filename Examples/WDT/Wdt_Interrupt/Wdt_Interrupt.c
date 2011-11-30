@@ -121,9 +121,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main WDT program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	uint32_t delay;
 	uint8_t ch;
@@ -221,13 +221,13 @@ int c_entry(void)
 		}
 	}
 	
-	return 1;
 }
 
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 

@@ -127,12 +127,12 @@
 
 /**
  * @defgroup groupMath Basic Math Functions
- * @ingroup CMSIS_DSP_Lib
+ * @ingroup DSP_Functions
  */
 
 /**
  * @defgroup groupFastMath Fast Math Functions
- * @ingroup CMSIS_DSP_Lib
+ * @ingroup DSP_Functions
  * This set of functions provides a fast approximation to sine, cosine, and square root.
  * As compared to most of the other functions in the CMSIS math library, the fast math functions
  * operate on individual values and not arrays.
@@ -142,7 +142,7 @@
 
 /**
  * @defgroup groupCmplxMath Complex Math Functions
- * @ingroup CMSIS_DSP_Lib
+ * @ingroup DSP_Functions
  * This set of functions operates on complex data vectors.
  * The data in the complex arrays is stored in an interleaved fashion
  * (real, imag, real, imag, ...).
@@ -153,12 +153,12 @@
 
 /**
  * @defgroup groupFilters Filtering Functions
- * @ingroup CMSIS_DSP_Lib
+ * @ingroup DSP_Functions
  */
 
 /**
  * @defgroup groupMatrix Matrix Functions
- * @ingroup CMSIS_DSP_Lib
+ * @ingroup DSP_Functions
  *
  * This set of functions provides basic matrix math operations.
  * The functions operate on matrix data structures.  For example,
@@ -230,26 +230,26 @@
 
 /**
  * @defgroup groupTransforms Transform Functions
- * @ingroup CMSIS_DSP_Lib
+ * @ingroup DSP_Functions
  */
 
 /**
  * @defgroup groupController Controller Functions
- * @ingroup CMSIS_DSP_Lib
+ * @ingroup DSP_Functions
  */
 
 /**
  * @defgroup groupStats Statistics Functions
- * @ingroup CMSIS_DSP_Lib
+ * @ingroup DSP_Functions
  */
 /**
  * @defgroup groupSupport Support Functions
- * @ingroup CMSIS_DSP_Lib
+ * @ingroup DSP_Functions
  */
 
 /**
  * @defgroup groupInterpolation Interpolation Functions
- * @ingroup CMSIS_DSP_Lib
+ * @ingroup DSP_Functions
  * These functions perform 1- and 2-dimensional interpolation of data.
  * Linear interpolation is used for 1-dimensional data and
  * bilinear interpolation is used for 2-dimensional data.
@@ -257,7 +257,7 @@
 
 /**
  * @defgroup groupExamples Examples
- * @ingroup CMSIS_DSP_Lib
+ * @ingroup DSP_Lib
  */
 #ifndef _ARM_MATH_H
 #define _ARM_MATH_H

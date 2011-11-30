@@ -29,10 +29,11 @@
 *                                           INCLUDE HEADER FILES
 **************************************************************************************************************
 */
-
+#include <stdio.h>
+#include <stdarg.h>
 #include "usbhost_uart.h"
 
-#include "system_lpc177x_8x.h"
+#include "system_LPC177x_8x.h"
 #include "debug_frmwrk.h"
 
 /** @addtogroup USBHost_Uart
@@ -74,7 +75,7 @@ void  UART_PrintStr (const uint8_t * str)
  * @param[in]		variable length arguments
  * @return 		None.
  **********************************************************************/
-void  UART_Printf (const  uint8_t *format, ...)
+void  UART_Printf (const  void *format, ...)
 {
     static  uint8_t  buffer[40 + 1];
             va_list     vArgs;

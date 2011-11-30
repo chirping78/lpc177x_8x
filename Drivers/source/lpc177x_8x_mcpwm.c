@@ -29,6 +29,12 @@
 /** @addtogroup MCPWM
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _MCPWM
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_mcpwm.h"
@@ -76,7 +82,7 @@ void MCPWM_Init(LPC_MCPWM_TypeDef *MCPWMx)
 void MCPWM_ConfigChannel(LPC_MCPWM_TypeDef *MCPWMx, uint32_t channelNum,
 						MCPWM_CHANNEL_CFG_Type * channelSetup)
 {
-	if ((channelNum >= 0) && (channelNum <= 2))
+	if (channelNum < MCPWM_MAX_CHANNEL)
 	{
 		if (channelNum == MCPWM_CHANNEL_0)
 		{
@@ -191,7 +197,7 @@ void MCPWM_WriteToShadow(LPC_MCPWM_TypeDef *MCPWMx, uint32_t channelNum,
 void MCPWM_ConfigCapture(LPC_MCPWM_TypeDef *MCPWMx, uint32_t channelNum,
 												MCPWM_CAPTURE_CFG_Type *captureConfig)
 {
-	if ((channelNum >= MCPWM_CHANNEL_0) && (channelNum <= MCPWM_CHANNEL_2))
+	if (channelNum < MCPWM_MAX_CHANNEL)
 	{
 
 		if (captureConfig->captureFalling == ENABLE)
@@ -286,7 +292,7 @@ uint32_t MCPWM_GetCapture(LPC_MCPWM_TypeDef *MCPWMx, uint32_t captureChannel)
 void MCPWM_CountConfig(LPC_MCPWM_TypeDef *MCPWMx, uint32_t channelNum,
 									uint32_t countMode, MCPWM_COUNT_CFG_Type *countConfig)
 {
-	if ((channelNum >= 0) && (channelNum <= 2))
+	if (channelNum < MCPWM_MAX_CHANNEL)
 	{
 		if (countMode == ENABLE)
 		{
@@ -553,7 +559,7 @@ FlagStatus MCPWM_GetIntStatus(LPC_MCPWM_TypeDef *MCPWMx, uint32_t ulIntType)
  * @}
  */
 
-
+#endif /*_MCPWM*/
 /**
  * @}
  */

@@ -23,7 +23,7 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
-
+#include "lpc_types.h"
 #include "lpc177x_8x_adc.h"
 #include "lpc177x_8x_pinsel.h"
 #include "debug_frmwrk.h"
@@ -73,6 +73,7 @@ uint8_t menu1[] =
 " or multiple input)\n\r"
 " Display ADC value via UART0\n\r"
 " Turn the potentiometer to see how ADC value changes\n\r"
+" Press q to stop the demo\n\r"
 "********************************************************************************\n\r";
 
 #ifdef LPC177x_8x_ADC_INJECT_TEST
@@ -96,7 +97,7 @@ void EINT0_IRQHandler(void)
 {
 	EXTI_ClearEXTIFlag(EXTI_EINT0);
 
-	toggle=~toggle;
+	toggle = ((toggle == TRUE) ? FALSE:TRUE);
 
 #ifdef LPC177x_8x_ADC_BURST_MULTI
 	if(toggle)
@@ -132,12 +133,13 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main ADC program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	uint32_t tmp;
 	uint32_t adc_value;
+	uint8_t  quit;
 	EXTI_InitTypeDef EXTICfg;
 	
 	GPIO_Init();
@@ -218,19 +220,23 @@ int c_entry(void)
 #endif
 		// Wait for a while
 		for(tmp = 0; tmp < 1500000; tmp++);
+
+		if(_DG_NONBLOCK(&quit) &&
+			(quit == 'Q' || quit == 'q'))
+			break;
 	}
-	
+    _DBG_("Demo termination!!!");
 	ADC_DeInit(LPC_ADC);
 	
 	GPIO_Deinit();
 	
-	return (0);
 }
 
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 /**

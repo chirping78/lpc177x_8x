@@ -22,7 +22,7 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
-
+#include "LPC177x_8x.h"
 #include "lpc177x_8x_timer.h"
 #include "lpc177x_8x_pinsel.h"
 #include "debug_frmwrk.h"
@@ -106,9 +106,9 @@ void print_menu(void)
 /*********************************************************************//**
  * @brief		c_entry: Main TIMER program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	/* Initialize debug via UART0
 	 * – 115200bps
@@ -156,14 +156,14 @@ int c_entry(void)
 	TIM_Cmd(BRD_TIMER_USED, ENABLE);
 
 	while (1);
-	return 1;
 
 }
 
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 

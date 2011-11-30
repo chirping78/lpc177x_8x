@@ -65,9 +65,9 @@ uint8_t menu1[] =
 /*********************************************************************//**
  * @brief		c_entry: Main WDT program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	/* Initialize debug via UART0
 	 * – 115200bps
@@ -109,13 +109,13 @@ int c_entry(void)
 	//infinite loop to wait chip reset from WDT
 	while(1);
 
-	return 0;
 }
 
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	return c_entry();
+	c_entry();
+	return 0;
 }
 
 

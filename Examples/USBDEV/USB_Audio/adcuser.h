@@ -19,6 +19,7 @@
 #ifndef __ADCUSER_H__
 #define __ADCUSER_H__
 
+#include "lpc_types.h"
 
 /* Audio Device Class Requests Callback Functions */
 extern uint32_t ADC_IF_GetRequest (void);

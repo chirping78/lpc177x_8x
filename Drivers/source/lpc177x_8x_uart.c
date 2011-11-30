@@ -28,6 +28,12 @@
 /** @addtogroup UART
  * @{
  */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _UART
 
 /* Includes ------------------------------------------------------------------- */
 #include "lpc177x_8x_uart.h"
@@ -1376,7 +1382,7 @@ uint32_t UART_RS485SendData(LPC_UART_TypeDef *UARTx, uint8_t *pData, uint32_t si
 /**
  * @}
  */
-
+#endif /*_UART*/
 /**
  * @}
  */

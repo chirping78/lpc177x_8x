@@ -19,6 +19,13 @@
  *          V1.20 Added USB_ClearEPBuf
  *          V1.00 Initial Version
  *----------------------------------------------------------------------------*/
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+
+#ifdef _USB_DEV_VIRTUAL_COM
 #include "LPC177x_8x.h"                        /* LPC17xx definitions */
 #include "usb.h"
 #include "usbcfg.h"
@@ -27,9 +34,6 @@
 #include "usbcore.h"
 #include "usbuser.h"
 
-#ifndef __IAR_SYSTEMS_ICC__
-#pragma diag_suppress 1441
-#endif
 
 
 /** @addtogroup USBDEV_UsbHw
@@ -46,11 +50,20 @@
 
 #if USB_DMA
 
+#ifndef __GNUC__
 #pragma arm section zidata = "USB_RAM"
 uint32_t UDCA[USB_EP_NUM];                     /* UDCA in USB RAM */
+
 uint32_t DD_NISO_Mem[4*DD_NISO_CNT];           /* Non-Iso DMA Descriptor Memory */
 uint32_t DD_ISO_Mem [5*DD_ISO_CNT];            /* Iso DMA Descriptor Memory */
 #pragma arm section zidata
+#else
+uint32_t UDCA[USB_EP_NUM]__attribute__((section ("USB_RAM")));                     /* UDCA in USB RAM */
+
+uint32_t DD_NISO_Mem[4*DD_NISO_CNT]__attribute__((section ("USB_RAM")));           /* Non-Iso DMA Descriptor Memory */
+uint32_t DD_ISO_Mem [5*DD_ISO_CNT]__attribute__((section ("USB_RAM")));            /* Iso DMA Descriptor Memory */
+#endif /*__GNUC__*/
+
 uint32_t udca[USB_EP_NUM];                     /* UDCA saved values */
 
 uint32_t DDMemMap[2];                          /* DMA Descriptor Memory Usage */
@@ -216,7 +229,6 @@ void USB_Init (void) {
  */
 
 void USB_Connect (uint32_t con) {
-	uint32_t result;
   WrCmdDat(CMD_SET_DEV_STAT, DAT_WR_BYTE(con ? DEV_CON : 0));
 #if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
   LPC_USB->I2C_STS |= (1<<0);
@@ -865,5 +877,5 @@ isr_end:
 /**
  * @}
  */
- 
+#endif /*_USB_DEV_VIRTUAL_COM*/
 

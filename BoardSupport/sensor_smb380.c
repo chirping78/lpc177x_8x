@@ -18,6 +18,12 @@
  *    @Modify: NXP MCU Application Team - NguyenCao
  *    @Date: 04. March. 2011
  **************************************************************************/
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+#ifdef _I2C
 #include "sensor_smb380.h"
 #include "lpc177x_8x_i2c.h"
 #include "lpc177x_8x_pinsel.h"
@@ -34,7 +40,7 @@
  * Description: Read/Write data to SMB380
  *
  *************************************************************************/
-static SMB380_Status_t SMB380_ReadWrite(uint8_t* txdata, uint32_t txlen, 
+SMB380_Status_t SMB380_ReadWrite(uint8_t* txdata, uint32_t txlen,
 	                                      uint8_t* rxdata, uint32_t rxlen)
 {
 	I2C_M_SETUP_Type i2cData;
@@ -134,4 +140,5 @@ SMB380_Status_t SMB380_GetData (pSMB380_Data_t pData)
   return SMB380_PASS;
 }
 
+#endif /*_I2C*/
 

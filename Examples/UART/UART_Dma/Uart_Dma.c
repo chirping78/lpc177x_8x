@@ -22,7 +22,7 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
-
+#include "LPC177x_8x.h"
 #include "lpc177x_8x_uart.h"
 #include "lpc177x_8x_gpdma.h"
 #include "lpc177x_8x_pinsel.h"
@@ -63,7 +63,9 @@ uint8_t menu1[]=
 "\t - UART Communication: 115200 bps \n\r"
 " The data will transfer into DMA memory, then transmit through Tx line of UART.\n\r"
 " To use UART with DMA mode, FIFO function must be enabled\n\r"
+" To terminate, press ESC\n\r"
 "********************************************************************************\n\r";
+uint8_t terminate[] = "\n\r Demo termination!!! \n\r" ;
 
 // Receive buffer
 __IO uint8_t rx_buf[RX_BUF_SIZE];
@@ -84,7 +86,6 @@ __IO uint32_t Channel1_Err;
 /************************** PRIVATE FUNCTIONS *************************/
 void DMA_IRQHandler (void);
 
-void print_menu(void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
@@ -142,12 +143,13 @@ void DMA_IRQHandler (void)
 /*********************************************************************//**
  * @brief		c_entry: Main UART program body
  * @param[in]	None
- * @return 		int
+ * @return 		None
  **********************************************************************/
-int c_entry(void)
+void c_entry(void)
 {
 	uint8_t *rx_char;
 	uint32_t idx;
+	uint8_t  stop = 0;
 	// UART Configuration structure variable
 	UART_CFG_Type UARTConfigStruct;
 	// UART FIFO configuration Struct variable
@@ -303,6 +305,12 @@ int c_entry(void)
         // now, start receive character using GPDMA
         rx_char = (uint8_t *) &rx_buf;
         while ((Channel1_TC == 0) && (Channel1_Err == 0)){
+			// Check whether to terminate
+			if(*rx_char == 27)
+			{
+			   stop = 1;
+			   break;
+			}
 			// Check whether if there's any character received, then print it back
 			if (*rx_char != 0)
 			{
@@ -310,14 +318,43 @@ int c_entry(void)
 				rx_char++;
 			}
         }
+		if(stop)
+			break;
     }
+
+	// Setup channel with given parameter
+	// channel 0
+	GPDMACfg.ChannelNum = 0;
+	// Source memory
+	GPDMACfg.SrcMemAddr = (uint32_t) &terminate;
+	// Destination memory - don't care
+	GPDMACfg.DstMemAddr = 0;
+	// Transfer size
+	GPDMACfg.TransferSize = sizeof(terminate);
+	// Transfer width - don't care
+	GPDMACfg.TransferWidth = 0;
+	// Transfer type
+	GPDMACfg.TransferType = GPDMA_TRANSFERTYPE_M2P;
+	// Source connection - don't care
+	GPDMACfg.SrcConn = 0;
+	// Destination connection
+	GPDMACfg.DstConn = _GPDMA_CONN_UART_Tx;
+	// Linker List Item - unused
+	GPDMACfg.DMALLI = 0;
+	// Setup channel with given parameter
+	GPDMA_Setup(&GPDMACfg);
+
+	
+	// Enable GPDMA channel 0
+	GPDMA_ChannelCmd(0, ENABLE);
+	
+	for(idx = 0; idx < 100000; idx++);
 
     // DeInitialize UART0 peripheral
     UART_DeInit(_LPC_UART);
 
     /* Loop forever */
     while(1);
-    return 1;
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -327,7 +364,8 @@ int c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-    return c_entry();
+	c_entry();
+	return 0;
 }
 
 

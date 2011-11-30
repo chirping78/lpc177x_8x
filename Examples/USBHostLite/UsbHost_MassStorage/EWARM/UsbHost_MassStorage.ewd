@@ -3,7 +3,7 @@
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
-    <name>FLASH</name>
+    <name>Flash</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -863,7 +863,7 @@
     </debuggerPlugins>
   </configuration>
   <configuration>
-    <name>RAM</name>
+    <name>Ram</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
