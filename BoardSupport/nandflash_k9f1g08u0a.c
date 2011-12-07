@@ -63,31 +63,25 @@ void NandFlash_Init( void )
 {
 	uint32_t i;
 	TIM_TIMERCFG_Type TIM_ConfigStruct;
+	EMC_STATIC_MEM_Config_Type config;
 
 	/**************************************************************************
 	* Initialize EMC for NAND FLASH
 	**************************************************************************/
-	EMC_Init();
-
-	LPC_EMC->Control = EMC_Control_E|(1<<1);
-
-	EMC_StaMemConfigMW (1, EMC_STATIC_CFG_MW_8BITS);
-
-	EMC_StaMemConfigPB(1, EMC_CFG_BYTELAND_READ_BITSLOW);
-
-	EMC_SetStaMemoryParameter(1, EMC_STA_MEM_WAITWEN, EMC_StaticWaitWen_WAITWEN(2));
-
-	EMC_SetStaMemoryParameter(1, EMC_STA_MEM_WAITOEN, EMC_StaticWaitOen_WAITOEN(2));
-
-	EMC_SetStaMemoryParameter(1, EMC_STA_MEM_WAITWR, EMC_StaticWaitwr_WAITWR(0x1f));
-
-	EMC_SetStaMemoryParameter(1, EMC_STA_MEM_WAITPAGE, EMC_StaticwaitPage_WAITPAGE(0x1f));
-
-	EMC_SetStaMemoryParameter(1, EMC_STA_MEM_WAITWR, EMC_StaticWaitwr_WAITWR(0x1f));
-
-	EMC_SetStaMemoryParameter(1, EMC_STA_MEM_WAITTURN, EMC_StaticWaitTurn_WAITTURN(0x1f));
-
-    // init timer
+	config.CSn = 1;
+	config.AddressMirror = 1;
+	config.ByteLane = 1;
+	config.DataWidth = 8;
+	config.ExtendedWait = 0;
+	config.PageMode = 0;
+	config.WaitWEn = 2;
+	config.WaitOEn = 2;
+	config.WaitWr = 0x1f;
+	config.WaitPage = 0x1f;
+	config.WaitRd = 0x1f;
+	config.WaitTurn = 0x1f;	
+	StaticMem_Init(&config);
+	 // init timer
 	TIM_ConfigStruct.PrescaleOption = TIM_PRESCALE_USVAL;
 	TIM_ConfigStruct.PrescaleValue	= 1;
 

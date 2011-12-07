@@ -50,56 +50,58 @@
  **********************************************************************/
 void SDRAMInit( void )
 {
-	uint32_t i, dwtemp;
-	TIM_TIMERCFG_Type TIM_ConfigStruct;
+    uint32_t i, dwtemp;
+    EMC_DYN_MEM_Config_Type config;
+    TIM_TIMERCFG_Type TIM_ConfigStruct;
+      
+    TIM_ConfigStruct.PrescaleOption = TIM_PRESCALE_USVAL;
+    TIM_ConfigStruct.PrescaleValue  = 1;
+      
+    // Set configuration for Tim_config and Tim_MatchConfig
+    TIM_Init(LPC_TIM0, TIM_TIMER_MODE,&TIM_ConfigStruct);
+      
+    config.ChipSize = 256;
+    config.AddrBusWidth = 32;
+    config.AddrMap = EMC_ADD_MAP_ROW_BANK_COL;
+    config.CSn = 0;
+    config.DataWidth = 16;
+    config.TotalSize = SDRAM_SIZE;
 
-	/* Initialize EMC */
-	EMC_Init();
-	TIM_ConfigStruct.PrescaleOption = TIM_PRESCALE_USVAL;
-	TIM_ConfigStruct.PrescaleValue	= 1;
+    config.CASLatency= 2;
+    config.RASLatency= 1;
+    config.Active2ActivePeriod =3;
+    config.ActiveBankLatency =0;
+    config.AutoRefrehPeriod = 3;
+    config.DataIn2ActiveTime =2;
+    config.DataOut2ActiveTime = 1;
+    config.WriteRecoveryTime = 1;
+    config.ExitSelfRefreshTime = 3;
+    config.LoadModeReg2Active = 0;
+    config.PrechargeCmdPeriod = 0;
+    config.ReadConfig = 1;  /* Command delayed strategy, using EMCCLKDELAY */
+    config.RefreshTime = 0x2E;
+    config.Active2PreChargeTime = 2;
+    config.SeftRefreshExitTime = 3;
+    DynMem_Init(&config);
+   
+    TIM_Waitms(100); 
+    EMC_DynCtrlSDRAMInit(EMC_DYNAMIC_CTRL_SDRAM_NOP); /* Issue NOP command */
 
-	// Set configuration for Tim_config and Tim_MatchConfig
-	TIM_Init(LPC_TIM0, TIM_TIMER_MODE,&TIM_ConfigStruct);
-	//Configure memory layout, but MUST DISABLE BUFFERs during configuration
-	LPC_EMC->DynamicConfig0    = 0x00004480; /* 256MB, 8Mx32, 4 banks, row=12, column=9 */
+    TIM_Waitms(100);                  /* wait 200ms */
+    EMC_DynCtrlSDRAMInit(EMC_DYNAMIC_CTRL_SDRAM_PALL); /* Issue Pre-charge command */
 
-	/*Configure timing for  Micron SDRAM MT48LC8M32LFB5-8 */
+    for(i = 0; i < 0x80; i++);         /* wait 128 AHB clock cycles */
+    
+    TIM_Waitms(100);    
+    EMC_DynCtrlSDRAMInit(EMC_DYNAMIC_CTRL_SDRAM_MODE); /* Issue MODE command */
+    dwtemp = *((volatile uint32_t *)(SDRAM_BASE_ADDR | (0x22<<(2+2+9)))); /* Mode Register Setting: 4 burst, 2 CAS latency */
 
-	//Timing for 48MHz Bus
-	LPC_EMC->DynamicRasCas0    = 0x00000201; /* 1 RAS, 2 CAS latency */
-	LPC_EMC->DynamicReadConfig = 0x00000001; /* Command delayed strategy, using EMCCLKDELAY */
-	LPC_EMC->DynamicRP         = 0x00000000; /* ( n + 1 ) -> 1 clock cycles */
-	LPC_EMC->DynamicRAS        = 0x00000002; /* ( n + 1 ) -> 3 clock cycles */
-	LPC_EMC->DynamicSREX       = 0x00000003; /* ( n + 1 ) -> 4 clock cycles */
-	LPC_EMC->DynamicAPR        = 0x00000001; /* ( n + 1 ) -> 2 clock cycles */
-	LPC_EMC->DynamicDAL        = 0x00000002; /* ( n ) -> 2 clock cycles */
-	LPC_EMC->DynamicWR         = 0x00000001; /* ( n + 1 ) -> 2 clock cycles */
-	LPC_EMC->DynamicRC         = 0x00000003; /* ( n + 1 ) -> 4 clock cycles */
-	LPC_EMC->DynamicRFC        = 0x00000003; /* ( n + 1 ) -> 4 clock cycles */
-	LPC_EMC->DynamicXSR        = 0x00000003; /* ( n + 1 ) -> 4 clock cycles */
-	LPC_EMC->DynamicRRD        = 0x00000000; /* ( n + 1 ) -> 1 clock cycles */
-	LPC_EMC->DynamicMRD        = 0x00000000; /* ( n + 1 ) -> 1 clock cycles */
+    //Timing for 48/60/72MHZ Bus
+    EMC_DynCtrlSDRAMInit(EMC_DYNAMIC_CTRL_SDRAM_NORMAL); /* Issue NORMAL command */
 
-	TIM_Waitms(100);						   /* wait 100ms */
-	LPC_EMC->DynamicControl    = 0x00000183; /* Issue NOP command */
-
-	TIM_Waitms(200);						   /* wait 200ms */
-	LPC_EMC->DynamicControl    = 0x00000103; /* Issue PALL command */
-	LPC_EMC->DynamicRefresh    = 0x00000002; /* ( n * 16 ) -> 32 clock cycles */
-
-	for(i = 0; i < 0x80; i++);	           /* wait 128 AHB clock cycles */
-
-	//Timing for 48MHz Bus
-	LPC_EMC->DynamicRefresh    = 0x0000002E; /* ( n * 16 ) -> 736 clock cycles -> 15.330uS at 48MHz <= 15.625uS ( 64ms / 4096 row ) */
-
-	LPC_EMC->DynamicControl    = 0x00000083; /* Issue MODE command */
-
-	//Timing for 48/60/72MHZ Bus
-	dwtemp = *((volatile uint32_t *)(SDRAM_BASE_ADDR | (0x22<<(2+2+9)))); /* 4 burst, 2 CAS latency */
-	LPC_EMC->DynamicControl    = 0x00000000; /* Issue NORMAL command */
-
-	//[re]enable buffers
-	LPC_EMC->DynamicConfig0    = 0x00084480; /* 256MB, 8Mx32, 4 banks, row=12, column=9 */
+    //enable buffers
+    EMC_DynMemConfigB(0, EMC_DYNAMIC_CFG_BUFF_ENABLED);
+    
 }
 #endif /*_EMC*/
 #endif /*(_CURR_USING_BRD == _QVGA_BOARD)*/

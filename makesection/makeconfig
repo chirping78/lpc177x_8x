@@ -23,8 +23,3 @@ GNU_VERSION			=4.3.3
 IAR_INSTALL_ROOT	=C:/Program Files (x86)/IAR Systems/Embedded Workbench 6.0 Kickstart
 KEIL_INSTALL_ROOT	=C:/Keil
 
-GNU_INC_DIR         =-I'$(GNU_INSTALL_ROOT)/arm-none-eabi/include'
-GNU_INC_DIR         += -I'$(GNU_INSTALL_ROOT)/arm-none-eabi/include/sys'
-GNU_INC_DIR         += -I'$(GNU_INSTALL_ROOT)/arm-none-eabi/include/machine'
-
-TOOLDIRINC          =$(GNU_INC_DIR)

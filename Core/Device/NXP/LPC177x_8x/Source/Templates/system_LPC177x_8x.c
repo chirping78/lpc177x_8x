@@ -315,7 +315,7 @@
     #if ((CLKSRCSEL_Val & 0x01) == 0)   /* sysclk = irc_clk */
         #define __CORE_CLK (IRC_OSC / __CCLK_DIV)
 		#define __PER_CLK  (IRC_OSC/  __PCLK_DIV)
-        #define __EMC_CLK  (IRC_OSC/  __ECLK_DIV)
+        #define __EMC_CLK  (__CORE_CLK/  __ECLK_DIV)
     #else                               /* sysclk = osc_clk */
         #define __CORE_CLK (OSC_CLK / __CCLK_DIV)
         #define __PER_CLK  (OSC_CLK/  __PCLK_DIV)
@@ -325,18 +325,18 @@
     #if ((CLKSRCSEL_Val & 0x01) == 0)   /* sysclk = irc_clk */
         #define __CORE_CLK (__PLL0_CLK(IRC_OSC) / __CCLK_DIV)
         #define __PER_CLK  (__PLL0_CLK(IRC_OSC) / __PCLK_DIV)
-        #define __EMC_CLK  (__PLL0_CLK(IRC_OSC) / __ECLK_DIV)
+        #define __EMC_CLK  (__CORE_CLK / __ECLK_DIV)
     #else                               /* sysclk = osc_clk */
         #define __CORE_CLK (__PLL0_CLK(OSC_CLK) / __CCLK_DIV)
         #define __PER_CLK  (__PLL0_CLK(OSC_CLK) / __PCLK_DIV)
-		#define __EMC_CLK  (__PLL0_CLK(OSC_CLK) / __ECLK_DIV)
+		#define __EMC_CLK  (__CORE_CLK / __ECLK_DIV)
     #endif
   #endif
 
 #else
         #define __CORE_CLK (IRC_OSC)
         #define __PER_CLK  (IRC_OSC)
-        #define __EMC_CLK  (IRC_OSC)
+        #define __EMC_CLK  (__CORE_CLK)
 #endif
 
 /*----------------------------------------------------------------------------
@@ -359,7 +359,7 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
     if ((LPC_SC->CLKSRCSEL & 0x01) == 0) {    /* sysclk = irc_clk */
 		  SystemCoreClock = __CLK_DIV(IRC_OSC , (LPC_SC->CCLKSEL & 0x1F));
           PeripheralClock = __CLK_DIV(IRC_OSC , (LPC_SC->PCLKSEL & 0x1F));
-          EMCClock        = (IRC_OSC / ((LPC_SC->EMCCLKSEL & 0x01)+1));
+          EMCClock        = (SystemCoreClock / ((LPC_SC->EMCCLKSEL & 0x01)+1));
     }
     else {                                        /* sysclk = osc_clk */
       if ((LPC_SC->SCS & 0x40) == 0) {
@@ -370,7 +370,7 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
       else {
           SystemCoreClock = __CLK_DIV(OSC_CLK , (LPC_SC->CCLKSEL & 0x1F));
           PeripheralClock = __CLK_DIV(OSC_CLK , (LPC_SC->PCLKSEL & 0x1F));	  	
-          EMCClock        = (OSC_CLK / ((LPC_SC->EMCCLKSEL & 0x01)+1));
+          EMCClock        = (SystemCoreClock / ((LPC_SC->EMCCLKSEL & 0x01)+1));
       }
     }
   }
@@ -388,7 +388,7 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
           uint8_t emc_div = (LPC_SC->EMCCLKSEL & 0x01)+1;
           SystemCoreClock = __CLK_DIV(IRC_OSC * mul , cpu_div);
           PeripheralClock = __CLK_DIV(IRC_OSC * mul , per_div);
-          EMCClock        = (IRC_OSC * mul) / emc_div;
+          EMCClock        = SystemCoreClock / emc_div;
       }
       else {                                        /* sysclk = osc_clk */
         if ((LPC_SC->SCS & 0x40) == 0) {
@@ -403,7 +403,7 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
 		  uint8_t emc_div = (LPC_SC->EMCCLKSEL & 0x01)+1;
           SystemCoreClock = __CLK_DIV(OSC_CLK * mul , cpu_div);
           PeripheralClock = __CLK_DIV(OSC_CLK * mul , per_div);
-          EMCClock        = OSC_CLK * mul / emc_div;
+          EMCClock        = SystemCoreClock / emc_div;
         }
       }
     }
