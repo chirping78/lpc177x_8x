@@ -950,22 +950,22 @@ EMC_FUNC_CODE EMC_StaMemConfigMW(uint32_t index , uint32_t mem_width)
     {
         case 0:
             LPC_EMC->StaticConfig0 &= ~ EMC_STATIC_CFG_MEMWIDTH_BMASK;
-            LPC_EMC->StaticConfig0 |= EMC_StaticConfig_MW(mem_width_flg);
+            LPC_EMC->StaticConfig0 |= mem_width_flg;
             break;
         
         case 1:
             LPC_EMC->StaticConfig1 &= ~ EMC_STATIC_CFG_MEMWIDTH_BMASK;
-            LPC_EMC->StaticConfig1 =EMC_StaticConfig_MW(mem_width_flg);
+            LPC_EMC->StaticConfig1 |= mem_width_flg;
             break;
         
         case 2:
             LPC_EMC->StaticConfig2 &= ~ EMC_STATIC_CFG_MEMWIDTH_BMASK;
-            LPC_EMC->StaticConfig2 = EMC_StaticConfig_MW(mem_width_flg);
+            LPC_EMC->StaticConfig2 |= mem_width_flg;
             break;
         
         case 3:
             LPC_EMC->StaticConfig3 &= ~ EMC_STATIC_CFG_MEMWIDTH_BMASK;
-            LPC_EMC->StaticConfig3 = EMC_StaticConfig_MW(mem_width_flg);
+            LPC_EMC->StaticConfig3 |= mem_width_flg;
             break;
 	default:
             return EMC_FUNC_INVALID_PARAM;
