@@ -10,7 +10,7 @@ LR_IROM1 0x10000000 0x00008000  {  ; load region
   RW_IRAM1 0x10008000 0x00008000  {  ; RW data
    * (+RW +ZI)
   }
-  RW_USBRAM 0x20004000 0x00004000  {
+  RW_USBRAM 0x20000000 0x00004000  {
     usbhw.o   (USB_RAM)
   }
 }

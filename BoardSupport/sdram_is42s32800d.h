@@ -33,6 +33,8 @@
 #ifndef __SDRAM_IS42S32800D_H
 #define __SDRAM_IS42S32800D_H
 
+#include "bsp.h"
+
 #define SDRAM_BASE_ADDR		0xA0000000
 #define SDRAM_SIZE	        0x10000000
 

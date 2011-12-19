@@ -19,6 +19,7 @@
 #ifndef __USBHW_H__
 #define __USBHW_H__
 
+#define USB_PORT         1   /* 1/2 */
 
 /* USB RAM Definitions */
 #define USB_RAM_ADR     LPC_PERI_RAM_BASE  /* USB RAM Start Address */

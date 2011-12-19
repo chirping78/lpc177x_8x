@@ -50,7 +50,7 @@ uint8_t menu1[] =
 " Turn the potentiometer to see how ADC value changes\n\r"
 " Press q to stop the demo\n\r"
 "********************************************************************************\n\r";
-uint32_t adc_value;
+__IO uint32_t adc_value;
 
 /************************** PRIVATE FUNCTION *************************/
 void ADC_IRQHandler(void);

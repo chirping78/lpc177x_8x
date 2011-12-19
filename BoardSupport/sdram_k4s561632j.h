@@ -32,6 +32,7 @@
 
 #ifndef __SDRAM_K4S561632J_H_
 #define __SDRAM_K4S561632J_H_
+#include "bsp.h"
 
 #if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
 

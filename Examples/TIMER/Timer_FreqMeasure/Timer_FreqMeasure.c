@@ -86,9 +86,9 @@ uint8_t menu1[] =
 TIM_TIMERCFG_Type TIM_ConfigStruct;
 TIM_CAPTURECFG_Type TIM_CaptureConfigStruct;
 
-BOOL_8 first_capture,done;
-uint32_t capture;
-uint8_t count=0;
+__IO BOOL_8 first_capture,done;
+__IO uint32_t capture;
+__IO uint8_t count=0;
 /************************** PRIVATE FUNCTIONS *************************/
 /* Interrupt service routines */
 void TIMER0_IRQHandler(void);

@@ -62,8 +62,8 @@ uint8_t menu[]=
 "********************************************************************************\n\r";
 
 //messages for test Acceptance Filter mode
-CAN_MSG_Type AFTxMsg[CAN_TX_MSG_CNT], AFRxMsg[CAN_RX_MSG_CNT];
-uint32_t CANRxCount = 0, CANTxCount = 0;
+__IO CAN_MSG_Type AFTxMsg[CAN_TX_MSG_CNT], AFRxMsg[CAN_RX_MSG_CNT];
+__IO  uint32_t CANRxCount = 0, CANTxCount = 0;
 uint32_t CANErrCount = 0;
 
 AF_SectionDef AFTable;

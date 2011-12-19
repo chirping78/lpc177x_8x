@@ -56,8 +56,8 @@ typedef struct __SER_BUF_T {
 
 unsigned long          ser_txRestart;                  // NZ if TX restart is required
 unsigned short         ser_lineState;                  // ((msr << 8) | (lsr))
-SER_BUF_T              ser_out;                        // Serial data buffers
-SER_BUF_T              ser_in;
+__IO SER_BUF_T              ser_out;                        // Serial data buffers
+__IO SER_BUF_T              ser_in;
 
 /*----------------------------------------------------------------------------
   open the serial port

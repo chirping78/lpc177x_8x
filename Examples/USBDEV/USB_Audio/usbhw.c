@@ -27,7 +27,7 @@
 #ifdef _USB_DEV_AUDIO
 #include "LPC177x_8x.h"
 #include "lpc_types.h"
-
+#include "bsp.h"
 #include "usb.h"
 #include "usbcfg.h"
 #include "usbreg.h"
@@ -162,7 +162,7 @@ uint32_t RdCmdDat (uint32_t cmd) {
 
 void USB_Init (void) {
   /* if 1, use port 1 as device, if 0, use port2 as device. */
-#if 1
+#if  (USB_PORT == 1)
 #if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
   LPC_IOCON->P0_27 = 0x2;
   LPC_IOCON->P0_28 = 0x2;
@@ -206,7 +206,10 @@ void USB_Init (void) {
 
   /* Port Select register when USB device is configured. */
   LPC_USB->StCtrl = 0x3;
-#endif
+
+  LPC_USB->USBClkCtrl = 0x12;                /* Disable OTG clock */
+  while ((LPC_USB->USBClkSt & 0x12) != 0x12);
+ #endif
 
   NVIC_EnableIRQ(USB_IRQn);               /* enable USB interrupt */
 

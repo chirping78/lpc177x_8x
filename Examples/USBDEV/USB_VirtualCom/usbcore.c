@@ -74,7 +74,7 @@ extern MSC_CSW CSW;
 
 uint16_t  USB_DeviceStatus;
 uint8_t  USB_DeviceAddress;
-uint8_t  USB_Configuration;
+volatile uint8_t  USB_Configuration;
 uint32_t USB_EndPointMask;
 uint32_t USB_EndPointHalt;
 uint32_t USB_EndPointStall;                         /* EP must stay stalled */
@@ -84,7 +84,7 @@ uint8_t  USB_AltSetting[USB_IF_NUM];
 uint8_t  EP0Buf[USB_MAX_PACKET0];
 
 
-USB_EP_DATA EP0Data;
+volatile USB_EP_DATA EP0Data;
 
 USB_SETUP_PACKET SetupPacket;
 
@@ -400,7 +400,7 @@ __inline uint32_t USB_ReqGetConfiguration (void) {
 #endif
   switch (SetupPacket.bmRequestType.BM.Recipient) {
     case REQUEST_TO_DEVICE:
-      EP0Data.pData = &USB_Configuration;
+      EP0Data.pData = (uint8_t* )&USB_Configuration;
       break;
     default:
       return (FALSE);

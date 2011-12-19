@@ -27,6 +27,7 @@
 
 #ifdef _USB_DEV_VIRTUAL_COM
 #include "LPC177x_8x.h"                        /* LPC17xx definitions */
+#include "bsp.h"
 #include "usb.h"
 #include "usbcfg.h"
 #include "usbreg.h"
@@ -163,51 +164,55 @@ uint32_t RdCmdDat (uint32_t cmd) {
 
 void USB_Init (void) {
   /* if 1, use port 1 as device, if 0, use port2 as device. */
-#if 1
+#if  (USB_PORT == 1)
 #if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
-  LPC_IOCON->P0_27 = 0x2;
-  LPC_IOCON->P0_28 = 0x2;
-#endif
-
-  LPC_IOCON->P0_29 &= ~0x07;    /* P0.29 D1+, P0.30 D1- */
-  LPC_IOCON->P0_29 |= 0x1;
-  LPC_IOCON->P0_30 &= ~0x07;
-  LPC_IOCON->P0_30 |= 0x1;
-
-  LPC_IOCON->P2_9  &= ~0x07;    /* USB_SoftConnect */
-  LPC_IOCON->P2_9  |= 0x1;
-
-  LPC_IOCON->P1_30  &= ~0x07;   /* USB_VBUS */
-  LPC_IOCON->P1_30  |= 0x2;
-
-  LPC_IOCON->P1_18  &= ~0x07;   /* USB_LED */
-  LPC_IOCON->P1_18  |= 0x1;
-
-  LPC_SC->PCONP |= (1UL<<31);                /* USB PCLK -> enable USB Per.       */
-
-  LPC_USB->USBClkCtrl = 0x12|(1<<2);                /* Dev, AHB clock enable */
-  while ((LPC_USB->USBClkSt & 0x12) != 0x12);
+	LPC_IOCON->P0_27 = 0x2;
+	LPC_IOCON->P0_28 = 0x2;
+#endif	
+  
+	LPC_IOCON->P0_29 &= ~0x07;	  /* P0.29 D1+, P0.30 D1- */
+	LPC_IOCON->P0_29 |= 0x1;
+	LPC_IOCON->P0_30 &= ~0x07;
+	LPC_IOCON->P0_30 |= 0x1;
+  
+	LPC_IOCON->P2_9  &= ~0x07;	  /* USB_SoftConnect */
+	LPC_IOCON->P2_9  |= 0x1;
+  
+	LPC_IOCON->P1_30  &= ~0x07;   /* USB_VBUS */
+	LPC_IOCON->P1_30  |= 0x2;
+  
+	LPC_IOCON->P1_18  &= ~0x07;   /* USB_LED */
+	LPC_IOCON->P1_18  |= 0x1;
+  
+	LPC_SC->PCONP |= (1UL<<31); 			   /* USB PCLK -> enable USB Per.		*/
+  
+	LPC_USB->USBClkCtrl =  0x12|(1<<2);				 /* Dev, AHB clock enable */
+	while ((LPC_USB->USBClkSt & 0x12) != 0x12);
 #else
-  LPC_IOCON->P0_31 &= ~0x07;    /* P0.31 D2+, D2- is dedicated pin.  */
-  LPC_IOCON->P0_31 |= 0x1;
-
-  LPC_IOCON->P0_14  &= ~0x07;    /* USB_SoftConnect */
-  LPC_IOCON->P0_14  |= 0x3;
-
-  LPC_IOCON->P1_30  &= ~0x07;   /* USB_VBUS */
-  LPC_IOCON->P1_30  |= 0x2;
-
-  LPC_IOCON->P0_13  &= ~0x07;   /* USB_LED */
-  LPC_IOCON->P0_13  |= 0x1;
-
-  LPC_SC->PCONP |= (1UL<<31);                /* USB PCLK -> enable USB Per.       */
-
-  LPC_USB->USBClkCtrl = 0x1A;                /* Dev, OTG, AHB clock enable */
-  while ((LPC_USB->USBClkSt & 0x1A) != 0x1A);
-
-  /* Port Select register when USB device is configured. */
-  LPC_USB->StCtrl = 0x3;
+	LPC_IOCON->P0_31 &= ~0x07;	  /* P0.31 D2+, D2- is dedicated pin.  */
+	LPC_IOCON->P0_31 |= 0x1;
+  
+	LPC_IOCON->P0_14  &= ~0x07;    /* USB_SoftConnect */
+	LPC_IOCON->P0_14  |= 0x3;
+  
+	LPC_IOCON->P1_30  &= ~0x07;   /* USB_VBUS */
+	LPC_IOCON->P1_30  |= 0x2;
+  
+	LPC_IOCON->P0_13  &= ~0x07;   /* USB_LED */
+	LPC_IOCON->P0_13  |= 0x1;
+  
+	 LPC_SC->PCONP |= (1UL<<31);				/* USB PCLK -> enable USB Per.		 */
+  
+	LPC_USB->USBClkCtrl = 0x1A; 			   /* Dev, OTG, AHB clock enable */
+	while ((LPC_USB->USBClkSt & 0x1A) != 0x1A);
+  
+	/* Port Select register when USB device is configured. */
+	LPC_USB->StCtrl = 0x3;
+  
+	LPC_USB->USBClkCtrl = 0x12; 			   /* Disable OTG clock */
+	while ((LPC_USB->USBClkSt & 0x12) != 0x12);
 #endif
+
 
   NVIC_EnableIRQ(USB_IRQn);               /* enable USB interrupt */
 
@@ -540,6 +545,7 @@ const uint32_t DDSz [2] = { 16,          20         };
 
 uint32_t USB_DMA_Setup(uint32_t EPNum, USB_DMA_DESCRIPTOR *pDD) {
   uint32_t num, ptr, nxt, iso, n;
+   uint32_t *tmp;
 
   iso = pDD->Cfg.Type.IsoEP;                /* Iso or Non-Iso Descriptor */
   num = EPAdr(EPNum);                       /* Endpoint's Physical Address */
@@ -573,16 +579,18 @@ uint32_t USB_DMA_Setup(uint32_t EPNum, USB_DMA_DESCRIPTOR *pDD) {
     UDCA[num] = nxt;                        /* Update UDCA in USB */
   }
 
-  /* Fill in DMA Descriptor */
-  *(((uint32_t *)nxt)++) =  0;                 /* Next DD Pointer */
-  *(((uint32_t *)nxt)++) =  pDD->Cfg.Type.ATLE |
+    /* Fill in DMA Descriptor */
+  //*(((uint32_t *)nxt)++) =  0;                 /* Next DD Pointer */
+  tmp = (uint32_t *)nxt;
+  *tmp++ = 0;
+  *tmp++ =  pDD->Cfg.Type.ATLE |
                        (pDD->Cfg.Type.IsoEP << 4) |
                        (pDD->MaxSize <<  5) |
                        (pDD->BufLen  << 16);
-  *(((uint32_t *)nxt)++) =  pDD->BufAdr;
-  *(((uint32_t *)nxt)++) =  pDD->Cfg.Type.LenPos << 8;
+  *tmp++ =  pDD->BufAdr;
+  *tmp++ =  pDD->Cfg.Type.LenPos << 8;
   if (iso) {
-    *((uint32_t *)nxt) =  pDD->InfoAdr;
+	  *tmp =  pDD->InfoAdr;
   }
 
   return (TRUE); /* Success */

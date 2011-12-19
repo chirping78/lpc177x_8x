@@ -32,6 +32,7 @@
 
 #ifndef __SDRAM_MT48LC8M32LFB5_H
 #define __SDRAM_MT48LC8M32LFB5_H
+#include "bsp.h"
 
 #define SDRAM_BASE_ADDR		0xA0000000
 #define SDRAM_SIZE	        0x10000000

@@ -40,6 +40,7 @@
 */
 #include  "lpc177x_8x_usbhost.h"
 #include  "lpc177x_8x_pinsel.h"
+#include  "bsp.h"
 
 /*
 **************************************************************************************************************
@@ -56,8 +57,8 @@
 *                                              GLOBAL VARIABLES
 **************************************************************************************************************
 */
-static int32_t       gUSBConnected = 0;
-static USB_DEVICE_TYPE gUSBDeviceType = USB_DEVICE_UNKNOWN;
+static volatile  int32_t       gUSBConnected = 0;
+static volatile  USB_DEVICE_TYPE gUSBDeviceType = USB_DEVICE_UNKNOWN;
 volatile  uint32_t   HOST_RhscIntr = 0;         /* Root Hub Status Change interrupt                       */
 volatile  uint32_t   HOST_WdhIntr  = 0;         /* Semaphore to wait until the TD is submitted            */
 volatile  uint8_t   HOST_TDControlStatus = 0;

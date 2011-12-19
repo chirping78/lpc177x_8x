@@ -1,6 +1,6 @@
 /**********************************************************************
 * $Id$		lpc17xx_libcfg.h			2010-05-21
-***
+*//**
 * @file		lpc17xx_libcfg.h
 * @brief	Library configuration file
 * @version	2.0
@@ -41,13 +41,13 @@
 /* Comment the line below to disable the specific peripheral inclusion */
 
 /* DEBUG_FRAMWORK -------------------- */
-#define _DBGFWK
+//#define _DBGFWK
 
 /* Clock & Power -------------------- */
 #define _CLKPWR
 
 /* CRC -------------------- */
-#define _CRC
+//#define _CRC
 
 /* GPIO ------------------------------- */
 #define _GPIO
@@ -59,90 +59,81 @@
 #define _PINSEL
 
 /* EXTI ------------------------------- */
-#define _EXTI
+//#define _EXTI
 
 /* EMC ------------------------------- */
-#define _EMC
+//#define _EMC
 
 /* UART ------------------------------- */
-#define _UART
+//#define _UART
 
 /* SPI ------------------------------- */
-#define _SPI
+//#define _SPI
 
 /* SYSTICK --------------------------- */
-#define _SYSTICK
+//#define _SYSTICK
 
 /* SSP ------------------------------- */
-#define _SSP
+//#define _SSP
 
 
 /* I2C ------------------------------- */
-#define _I2C
+//#define _I2C
 
 /* TIMER ------------------------------- */
-#define _TIM
+//#define _TIM
 
 /* WDT ------------------------------- */
-#define _WDT
+//#define _WDT
 
 
 /* GPDMA ------------------------------- */
-#define _GPDMA
+//#define _GPDMA
 
 
 /* DAC ------------------------------- */
-#define _DAC
+//#define _DAC
 
 /* ADC ------------------------------- */
-#define _ADC
+//#define _ADC
 
 /* EEPROM ------------------------------- */
-#define _EEPROM
+//#define _EEPROM
 
 /* PWM ------------------------------- */
-#define _PWM
+//#define _PWM
 
 /* RTC ------------------------------- */
-#define _RTC
+//#define _RTC
 
 /* I2S ------------------------------- */
-#define _I2S
+//#define _I2S
 
 /* USB device ------------------------------- */
-#define _USBDEV
-#ifdef _USBDEV
-#define _USB_DEV_AUDIO
-#define _USB_DEV_MASS_STORAGE
-#define _USB_DEV_HID
-#define _USB_DEV_VIRTUAL_COM
-#endif /*_USBDEV*/
+//#define _USBDEV
 
 /* USB Host ------------------------------- */
-#define _USBHost
+//#define _USBHost
 
 /* QEI ------------------------------- */
-#define _QEI
+//#define _QEI
 
 /* MCPWM ------------------------------- */
-#define _MCPWM
+//#define _MCPWM
 
 /* CAN--------------------------------*/
-#define _CAN
+//#define _CAN
 
 /* EMAC ------------------------------ */
-#define _EMAC
+//#define _EMAC
 
 /* LCD ------------------------------ */
-#define _LCD
+//#define _LCD
 
 /* MCI ------------------------------ */
-#define _MCI
+//#define _MCI
 
-/* IAP------------------------------ */
-#define _IAP
-
-/* BOD------------------------------ */
+/* BOD ------------------------------ */
 #define _BOD
 /************************** GLOBAL/PUBLIC MACRO DEFINITIONS *********************************/
 

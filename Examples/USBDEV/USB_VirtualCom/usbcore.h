@@ -29,7 +29,7 @@ typedef struct _USB_EP_DATA {
 /* USB Core Global Variables */
 extern uint16_t USB_DeviceStatus;
 extern uint8_t  USB_DeviceAddress;
-extern uint8_t  USB_Configuration;
+extern volatile uint8_t  USB_Configuration;
 extern uint32_t USB_EndPointMask;
 extern uint32_t USB_EndPointHalt;
 extern uint32_t USB_EndPointStall;
@@ -39,7 +39,7 @@ extern uint8_t  USB_AltSetting[USB_IF_NUM];
 extern uint8_t  EP0Buf[USB_MAX_PACKET0];
 
 /* USB Endpoint 0 Data Info */
-extern USB_EP_DATA EP0Data;
+extern volatile USB_EP_DATA EP0Data;
 
 /* USB Setup Packet */
 extern USB_SETUP_PACKET SetupPacket;

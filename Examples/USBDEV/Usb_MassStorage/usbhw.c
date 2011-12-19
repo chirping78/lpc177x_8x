@@ -163,7 +163,7 @@ uint32_t RdCmdDat (uint32_t cmd) {
 
 void USB_Init (void) {
   /* if 1, use port 1 as device, if 0, use port2 as device. */
-#if 1
+#if  (USB_PORT == 1)
 #if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
   LPC_IOCON->P0_27 = 0x2;
   LPC_IOCON->P0_28 = 0x2;
@@ -200,13 +200,16 @@ void USB_Init (void) {
   LPC_IOCON->P0_13  &= ~0x07;   /* USB_LED */
   LPC_IOCON->P0_13  |= 0x1;
 
-  LPC_SC->PCONP |= (1UL<<31);                /* USB PCLK -> enable USB Per.       */
+   LPC_SC->PCONP |= (1UL<<31);                /* USB PCLK -> enable USB Per.       */
 
   LPC_USB->USBClkCtrl = 0x1A;                /* Dev, OTG, AHB clock enable */
   while ((LPC_USB->USBClkSt & 0x1A) != 0x1A);
 
   /* Port Select register when USB device is configured. */
   LPC_USB->StCtrl = 0x3;
+
+  LPC_USB->USBClkCtrl = 0x12;                /* Disable OTG clock */
+  while ((LPC_USB->USBClkSt & 0x12) != 0x12);
 #endif
 
   NVIC_EnableIRQ(USB_IRQn);               /* enable USB interrupt */
