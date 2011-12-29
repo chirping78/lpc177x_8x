@@ -100,7 +100,7 @@ void CAN_IRQHandler(void)
 				||(CAN_FullCANPendGetStatus(FULLCAN_IC1)))
 		{
 			//read received FullCAN Object in Object Section
-			FCAN_ReadObj(&AFRxMsg[CANRxCount]);
+			FCAN_ReadObj((CAN_MSG_Type *)&AFRxMsg[CANRxCount]);
 
 			CANRxCount++;
 		}
@@ -115,7 +115,7 @@ void CAN_IRQHandler(void)
 	//check receive interrupt
 	if((IntStatus >> 0) & 0x01)
 	{
-		CAN_ReceiveMsg(RECVD_CAN_NO, &AFRxMsg[CANRxCount]);
+		CAN_ReceiveMsg(RECVD_CAN_NO, (CAN_MSG_Type *)&AFRxMsg[CANRxCount]);
 
 		CANRxCount++;
 	}
@@ -564,9 +564,9 @@ void c_entry(void)
 
 	for (i = 0; i < CAN_TX_MSG_CNT; i++)
 	{
-		CAN_SendMsg(CAN_1, &AFTxMsg[i]);
+		CAN_SendMsg(CAN_1, (CAN_MSG_Type *)&AFTxMsg[i]);
 
-		PrintMessage(&AFTxMsg[i]);_DBG_("");
+		PrintMessage((CAN_MSG_Type *)&AFTxMsg[i]);_DBG_("");
 
 		for(cnt=0;cnt<10000;cnt++); //transmit delay
 
@@ -586,7 +586,7 @@ void c_entry(void)
 
 	for (i = 0; i < CAN_RX_MSG_CNT; i++)
 	{
-		PrintMessage(&AFRxMsg[i]);_DBG_("");
+		PrintMessage((CAN_MSG_Type *)&AFRxMsg[i]);_DBG_("");
 	}
 
 	/*-------------------------Change AFLUT Table --------------------*/
@@ -610,9 +610,9 @@ void c_entry(void)
 
 	for (i = 0; i < CAN_TX_MSG_CNT; i++)
 	{
-		CAN_SendMsg(CAN_1, &AFTxMsg[i]);
+		CAN_SendMsg(CAN_1, (CAN_MSG_Type *)&AFTxMsg[i]);
 
-		PrintMessage(&AFTxMsg[i]);_DBG_("");
+		PrintMessage((CAN_MSG_Type *)&AFTxMsg[i]);_DBG_("");
 
 		for(cnt=0;cnt<10000;cnt++); //transmit delay
 
@@ -632,7 +632,7 @@ void c_entry(void)
 
 	for (i = 0; i < CAN_RX_MSG_CNT; i++)
 	{
-		PrintMessage(&AFRxMsg[i]);_DBG_("");
+		PrintMessage((CAN_MSG_Type *)&AFRxMsg[i]);_DBG_("");
 	}
 
 	_DBG_("Demo terminal !!!");

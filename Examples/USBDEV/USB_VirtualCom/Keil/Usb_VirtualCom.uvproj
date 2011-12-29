@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\Drivers\include;..\..\..\..\Core\CMSIS\Include;..\..\..\..\Core\Device\NXP\LPC177x_8x\Include</IncludePath>
+              <IncludePath>..\..\..\..\Drivers\include;..\..\..\..\Core\CMSIS\Include;..\..\..\..\Core\Device\NXP\LPC177x_8x\Include;..\..\..\..\BoardSupport</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -958,7 +958,7 @@
               <MiscControls></MiscControls>
               <Define>__RAM_MODE__</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\Drivers\include;..\..\..\..\Core\CMSIS\Include;..\..\..\..\Core\Device\NXP\LPC177x_8x\Include</IncludePath>
+              <IncludePath>..\..\..\..\Drivers\include;..\..\..\..\Core\CMSIS\Include;..\..\..\..\Core\Device\NXP\LPC177x_8x\Include;..\..\..\..\BoardSupport</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
