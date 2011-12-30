@@ -1,3 +1,22 @@
+RELEASE LPC177x_8xCMSIS_111230
+
+***** Implementations and Improvements ****
+1. Add volatile description for global variables in examples ADC, CAN, Timer_FreMeasure, USB_VirtualCom & USBHost.
+2. Reconstruct the EMC driver.
+3. Fix problem: the SDRAM example sometimes fails.
+4. Add BOD example.
+5. Documentation: update the CHM and examples descriptions
+
+
+***** Known Issues: In this package contains some examples that can not verify now ****
+
+1./ ADC > Adc_Burst
+2./ CAN > Can_SelfTest
+Maybe they will be removed when release for customers.
+ 
+ 
+==========================================================================================================
+==========================================================================================================
 RELEASE LPC177x_8xCMSIS_111130
 
 ***** Implementations and Improvements ****
