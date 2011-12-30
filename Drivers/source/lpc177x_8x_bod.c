@@ -88,7 +88,7 @@ void BOD_Init( BOD_Config_Type* pConfig )
  **********************************************************************/
 int32_t BOD_ResetSourceStatus( void )
 {
-   if((LPC_SC->RSID & BOD_RSID_POR) == 0)
+   if((LPC_SC->RSID & BOD_RSID_POR) == 1)
    	return DISABLE;
    return ((LPC_SC->RSID & BOD_RSID_BODR)? ENABLE:DISABLE);
 }

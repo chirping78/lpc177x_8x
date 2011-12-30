@@ -22,7 +22,12 @@
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
 **********************************************************************/
-#ifndef __LPC177x_8x_BOD_H 
+
+/* Peripheral group ----------------------------------------------------------- */
+/** @defgroup BOD BOD (Brown-Out Detector)
+ * @ingroup LPC177x_8xCMSIS_FwLib_Drivers
+ * @{
+ */#ifndef __LPC177x_8x_BOD_H 
 #define __LPC177x_8x_BOD_H
 #include "lpc_types.h"
 /** @defgroup BOD_Private_Macros BOD Private Macros
@@ -78,6 +83,10 @@ void BOD_ResetSourceClr(void);
  * @}
  */
 #endif /* end __LPC177x_8x_BOD_H */
+/**
+ * @}
+ */
+
 /*****************************************************************************
 **                            End Of File
 ******************************************************************************/
