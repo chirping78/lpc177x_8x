@@ -73,7 +73,7 @@ int32_t PHY_Reset(void)
 	EMAC_Write_PHY(EMAC_PHY_REG_BMCR, EMAC_PHY_BMCR_RESET);
 
 	/* Wait for hardware reset to end. */
-	for (tout = EMAC_PHY_RESP_TOUT; tout; tout--)
+	for (tout = EMAC_PHY_RESP_TOUT; tout >= 0; tout--)
 	{
 		regv = EMAC_Read_PHY (EMAC_PHY_REG_BMCR);
 
@@ -172,21 +172,8 @@ int32_t PHY_SetMode(uint32_t ulPHYMode)
 				/* Use auto-negotiation about the link speed. */
 				EMAC_Write_PHY (EMAC_PHY_REG_BMCR, EMAC_PHY_AUTO_NEG);
 				/* Wait to complete Auto_Negotiation */
-				for (tout = EMAC_PHY_RESP_TOUT; tout; tout--)
+				for (tout = EMAC_PHY_RESP_TOUT; tout>=0; tout--)
 				{
-					regv = EMAC_Read_PHY (EMAC_PHY_REG_BMSR);
-
-					if (regv & EMAC_PHY_BMSR_AUTO_DONE)
-					{
-						/* Auto-negotiation Complete. */
-						break;
-					}
-
-					if (tout == 0)
-					{
-						// Time out, return error
-						return (-1);
-					}
 				}
 				break;
 
@@ -247,7 +234,7 @@ int32_t PHY_UpdateStatus(void)
 	int32_t regv, tout;
 
 	/* Check the link status. */
-	for (tout = EMAC_PHY_RESP_TOUT; tout; tout--)
+	for (tout = EMAC_PHY_RESP_TOUT; tout>=0; tout--)
 	{
 		regv = EMAC_Read_PHY (EMAC_PHY_REG_BMSR);
 

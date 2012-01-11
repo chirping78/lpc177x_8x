@@ -211,7 +211,7 @@ unsigned int GetAD7Val(void)
 
 	val = val >> 2;//For displaying on webpage
 	
-	return(val / 10);                      // result of A/D process
+	return(val*100 / 0x3FF);                      // result of A/D process
 }
 
 // samples and returns AD-converter value of channel 1
@@ -233,7 +233,7 @@ unsigned int GetTempVal(void)
 
 	val = val >> 2;//For displaying on webpage
 
-	return(val / 10);                      // result of A/D process
+	return(val*100 / 0x3FF);                      // result of A/D process
 }
 
 // searches the TX-buffer for special strings and replaces them

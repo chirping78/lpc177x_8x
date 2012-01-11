@@ -130,7 +130,7 @@ void c_entry (void)
 	 */
 
 
-#if (__RAM_MODE__==1)//Run in RAM mode
+#ifdef __RAM_MODE__ //Run in RAM mode
   pSource =  (void*)0x10000000;
   memcpy(pDest,pSource , 256*4);
 #else
