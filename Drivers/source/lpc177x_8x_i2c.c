@@ -513,17 +513,17 @@ int32_t I2C_MasterHanleStates(en_I2C_unitId i2cId, uint32_t CodeStatus, I2C_M_SE
 		case I2C_I2STAT_M_RX_DAT_ACK:
 			if (TransferCfg->rx_count <TransferCfg->rx_length)
 			{
-				if (TransferCfg->rx_count < (TransferCfg->rx_length - 1))
+				if (TransferCfg->rx_count < (TransferCfg->rx_length - 2))
 				{
 					I2C_GetByte(I2Cx, &tmp, TRUE);
 
 					Ret = I2C_BYTE_RECV;
 					
 				}
-				else
+				else  // the next byte is the last byte, send NACK instead.
 				 {
 					I2C_GetByte(I2Cx, &tmp, FALSE);
-					Ret = I2C_LAST_BYTE_RECV;
+					Ret = I2C_BYTE_RECV;
 				 }
 				*rxdat++ = tmp;
 
@@ -536,6 +536,10 @@ int32_t I2C_MasterHanleStates(en_I2C_unitId i2cId, uint32_t CodeStatus, I2C_M_SE
 			
 			break;
 		case I2C_I2STAT_M_RX_DAT_NACK:
+			I2C_GetByte(I2Cx, &tmp, FALSE);
+			*rxdat++ = tmp;
+			TransferCfg->rx_count++;
+			I2C_Stop(I2Cx);
 			Ret = I2C_RECV_END;
 			break;
 		case I2C_I2STAT_M_RX_SLAR_NACK:
@@ -620,9 +624,9 @@ int32_t I2C_SlaveHanleStates(en_I2C_unitId i2cId, uint32_t CodeStatus, I2C_S_SET
 
 				Ret = I2C_BYTE_RECV;
 			}
-			if(TransferCfg->rx_count == TransferCfg->rx_length ) {
+			if(TransferCfg->rx_count == (TransferCfg->rx_length) ) {
 				I2Cx->CONCLR = I2C_I2CONCLR_AAC|I2C_I2CONCLR_SIC;
-				Ret = I2C_RECV_END;
+				Ret = I2C_BYTE_RECV;
 			}
 			else {
 				I2Cx->CONSET = I2C_I2CONSET_AA;
@@ -704,7 +708,7 @@ int32_t I2C_SlaveHanleStates(en_I2C_unitId i2cId, uint32_t CodeStatus, I2C_S_SET
 		case I2C_I2STAT_S_RX_PRE_GENCALL_DAT_NACK:
 			I2Cx->CONSET = I2C_I2CONSET_AA;
 			I2Cx->CONCLR = I2C_I2CONCLR_SIC;
-			Ret = I2C_ERR;
+			Ret = I2C_RECV_END;
 			break;
 
 		/*
