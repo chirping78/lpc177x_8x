@@ -78,7 +78,7 @@ SMB380_Status_t SMB380_Init(void)
   PINSEL_ConfigPin (2, 14, 2);
   PINSEL_ConfigPin (2, 15, 2);
   I2C_Init(I2C_1, SMB380_SPEED);
-  I2C_Cmd(I2C_1,ENABLE);
+  I2C_Cmd(I2C_1,I2C_MASTER_MODE, ENABLE);
 
   Data[0] = 0x14;
   SMB380_ReadWrite(&Data[0], 1, NULL, 0);

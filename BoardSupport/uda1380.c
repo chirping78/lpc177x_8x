@@ -57,7 +57,7 @@ int32_t Uda1380_Init(uint32_t i2cClockFreq, uint32_t i2sClockFreq)
 	I2C_Init(UDA1380_I2C, i2cClockFreq);
 
 	/* Enable I2C1 operation */
-	I2C_Cmd(UDA1380_I2C, ENABLE);
+	I2C_Cmd(UDA1380_I2C, I2C_MASTER_MODE, ENABLE);
 
 	/* Reset */
 	ret = Uda1380_WriteData(UDA1380_REG_L3, 0 );

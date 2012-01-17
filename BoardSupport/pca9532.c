@@ -53,7 +53,7 @@ void Pca9532_Init(uint32_t i2cClockFreq)
 	I2C_Init(PCA9532_I2C, i2cClockFreq);
 
 	/* Enable I2C1 operation */
-	I2C_Cmd(PCA9532_I2C, ENABLE);
+	I2C_Cmd(PCA9532_I2C, I2C_MASTER_MODE, ENABLE);
 
 	return;
 }
@@ -66,7 +66,7 @@ void Pca9532_Init(uint32_t i2cClockFreq)
 void Pca9532_DeInit(void)
 {
 	/* Enable I2C1 operation */
-	I2C_Cmd(PCA9532_I2C, DISABLE);
+	I2C_Cmd(PCA9532_I2C, I2C_MASTER_MODE, DISABLE);
 
 	return;
 }
