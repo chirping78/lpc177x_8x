@@ -1,3 +1,22 @@
+RELEASE LPC177x_8xCMSIS_120131
+
+***** Implementations and Improvements ****
+1. Update functions in lpc177x_8x_pinsel.c/.h to make sure a function only is applied to relevant pins.
+2. Update I2C driver: create a common functions to handle I2C Master States, I2C Slave States.
+3. Add I2C_Master, I2C_Slave, I2C_EEPROM examples.
+4. Fix some minor bugs in phylan.c.
+5. Documentation: update the CHM and examples descriptions
+
+
+***** Known Issues: In this package contains some examples that can not verify now ****
+
+1./ ADC > Adc_Burst
+2./ CAN > Can_SelfTest
+Maybe they will be removed when release for customers.
+ 
+ 
+==========================================================================================================
+==========================================================================================================
 RELEASE LPC177x_8xCMSIS_111230
 
 ***** Implementations and Improvements ****
