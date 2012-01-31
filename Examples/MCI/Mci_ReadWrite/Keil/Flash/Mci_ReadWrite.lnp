@@ -1,4 +1,0 @@
---cpu Cortex-M3 ".\flash\startup_lpc177x_8x.o" ".\flash\system_lpc177x_8x.o" ".\flash\core_cm3.o" ".\flash\lpc177x_8x_pinsel.o" ".\flash\lpc177x_8x_clkpwr.o" ".\flash\lpc177x_8x_mci.o" ".\flash\lpc177x_8x_gpdma.o" ".\flash\debug_frmwrk.o" ".\flash\lpc177x_8x_uart.o" ".\flash\mci_readwrite.o" --library_type=microlib --strict --scatter ".\Flash\Mci_ReadWrite.sct" 
---autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
---info sizes --info totals --info unused --info veneers 
- --list ".\Flash\Mci_ReadWrite.map" -o ".\Flash\Mci_ReadWrite.axf"

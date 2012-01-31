@@ -22,6 +22,12 @@
 * notification. NXP Semiconductors also make no representation or
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
+* Permission to use, copy, modify, and distribute this software and its
+* documentation is hereby granted, under NXP Semiconductors'
+* relevant copyright in the software, without fee, provided that it
+* is used in conjunction with NXP Semiconductors microcontrollers.  This
+* copyright, permission, and disclaimer notice must appear in all copies of
+* this code.
 **********************************************************************/
 #ifdef __BUILD_WITH_EXAMPLE__
 #include "lpc177x_8x_libcfg.h"
@@ -61,7 +67,7 @@ uint8_t menu1[] =
 "\t - Core: ARM Cortex-M3 \n\r"
 "\t - Communicate via: UART0 - 115.2 kbps \n\r"
 " An example of I2C using polling mode to test the I2C driver \n\r"
-" EEPROM EEPROM to transfer a number of data byte \n\r"
+" EEPROM to transfer a number of data byte \n\r"
 "********************************************************************************\n\r";
 uint8_t menu2[] = "Demo terminated! \n\r";
 

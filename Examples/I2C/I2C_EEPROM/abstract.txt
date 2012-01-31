@@ -48,7 +48,7 @@
 			LPC1788 OEM Board rev A and OEM Base Board rev A
 			Jumpers: Default
 
-		This example does not work on the IAR board from Olimex because the PCA9532
+		This example does not work on the IAR board from Olimex because the EEPROM 24LC256
 		is not mounted on
 	
 	Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
