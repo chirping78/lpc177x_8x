@@ -21,12 +21,6 @@
 * notification. NXP Semiconductors also make no representation or
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
-* Permission to use, copy, modify, and distribute this software and its
-* documentation is hereby granted, under NXP Semiconductors'
-* relevant copyright in the software, without fee, provided that it
-* is used in conjunction with NXP Semiconductors microcontrollers.  This
-* copyright, permission, and disclaimer notice must appear in all copies of
-* this code.
 **********************************************************************/
 #include "LPC177x_8x.h"
 #include "lpc177x_8x_uart.h"
@@ -39,20 +33,28 @@
 
 
 /************************** PRIVATE DEFINTIONS *************************/
-#define UART_TEST_NUM		0
+#define UART_TEST_NUM		4
 
 #if (UART_TEST_NUM == 0)
-#define	_LPC_UART			(LPC_UART_TypeDef *)LPC_UART0
+#define	_LPC_UART			UART_0
 #define _UART_IRQ			UART0_IRQn
 #define _UART_IRQHander		UART0_IRQHandler
 #elif (UART_TEST_NUM == 1)
-#define _LPC_UART			(LPC_UART_TypeDef *)LPC_UART1
+#define _LPC_UART			UART_1
 #define _UART_IRQ			UART1_IRQn
 #define _UART_IRQHander		UART1_IRQHandler
 #elif (UART_TEST_NUM == 2)
-#define _LPC_UART			LPC_UART2
+#define _LPC_UART			UART_2
 #define _UART_IRQ			UART2_IRQn
 #define _UART_IRQHander		UART2_IRQHandler
+#elif (UART_TEST_NUM == 3)
+#define _LPC_UART			UART_3
+#define _UART_IRQ			UART3_IRQn
+#define _UART_IRQHander		UART3_IRQHandler
+#elif (UART_TEST_NUM == 4)
+#define _LPC_UART			UART_4
+#define _UART_IRQ			UART4_IRQn
+#define _UART_IRQHander		UART4_IRQHandler
 #endif
 /* buffer size definition */
 #define UART_RING_BUFSIZE 256
@@ -113,8 +115,8 @@ void UART_IntErr(uint8_t bLSErrType);
 void UART_IntTransmit(void);
 void UART_IntReceive(void);
 
-uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint32_t buflen);
-uint32_t UARTSend(LPC_UART_TypeDef *UARTPort, uint8_t *txbuf, uint32_t buflen);
+uint32_t UARTReceive(UART_ID_Type UartID, uint8_t *rxbuf, uint32_t buflen);
+uint32_t UARTSend(UART_ID_Type UartID, uint8_t *txbuf, uint32_t buflen);
 void print_menu(void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
@@ -249,7 +251,7 @@ void UART_IntErr(uint8_t bLSErrType)
  * @param[in]	buflen Length of Transmit buffer
  * @return 		Number of bytes actually sent to the ring buffer
  **********************************************************************/
-uint32_t UARTSend(LPC_UART_TypeDef *UARTPort, uint8_t *txbuf, uint32_t buflen)
+uint32_t UARTSend(UART_ID_Type UartID, uint8_t *txbuf, uint32_t buflen)
 {
     uint8_t *data = (uint8_t *) txbuf;
     uint32_t bytes = 0;
@@ -257,7 +259,7 @@ uint32_t UARTSend(LPC_UART_TypeDef *UARTPort, uint8_t *txbuf, uint32_t buflen)
 	/* Temporarily lock out UART transmit interrupts during this
 	   read so the UART transmit interrupt won't cause problems
 	   with the index values */
-    UART_IntConfig(UARTPort, UART_INTCFG_THRE, DISABLE);
+    UART_IntConfig(UartID, UART_INTCFG_THRE, DISABLE);
 
 	/* Loop until transmit run buffer is full or until n_bytes
 	   expires */
@@ -288,7 +290,7 @@ uint32_t UARTSend(LPC_UART_TypeDef *UARTPort, uint8_t *txbuf, uint32_t buflen)
 	 * Otherwise, re-enables Tx Interrupt
 	 */
 	else {
-		UART_IntConfig(UARTPort, UART_INTCFG_THRE, ENABLE);
+		UART_IntConfig(UartID, UART_INTCFG_THRE, ENABLE);
 	}
 
     return bytes;
@@ -303,7 +305,7 @@ uint32_t UARTSend(LPC_UART_TypeDef *UARTPort, uint8_t *txbuf, uint32_t buflen)
  * @param[in]	buflen Length of Received buffer
  * @return 		Number of bytes actually read from the ring buffer
  **********************************************************************/
-uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint32_t buflen)
+uint32_t UARTReceive(UART_ID_Type UartID, uint8_t *rxbuf, uint32_t buflen)
 {
     uint8_t *data = (uint8_t *) rxbuf;
     uint32_t bytes = 0;
@@ -311,7 +313,7 @@ uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint32_t buflen
 	/* Temporarily lock out UART receive interrupts during this
 	   read so the UART receive interrupt won't cause problems
 	   with the index values */
-	UART_IntConfig(UARTPort, UART_INTCFG_RBR, DISABLE);
+	UART_IntConfig(UartID, UART_INTCFG_RBR, DISABLE);
 
 	/* Loop until receive buffer ring is empty or
 		until max_bytes expires */
@@ -330,7 +332,7 @@ uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint32_t buflen
 	}
 
 	/* Re-enable UART interrupts */
-	UART_IntConfig(UARTPort, UART_INTCFG_RBR, ENABLE);
+	UART_IntConfig(UartID, UART_INTCFG_RBR, ENABLE);
 
     return bytes;
 }
@@ -397,7 +399,22 @@ void c_entry(void)
 	 */
 	PINSEL_ConfigPin(0,10,1);
 	PINSEL_ConfigPin(0,11,1);
-
+#elif (UART_TEST_NUM == 3)
+	/*
+	 * Initialize UART2 pin connect
+	 * P0.2: U3_TXD
+	 * P0.3: U3_RXD
+	 */
+	PINSEL_ConfigPin(0,2,2);
+	PINSEL_ConfigPin(0,3,2);
+#elif (UART_TEST_NUM == 4)
+	/*
+	 * Initialize UART2 pin connect
+	 * P0.22: U4_TXD
+	 * P2.9: U4_RXD
+	 */
+	PINSEL_ConfigPin(0,22,3);
+	PINSEL_ConfigPin(2,9,3);
 #endif
 
 	/* Initialize UART Configuration parameter structure to default state:
@@ -409,7 +426,7 @@ void c_entry(void)
 	UART_ConfigStructInit(&UARTConfigStruct);
 
 	// Initialize UART0 peripheral with given to corresponding parameter
-	UART_Init((LPC_UART_TypeDef *)_LPC_UART, &UARTConfigStruct);
+	UART_Init(_LPC_UART, &UARTConfigStruct);
 
 
 	/* Initialize FIFOConfigStruct to default state:
@@ -422,16 +439,16 @@ void c_entry(void)
 	UART_FIFOConfigStructInit(&UARTFIFOConfigStruct);
 
 	// Initialize FIFO for UART0 peripheral
-	UART_FIFOConfig((LPC_UART_TypeDef *)_LPC_UART, &UARTFIFOConfigStruct);
+	UART_FIFOConfig(_LPC_UART, &UARTFIFOConfigStruct);
 
 
 	// Enable UART Transmit
-	UART_TxCmd((LPC_UART_TypeDef *)_LPC_UART, ENABLE);
+	UART_TxCmd(_LPC_UART, ENABLE);
 
     /* Enable UART Rx interrupt */
-	UART_IntConfig((LPC_UART_TypeDef *)_LPC_UART, UART_INTCFG_RBR, ENABLE);
+	UART_IntConfig(_LPC_UART, UART_INTCFG_RBR, ENABLE);
 	/* Enable UART line status interrupt */
-	UART_IntConfig((LPC_UART_TypeDef *)_LPC_UART, UART_INTCFG_RLS, ENABLE);
+	UART_IntConfig(_LPC_UART, UART_INTCFG_RLS, ENABLE);
 	/*
 	 * Do not enable transmit interrupt here, since it is handled by
 	 * UART_Send() function, just to reset Tx Interrupt state for the

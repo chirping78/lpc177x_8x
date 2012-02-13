@@ -21,12 +21,6 @@
 * notification. NXP Semiconductors also make no representation or
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
-* Permission to use, copy, modify, and distribute this software and its
-* documentation is hereby granted, under NXP Semiconductors'
-* relevant copyright in the software, without fee, provided that it
-* is used in conjunction with NXP Semiconductors microcontrollers.  This
-* copyright, permission, and disclaimer notice must appear in all copies of
-* this code.
 **********************************************************************/
 #include "LPC177x_8x.h"
 #include "lpc177x_8x_uart.h"
@@ -41,19 +35,27 @@
 
 
 /************************** PRIVATE DEFINITIONS *************************/
-#define UART_TEST_NUM			0
+#define UART_TEST_NUM			4
 #if (UART_TEST_NUM == 0)
-#define	_LPC_UART				(LPC_UART_TypeDef *)LPC_UART0
+#define	_LPC_UART				UART_0
 #define _GPDMA_CONN_UART_Tx		GPDMA_CONN_UART0_Tx
 #define _GPDMA_CONN_UART_Rx		GPDMA_CONN_UART0_Rx
 #elif (UART_TEST_NUM == 1)
-#define _LPC_UART				(LPC_UART_TypeDef *)LPC_UART1
+#define _LPC_UART				UART_1
 #define _GPDMA_CONN_UART_Tx		GPDMA_CONN_UART1_Tx
 #define _GPDMA_CONN_UART_Rx		GPDMA_CONN_UART1_Rx
 #elif (UART_TEST_NUM == 2)
-#define _LPC_UART				LPC_UART2
+#define _LPC_UART				UART_2
 #define _GPDMA_CONN_UART_Tx		GPDMA_CONN_UART2_Tx
 #define _GPDMA_CONN_UART_Rx		GPDMA_CONN_UART2_Rx
+#elif (UART_TEST_NUM == 3)
+#define _LPC_UART			    UART_3
+#define _GPDMA_CONN_UART_Tx		GPDMA_CONN_UART3_Tx
+#define _GPDMA_CONN_UART_Rx		GPDMA_CONN_UART3_Rx
+#elif (UART_TEST_NUM == 4)
+#define _LPC_UART			    UART_4
+#define _GPDMA_CONN_UART_Tx		GPDMA_CONN_UART4_Tx
+#define _GPDMA_CONN_UART_Rx		GPDMA_CONN_UART4_Rx
 #endif
 /* Receive buffer size */
 #define RX_BUF_SIZE	0x10
@@ -186,7 +188,22 @@ void c_entry(void)
 	 */
 	PINSEL_ConfigPin(0,10,1);
 	PINSEL_ConfigPin(0,11,1);
-
+#elif (UART_TEST_NUM == 3)
+	/*
+	 * Initialize UART2 pin connect
+	 * P0.2: U3_TXD
+	 * P0.3: U3_RXD
+	 */
+	PINSEL_ConfigPin(0,2,2);
+	PINSEL_ConfigPin(0,3,2);
+#elif (UART_TEST_NUM == 4)
+	/*
+	 * Initialize UART2 pin connect
+	 * P0.22: U4_TXD
+	 * P2.9: U4_RXD
+	 */
+	PINSEL_ConfigPin(0,22,3);
+	PINSEL_ConfigPin(2,9,3);
 #endif
 	/* Initialize UART Configuration parameter structure to default state:
 	 * Baudrate = 115200 bps

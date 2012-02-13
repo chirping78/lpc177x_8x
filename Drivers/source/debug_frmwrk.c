@@ -21,12 +21,6 @@
 * notification. NXP Semiconductors also make no representation or
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
-* Permission to use, copy, modify, and distribute this software and its
-* documentation is hereby granted, under NXP Semiconductors'
-* relevant copyright in the software, without fee, provided that it
-* is used in conjunction with NXP Semiconductors microcontrollers.  This
-* copyright, permission, and disclaimer notice must appear in all copies of
-* this code.
 **********************************************************************/
 #ifdef __BUILD_WITH_EXAMPLE__
 #include "lpc177x_8x_libcfg.h"
@@ -39,22 +33,22 @@
 
 /* Debug framework */
 
-void (*_db_msg)(LPC_UART_TypeDef *UARTx, const void *s);
-void (*_db_msg_)(LPC_UART_TypeDef *UARTx, const void *s);
-void (*_db_char)(LPC_UART_TypeDef *UARTx, uint8_t ch);
-void (*_db_dec)(LPC_UART_TypeDef *UARTx, uint8_t decn);
-void (*_db_dec_16)(LPC_UART_TypeDef *UARTx, uint16_t decn);
-void (*_db_dec_32)(LPC_UART_TypeDef *UARTx, uint32_t decn);
-void (*_db_hex)(LPC_UART_TypeDef *UARTx, uint8_t hexn);
-void (*_db_hex_16)(LPC_UART_TypeDef *UARTx, uint16_t hexn);
-void (*_db_hex_32)(LPC_UART_TypeDef *UARTx, uint32_t hexn);
-void (*_db_hex_)(LPC_UART_TypeDef *UARTx, uint8_t hexn);
-void (*_db_hex_16_)(LPC_UART_TypeDef *UARTx, uint16_t hexn);
-void (*_db_hex_32_)(LPC_UART_TypeDef *UARTx, uint32_t hexn);
+void (*_db_msg)(UART_ID_Type UartID, const void *s);
+void (*_db_msg_)(UART_ID_Type UartID, const void *s);
+void (*_db_char)(UART_ID_Type UartID, uint8_t ch);
+void (*_db_dec)(UART_ID_Type UartID, uint8_t decn);
+void (*_db_dec_16)(UART_ID_Type UartID, uint16_t decn);
+void (*_db_dec_32)(UART_ID_Type UartID, uint32_t decn);
+void (*_db_hex)(UART_ID_Type UartID, uint8_t hexn);
+void (*_db_hex_16)(UART_ID_Type UartID, uint16_t hexn);
+void (*_db_hex_32)(UART_ID_Type UartID, uint32_t hexn);
+void (*_db_hex_)(UART_ID_Type UartID, uint8_t hexn);
+void (*_db_hex_16_)(UART_ID_Type UartID, uint16_t hexn);
+void (*_db_hex_32_)(UART_ID_Type UartID, uint32_t hexn);
 
-uint8_t (*_db_get_char)(LPC_UART_TypeDef *UARTx);
-Bool (*_db_get_char_nonblocking)(LPC_UART_TypeDef *UARTx, uint8_t* c);
-uint8_t (*_db_get_val)(LPC_UART_TypeDef *UARTx, uint8_t option, uint8_t numCh, uint32_t * val);
+uint8_t (*_db_get_char)(UART_ID_Type UartID);
+Bool (*_db_get_char_nonblocking)(UART_ID_Type UartID, uint8_t* c);
+uint8_t (*_db_get_val)(UART_ID_Type UartID, uint8_t option, uint8_t numCh, uint32_t * val);
 
 
 /*********************************************************************//**
@@ -63,9 +57,9 @@ uint8_t (*_db_get_val)(LPC_UART_TypeDef *UARTx, uint8_t option, uint8_t numCh, u
  * @param[in]	ch		Character to put
  * @return		None
  **********************************************************************/
-void UARTPutChar (LPC_UART_TypeDef *UARTx, uint8_t ch)
+void UARTPutChar (UART_ID_Type UartID, uint8_t ch)
 {
-	UART_Send(UARTx, &ch, 1, BLOCKING);
+	UART_Send(UartID, &ch, 1, BLOCKING);
 }
 
 
@@ -74,11 +68,11 @@ void UARTPutChar (LPC_UART_TypeDef *UARTx, uint8_t ch)
  * @param[in]	UARTx	Pointer to UART peripheral
  * @return		character value that returned
  **********************************************************************/
-uint8_t UARTGetChar (LPC_UART_TypeDef *UARTx)
+uint8_t UARTGetChar (UART_ID_Type UartID)
 {
 	uint8_t tmp = 0;
 
-	UART_Receive(UARTx, &tmp, 1, BLOCKING);
+	UART_Receive(UartID, &tmp, 1, BLOCKING);
 
 	return(tmp);
 }
@@ -89,11 +83,11 @@ uint8_t UARTGetChar (LPC_UART_TypeDef *UARTx)
  * @return		TRUE (there is a character for procesisng)/FALSE
  **********************************************************************/
 
-Bool UARTGetCharInNonBlock(LPC_UART_TypeDef *UARTx, uint8_t* c)
+Bool UARTGetCharInNonBlock(UART_ID_Type UartID, uint8_t* c)
 {	
     if(c == NULL)
         return FALSE;		
-    if(UART_Receive(UARTx, c, 1, NONE_BLOCKING))
+    if(UART_Receive(UartID, c, 1, NONE_BLOCKING))
         return TRUE;	
     return FALSE;
 }
@@ -104,7 +98,7 @@ Bool UARTGetCharInNonBlock(LPC_UART_TypeDef *UARTx, uint8_t* c)
  * @param[in]	UARTx	Pointer to UART peripheral
  * @return		character value that returned
  **********************************************************************/
-uint8_t UARTGetValue (LPC_UART_TypeDef *UARTx, uint8_t option,
+uint8_t UARTGetValue (UART_ID_Type UartID, uint8_t option,
 												uint8_t numCh, uint32_t* val)
 {
 	uint8_t tmpCh = 0, cnt, factor, isValidCh = FALSE;
@@ -135,7 +129,7 @@ uint8_t UARTGetValue (LPC_UART_TypeDef *UARTx, uint8_t option,
 	{
 		isValidCh = TRUE;
 
-		UART_Receive(UARTx, &tmpCh, 1, BLOCKING);
+		UART_Receive(UartID, &tmpCh, 1, BLOCKING);
 
 		if((tmpCh >= '0') && (tmpCh<= '9'))
 		{
@@ -205,18 +199,18 @@ uint8_t UARTGetValue (LPC_UART_TypeDef *UARTx, uint8_t option,
 		{
 			if(option == DBG_GETVAL_IN_DEC)
 			{
-				UARTPuts(UARTx, "Please enter a char from '0' to '9'!!!\r\n");
+				UARTPuts(UartID, "Please enter a char from '0' to '9'!!!\r\n");
 			}
 			else if (option == DBG_GETVAL_IN_HEX)
 			{
-				UARTPuts(UARTx, "Please enter a char from '0' to '9', and 'a/A', 'b/B', c/C', 'd/D', 'e/E' and 'f/F'!!!\r\n");
+				UARTPuts(UartID, "Please enter a char from '0' to '9', and 'a/A', 'b/B', c/C', 'd/D', 'e/E' and 'f/F'!!!\r\n");
 			}
 
 			cntFailed ++;
 
 			if(cntFailed >= NUM_SKIPPED_ALLOWED)
 			{
-				UARTPuts(UARTx, "Reach limitation of re-tries. Return FAILED\r\n");
+				UARTPuts(UartID, "Reach limitation of re-tries. Return FAILED\r\n");
 
 				//it's failed, should return
 				return 0;
@@ -225,7 +219,7 @@ uint8_t UARTGetValue (LPC_UART_TypeDef *UARTx, uint8_t option,
 		else
 		{
 			//Echo the character to the terminal
-			UARTPutChar(UARTx, tmpCh);
+			UARTPutChar(UartID, tmpCh);
 
 			if(numCh == 1)
 			{
@@ -262,13 +256,13 @@ uint8_t UARTGetValue (LPC_UART_TypeDef *UARTx, uint8_t option,
  * @param[in]	str 	string to put
  * @return		None
  **********************************************************************/
-void UARTPuts(LPC_UART_TypeDef *UARTx, const void *str)
+void UARTPuts(UART_ID_Type UartID, const void *str)
 {
 	uint8_t *s = (uint8_t *) str;
 
 	while (*s)
 	{
-		UARTPutChar(UARTx, *s++);
+		UARTPutChar(UartID, *s++);
 	}
 }
 
@@ -279,10 +273,10 @@ void UARTPuts(LPC_UART_TypeDef *UARTx, const void *str)
  * @param[in]	str		String to put
  * @return		None
  **********************************************************************/
-void UARTPuts_(LPC_UART_TypeDef *UARTx, const void *str)
+void UARTPuts_(UART_ID_Type UartID, const void *str)
 {
-	UARTPuts (UARTx, str);
-	UARTPuts (UARTx, "\n\r");
+	UARTPuts (UartID, str);
+	UARTPuts (UartID, "\n\r");
 }
 
 
@@ -292,14 +286,14 @@ void UARTPuts_(LPC_UART_TypeDef *UARTx, const void *str)
  * @param[in]	decnum	Decimal number (8-bit long)
  * @return		None
  **********************************************************************/
-void UARTPutDec(LPC_UART_TypeDef *UARTx, uint8_t decnum)
+void UARTPutDec(UART_ID_Type UartID, uint8_t decnum)
 {
 	uint8_t c1=decnum%10;
 	uint8_t c2=(decnum/10)%10;
 	uint8_t c3=(decnum/100)%10;
-	UARTPutChar(UARTx, '0'+c3);
-	UARTPutChar(UARTx, '0'+c2);
-	UARTPutChar(UARTx, '0'+c1);
+	UARTPutChar(UartID, '0'+c3);
+	UARTPutChar(UartID, '0'+c2);
+	UARTPutChar(UartID, '0'+c1);
 }
 
 /*********************************************************************//**
@@ -308,18 +302,18 @@ void UARTPutDec(LPC_UART_TypeDef *UARTx, uint8_t decnum)
  * @param[in]	decnum	Decimal number (8-bit long)
  * @return		None
  **********************************************************************/
-void UARTPutDec16(LPC_UART_TypeDef *UARTx, uint16_t decnum)
+void UARTPutDec16(UART_ID_Type UartID, uint16_t decnum)
 {
 	uint8_t c1=decnum%10;
 	uint8_t c2=(decnum/10)%10;
 	uint8_t c3=(decnum/100)%10;
 	uint8_t c4=(decnum/1000)%10;
 	uint8_t c5=(decnum/10000)%10;
-	UARTPutChar(UARTx, '0'+c5);
-	UARTPutChar(UARTx, '0'+c4);
-	UARTPutChar(UARTx, '0'+c3);
-	UARTPutChar(UARTx, '0'+c2);
-	UARTPutChar(UARTx, '0'+c1);
+	UARTPutChar(UartID, '0'+c5);
+	UARTPutChar(UartID, '0'+c4);
+	UARTPutChar(UartID, '0'+c3);
+	UARTPutChar(UartID, '0'+c2);
+	UARTPutChar(UartID, '0'+c1);
 }
 
 /*********************************************************************//**
@@ -328,7 +322,7 @@ void UARTPutDec16(LPC_UART_TypeDef *UARTx, uint16_t decnum)
  * @param[in]	decnum	Decimal number (8-bit long)
  * @return		None
  **********************************************************************/
-void UARTPutDec32(LPC_UART_TypeDef *UARTx, uint32_t decnum)
+void UARTPutDec32(UART_ID_Type UartID, uint32_t decnum)
 {
 	uint8_t c1=decnum%10;
 	uint8_t c2=(decnum/10)%10;
@@ -340,16 +334,16 @@ void UARTPutDec32(LPC_UART_TypeDef *UARTx, uint32_t decnum)
 	uint8_t c8=(decnum/10000000)%10;
 	uint8_t c9=(decnum/100000000)%10;
 	uint8_t c10=(decnum/1000000000)%10;
-	UARTPutChar(UARTx, '0'+c10);
-	UARTPutChar(UARTx, '0'+c9);
-	UARTPutChar(UARTx, '0'+c8);
-	UARTPutChar(UARTx, '0'+c7);
-	UARTPutChar(UARTx, '0'+c6);
-	UARTPutChar(UARTx, '0'+c5);
-	UARTPutChar(UARTx, '0'+c4);
-	UARTPutChar(UARTx, '0'+c3);
-	UARTPutChar(UARTx, '0'+c2);
-	UARTPutChar(UARTx, '0'+c1);
+	UARTPutChar(UartID, '0'+c10);
+	UARTPutChar(UartID, '0'+c9);
+	UARTPutChar(UartID, '0'+c8);
+	UARTPutChar(UartID, '0'+c7);
+	UARTPutChar(UartID, '0'+c6);
+	UARTPutChar(UartID, '0'+c5);
+	UARTPutChar(UartID, '0'+c4);
+	UARTPutChar(UartID, '0'+c3);
+	UARTPutChar(UartID, '0'+c2);
+	UARTPutChar(UartID, '0'+c1);
 }
 
 /*********************************************************************//**
@@ -358,7 +352,7 @@ void UARTPutDec32(LPC_UART_TypeDef *UARTx, uint32_t decnum)
  * @param[in]	hexnum	Hex number (8-bit long)
  * @return		None
  **********************************************************************/
-void UARTPutHex_ (LPC_UART_TypeDef *UARTx, uint8_t hexnum)
+void UARTPutHex_ (UART_ID_Type UartID, uint8_t hexnum)
 {
 	uint8_t nibble, i;
 
@@ -367,7 +361,7 @@ void UARTPutHex_ (LPC_UART_TypeDef *UARTx, uint8_t hexnum)
 	{
 		nibble = (hexnum >> (4*i)) & 0x0F;
 
-		UARTPutChar(UARTx, (nibble > 9) ? ('A' + nibble - 10) : ('0' + nibble));
+		UARTPutChar(UartID, (nibble > 9) ? ('A' + nibble - 10) : ('0' + nibble));
 	}
 	while (i--);
 }
@@ -379,16 +373,16 @@ void UARTPutHex_ (LPC_UART_TypeDef *UARTx, uint8_t hexnum)
  * @param[in]	hexnum	Hex number (8-bit long)
  * @return		None
  **********************************************************************/
-void UARTPutHex (LPC_UART_TypeDef *UARTx, uint8_t hexnum)
+void UARTPutHex (UART_ID_Type UartID, uint8_t hexnum)
 {
 	uint8_t nibble, i;
 
-	UARTPuts(UARTx, "0x");
+	UARTPuts(UartID, "0x");
 
 	i = 1;
 	do {
 		nibble = (hexnum >> (4*i)) & 0x0F;
-		UARTPutChar(UARTx, (nibble > 9) ? ('A' + nibble - 10) : ('0' + nibble));
+		UARTPutChar(UartID, (nibble > 9) ? ('A' + nibble - 10) : ('0' + nibble));
 	} while (i--);
 }
 
@@ -399,7 +393,7 @@ void UARTPutHex (LPC_UART_TypeDef *UARTx, uint8_t hexnum)
  * @param[in]	hexnum	Hex number (16-bit long)
  * @return		None
  **********************************************************************/
-void UARTPutHex16_ (LPC_UART_TypeDef *UARTx, uint16_t hexnum)
+void UARTPutHex16_ (UART_ID_Type UartID, uint16_t hexnum)
 {
 	uint8_t nibble, i;
 
@@ -408,7 +402,7 @@ void UARTPutHex16_ (LPC_UART_TypeDef *UARTx, uint16_t hexnum)
 	{
 		nibble = (hexnum >> (4*i)) & 0x0F;
 
-		UARTPutChar(UARTx, (nibble > 9) ? ('A' + nibble - 10) : ('0' + nibble));
+		UARTPutChar(UartID, (nibble > 9) ? ('A' + nibble - 10) : ('0' + nibble));
 	}
 	while (i--);
 }
@@ -420,18 +414,18 @@ void UARTPutHex16_ (LPC_UART_TypeDef *UARTx, uint16_t hexnum)
  * @param[in]	hexnum	Hex number (16-bit long)
  * @return		None
  **********************************************************************/
-void UARTPutHex16 (LPC_UART_TypeDef *UARTx, uint16_t hexnum)
+void UARTPutHex16 (UART_ID_Type UartID, uint16_t hexnum)
 {
 	uint8_t nibble, i;
 
-	UARTPuts(UARTx, "0x");
+	UARTPuts(UartID, "0x");
 
 	i = 3;
 	do
 	{
 		nibble = (hexnum >> (4*i)) & 0x0F;
 
-		UARTPutChar(UARTx, (nibble > 9) ? ('A' + nibble - 10) : ('0' + nibble));
+		UARTPutChar(UartID, (nibble > 9) ? ('A' + nibble - 10) : ('0' + nibble));
 	}
 	while (i--);
 }
@@ -442,7 +436,7 @@ void UARTPutHex16 (LPC_UART_TypeDef *UARTx, uint16_t hexnum)
  * @param[in]	hexnum	Hex number (32-bit long)
  * @return		None
  **********************************************************************/
-void UARTPutHex32_ (LPC_UART_TypeDef *UARTx, uint32_t hexnum)
+void UARTPutHex32_ (UART_ID_Type UartID, uint32_t hexnum)
 {
 	uint8_t nibble, i;
 
@@ -451,7 +445,7 @@ void UARTPutHex32_ (LPC_UART_TypeDef *UARTx, uint32_t hexnum)
 	{
 		nibble = (hexnum >> (4*i)) & 0x0F;
 
-		UARTPutChar(UARTx, (nibble > 9) ? ('A' + nibble - 10) : ('0' + nibble));
+		UARTPutChar(UartID, (nibble > 9) ? ('A' + nibble - 10) : ('0' + nibble));
 	}
 	while (i--);
 }
@@ -463,18 +457,18 @@ void UARTPutHex32_ (LPC_UART_TypeDef *UARTx, uint32_t hexnum)
  * @param[in]	hexnum	Hex number (32-bit long)
  * @return		None
  **********************************************************************/
-void UARTPutHex32 (LPC_UART_TypeDef *UARTx, uint32_t hexnum)
+void UARTPutHex32 (UART_ID_Type UartID, uint32_t hexnum)
 {
 	uint8_t nibble, i;
 
-	UARTPuts(UARTx, "0x");
+	UARTPuts(UartID, "0x");
 
 	i = 7;
 	do
 	{
 		nibble = (hexnum >> (4*i)) & 0x0F;
 
-		UARTPutChar(UARTx, (nibble > 9) ? ('A' + nibble - 10) : ('0' + nibble));
+		UARTPutChar(UartID, (nibble > 9) ? ('A' + nibble - 10) : ('0' + nibble));
 	}
 	while (i--);
 }

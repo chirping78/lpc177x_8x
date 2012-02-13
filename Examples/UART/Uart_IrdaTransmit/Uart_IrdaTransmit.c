@@ -21,12 +21,6 @@
 * notification. NXP Semiconductors also make no representation or
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
-* Permission to use, copy, modify, and distribute this software and its
-* documentation is hereby granted, under NXP Semiconductors'
-* relevant copyright in the software, without fee, provided that it
-* is used in conjunction with NXP Semiconductors microcontrollers.  This
-* copyright, permission, and disclaimer notice must appear in all copies of
-* this code.
 **********************************************************************/
 
 #include "lpc177x_8x_uart.h"
@@ -42,12 +36,12 @@
 #define UART_PORT 0
 
 #if (UART_PORT == 0)
-#define TEST_UART (LPC_UART_TypeDef *)LPC_UART0
+#define TEST_UART UART_0
 #elif (UART_PORT == 1)
-#define TEST_UART (LPC_UART_TypeDef *)LPC_UART1
+#define TEST_UART UART_1
 #endif
 
-#define TEST_IRDA (LPC_UART_TypeDef *)LPC_UART4
+#define TEST_IRDA UART_4
 
 /************************** PRIVATE VARIABLES *************************/
 

@@ -22,12 +22,6 @@
 * notification. NXP Semiconductors also make no representation or
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
-* Permission to use, copy, modify, and distribute this software and its
-* documentation is hereby granted, under NXP Semiconductors'
-* relevant copyright in the software, without fee, provided that it
-* is used in conjunction with NXP Semiconductors microcontrollers.  This
-* copyright, permission, and disclaimer notice must appear in all copies of
-* this code.
 **********************************************************************/
 
 /* Peripheral group ----------------------------------------------------------- */
@@ -122,6 +116,7 @@ extern "C"
 #define UART_IER_BITMASK		((uint32_t)(0x307))
 /** UART1 interrupt enable register bit mask */
 #define UART1_IER_BITMASK		((uint32_t)(0x38F))
+
 
 /*********************************************************************//**
  * Macro defines for Macro defines for UART interrupt identification register
@@ -316,47 +311,41 @@ extern "C"
 #define UART_TER_TXEN			((uint8_t)(1<<7))
 /** UART Transmit Enable Register bit mask */
 #define UART_TER_BITMASK		((uint8_t)(0x80))
+/** Transmit enable bit on UART4 */
+#define UART4_TER_TXEN			((uint8_t)(1<<0))
+/** UART4 Transmit Enable Register bit mask */
+#define UART4_TER_BITMASK		((uint8_t)(0x01))
 
 /*********************************************************************//**
- * Macro defines for Macro defines for UART1 RS485 Control register
+ * Macro defines for Macro defines for UART RS485 Control register
  **********************************************************************/
 /** RS-485/EIA-485 Normal Multi-drop Mode (NMM) is disabled */
-#define UART1_RS485CTRL_NMM_EN		((uint32_t)(1<<0))
+#define UART_RS485CTRL_NMM_EN		((uint32_t)(1<<0))
 /** The receiver is disabled */
-#define UART1_RS485CTRL_RX_DIS		((uint32_t)(1<<1))
+#define UART_RS485CTRL_RX_DIS		((uint32_t)(1<<1))
 /** Auto Address Detect (AAD) is enabled */
-#define UART1_RS485CTRL_AADEN		((uint32_t)(1<<2))
+#define UART_RS485CTRL_AADEN		((uint32_t)(1<<2))
 /** If direction control is enabled (bit DCTRL = 1), pin DTR is used for direction control */
-#define UART1_RS485CTRL_SEL_DTR		((uint32_t)(1<<3))
+#define UART_RS485CTRL_SEL_DTR		((uint32_t)(1<<3))
 /** Enable Auto Direction Control */
-#define UART1_RS485CTRL_DCTRL_EN	((uint32_t)(1<<4))
+#define UART_RS485CTRL_DCTRL_EN	((uint32_t)(1<<4))
 /** This bit reverses the polarity of the direction control signal on the RTS (or DTR) pin. 
 The direction control pin will be driven to logic "1" when the transmitter has data to be sent */
-#define UART1_RS485CTRL_OINV_1		((uint32_t)(1<<5))
+#define UART_RS485CTRL_OINV_1		((uint32_t)(1<<5))
 
 /** RS485 control bit-mask value */
-#define UART1_RS485CTRL_BITMASK		((uint32_t)(0x3F))
+#define UART_RS485CTRL_BITMASK		((uint32_t)(0x3F))
 
 /*********************************************************************//**
- * Macro defines for Macro defines for UART1 RS-485 Address Match register
+ * Macro defines for Macro defines for UART RS-485 Address Match register
  **********************************************************************/
-#define UART1_RS485ADRMATCH_BITMASK ((uint8_t)(0xFF)) 	/**< Bit mask value */
+#define UART_RS485ADRMATCH_BITMASK ((uint8_t)(0xFF)) 	/**< Bit mask value */
 
 /*********************************************************************//**
  * Macro defines for Macro defines for UART1 RS-485 Delay value register
  **********************************************************************/
 /* Macro defines for UART1 RS-485 Delay value register */
-#define UART1_RS485DLY_BITMASK		((uint8_t)(0xFF)) 	/** Bit mask value */
-
-/*********************************************************************//**
- * Macro defines for Macro defines for UART FIFO Level register
- **********************************************************************/
-/** Reflects the current level of the UART receiver FIFO */
-#define UART_FIFOLVL_RXFIFOLVL(n)	((uint32_t)(n&0x0F))
-/** Reflects the current level of the UART transmitter FIFO */
-#define UART_FIFOLVL_TXFIFOLVL(n)	((uint32_t)((n>>8)&0x0F))
-/** UART FIFO Level Register bit mask */
-#define UART_FIFOLVL_BITMASK		((uint32_t)(0x0F0F))
+#define UART_RS485DLY_BITMASK		((uint8_t)(0xFF)) 	/** Bit mask value */
 
 
 /**
@@ -368,6 +357,18 @@ The direction control pin will be driven to logic "1" when the transmitter has d
 /** @defgroup UART_Public_Types UART Public Types
  * @{
  */
+
+/**
+ * @brief UART ID
+ */
+ typedef enum
+{
+	UART_0 = 0,
+	UART_1,
+	UART_2,
+	UART_3,
+	UART_4,
+} UART_ID_Type;
 
 /**
  * @brief UART Databit type definitions
@@ -415,8 +416,8 @@ typedef enum {
 	UART_INTCFG_RBR = 0,	/*!< RBR Interrupt enable*/
 	UART_INTCFG_THRE,		/*!< THR Interrupt enable*/
 	UART_INTCFG_RLS,		/*!< RX line status interrupt enable*/
-	UART1_INTCFG_MS,		/*!< Modem status interrupt enable (UART1 only) */
-	UART1_INTCFG_CTS,		/*!< CTS1 signal transition interrupt enable (UART1 only) */
+	UART_INTCFG_MS,		/*!< Modem status interrupt enable (UART1 only) */
+	UART_INTCFG_CTS,		/*!< CTS1 signal transition interrupt enable (UART1 only) */
 	UART_INTCFG_ABEO,		/*!< Enables the end of auto-baud interrupt */
 	UART_INTCFG_ABTO		/*!< Enables the auto-baud time-out interrupt */
 } UART_INT_Type;
@@ -540,8 +541,8 @@ typedef enum {
  * @brief UART Direction Control Pin type definition
  */
 typedef enum {
-	UART1_RS485_DIRCTRL_RTS = 0,	/**< Pin RTS is used for direction control */
-	UART1_RS485_DIRCTRL_DTR			/**< Pin DTR is used for direction control */
+	UART_RS485_DIRCTRL_RTS = 0,	/**< Pin RTS is used for direction control */
+	UART_RS485_DIRCTRL_DTR			/**< Pin DTR is used for direction control */
 } UART_RS485_DIRCTRL_PIN_Type;
 
 /********************************************************************//**
@@ -634,56 +635,56 @@ typedef struct {
  * @{
  */
 /* UART Init/DeInit functions --------------------------------------------------*/
-void UART_Init(LPC_UART_TypeDef *UARTx, UART_CFG_Type *UART_ConfigStruct);
-void UART_DeInit(LPC_UART_TypeDef* UARTx);
+void UART_Init(UART_ID_Type UartID, UART_CFG_Type *UART_ConfigStruct);
+void UART_DeInit(UART_ID_Type UartID);
 void UART_ConfigStructInit(UART_CFG_Type *UART_InitStruct);
 
 /* UART Send/Receive functions -------------------------------------------------*/
-void UART_SendByte(LPC_UART_TypeDef* UARTx, uint8_t Data);
-uint8_t UART_ReceiveByte(LPC_UART_TypeDef* UARTx);
-uint32_t UART_Send(LPC_UART_TypeDef *UARTx, uint8_t *txbuf,
+void UART_SendByte(UART_ID_Type UartID, uint8_t Data);
+uint8_t UART_ReceiveByte(UART_ID_Type UartID);
+uint32_t UART_Send(UART_ID_Type UartID, uint8_t *txbuf,
 		uint32_t buflen, TRANSFER_BLOCK_Type flag);
-uint32_t UART_Receive(LPC_UART_TypeDef *UARTx, uint8_t *rxbuf, \
+uint32_t UART_Receive(UART_ID_Type UartID, uint8_t *rxbuf, \
 		uint32_t buflen, TRANSFER_BLOCK_Type flag);
 
 /* UART FIFO functions ----------------------------------------------------------*/
-void UART_FIFOConfig(LPC_UART_TypeDef *UARTx, UART_FIFO_CFG_Type *FIFOCfg);
+void UART_FIFOConfig(UART_ID_Type UartID, UART_FIFO_CFG_Type *FIFOCfg);
 void UART_FIFOConfigStructInit(UART_FIFO_CFG_Type *UART_FIFOInitStruct);
 
 /* UART get information functions -----------------------------------------------*/
-uint32_t UART_GetIntId(LPC_UART_TypeDef* UARTx);
-uint8_t UART_GetLineStatus(LPC_UART_TypeDef* UARTx);
+uint32_t UART_GetIntId(UART_ID_Type UartID);
+uint8_t UART_GetLineStatus(UART_ID_Type UartID);
 
 /* UART operate functions -------------------------------------------------------*/
-void UART_IntConfig(LPC_UART_TypeDef *UARTx, UART_INT_Type UARTIntCfg, \
+void UART_IntConfig(UART_ID_Type UartID, UART_INT_Type UARTIntCfg, \
 				FunctionalState NewState);
-void UART_TxCmd(LPC_UART_TypeDef *UARTx, FunctionalState NewState);
-FlagStatus UART_CheckBusy(LPC_UART_TypeDef *UARTx);
-void UART_ForceBreak(LPC_UART_TypeDef* UARTx);
+void UART_TxCmd(UART_ID_Type UartID, FunctionalState NewState);
+FlagStatus UART_CheckBusy(UART_ID_Type UartID);
+void UART_ForceBreak(UART_ID_Type UartID);
 
 /* UART Auto-baud functions -----------------------------------------------------*/
-void UART_ABClearIntPending(LPC_UART_TypeDef *UARTx, UART_ABEO_Type ABIntType);
-void UART_ABCmd(LPC_UART_TypeDef *UARTx, UART_AB_CFG_Type *ABConfigStruct, \
+void UART_ABClearIntPending(UART_ID_Type UartID, UART_ABEO_Type ABIntType);
+void UART_ABCmd(UART_ID_Type UartID, UART_AB_CFG_Type *ABConfigStruct, \
 				FunctionalState NewState);
 
 /* UART1 FullModem functions ----------------------------------------------------*/
-void UART_FullModemForcePinState(LPC_UART1_TypeDef *UARTx, UART_MODEM_PIN_Type Pin, \
+void UART_FullModemForcePinState(UART_ID_Type UartID, UART_MODEM_PIN_Type Pin, \
 							UART1_SignalState NewState);
-void UART_FullModemConfigMode(LPC_UART1_TypeDef *UARTx, UART_MODEM_MODE_Type Mode, \
+void UART_FullModemConfigMode(UART_ID_Type UartID, UART_MODEM_MODE_Type Mode, \
 							FunctionalState NewState);
-uint8_t UART_FullModemGetStatus(LPC_UART1_TypeDef *UARTx);
+uint8_t UART_FullModemGetStatus(UART_ID_Type UartID);
 
 /* UART RS485 functions ----------------------------------------------------------*/
-void UART_RS485Config(LPC_UART_TypeDef *UARTx,
+void UART_RS485Config(UART_ID_Type UartID,
 									UART1_RS485_CTRLCFG_Type *RS485ConfigStruct);
-void UART_RS485ReceiverCmd(LPC_UART_TypeDef *UARTx, FunctionalState NewState);
-void UART_RS485SendSlvAddr(LPC_UART_TypeDef *UARTx, uint8_t SlvAddr);
-uint32_t UART_RS485SendData(LPC_UART_TypeDef *UARTx, uint8_t *pData, uint32_t size);
+void UART_RS485ReceiverCmd(UART_ID_Type UartID, FunctionalState NewState);
+void UART_RS485SendSlvAddr(UART_ID_Type UartID, uint8_t SlvAddr);
+uint32_t UART_RS485SendData(UART_ID_Type UartID, uint8_t *pData, uint32_t size);
 
 /* UART IrDA functions-------------------------------------------------------------*/
-void UART_IrDAInvtInputCmd(LPC_UART_TypeDef* UARTx, FunctionalState NewState);
-void UART_IrDACmd(LPC_UART_TypeDef* UARTx, FunctionalState NewState);
-void UART_IrDAPulseDivConfig(LPC_UART_TypeDef *UARTx, UART_IrDA_PULSE_Type PulseDiv);
+void UART_IrDAInvtInputCmd(UART_ID_Type UartID, FunctionalState NewState);
+void UART_IrDACmd(UART_ID_Type UartID, FunctionalState NewState);
+void UART_IrDAPulseDivConfig(UART_ID_Type UartID, UART_IrDA_PULSE_Type PulseDiv);
 /**
  * @}
  */

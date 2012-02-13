@@ -21,12 +21,6 @@
 * notification. NXP Semiconductors also make no representation or
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
-* Permission to use, copy, modify, and distribute this software and its
-* documentation is hereby granted, under NXP Semiconductors'
-* relevant copyright in the software, without fee, provided that it
-* is used in conjunction with NXP Semiconductors microcontrollers.  This
-* copyright, permission, and disclaimer notice must appear in all copies of
-* this code.
 **********************************************************************/
 #include "LPC177x_8x.h"
 #include "lpc177x_8x_uart.h"
@@ -39,20 +33,28 @@
 
 
 /************************** PRIVATE DEFINTIONS *************************/
-#define UART_TEST_NUM		0
+#define UART_TEST_NUM		4
 
 #if (UART_TEST_NUM == 0)
-#define	_LPC_UART			(LPC_UART_TypeDef *)LPC_UART0
+#define	_LPC_UART			UART_0
 #define _UART_IRQ			UART0_IRQn
 #define _UART_IRQHander		UART0_IRQHandler
 #elif (UART_TEST_NUM == 1)
-#define _LPC_UART			(LPC_UART_TypeDef *)LPC_UART1
+#define _LPC_UART			UART_1
 #define _UART_IRQ			UART1_IRQn
 #define _UART_IRQHander		UART1_IRQHandler
 #elif (UART_TEST_NUM == 2)
-#define _LPC_UART			LPC_UART2
+#define _LPC_UART			UART_2
 #define _UART_IRQ			UART2_IRQn
 #define _UART_IRQHander		UART2_IRQHandler
+#elif (UART_TEST_NUM == 3)
+#define _LPC_UART			UART_3
+#define _UART_IRQ			UART3_IRQn
+#define _UART_IRQHander		UART3_IRQHandler
+#elif (UART_TEST_NUM == 4)
+#define _LPC_UART			UART_4
+#define _UART_IRQ			UART4_IRQn
+#define _UART_IRQHander		UART4_IRQHandler
 #endif
 
 /************************** PRIVATE VARIABLES *************************/
@@ -84,7 +86,7 @@ void print_menu(void);
  **********************************************************************/
 void print_menu(void)
 {
-	UART_Send(_LPC_UART, menu1, sizeof(menu1), BLOCKING);
+	UART_Send((UART_ID_Type)_LPC_UART, menu1, sizeof(menu1), BLOCKING);
 }
 
 
@@ -130,7 +132,22 @@ void c_entry(void)
 	 */
 	PINSEL_ConfigPin(0,10,1);
 	PINSEL_ConfigPin(0,11,1);
-
+#elif (UART_TEST_NUM == 3)
+	/*
+	 * Initialize UART2 pin connect
+	 * P0.2: U3_TXD
+	 * P0.3: U3_RXD
+	 */
+	PINSEL_ConfigPin(0,2,2);
+	PINSEL_ConfigPin(0,3,2);
+#elif (UART_TEST_NUM == 4)
+	/*
+	 * Initialize UART2 pin connect
+	 * P0.22: U4_TXD
+	 * P2.9: U4_RXD
+	 */
+	PINSEL_ConfigPin(0,22,3);
+	PINSEL_ConfigPin(2,9,3);
 #endif
 
 	/* Initialize UART Configuration parameter structure to default state:
@@ -143,7 +160,7 @@ void c_entry(void)
 	UART_ConfigStructInit(&UARTConfigStruct);
 
 	// Initialize UART0 peripheral with given to corresponding parameter
-	UART_Init(_LPC_UART, &UARTConfigStruct);
+	UART_Init((UART_ID_Type)_LPC_UART, &UARTConfigStruct);
 
 	/* Initialize FIFOConfigStruct to default state:
 	 * 				- FIFO_DMAMode = DISABLE
@@ -155,11 +172,11 @@ void c_entry(void)
 	UART_FIFOConfigStructInit(&UARTFIFOConfigStruct);
 
 	// Initialize FIFO for UART0 peripheral
-	UART_FIFOConfig(_LPC_UART, &UARTFIFOConfigStruct);
+	UART_FIFOConfig((UART_ID_Type)_LPC_UART, &UARTFIFOConfigStruct);
 
 
 	// Enable UART Transmit
-	UART_TxCmd(_LPC_UART, ENABLE);
+	UART_TxCmd((UART_ID_Type)_LPC_UART, ENABLE);
 
 	// print welcome screen
 	print_menu();
@@ -173,7 +190,7 @@ void c_entry(void)
        len = 0;
         while (len == 0)
         {
-            len = UART_Receive(_LPC_UART, buffer, sizeof(buffer), NONE_BLOCKING);
+            len = UART_Receive((UART_ID_Type)_LPC_UART, buffer, sizeof(buffer), NONE_BLOCKING);
         }
 
         /* Got some data */
@@ -183,30 +200,30 @@ void c_entry(void)
             if (buffer[idx] == 27)
             {
                 /* ESC key, set exit flag */
-            	UART_Send(_LPC_UART, menu2, sizeof(menu2), BLOCKING);
+            	UART_Send((UART_ID_Type)_LPC_UART, menu2, sizeof(menu2), BLOCKING);
                 exitflag = SET;
             }
             else if (buffer[idx] == 'r')
             {
             	/* Echo it back */
-            	UART_Send(_LPC_UART, &buffer[idx], 1, BLOCKING);
+            	UART_Send((UART_ID_Type)_LPC_UART, &buffer[idx], 1, BLOCKING);
 
                 print_menu();
             }
             else
             {
                 /* Echo it back */
-            	UART_Send(_LPC_UART, &buffer[idx], 1, BLOCKING);
+            	UART_Send((UART_ID_Type)_LPC_UART, &buffer[idx], 1, BLOCKING);
             }
             idx++;
         }
     }
 
     // wait for current transmission complete - THR must be empty
-    while (UART_CheckBusy(_LPC_UART) == SET);
+    while (UART_CheckBusy((UART_ID_Type)_LPC_UART) == SET);
 
     // DeInitialize UART0 peripheral
-    UART_DeInit(_LPC_UART);
+    UART_DeInit((UART_ID_Type)_LPC_UART);
 
     /* Loop forever */
     while(1);

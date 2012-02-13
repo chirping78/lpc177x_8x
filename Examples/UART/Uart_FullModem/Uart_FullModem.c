@@ -21,12 +21,6 @@
 * notification. NXP Semiconductors also make no representation or
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
-* Permission to use, copy, modify, and distribute this software and its
-* documentation is hereby granted, under NXP Semiconductors'
-* relevant copyright in the software, without fee, provided that it
-* is used in conjunction with NXP Semiconductors microcontrollers.  This
-* copyright, permission, and disclaimer notice must appear in all copies of
-* this code.
 **********************************************************************/
 
 #include "lpc177x_8x_uart.h"
@@ -38,6 +32,7 @@
  * @ingroup UART_Examples
  * @{
  */
+#define _LPC_UART		UART_1
 
 
 /************************** PRIVATE DEFINITIONS *************************/
@@ -116,8 +111,8 @@ void UART1_IntTransmit(void);
 void UART1_IntReceive(void);
 void UART1_IntErr(uint8_t bLSErrType);
 
-uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint32_t buflen);
-uint32_t UARTSend(LPC_UART_TypeDef *UARTPort, uint8_t *txbuf, uint32_t buflen);
+uint32_t UARTReceive(UART_ID_Type UartID, uint8_t *rxbuf, uint32_t buflen);
+uint32_t UARTSend(UART_ID_Type UartID, uint8_t *txbuf, uint32_t buflen);
 void print_menu(void);
 
 
@@ -133,7 +128,7 @@ void UART1_IRQHandler(void)
 	uint32_t intSrc, curIntr, lineSts;
 
 	/* Determine the interrupt source */
-	intSrc = UART_GetIntId((LPC_UART_TypeDef *)LPC_UART1);
+	intSrc = UART_GetIntId(_LPC_UART);
 
 	curIntr = intSrc & UART_IIR_INTID_MASK;
 
@@ -145,7 +140,7 @@ void UART1_IRQHandler(void)
 	if (curIntr == UART1_IIR_INTID_MODEM)
 	{
 		// Check Modem status
-		modemSts = UART_FullModemGetStatus(LPC_UART1);
+		modemSts = UART_FullModemGetStatus(_LPC_UART);
 
 #if (AUTO_RTS_CTS_USE == 0)
 		// Check CTS status change flag
@@ -155,13 +150,13 @@ void UART1_IRQHandler(void)
 			if (modemSts & UART1_MODEM_STAT_CTS)
 			{
 				// Re-Enable Tx
-				UART_TxCmd((LPC_UART_TypeDef *)LPC_UART1, ENABLE);
+				UART_TxCmd(_LPC_UART, ENABLE);
 			}
 			// Otherwise, Stop current transmission immediately
 			else
 			{
 				// Disable Tx
-				UART_TxCmd((LPC_UART_TypeDef *)LPC_UART1, DISABLE);
+				UART_TxCmd(_LPC_UART, DISABLE);
 			}
 		}
 #endif
@@ -171,7 +166,7 @@ void UART1_IRQHandler(void)
 	if (curIntr == UART_IIR_INTID_RLS)
 	{
 		// Check line status
-		lineSts = UART_GetLineStatus((LPC_UART_TypeDef *)LPC_UART1);
+		lineSts = UART_GetLineStatus(_LPC_UART);
 
 		// Mask out the Receive Ready and Transmit Holding empty status
 		lineSts &= (UART_LSR_OE | UART_LSR_PE | UART_LSR_FE \
@@ -210,7 +205,7 @@ void UART1_IntReceive(void)
 	while (1)
 	{
 		// Call UART read function in UART driver
-		rLen = UART_Receive((LPC_UART_TypeDef *)LPC_UART1, &tmpc, 1, NONE_BLOCKING);
+		rLen = UART_Receive(_LPC_UART, &tmpc, 1, NONE_BLOCKING);
 
 		// If data received
 		if (rLen)
@@ -224,7 +219,7 @@ void UART1_IntReceive(void)
 				if (RTS_State == ACTIVE)
 				{
 					// Disable request to send through RTS line
-					UART_FullModemForcePinState(LPC_UART1, UART1_MODEM_PIN_RTS, INACTIVE);
+					UART_FullModemForcePinState(_LPC_UART, UART1_MODEM_PIN_RTS, INACTIVE);
 
 					RTS_State = INACTIVE;
 				}
@@ -258,17 +253,17 @@ void UART1_IntReceive(void)
 void UART1_IntTransmit(void)
 {
     // Disable THRE interrupt
-    UART_IntConfig((LPC_UART_TypeDef *)LPC_UART1, UART_INTCFG_THRE, DISABLE);
+    UART_IntConfig(_LPC_UART, UART_INTCFG_THRE, DISABLE);
 
 	/* Wait for FIFO buffer empty, transfer UART_TX_FIFO_SIZE bytes
 	 * of data or break whenever ring buffers are empty */
 	/* Wait until THR empty */
-    while (UART_CheckBusy((LPC_UART_TypeDef *)LPC_UART1) == SET);
+    while (UART_CheckBusy(_LPC_UART) == SET);
 
 	while (!__BUF_IS_EMPTY(rb.tx_head,rb.tx_tail))
     {
         /* Move a piece of data into the transmit FIFO */
-    	if (UART_Send((LPC_UART_TypeDef *)LPC_UART1, (uint8_t *)&rb.tx[rb.tx_tail], 1, NONE_BLOCKING))
+    	if (UART_Send(_LPC_UART, (uint8_t *)&rb.tx[rb.tx_tail], 1, NONE_BLOCKING))
 		{
 	        /* Update transmit ring FIFO tail pointer */
 	        __BUF_INCR(rb.tx_tail);
@@ -283,7 +278,7 @@ void UART1_IntTransmit(void)
        interrupt - else enable it or keep it enabled */
 	if (__BUF_IS_EMPTY(rb.tx_head, rb.tx_tail))
 	{
-    	UART_IntConfig((LPC_UART_TypeDef *)LPC_UART1, UART_INTCFG_THRE, DISABLE);
+    	UART_IntConfig(_LPC_UART, UART_INTCFG_THRE, DISABLE);
 
 		// Reset Tx Interrupt state
     	TxIntStat = RESET;
@@ -293,7 +288,7 @@ void UART1_IntTransmit(void)
       	// Set Tx Interrupt state
 		TxIntStat = SET;
 
-		UART_IntConfig((LPC_UART_TypeDef *)LPC_UART1, UART_INTCFG_THRE, ENABLE);
+		UART_IntConfig(_LPC_UART, UART_INTCFG_THRE, ENABLE);
     }
 }
 
@@ -321,7 +316,7 @@ void UART1_IntErr(uint8_t bLSErrType)
  * @param[in]	buflen Length of Transmit buffer
  * @return 		Number of bytes actually sent to the ring buffer
  **********************************************************************/
-uint32_t UARTSend(LPC_UART_TypeDef *UARTPort, uint8_t *txbuf, uint32_t buflen)
+uint32_t UARTSend(UART_ID_Type UartID, uint8_t *txbuf, uint32_t buflen)
 {
     uint8_t *data = (uint8_t *) txbuf;
     uint32_t bytes = 0;
@@ -329,7 +324,7 @@ uint32_t UARTSend(LPC_UART_TypeDef *UARTPort, uint8_t *txbuf, uint32_t buflen)
 	/* Temporarily lock out UART transmit interrupts during this
 	   read so the UART transmit interrupt won't cause problems
 	   with the index values */
-	UART_IntConfig(UARTPort, UART_INTCFG_THRE, DISABLE);
+	UART_IntConfig(UartID, UART_INTCFG_THRE, DISABLE);
 
 	/* Loop until transmit run buffer is full or until n_bytes
 	   expires */
@@ -364,7 +359,7 @@ uint32_t UARTSend(LPC_UART_TypeDef *UARTPort, uint8_t *txbuf, uint32_t buflen)
 	 */
 	else
 	{
-		UART_IntConfig(UARTPort, UART_INTCFG_THRE, ENABLE);
+		UART_IntConfig(UartID, UART_INTCFG_THRE, ENABLE);
 	}
 
     return bytes;
@@ -378,7 +373,7 @@ uint32_t UARTSend(LPC_UART_TypeDef *UARTPort, uint8_t *txbuf, uint32_t buflen)
  * @param[in]	buflen Length of Received buffer
  * @return 		Number of bytes actually read from the ring buffer
  **********************************************************************/
-uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint32_t buflen)
+uint32_t UARTReceive(UART_ID_Type UartID, uint8_t *rxbuf, uint32_t buflen)
 {
     uint8_t *data = (uint8_t *) rxbuf;
     uint32_t bytes = 0;
@@ -386,7 +381,7 @@ uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint32_t buflen
 	/* Temporarily lock out UART receive interrupts during this
 	   read so the UART receive interrupt won't cause problems
 	   with the index values */
-	UART_IntConfig(UARTPort, UART_INTCFG_RBR, DISABLE);
+	UART_IntConfig(UartID, UART_INTCFG_RBR, DISABLE);
 
 	/* Loop until receive buffer ring is empty or
 		until max_bytes expires */
@@ -412,7 +407,7 @@ uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint32_t buflen
 			if (!__BUF_WILL_FULL(rb.rx_head, rb.rx_tail))
 			{
 				// Disable request to send through RTS line
-				UART_FullModemForcePinState(LPC_UART1, UART1_MODEM_PIN_RTS, ACTIVE);
+				UART_FullModemForcePinState(_LPC_UART, UART1_MODEM_PIN_RTS, ACTIVE);
 				RTS_State = ACTIVE;
 			}
 		}
@@ -420,7 +415,7 @@ uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint32_t buflen
 	}
 
 	/* Re-enable UART interrupts */
-	UART_IntConfig(UARTPort, UART_INTCFG_RBR, ENABLE);
+	UART_IntConfig(UartID, UART_INTCFG_RBR, ENABLE);
 
     return bytes;
 }
@@ -441,7 +436,7 @@ void print_menu(void)
 
 	while(tmp)
 	{
-		tmp2 = UARTSend((LPC_UART_TypeDef *)LPC_UART1, pDat, tmp);
+		tmp2 = UARTSend(_LPC_UART, pDat, tmp);
 
 		pDat += tmp2;
 
@@ -499,7 +494,7 @@ void c_entry(void)
 	UART_ConfigStructInit(&UARTConfigStruct);
 
 	// Initialize UART1 peripheral with given to corresponding parameter
-	UART_Init((LPC_UART_TypeDef *)LPC_UART1, &UARTConfigStruct);
+	UART_Init(_LPC_UART, &UARTConfigStruct);
 
 	// Initialize FIFOConfigStruct to default state:
 	UARTFIFOConfigStruct.FIFO_DMAMode = DISABLE;
@@ -508,21 +503,21 @@ void c_entry(void)
 	UARTFIFOConfigStruct.FIFO_ResetTxBuf = ENABLE;
 
 	// Initialize FIFO for UART1 peripheral
-	UART_FIFOConfig((LPC_UART_TypeDef *)LPC_UART1, &UARTFIFOConfigStruct);
+	UART_FIFOConfig(_LPC_UART, &UARTFIFOConfigStruct);
 
 #if (AUTO_RTS_CTS_USE==0)
 	/*
 	 * Determine current state of CTS pin to enable Tx
 	 * activity
 	 */
-	if (UART_FullModemGetStatus(LPC_UART1) & UART1_MODEM_STAT_CTS)
+	if (UART_FullModemGetStatus(_LPC_UART) & UART1_MODEM_STAT_CTS)
 	{
 		// Enable UART Transmit
-		UART_TxCmd((LPC_UART_TypeDef *)LPC_UART1, ENABLE);
+		UART_TxCmd(_LPC_UART, ENABLE);
 	}
 #else
 	// Enable UART Transmit
-	UART_TxCmd((LPC_UART_TypeDef *)LPC_UART1, ENABLE);
+	UART_TxCmd(_LPC_UART, ENABLE);
 #endif
 
 	// Reset ring buf head and tail idx
@@ -537,13 +532,13 @@ void c_entry(void)
 	UART_FullModemConfigMode(LPC_UART1, UART1_MODEM_MODE_AUTO_CTS, ENABLE);
 #else
 	// Enable Modem status interrupt
-	UART_IntConfig((LPC_UART_TypeDef *)LPC_UART1, UART1_INTCFG_MS, ENABLE);
+	UART_IntConfig(_LPC_UART, UART_INTCFG_MS, ENABLE);
 
 	// Enable CTS1 signal transition interrupt
-	UART_IntConfig((LPC_UART_TypeDef *)LPC_UART1, UART1_INTCFG_CTS, ENABLE);
+	UART_IntConfig(_LPC_UART, UART_INTCFG_CTS, ENABLE);
 
 	// Force RTS pin state to ACTIVE
-	UART_FullModemForcePinState(LPC_UART1, UART1_MODEM_PIN_RTS, ACTIVE);
+	UART_FullModemForcePinState(_LPC_UART, UART1_MODEM_PIN_RTS, ACTIVE);
 
 	//RESET RTS State flag
 	RTS_State = ACTIVE;
@@ -551,10 +546,10 @@ void c_entry(void)
 
 
     /* Enable UART Rx interrupt */
-	UART_IntConfig((LPC_UART_TypeDef *)LPC_UART1, UART_INTCFG_RBR, ENABLE);
+	UART_IntConfig(_LPC_UART, UART_INTCFG_RBR, ENABLE);
 
 	/* Enable UART line status interrupt */
-	UART_IntConfig((LPC_UART_TypeDef *)LPC_UART1, UART_INTCFG_RLS, ENABLE);
+	UART_IntConfig(_LPC_UART, UART_INTCFG_RLS, ENABLE);
 
 	/*
 	 * Do not enable transmit interrupt here, since it is handled by
@@ -582,7 +577,7 @@ void c_entry(void)
 
 		while (len == 0)
         {
-            len = UARTReceive((LPC_UART_TypeDef *)LPC_UART1, buffer, sizeof(buffer));
+            len = UARTReceive(_LPC_UART, buffer, sizeof(buffer));
         }
 
         /* Got some data */
@@ -594,14 +589,14 @@ void c_entry(void)
             if (buffer[idx] == 27)
             {
                 /* ESC key, set exit flag */
-            	UARTSend((LPC_UART_TypeDef *)LPC_UART1, menu2, sizeof(menu2));
+            	UARTSend(_LPC_UART, menu2, sizeof(menu2));
 
 				exitflag = SET;
             }
             else if (buffer[idx] == 'r')
             {
             	/* Echo it back */
-            	UARTSend((LPC_UART_TypeDef *)LPC_UART1, &buffer[idx], 3);
+            	UARTSend(_LPC_UART, &buffer[idx], 3);
 				
                 print_menu();
             }
@@ -611,7 +606,7 @@ void c_entry(void)
 				buffer[idx + 2] = '\r';
 
                 /* Echo it back */
-            	UARTSend((LPC_UART_TypeDef *)LPC_UART1, &buffer[idx], 3);
+            	UARTSend(_LPC_UART, &buffer[idx], 3);
             }
 
 			idx++;
@@ -619,10 +614,10 @@ void c_entry(void)
     }
 
     // wait for current transmission complete - THR must be empty
-    while (UART_CheckBusy((LPC_UART_TypeDef *)LPC_UART1) == SET);
+    while (UART_CheckBusy(_LPC_UART) == SET);
 
     // DeInitialize UART1 peripheral
-    UART_DeInit((LPC_UART_TypeDef *)LPC_UART1);
+    UART_DeInit(_LPC_UART);
 
     /* Loop forever */
     while(1);

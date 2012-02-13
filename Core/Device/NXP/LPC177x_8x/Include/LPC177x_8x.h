@@ -497,8 +497,7 @@ typedef struct
 	__IO uint8_t  SCR;
 	uint8_t  RESERVED3[3];//Reserved
 	__IO uint32_t ACR;
-	__IO uint8_t  ICR;
-	uint8_t  RESERVED4[3];//Reserved
+	uint8_t  RESERVED4[4];//Reserved
 	__IO uint8_t  FDR;
 	uint8_t  RESERVED5[7];//Reserved
 	__IO uint8_t  TER;
@@ -509,7 +508,6 @@ typedef struct
 	uint8_t  RESERVED10[3];//Reserved
 	__IO uint8_t  RS485DLY;
 	uint8_t  RESERVED11[3];//Reserved
-	__I  uint8_t  FIFOLVL;
 }LPC_UART_TypeDef;
 #endif
 
@@ -552,7 +550,6 @@ typedef struct
        uint8_t  RESERVED10[3];
   __IO uint8_t  RS485DLY;
        uint8_t  RESERVED11[3];
-  __I  uint8_t  FIFOLVL;
 } LPC_UART1_TypeDef;
 
 typedef struct
@@ -579,27 +576,13 @@ typedef struct
   __IO uint32_t  ICR;                   /*!< Offset: 0x024 irDA Control Register (R/W) */
   __IO uint32_t  FDR;                   /*!< Offset: 0x028 Fractional Divider Register (R/W) */
   __IO uint32_t  OSR;                   /*!< Offset: 0x02C Over sampling Register (R/W) */
-  __O  uint32_t  POP;                   /*!< Offset: 0x030 NHP Pop Register (W) */
-  __IO uint32_t  MODE;                  /*!< Offset: 0x034 NHP Mode selection Register (W) */
-       uint32_t  RESERVED0[2];
-  __IO uint32_t  HDEN;                  /*!< Offset: 0x040 Half duplex Enable Register (R/W) */
-       uint32_t  RESERVED1;
+       uint32_t  RESERVED0[6];               
   __IO uint32_t  SCI_CTRL;				/*!< Offset: 0x048 Smart card Interface Control Register (R/W) */
   __IO uint32_t  RS485CTRL;             /*!< Offset: 0x04C RS-485/EIA-485 Control Register (R/W) */
   __IO uint32_t  ADRMATCH;              /*!< Offset: 0x050 RS-485/EIA-485 address match Register (R/W) */
   __IO uint32_t  RS485DLY;              /*!< Offset: 0x054 RS-485/EIA-485 direction control delay Register (R/W) */
   __IO uint32_t  SYNCCTRL;              /*!< Offset: 0x058 Synchronous Mode Control Register (R/W ) */
   __IO uint32_t  TER;                   /*!< Offset: 0x05C Transmit Enable Register (R/W) */
-       uint32_t  RESERVED2[989];
-  __I  uint32_t  CFG;                   /*!< Offset: 0xFD4 Configuration Register (R) */
-  __O  uint32_t  INTCE;                 /*!< Offset: 0xFD8 Interrupt Clear Enable Register (W) */
-  __O  uint32_t  INTSE;                 /*!< Offset: 0xFDC Interrupt Set Enable Register (W) */
-  __I  uint32_t  INTS;                  /*!< Offset: 0xFE0 Interrupt Status Register (R) */
-  __I  uint32_t  INTE;                  /*!< Offset: 0xFE4 Interrupt Enable Register (R) */
-  __O  uint32_t  INTCS;                 /*!< Offset: 0xFE8 Interrupt Clear Status Register (W) */
-  __O  uint32_t  INTSS;                 /*!< Offset: 0xFEC Interrupt Set Status Register (W) */
-       uint32_t  RESERVED3[3];
-  __I  uint32_t  MID;                   /*!< Offset: 0xFFC Module Identification Register (R) */
 } LPC_UART4_TypeDef;
 
 /*------------- Synchronous Serial Communication (SSP) -----------------------*/

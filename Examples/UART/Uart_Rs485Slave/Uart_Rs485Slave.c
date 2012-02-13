@@ -23,12 +23,6 @@
 * notification. NXP Semiconductors also make no representation or
 * warranty that such application will be suitable for the specified
 * use without further testing or modification.
-* Permission to use, copy, modify, and distribute this software and its
-* documentation is hereby granted, under NXP Semiconductors'
-* relevant copyright in the software, without fee, provided that it
-* is used in conjunction with NXP Semiconductors microcontrollers.  This
-* copyright, permission, and disclaimer notice must appear in all copies of
-* this code.
 **********************************************************************/
 
 #include "lpc177x_8x_uart.h"
@@ -57,7 +51,29 @@
  * - 1: Receiver always be enabled */
 #define RECEIVER_ALWAYS_EN	0
 
-#define UART_RS485		(LPC_UART2)
+#define UART_TEST_NUM		2
+
+#if (UART_TEST_NUM == 0)
+#define	_LPC_UART			UART_0
+#define _UART_IRQ			UART0_IRQn
+#define _UART_IRQHander		UART0_IRQHandler
+#elif (UART_TEST_NUM == 1)
+#define _LPC_UART			UART_1
+#define _UART_IRQ			UART1_IRQn
+#define _UART_IRQHander		UART1_IRQHandler
+#elif (UART_TEST_NUM == 2)
+#define _LPC_UART			UART_2
+#define _UART_IRQ			UART2_IRQn
+#define _UART_IRQHander		UART2_IRQHandler
+#elif (UART_TEST_NUM == 3)
+#define _LPC_UART			UART_3
+#define _UART_IRQ			UART3_IRQn
+#define _UART_IRQHander		UART3_IRQHandler
+#elif (UART_TEST_NUM == 4)
+#define _LPC_UART			UART_4
+#define _UART_IRQ			UART4_IRQn
+#define _UART_IRQHander		UART4_IRQHandler
+#endif
 
 
 #if (RECEIVER_ALWAYS_EN == 0)
@@ -147,22 +163,22 @@ void UART2_IRQHandler(void);
 void UART_IntReceive(void);
 void UART_IntErr(uint8_t bLSErrType);
 
-uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint8_t buflen);
+uint32_t UARTReceive(UART_ID_Type UartID, uint8_t *rxbuf, uint8_t buflen);
 void print_menu(void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
+
 /*********************************************************************//**
  * @brief		UART1 interrupt handler sub-routine
  * @param[in]	None
  * @return 		None
  **********************************************************************/
-void UART1_IRQHandler(void)
+void _UART_IRQHander(void)
 {
-	// Call Standard UART 0 interrupt handler
 	uint32_t intsrc, tmp, tmp1;
 
 	/* Determine the interrupt source */
-	intsrc = UART_GetIntId((LPC_UART_TypeDef *)LPC_UART1);
+	intsrc = UART_GetIntId(_LPC_UART);
 	
 	tmp = intsrc & UART_IIR_INTID_MASK;
 
@@ -170,45 +186,7 @@ void UART1_IRQHandler(void)
 	if (tmp == UART_IIR_INTID_RLS)
 	{
 		// Check line status
-		tmp1 = UART_GetLineStatus((LPC_UART_TypeDef *)LPC_UART1);
-		
-		// Mask out the Receive Ready and Transmit Holding empty status
-		tmp1 &= (UART_LSR_OE | UART_LSR_PE | UART_LSR_FE 
-								| UART_LSR_BI | UART_LSR_RXFE);
-		
-		// If any error exist
-		if (tmp1) 
-		{
-			UART_IntErr(tmp1);
-		}
-	}
-
-	// Receive Data Available or Character time-out
-	if ((tmp == UART_IIR_INTID_RDA) || (tmp == UART_IIR_INTID_CTI))
-	{
-		UART_IntReceive();
-	}
-}
-
-/*********************************************************************//**
- * @brief		UART1 interrupt handler sub-routine
- * @param[in]	None
- * @return 		None
- **********************************************************************/
-void UART2_IRQHandler(void)
-{
-	uint32_t intsrc, tmp, tmp1;
-
-	/* Determine the interrupt source */
-	intsrc = UART_GetIntId(LPC_UART2);
-	
-	tmp = intsrc & UART_IIR_INTID_MASK;
-
-	// Receive Line Status
-	if (tmp == UART_IIR_INTID_RLS)
-	{
-		// Check line status
-		tmp1 = UART_GetLineStatus(LPC_UART2);
+		tmp1 = UART_GetLineStatus(_LPC_UART);
 
 		// Mask out the Receive Ready and Transmit Holding empty status
 		tmp1 &= (UART_LSR_OE | UART_LSR_PE | UART_LSR_FE \
@@ -245,7 +223,7 @@ void UART_IntReceive(void)
 	while(1)
 	{
 		// Call UART read function in UART driver
-		rLen = UART_Receive((LPC_UART_TypeDef *)UART_RS485, &tmpc, 1, NONE_BLOCKING);
+		rLen = UART_Receive(_LPC_UART, &tmpc, 1, NONE_BLOCKING);
 
 		// If data received
 		if (rLen)
@@ -274,7 +252,7 @@ void UART_IntReceive(void)
 	while(1)
 	{
 		// Call UART read function in UART driver
-		rLen = UART_Receive((LPC_UART_TypeDef *)UART_RS485, &tmpc, 1, NONE_BLOCKING);
+		rLen = UART_Receive(_LPC_UART, &tmpc, 1, NONE_BLOCKING);
 
 		// If data received
 		if (rLen)
@@ -301,7 +279,7 @@ void UART_IntReceive(void)
 	while(1)
 	{
 		// Call UART read function in UART driver
-		rLen = UART_Receive((LPC_UART_TypeDef *)UART_RS485, &tmpc, 1, NONE_BLOCKING);
+		rLen = UART_Receive(_LPC_UART, &tmpc, 1, NONE_BLOCKING);
 
 		// If data received
 		if (rLen)
@@ -341,16 +319,16 @@ void UART_IntErr(uint8_t bLSErrType)
 	{
 		// Parity error means the latest frame receive is slave address frame,
 		// Value of slave address is read and trimmed out.
-		UART_Send(LPC_UART0, p_err_menu, sizeof(p_err_menu), BLOCKING);
+		UART_Send(UART_0, p_err_menu, sizeof(p_err_menu), BLOCKING);
 
-		UART_Send(LPC_UART0, addr_menu, sizeof(addr_menu), BLOCKING);
+		UART_Send(UART_0, addr_menu, sizeof(addr_menu), BLOCKING);
 
-		UART_Receive((LPC_UART_TypeDef *)UART_RS485, &tmpc, 1, NONE_BLOCKING);
+		UART_Receive(_LPC_UART, &tmpc, 1, NONE_BLOCKING);
 	}
 
 	if (bLSErrType & UART_LSR_FE)
 	{
-		UART_Send(LPC_UART0, f_err_menu, sizeof(f_err_menu), BLOCKING);
+		UART_Send(UART_0, f_err_menu, sizeof(f_err_menu), BLOCKING);
 	}
 #else
 #if (AUTO_SLVADDR_DETECT == 0)
@@ -363,22 +341,22 @@ void UART_IntErr(uint8_t bLSErrType)
 
 	if (bLSErrType & UART_LSR_PE)
 	{
-		UART_Receive((LPC_UART_TypeDef *)UART_RS485, &tmp, 1, NONE_BLOCKING);
+		UART_Receive(_LPC_UART, &tmp, 1, NONE_BLOCKING);
 
-		UART_Send(LPC_UART0, p_err_menu, sizeof(p_err_menu), BLOCKING);
+		UART_Send(UART_0, p_err_menu, sizeof(p_err_menu), BLOCKING);
 
 		if (tmp == SLAVE_ADDR)
 		{
 			UART_RS485ReceiverCmd(UART_RS485, ENABLE);
 			
-			UART_Send(LPC_UART0, addr_acc, sizeof(addr_acc), BLOCKING);
+			UART_Send(UART_0, addr_acc, sizeof(addr_acc), BLOCKING);
 		} 
 		else 
 		{
 			// Disable receiver
 			UART_RS485ReceiverCmd(UART_RS485, DISABLE);
 			
-			UART_Send(LPC_UART0, addr_una, sizeof(addr_una), BLOCKING);
+			UART_Send(UART_0, addr_una, sizeof(addr_una), BLOCKING);
 		}
 	}
 #else
@@ -389,9 +367,9 @@ void UART_IntErr(uint8_t bLSErrType)
 	// continue to receive following data frame.
 	if (bLSErrType & UART_LSR_PE)
 	{
-		UART_Receive((LPC_UART_TypeDef *)UART_RS485, &tmp, 1, NONE_BLOCKING);
+		UART_Receive(_LPC_UART, &tmp, 1, NONE_BLOCKING);
 
-		UART_Send(LPC_UART0, addr_auto, sizeof(addr_auto), BLOCKING);
+		UART_Send(UART_0, addr_auto, sizeof(addr_auto), BLOCKING);
 	}
 #endif
 #endif
@@ -400,13 +378,13 @@ void UART_IntErr(uint8_t bLSErrType)
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
  * @brief		UART read function for interrupt mode (using ring buffers)
- * @param[in]	UARTPort	Selected UART peripheral used to send data,
+ * @param[in]	UartID	Selected UART peripheral used to send data,
  * 				should be UART0
  * @param[out]	rxbuf Pointer to Received buffer
  * @param[in]	buflen Length of Received buffer
  * @return 		Number of bytes actually read from the ring buffer
  **********************************************************************/
-uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint8_t buflen)
+uint32_t UARTReceive(UART_ID_Type UartID, uint8_t *rxbuf, uint8_t buflen)
 {
 	uint8_t *data = (uint8_t *) rxbuf;
 	uint32_t bytes = 0;
@@ -414,7 +392,7 @@ uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint8_t buflen)
 	/* Temporarily lock out UART receive interrupts during this
 	read so the UART receive interrupt won't cause problems
 	with the index values */
-	UART_IntConfig(UARTPort, UART_INTCFG_RBR, DISABLE);
+	UART_IntConfig(UartID, UART_INTCFG_RBR, DISABLE);
 
 	/* Loop until receive buffer ring is empty or
 	until max_bytes expires */
@@ -433,7 +411,7 @@ uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint8_t buflen)
 	}
 
 	/* Re-enable UART interrupts */
-	UART_IntConfig(UARTPort, UART_INTCFG_RBR, ENABLE);
+	UART_IntConfig(UartID, UART_INTCFG_RBR, ENABLE);
 
 	return bytes;
 }
@@ -445,7 +423,7 @@ uint32_t UARTReceive(LPC_UART_TypeDef *UARTPort, uint8_t *rxbuf, uint8_t buflen)
  **********************************************************************/
 void print_menu(void)
 {
-	UART_Send(LPC_UART0, menu1, sizeof(menu1), BLOCKING);
+	UART_Send(UART_0, menu1, sizeof(menu1), BLOCKING);
 }
 
 
@@ -469,8 +447,6 @@ void c_entry(void)
 	uint8_t buffer[10];
 	uint32_t tmp;
 
-	IRQn_Type rs485Irq;
-
 	// UART0 section ----------------------------------------------------
 	// Initialize UART0 pin connect
 
@@ -487,7 +463,7 @@ void c_entry(void)
 	UART_ConfigStructInit(&UARTConfigStruct);
 
 	// Initialize UART0 peripheral with given to corresponding parameter
-	UART_Init(LPC_UART0, &UARTConfigStruct);
+	UART_Init(UART_0, &UARTConfigStruct);
 
 	/* Initialize FIFOConfigStruct to default state:
 	* 				- FIFO_DMAMode = DISABLE
@@ -499,10 +475,10 @@ void c_entry(void)
 	UART_FIFOConfigStructInit(&UARTFIFOConfigStruct);
 
 	// Initialize FIFO for UART0 peripheral
-	UART_FIFOConfig(LPC_UART0, &UARTFIFOConfigStruct);
+	UART_FIFOConfig(UART_0, &UARTFIFOConfigStruct);
 
 	// Enable UART Transmit
-	UART_TxCmd(LPC_UART0, ENABLE);
+	UART_TxCmd(UART_0, ENABLE);
 
 	// print welcome screen
 	print_menu();
@@ -531,7 +507,7 @@ void c_entry(void)
 	UARTConfigStruct.Baud_rate = 9600;
 
 	// Initialize UART0 peripheral with given to corresponding parameter
-	UART_Init((LPC_UART_TypeDef *)UART_RS485, &UARTConfigStruct);
+	UART_Init(_LPC_UART, &UARTConfigStruct);
 
 	/* Initialize FIFOConfigStruct to default state:
 	* 				- FIFO_DMAMode = DISABLE
@@ -543,7 +519,7 @@ void c_entry(void)
 	UART_FIFOConfigStructInit(&UARTFIFOConfigStruct);
 
 	// Initialize FIFO for UART0 peripheral
-	UART_FIFOConfig((LPC_UART_TypeDef *)UART_RS485, &UARTFIFOConfigStruct);
+	UART_FIFOConfig(_LPC_UART, &UARTFIFOConfigStruct);
 
 	// Configure RS485
 	/*
@@ -556,7 +532,7 @@ void c_entry(void)
 	* - Receive state is enable
 	*/
 	rs485cfg.AutoDirCtrl_State = ENABLE;
-	rs485cfg.DirCtrlPin = UART1_RS485_DIRCTRL_DTR;
+	rs485cfg.DirCtrlPin = UART_RS485_DIRCTRL_DTR;
 	rs485cfg.DirCtrlPol_Level = SET;
 	rs485cfg.DelayValue = 50;
 	rs485cfg.NormalMultiDropMode_State = ENABLE;
@@ -573,26 +549,24 @@ void c_entry(void)
 	rs485cfg.Rx_State = DISABLE;
 #endif
 
-	UART_RS485Config(UART_RS485, &rs485cfg);
+	UART_RS485Config(_LPC_UART, &rs485cfg);
 
 	/* Enable UART Rx interrupt */
-	UART_IntConfig((LPC_UART_TypeDef *)UART_RS485, UART_INTCFG_RBR, ENABLE);
+	UART_IntConfig(_LPC_UART, UART_INTCFG_RBR, ENABLE);
 
 	/* Enable UART line status interrupt */
-	UART_IntConfig((LPC_UART_TypeDef *)UART_RS485, UART_INTCFG_RLS, ENABLE);
-
-	rs485Irq = UART2_IRQn;
+	UART_IntConfig(_LPC_UART, UART_INTCFG_RLS, ENABLE);
 
 	// Priorities settings for UART RS485: here we use UART2 for RS485 communication
 	// They should be changed if using another UART
 	/* preemption = 1, sub-priority = 1 */
-	NVIC_SetPriority(rs485Irq, ((0x01<<3)|0x01));
+	NVIC_SetPriority(_UART_IRQ, ((0x01<<3)|0x01));
 
 	/* Enable Interrupt for UART0 channel */
-	NVIC_EnableIRQ(rs485Irq);
+	NVIC_EnableIRQ(_UART_IRQ);
 	
 	// Enable UART Transmit
-	UART_TxCmd((LPC_UART_TypeDef *)UART_RS485, ENABLE);
+	UART_TxCmd(_LPC_UART, ENABLE);
 
 	// for testing...
 	while (1)
@@ -601,7 +575,7 @@ void c_entry(void)
 
 		while (len == 0)
 		{
-			len = UARTReceive((LPC_UART_TypeDef *)UART_RS485, buffer, sizeof(buffer));
+			len = UARTReceive(_LPC_UART, buffer, sizeof(buffer));
 		}
 
 		/* Got some data */
@@ -613,16 +587,16 @@ void c_entry(void)
 			{
 				for (tmp = 0; tmp < 1000000; tmp++);
 				
-				UART_RS485SendData(UART_RS485, ack_msg, sizeof(ack_msg));
+				UART_RS485SendData(_LPC_UART, ack_msg, sizeof(ack_msg));
 
-				UART_Send(LPC_UART0, nextline, sizeof(nextline), BLOCKING);
+				UART_Send(UART_0, nextline, sizeof(nextline), BLOCKING);
 
-				UART_RS485SendData(UART_RS485, &terminator, 1);
+				UART_RS485SendData(_LPC_UART, &terminator, 1);
 			} 
 			else 
 			{
 				/* Echo it back */
-				UART_Send(LPC_UART0, &buffer[idx], 1, BLOCKING);
+				UART_Send(UART_0, &buffer[idx], 1, BLOCKING);
 			}
 			
 			idx++;
