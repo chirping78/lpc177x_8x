@@ -483,7 +483,19 @@ void c_entry(void)
 	// print welcome screen
 	print_menu();
 
+#if (UART_TEST_NUM == 1)
+	// UART1 - RS485 section -------------------------------------------------
+	// Initialize UART1 pin connect
 
+	//TXD2
+	PINSEL_ConfigPin(0, 15, 1);
+
+	//RXD2
+	PINSEL_ConfigPin(0, 16, 1);
+
+	//P0.20, UART OE1 Output Enable for UART1
+	PINSEL_ConfigPin(0, 20, 1);	
+#elif (UART_TEST_NUM == 2)
 	// UART1 - RS485 section -------------------------------------------------
 	// Initialize UART1 pin connect
 
@@ -493,9 +505,33 @@ void c_entry(void)
 	//RXD2
 	PINSEL_ConfigPin(0, 11, 1);
 
-	//P1.19, function 6: OE2: UART OE2 Output Enable for UART2
+	//OE2: UART OE2 Output Enable for UART2
 	PINSEL_ConfigPin(1, 19, 6);	
+#elif (UART_TEST_NUM == 3)
+    // UART3 - RS485 section -------------------------------------------------
+	// Initialize UART3 pin connect
 
+	//TXD3
+	PINSEL_ConfigPin(0, 25, 3);
+
+	//RXD3
+	PINSEL_ConfigPin(0, 26, 3);
+
+	//OE3: UART OE3 Output Enable for UART3
+	PINSEL_ConfigPin(1, 30, 5);	
+#elif (UART_TEST_NUM == 4)
+    // UART4 - RS485 section -------------------------------------------------
+	// Initialize UART1 pin connect
+
+	//TXD4
+	PINSEL_ConfigPin(0, 22, 3);
+
+	//RXD4
+	PINSEL_ConfigPin(2, 9, 3);
+
+	//OE4: UART OE4 Output Enable for UART4
+	PINSEL_ConfigPin(0, 21, 3);	
+#endif
 	/* Initialize UART Configuration parameter structure to default state:
 	* Baudrate = 9600 bps
 	* 8 data bit

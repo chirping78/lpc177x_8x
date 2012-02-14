@@ -57,11 +57,32 @@
 			Pls see the 'Transceiver_Master.png' in this directory for wiring information.
 
 		Pin Map:
-							EA Board
-			P0.10			J3.20
-			P0.11			J3.11
+            UART1: 
+    						EA Board
+    			P0.15			J5.19
+    			P0.16			J3.24
+    
+    			P0.20			J3.26
 
-			P1.19			J3.33
+            UART2: 
+    						EA Board
+    			P0.10			J3.20
+    			P0.11			J3.11
+    
+    			P1.19			J3.33
+            UART3: 
+    						EA Board
+    			P0.25			J5.24
+    			P0.26			J3.28
+    
+    			P1.30			J5.37
+
+            UART4: 
+    						EA Board
+    			P0.22			J3.25
+    			P2.9			J3.15
+    
+    			P0.21			J5.22
 	
 	Running mode:
 		This example can run on RAM/ROM mode.
