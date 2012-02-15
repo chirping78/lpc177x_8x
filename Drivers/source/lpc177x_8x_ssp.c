@@ -120,7 +120,10 @@ void SSP_Init(LPC_SSP_TypeDef *SSPx, SSP_CFG_Type *SSP_ConfigStruct)
 	} else if(SSPx == LPC_SSP1) {
 		/* Set up clock and power for SSP1 module */
 		CLKPWR_ConfigPPWR (CLKPWR_PCONP_PCSSP1, ENABLE);
-	} else {
+	} else if(SSPx == LPC_SSP2) {
+		/* Set up clock and power for SSP1 module */
+		CLKPWR_ConfigPPWR (CLKPWR_PCONP_PCSSP2, ENABLE);
+    } else {
 		return;
 	}
 
@@ -157,7 +160,10 @@ void SSP_DeInit(LPC_SSP_TypeDef* SSPx)
 	} else if (SSPx == LPC_SSP1) {
 		/* Set up clock and power for SSP1 module */
 		CLKPWR_ConfigPPWR (CLKPWR_PCONP_PCSSP1, DISABLE);
-	}
+	} else if (SSPx == LPC_SSP2) {
+		/* Set up clock and power for SSP1 module */
+		CLKPWR_ConfigPPWR (CLKPWR_PCONP_PCSSP2, DISABLE);
+    }
 }
 
 /*****************************************************************************//**
