@@ -74,7 +74,7 @@ uint8_t __attribute__ ((aligned (4))) write_buffer[EEPROM_PAGE_SIZE]="NXP Semico
  * @return 		None
  **********************************************************************/
 void c_entry (void) {                       /* Main Program */
-	uint32_t i;
+	uint32_t i, j;
 	uint8_t count;
     uint8_t error = 0;
 
@@ -92,11 +92,16 @@ void c_entry (void) {                       /* Main Program */
     }
     for(i=0;i<EEPROM_PAGE_NUM;i++)
 	{
+        uint32_t *ptr = (uint32_t*)read_buffer;
         EEPROM_Read(0,EEPROM_PAGE_ADRESS(i),(void*)read_buffer,MODE_32_BIT,EEPROM_PAGE_SIZE/4);
-        if(read_buffer[i] != 0)
+        for(j = 0; j < EEPROM_PAGE_SIZE/4; j++)
         {
-             _DBG("Erase ERROR at page ");_DBD(i);_DBG_("");
-             error = 1;
+            if(*ptr++ != 0)
+            {
+                _DBG("Erase ERROR at page ");_DBD(i);_DBG_("");
+                error = 1;
+                break;
+            }
         }
 	}
     if(error)
