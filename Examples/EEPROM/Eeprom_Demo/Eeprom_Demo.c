@@ -63,7 +63,7 @@ uint8_t read_buffer[EEPROM_PAGE_SIZE*2];
 uint8_t write_buffer[]="NXP Semiconductor LPC177x_8x-CortexM3 \n\r\t--- HELLO WORLD!!! ---";
 #else
 uint8_t __attribute__ ((aligned (4))) read_buffer[EEPROM_PAGE_SIZE*2];
-uint8_t __attribute__ ((aligned (4))) write_buffer[]="NXP Semiconductor LPC177x_8x-CortexM3 \n\r\t--- HELLO WORLD!!! ---";
+uint8_t __attribute__ ((aligned (4))) write_buffer[EEPROM_PAGE_SIZE]="NXP Semiconductor LPC177x_8x-CortexM3 \n\r\t--- HELLO WORLD!!! ---";
 #endif
 
 /************************** PRIVATE FUNCTIONS *************************/
@@ -76,43 +76,58 @@ uint8_t __attribute__ ((aligned (4))) write_buffer[]="NXP Semiconductor LPC177x_
 void c_entry (void) {                       /* Main Program */
 	uint32_t i;
 	uint8_t count;
-        uint8_t error = 0;
+    uint8_t error = 0;
 
 	debug_frmwrk_init();
 	_DBG(menu);
 	EEPROM_Init();
 
 	count = sizeof(write_buffer);
-        count &= 0xFC;
+    count &= 0xFC;
 
+    _DBG_("Erase EEPROM");
+    for(i = 0; i < EEPROM_PAGE_NUM; i++)
+    {
+        EEPROM_Erase(EEPROM_PAGE_ADRESS(i));
+    }
+    for(i=0;i<EEPROM_PAGE_NUM;i++)
+	{
+        EEPROM_Read(0,EEPROM_PAGE_ADRESS(i),(void*)read_buffer,MODE_32_BIT,EEPROM_PAGE_SIZE/4);
+        if(read_buffer[i] != 0)
+        {
+             _DBG("Erase ERROR at page ");_DBD(i);_DBG_("");
+             error = 1;
+        }
+	}
+    if(error)
+        while(1);
 	_DBG_("Write data to EEPROM");
 	EEPROM_Write(PAGE_OFFSET,PAGE_ADDR,(void*)write_buffer,MODE_8_BIT,count/1);
-
 	_DBG_("Read data from EEPROM");
 	EEPROM_Read(PAGE_OFFSET,PAGE_ADDR,(void*)read_buffer,MODE_16_BIT,count/2);
 
 	//display eeprom data
 	for(i=0;i<count;i++)
 	{
-                if(read_buffer[i] != write_buffer[i])
-                {
-                    _DBG("Difference at position ");_DBD(i);_DBG_("");
-                    error = 1;
-                }
+        if(read_buffer[i] != write_buffer[i])
+        {
+             _DBG("Difference at position ");_DBD(i);_DBG_("");
+             error = 1;
+        }
 	}
         
 	if(error)
           _DBG_("ERROR!!!!");
         else
         {
-          for(i=0;i<count;i++)
-          {
-            _DBC(read_buffer[i]);
-          }
-        _DBG_("");
-	  _DBG_("Demo is terminated");
+            for(i=0;i<count;i++)
+            {
+              _DBC(read_buffer[i]);
+            }
+            _DBG_("");
+	        _DBG_("Demo is terminated");
         }
-
+     
 	while(1);
 
 }

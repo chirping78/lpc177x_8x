@@ -75,7 +75,7 @@ void EEPROM_Init(void)
 /*********************************************************************//**
  * @brief 		Write data to EEPROM at specific address
  * @param[in]	address EEPROM address that start to write data, it must be
- * 				in range 0..0x1000
+ * 				in range 0..0xFBF
  * 				mode	Write mode, should be:
  * 					- MODE_8_BIT	: write 8 bit mode
  * 					- MODE_16_BIT	: write 16 bit mode
@@ -107,20 +107,20 @@ void EEPROM_Write(uint16_t page_offset, uint16_t page_address, void* data, EEPRO
 		//update data to page register
 		if(mode == MODE_8_BIT){
 			LPC_EEPROM->CMD = EEPROM_CMD_8_BIT_WRITE;
-                        LPC_EEPROM -> WDATA = *tmp8;
-                        tmp8++;
+			LPC_EEPROM -> WDATA = *tmp8;
+			tmp8++;
 			page_offset +=1;
 		}
 		else if(mode == MODE_16_BIT){
 			LPC_EEPROM->CMD = EEPROM_CMD_16_BIT_WRITE;
-                        LPC_EEPROM -> WDATA = *tmp16;
-                        tmp16++;
+			LPC_EEPROM -> WDATA = *tmp16;
+			tmp16++;
 			page_offset +=2;
 		}
 		else{
 			LPC_EEPROM->CMD = EEPROM_CMD_32_BIT_WRITE;
-                        LPC_EEPROM -> WDATA = *tmp32;
-                        tmp32++;
+			LPC_EEPROM -> WDATA = *tmp32;
+			tmp32++;
 			page_offset +=4;
 		}
 		while(!((LPC_EEPROM->INT_STATUS >> EEPROM_ENDOF_RW)&0x01));
@@ -131,7 +131,7 @@ void EEPROM_Write(uint16_t page_offset, uint16_t page_address, void* data, EEPRO
 			LPC_EEPROM->ADDR = EEPROM_PAGE_ADRESS(page_address);
 			LPC_EEPROM->CMD = EEPROM_CMD_ERASE_PRG_PAGE;
 			while(!((LPC_EEPROM->INT_STATUS >> EEPROM_ENDOF_PROG)&0x01));
-                        LPC_EEPROM->INT_CLR_STATUS = (1 << EEPROM_ENDOF_PROG);
+			LPC_EEPROM->INT_CLR_STATUS = (1 << EEPROM_ENDOF_PROG);
 		}
 		if(page_offset >= EEPROM_PAGE_SIZE)
 		{
@@ -151,7 +151,7 @@ void EEPROM_Write(uint16_t page_offset, uint16_t page_address, void* data, EEPRO
  * 					- MODE_8_BIT	: read 8 bit mode
  * 					- MODE_16_BIT	: read 16 bit mode
  * 					- MODE_32_BIT	: read 32 bit mode
- * 				size	number read data (bytes)
+ * 				count	number read data (bytes)
  * @return 		data	buffer that contain data that will be read to buffer
  **********************************************************************/
 void EEPROM_Read(uint16_t page_offset, uint16_t page_address, void* data, EEPROM_Mode_Type mode, uint32_t count)
@@ -169,37 +169,37 @@ void EEPROM_Read(uint16_t page_offset, uint16_t page_address, void* data, EEPROM
 		LPC_EEPROM->CMD = EEPROM_CMD_16_BIT_READ|EEPROM_CMD_RDPREFETCH;
 		//check page_offset
 		if((page_offset &0x01)!=0)
-			while(1);
+			return;
 	}
 	else{
 		LPC_EEPROM->CMD = EEPROM_CMD_32_BIT_READ|EEPROM_CMD_RDPREFETCH;
 		//page_offset must be a multiple of 0x04
 		if((page_offset & 0x03)!=0)
-			while(1);
+			return;
 	}
 
 	//read and store data in buffer
 	for(i=0;i<count;i++){
 		 
 		 if(mode == MODE_8_BIT){
-                         *tmp8 = (uint8_t)(LPC_EEPROM -> RDATA);
-                         tmp8++;
+			 *tmp8 = (uint8_t)(LPC_EEPROM -> RDATA);
+			 tmp8++;
 			 page_offset +=1;
 		 }
 		 else if (mode == MODE_16_BIT)
 		 {
-                         *tmp16 =  (uint16_t)(LPC_EEPROM -> RDATA);
-                         tmp16++;
+			 *tmp16 =  (uint16_t)(LPC_EEPROM -> RDATA);
+			 tmp16++;
 			 page_offset +=2;
 		 }
 		 else{
-                         *tmp32 = (uint32_t)(LPC_EEPROM ->RDATA);
-                         tmp32++;
+			 *tmp32 = (uint32_t)(LPC_EEPROM ->RDATA);
+			 tmp32++;
 			 page_offset +=4;
 		 }
 		 while(!((LPC_EEPROM->INT_STATUS >> EEPROM_ENDOF_RW)&0x01));
                  LPC_EEPROM->INT_CLR_STATUS = (1 << EEPROM_ENDOF_RW);
-		 if(page_offset >= EEPROM_PAGE_SIZE) {
+		 if((page_offset >= EEPROM_PAGE_SIZE) && (i < count - 1)) {
 			 page_offset = 0;
 			 page_address++;
 			 LPC_EEPROM->ADDR = EEPROM_PAGE_ADRESS(page_address)|EEPROM_PAGE_OFFSET(page_offset);
@@ -214,34 +214,34 @@ void EEPROM_Read(uint16_t page_offset, uint16_t page_address, void* data, EEPROM
 }
 
 /*********************************************************************//**
- * @brief 		Erase to EEPROM at specific address
- * @param[in]	address EEPROM address that start to read data, should be
- * 				in range: 0..4096
- * 				mode	Read mode, should be:
- * 					- MODE_8_BIT	: write 8 bit mode
- * 					- MODE_16_BIT	: write 16 bit mode
- * 					- MODE_32_BIT	: write 32 bit mode
- * 				size	number read data
- * 					- byte unit in MODE_8_BIT
- * 					- word unit in MODE_16_BIT
- * 					- double word unit in MODE_32_BIT
+ * @brief 		Erase a page at the specific address
+ * @param[in]	address EEPROM page address 
  * @return 		data	buffer that contain data that will be read to buffer
  **********************************************************************/
 void EEPROM_Erase(uint32_t address)
 {
 	uint32_t i;
+    uint32_t page_address;
+    uint32_t count = EEPROM_PAGE_SIZE/4;
+
+    page_address = address & (~(EEPROM_PAGE_SIZE-1));
+    LPC_EEPROM->INT_CLR_STATUS = ((1 << EEPROM_ENDOF_RW)|(1 << EEPROM_ENDOF_PROG));  
+
 	//clear page register
-	LPC_EEPROM->CMD = EEPROM_CMD_8_BIT_WRITE;
-	for(i=0;i<64;i++)
+    LPC_EEPROM->ADDR = EEPROM_PAGE_OFFSET(0);
+	LPC_EEPROM->CMD = EEPROM_CMD_32_BIT_WRITE;
+	for(i=0;i<count;i++)
 	{
-		LPC_EEPROM -> WDATA = 0;
-		while(!((LPC_EEPROM->INT_STATUS >> 26)&0x01));
+		LPC_EEPROM->WDATA = 0;
+		while(!((LPC_EEPROM->INT_STATUS >> EEPROM_ENDOF_RW)&0x01));
+		LPC_EEPROM->INT_CLR_STATUS = (1 << EEPROM_ENDOF_RW);
 	}
 
-	LPC_EEPROM->INT_CLR_STATUS = (0x1 << EEPROM_ENDOF_PROG);
-	LPC_EEPROM->ADDR = EEPROM_PAGE_ADRESS(address);
+    LPC_EEPROM->INT_CLR_STATUS = (0x1 << EEPROM_ENDOF_PROG);
+	LPC_EEPROM->ADDR = EEPROM_PAGE_ADRESS(page_address);
 	LPC_EEPROM->CMD = EEPROM_CMD_ERASE_PRG_PAGE;
-	while(!((LPC_EEPROM->INT_STATUS >> 28)&0x01));
+	while(!((LPC_EEPROM->INT_STATUS >> EEPROM_ENDOF_PROG)&0x01));
+	LPC_EEPROM->INT_CLR_STATUS = (1 << EEPROM_ENDOF_PROG);
 }
 
 /*********************************************************************//**
