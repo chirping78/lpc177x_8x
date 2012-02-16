@@ -88,12 +88,12 @@ void c_entry (void) {                       /* Main Program */
     _DBG_("Erase EEPROM");
     for(i = 0; i < EEPROM_PAGE_NUM; i++)
     {
-        EEPROM_Erase(EEPROM_PAGE_ADRESS(i));
+        EEPROM_Erase(i);
     }
     for(i=0;i<EEPROM_PAGE_NUM;i++)
 	{
         uint32_t *ptr = (uint32_t*)read_buffer;
-        EEPROM_Read(0,EEPROM_PAGE_ADRESS(i),(void*)read_buffer,MODE_32_BIT,EEPROM_PAGE_SIZE/4);
+        EEPROM_Read(0,i,(void*)read_buffer,MODE_32_BIT,EEPROM_PAGE_SIZE/4);
         for(j = 0; j < EEPROM_PAGE_SIZE/4; j++)
         {
             if(*ptr++ != 0)

@@ -130,7 +130,7 @@ typedef enum
 void EEPROM_Init(void);
 void EEPROM_Write(uint16_t page_offset, uint16_t page_address, void* data, EEPROM_Mode_Type mode, uint32_t size);
 void EEPROM_Read(uint16_t page_offset, uint16_t page_address, void* data, EEPROM_Mode_Type mode, uint32_t size);
-void EEPROM_Erase(uint32_t address);
+void EEPROM_Erase(uint16_t address);
 void EEPROM_PowerDown(FunctionalState NewState);
 
 /**

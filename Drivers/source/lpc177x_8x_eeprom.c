@@ -74,8 +74,8 @@ void EEPROM_Init(void)
 
 /*********************************************************************//**
  * @brief 		Write data to EEPROM at specific address
- * @param[in]	address EEPROM address that start to write data, it must be
- * 				in range 0..0xFBF
+ * @param[in]	page_offset offset of data in page register(0 - 63)
+ *              page_address page address (0-62)                    
  * 				mode	Write mode, should be:
  * 					- MODE_8_BIT	: write 8 bit mode
  * 					- MODE_16_BIT	: write 16 bit mode
@@ -215,16 +215,14 @@ void EEPROM_Read(uint16_t page_offset, uint16_t page_address, void* data, EEPROM
 
 /*********************************************************************//**
  * @brief 		Erase a page at the specific address
- * @param[in]	address EEPROM page address 
+ * @param[in]	address EEPROM page address (0-62)
  * @return 		data	buffer that contain data that will be read to buffer
  **********************************************************************/
-void EEPROM_Erase(uint32_t address)
+void EEPROM_Erase(uint16_t page_address)
 {
 	uint32_t i;
-    uint32_t page_address;
     uint32_t count = EEPROM_PAGE_SIZE/4;
 
-    page_address = address & (~(EEPROM_PAGE_SIZE-1));
     LPC_EEPROM->INT_CLR_STATUS = ((1 << EEPROM_ENDOF_RW)|(1 << EEPROM_ENDOF_PROG));  
 
 	//clear page register
