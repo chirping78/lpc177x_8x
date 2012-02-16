@@ -27,7 +27,7 @@
 		This example describes how to use ADC conversion in burst mode with single or multiple input.
 		This example also describes how to inject an ADC conversion channel while the others are running.
 	Process:
-		The ADC conversion rate is 400KHz. A fully A fully accurate conversion requires 31 of these clocks. 
+		The ADC conversion rate is 400KHz. A fully accurate conversion requires 31 of these clocks. 
 		So ADC clock = 400KHz * 31 = 12.4MHz.
 		Note that maximum ADC clock input is 12.4MHz.  
 		
