@@ -53,7 +53,7 @@
 #define _ADC_CHANNEL_n		ADC_CHANNEL_3
 #endif
 
-#define __DMA_USED__		(1)
+#define __DMA_USED__		(0)
 /** DMA size of transfer */
 #define DMA_SIZE		8
 
@@ -284,6 +284,7 @@ void c_entry(void)
 
     while(1)
     {
+		 for(tmp = 0; tmp < 0x1000; tmp++);
         /* Reset terminal counter */
 	    Channel0_TC = 0;
 	    /* Reset Error counter */
@@ -308,11 +309,6 @@ void c_entry(void)
                 {
                     _DBG("ADC value on channel "); _DBD(ADC_GDR_CH(s_buf[tmp])); _DBG(": ");
                     _DBD32(ADC_GDR_RESULT(s_buf[tmp]));_DBG_("");
-                }
-                else
-                {
-                    _DBG_("A/D conversion hasn't completed yet.");
-                    while(1);
                 }
           }
           if(_DG_NONBLOCK(&quit) &&
