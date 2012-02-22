@@ -31,7 +31,7 @@
 			- CPOL = 0: SCK is active high
 			- Clock rate = 1MHz
 			- DSS = 8: 8 bits per transfer
-			- MSTR = 1: SSP operates in Master mode
+			- MSTR = 0: SSP operates in Slave mode
 			- FRF= 0: SPI Frame format
 		This example uses SSP function in Slave mode.
 		Using _SSP_NO_USING to define which SSP peripheral will be used.
@@ -58,25 +58,23 @@
 		(Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
 		
 		SSP Connection:
-			SSP0: SSP0_MISO(P0.17) connects with SSP0_MOSI(P0.18)
-			SSP1: SSP1_MISO(P0.8) connects with SSP1_MOSI(P0.9)
-			
+		
 			Pin Map:
-								        PA brd				IAR brd
-			- P0.15: SSP0_SCK			J5.19
-			- P0.16: SSP0_SSEL			J3.24 
-	  		- P0.17: SSP0_MISO			J5.20
-	  		- P0.18: SSP0_MOSI			J3.23
+								PA brd				IAR brd     
+			- P0.15: SSP0_SCK			J5.19                           J3.19
+			- P0.16: SSP0_SSEL			J3.24                           J2.18
+	  		- P0.17: SSP0_MISO			J5.20                           J3.20
+	  		- P0.18: SSP0_MOSI			J3.23                           J1.15
 
 	  		- P0.7:  SSP1_SCK			J5.17				EXT-7    
 	  		- P0.6 : SSP1_SSEL			J3.18				EXT-6 
 			- P0.8: SSP1_MISO			J3.19				EXT-8
 			- P0.9: SSP1_MOSI			J5.18				EXT-9
                         
-			- P1.0:  SSP2_SCK			    
-			- P1.8 : SSP2_SSEL			 
-			- P1.4: SSP2_MISO							
-			- P1.1: SSP2_MOSI			
+			- P1.0:  SSP2_SCK	                                        	    
+			- P1.8 : SSP2_SSEL	                                        
+			- P1.4: SSP2_MISO	                                        						
+			- P1.1: SSP2_MOSI	                                        	
 
 		SCK, SSEL, MISO, MOSI pin of Slave are connected to corresponding pins of Master.
 		GND of Master board and Slave board must be connected together.

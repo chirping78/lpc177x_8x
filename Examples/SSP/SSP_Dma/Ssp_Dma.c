@@ -45,7 +45,7 @@
 
 /************************** PRIVATE DEFINITIONS ***********************/
 
-#define _SSP_NO_USING		(1)//(0)
+#define _SSP_NO_USING		(2)//(0)
 
 #if(_SSP_NO_USING == 0)
 #define _USING_SSP		(LPC_SSP0)
@@ -53,12 +53,16 @@
 #define SSP_TX_SRC_DMA_CONN		(GPDMA_CONN_SSP0_Tx)
 
 #define SSP_RX_SRC_DMA_CONN		(GPDMA_CONN_SSP0_Rx)
-#else
+#elif (_SSP_NO_USING == 1)
 #define _USING_SSP		(LPC_SSP1)
 
 #define SSP_TX_SRC_DMA_CONN		(GPDMA_CONN_SSP1_Tx)
 
 #define SSP_RX_SRC_DMA_CONN		(GPDMA_CONN_SSP1_Rx)
+#else
+#define _USING_SSP      (LPC_SSP2)
+#define SSP_TX_SRC_DMA_CONN		(GPDMA_CONN_SSP2_Tx)
+#define SSP_RX_SRC_DMA_CONN		(GPDMA_CONN_SSP2_Rx)
 #endif
 
 /* For DMA controller */
@@ -243,7 +247,7 @@ void c_entry(void)
 	PINSEL_ConfigPin(0, 16, 2);
 	PINSEL_ConfigPin(0, 17, 2);
 	PINSEL_ConfigPin(0, 18, 2);
-#else
+#elif (_SSP_NO_USING == 1) 
 	PINSEL_ConfigPin(0, 6, 2);
 
 	PINSEL_ConfigPin(0, 7, 2);
@@ -254,6 +258,11 @@ void c_entry(void)
 
 	PINSEL_ConfigPin(0, 9, 2);
 	PINSEL_SetFilter(0, 9, 0);
+#else
+    PINSEL_ConfigPin(1, 0, 4);
+	PINSEL_ConfigPin(1, 8, 4);
+	PINSEL_ConfigPin(1, 1, 4);
+	PINSEL_ConfigPin(1, 4, 4);
 #endif
 	/* Initialize debug via UART0
 	 * – 115200bps

@@ -70,6 +70,8 @@
 			- P0.8: SSP1_MISO			J3.19				EXT-8
 			- P0.9: SSP1_MOSI			J5.18				EXT-9
 
+			- P1.4: SSP2_MISO							
+			- P1.1: SSP2_MOSI
 						
 		Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
 			1. LPC1788 OEM Board rev A and OEM Base Board rev A
