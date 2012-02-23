@@ -117,8 +117,14 @@ void c_entry (void)
 
 	switch (cardType)
 	{
-		case MCI_SD_CARD:
-			_DBG_("Currently the SD CARD is being used");
+		case MCI_SDHC_SDXC_CARD:
+			_DBG_("Currently the SDXC/SDHC CARD ver2.0 is being used");
+			break;
+		case MCI_SDSC_V2_CARD:
+			_DBG_("Currently the SD CARD ver2.0 is being used");
+			break;
+		case MCI_SDSC_V1_CARD:
+			_DBG_("Currently the SD CARD ver1.0 is being used");
 			break;
 
 		case MCI_MMC_CARD:

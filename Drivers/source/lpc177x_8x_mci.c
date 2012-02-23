@@ -1298,7 +1298,9 @@ int32_t MCI_Cmd_SendACMD( void )
 
 	int32_t retval = MCI_FUNC_FAILED;
 
-	if (MCI_CardType == MCI_SD_CARD)
+	if ((MCI_CardType == MCI_SDSC_V1_CARD) ||
+		(MCI_CardType == MCI_SDSC_V2_CARD) ||
+		(MCI_CardType == MCI_SDHC_SDXC_CARD)) 
 	{
 		CmdArgument = CardRCA;	/* Use the address from SET_RELATIVE_ADDR cmd */
 	}
@@ -1397,6 +1399,52 @@ int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
 	return retval;
 }
 
+/************************************************************************//**
+   * @brief 		Send CMD58 to get OCR.
+ *
+ * @param[in]		None.
+ *
+ * @return 		MCI_FUNC_OK if all success
+ *
+ ****************************************************************************/
+int32_t MCI_ReadOCR(uint32_t* result)
+{
+	uint32_t i, retryCount;
+	uint32_t respStatus;
+	uint32_t respValue[4];
+
+	int32_t retval = MCI_FUNC_FAILED;
+
+	retryCount = 0x200;			/* reset retry counter */
+
+	while ( retryCount > 0 )
+	{
+		respStatus = MCI_CmdResp(CMD58_READ_OCR, 0, EXPECT_LONG_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+
+		if(respStatus & MCI_CMD_TIMEOUT)
+		{
+			retval = MCI_FUNC_TIMEOUT;
+		}
+		else if ((respValue[0] & 0x80000000) == 0)
+		{
+			//The card has not finished the power up routine
+			retval = MCI_FUNC_BUS_NOT_IDLE;
+		}
+		else
+		{
+			*result = respValue[0];
+			retval = MCI_FUNC_OK;
+			break;
+		}
+
+		for ( i = 0; i < 0x20; i++ );
+
+		retryCount--;
+	}
+
+	return(retval);
+}
+
 
 /************************************************************************//**
  * @brief 		Do initialization for the card in the slot
@@ -1417,6 +1465,7 @@ int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
 int32_t MCI_CardInit( void )
 {
 	uint32_t i;
+	uint32_t ccs;
 	int32_t retval = MCI_FUNC_FAILED;
 
 	MCI_CardType = MCI_CARD_UNKNOWN;
@@ -1439,23 +1488,29 @@ int32_t MCI_CardInit( void )
 		return retval;
 	}
 
-	if(retval == MCI_FUNC_OK)
+	if(retval == MCI_FUNC_OK) /* Ver2.00 or later*/
 	{
 		//Check in case of High Capacity Supporting Host
 		if ((retval = MCI_Acmd_SendOpCond(1)) == MCI_FUNC_OK)
 		{
-			MCI_CardType = MCI_SD_CARD;//Support High Capacity
+            MCI_CardType = MCI_SDSC_V2_CARD;//SDSC
+            if(MCI_ReadOCR(&ccs) == MCI_FUNC_OK)
+            {
+    			if( (ccs&(1<<30)) == 1)
+    				MCI_CardType = MCI_SDHC_SDXC_CARD;//SDHC or SDXC 
+            }
 
 			return MCI_FUNC_OK;	/* Found the card, it's a hD */
 		}
 	}
 
-	if(retval != MCI_FUNC_OK)
+	if(retval != MCI_FUNC_OK) /* voltage mismatch (ver2.00)or ver1.X SD Card or not SD Card*/
 	{
+		
 		//Check in case of Standard Capacity Supporting Host
 		if ((retval = MCI_Acmd_SendOpCond(0)) == MCI_FUNC_OK)
 		{
-			MCI_CardType = MCI_SD_CARD;//Support Standard Capacity only
+			MCI_CardType = MCI_SDSC_V1_CARD;//Support Standard Capacity only
 
 			return MCI_FUNC_OK;	/* Found the card, it's a SD */
 		}
@@ -1622,7 +1677,9 @@ int32_t MCI_SetCardAddress( void )
 	/* If it's a SD card, SET_RELATIVE_ADDR is to get the address
 	from the card and use this value in RCA, if it's a MMC, set default
 	RCA addr. 0x00010000. */
-	if (MCI_CardType == MCI_SD_CARD)
+	if ((MCI_CardType == MCI_SDSC_V1_CARD) ||
+		(MCI_CardType == MCI_SDSC_V2_CARD) ||
+		(MCI_CardType == MCI_SDHC_SDXC_CARD))
 	{
 		CmdArgument = 0;
 	}
@@ -1699,7 +1756,9 @@ int32_t MCI_GetCSD(uint32_t* csdVal)
 	uint32_t respValue[4];
 	uint32_t CmdArgument;
 
-	if (MCI_CardType == MCI_SD_CARD)
+	if ((MCI_CardType == MCI_SDSC_V1_CARD) ||
+		(MCI_CardType == MCI_SDSC_V2_CARD) ||
+		(MCI_CardType == MCI_SDHC_SDXC_CARD))
 	{
 		CmdArgument = CardRCA;
 	}
@@ -1760,7 +1819,9 @@ int32_t MCI_Cmd_SelectCard( void )
 
 	int32_t retval = MCI_FUNC_FAILED;
 
-	if (MCI_CardType == MCI_SD_CARD)
+	if ((MCI_CardType == MCI_SDSC_V1_CARD) ||
+			(MCI_CardType == MCI_SDSC_V2_CARD) ||
+			(MCI_CardType == MCI_SDHC_SDXC_CARD)) 
 	{
 		CmdArgument = CardRCA;
 	}
@@ -1824,7 +1885,9 @@ int32_t MCI_GetCardStatus(int32_t* cardStatus)
 
 	int32_t retval = MCI_FUNC_FAILED;
 
-	if (MCI_CardType == MCI_SD_CARD)
+	if ((MCI_CardType == MCI_SDSC_V1_CARD) ||
+		(MCI_CardType == MCI_SDSC_V2_CARD) ||
+		(MCI_CardType == MCI_SDHC_SDXC_CARD)) 
 	{
 		CmdArgument = CardRCA;
 	}

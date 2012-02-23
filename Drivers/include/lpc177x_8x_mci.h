@@ -43,7 +43,7 @@
  * @{
  */
 
-#define MCI_DMA_ENABLED		(1)
+#define MCI_DMA_ENABLED		(0)
 
 #define HIGH_LVL		(1)
 #define LOW_LVL			(0)
@@ -91,6 +91,10 @@
 
 /* APP_CMD, the following will a ACMD */
 #define CMD55_APP_CMD			55
+
+/* READ OCR */
+#define CMD58_READ_OCR			58
+
 
 #define OCR_INDEX			0x00FF8000
 
@@ -292,8 +296,10 @@ typedef enum mci_func_error
 
 typedef enum mci_card_type
 {
+	MCI_SDHC_SDXC_CARD = 3,
+	MCI_SDSC_V2_CARD = 2,
 	MCI_MMC_CARD = 1,
-	MCI_SD_CARD = 0,
+	MCI_SDSC_V1_CARD = 0,
 	MCI_CARD_UNKNOWN = -1,
 }en_Mci_CardType;
 
@@ -362,6 +368,8 @@ int32_t MCI_ReadBlock(uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBlock
 #if MCI_DMA_ENABLED
 void     MCI_DMA_IRQHandler (void);
 #endif
+
+int32_t MCI_ReadOCR(uint32_t* result);
 
 /**
  * @}

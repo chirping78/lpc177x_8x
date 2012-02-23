@@ -135,8 +135,14 @@ void c_entry (void)
 
 	switch (cardType)
 	{
-		case MCI_SD_CARD:
-			_DBG_("Currently the SD CARD is being used");
+		case MCI_SDHC_SDXC_CARD:
+			_DBG_("Currently the SDXC/SDHC CARD ver2.0 is being used");
+			break;
+		case MCI_SDSC_V2_CARD:
+			_DBG_("Currently the SD CARD ver2.0 is being used");
+			break;
+		case MCI_SDSC_V1_CARD:
+			_DBG_("Currently the SD CARD ver1.0 is being used");
 			break;
 
 		case MCI_MMC_CARD:
@@ -203,7 +209,9 @@ void c_entry (void)
 		_DBG("Card has been selected successfully!!!\n\r");
 	}
 
-	if(cardType == MCI_SD_CARD)
+	if(cardType == MCI_SDSC_V1_CARD||
+		cardType == MCI_SDSC_V2_CARD||
+		cardType == MCI_SDHC_SDXC_CARD)
 	{
 		MCI_Set_MCIClock( MCI_NORMAL_RATE );
 		
