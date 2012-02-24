@@ -111,7 +111,11 @@
 
 volatile uint32_t Mci_Data_Xfer_End = 0;
 
+volatile uint32_t Mci_Data_Xfer_ERR = 0;
+
 volatile uint32_t CardRCA;
+
+volatile uint8_t CCS;
 
 volatile en_Mci_CardType MCI_CardType;
 
@@ -546,6 +550,8 @@ void MCI_DataErrorProcess( void )
 		LPC_MCI->CLEAR =  MCI_START_BIT_ERR;
 	}
 
+    Mci_Data_Xfer_End = 0;
+    Mci_Data_Xfer_ERR = MCIStatus;
 	return;
 }
 
@@ -573,6 +579,8 @@ void MCI_DATA_END_InterruptService( void )
 		LPC_MCI->CLEAR = MCI_DATA_END;
 
 		Mci_Data_Xfer_End = 0;
+
+        Mci_Data_Xfer_ERR = 0;
 
 		MCI_TXDisable();
 		
@@ -1082,6 +1090,7 @@ int32_t MCI_GetCmdResp(uint32_t ExpectCmdData, uint32_t ExpectResp, uint32_t *Cm
 			LPC_MCI->CLEAR = CmdRespStatus | MCI_CMD_RESP_END;
 			break;	/* cmd response is received, expecting response */
 		}
+        
 	}
 
 	if ((LPC_MCI->RESP_CMD & 0x3F) != ExpectCmdData)
@@ -1115,7 +1124,7 @@ int32_t MCI_GetCmdResp(uint32_t ExpectCmdData, uint32_t ExpectResp, uint32_t *Cm
 			*(CmdResp + 2) = LPC_MCI->RESP2;
 			*(CmdResp + 3) = LPC_MCI->RESP3;
 		}
-	}
+		}
 
 	return MCI_FUNC_OK;
 }
@@ -1386,6 +1395,7 @@ int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
 			}
 			else
 			{
+				CCS = (respValue[0]&(1<<30)) ? 1:0;
 				retval = MCI_FUNC_OK;
 				break;
 			}
@@ -1398,53 +1408,6 @@ int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
 
 	return retval;
 }
-
-/************************************************************************//**
-   * @brief 		Send CMD58 to get OCR.
- *
- * @param[in]		None.
- *
- * @return 		MCI_FUNC_OK if all success
- *
- ****************************************************************************/
-int32_t MCI_ReadOCR(uint32_t* result)
-{
-	uint32_t i, retryCount;
-	uint32_t respStatus;
-	uint32_t respValue[4];
-
-	int32_t retval = MCI_FUNC_FAILED;
-
-	retryCount = 0x200;			/* reset retry counter */
-
-	while ( retryCount > 0 )
-	{
-		respStatus = MCI_CmdResp(CMD58_READ_OCR, 0, EXPECT_LONG_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
-
-		if(respStatus & MCI_CMD_TIMEOUT)
-		{
-			retval = MCI_FUNC_TIMEOUT;
-		}
-		else if ((respValue[0] & 0x80000000) == 0)
-		{
-			//The card has not finished the power up routine
-			retval = MCI_FUNC_BUS_NOT_IDLE;
-		}
-		else
-		{
-			*result = respValue[0];
-			retval = MCI_FUNC_OK;
-			break;
-		}
-
-		for ( i = 0; i < 0x20; i++ );
-
-		retryCount--;
-	}
-
-	return(retval);
-}
-
 
 /************************************************************************//**
  * @brief 		Do initialization for the card in the slot
@@ -1465,7 +1428,6 @@ int32_t MCI_ReadOCR(uint32_t* result)
 int32_t MCI_CardInit( void )
 {
 	uint32_t i;
-	uint32_t ccs;
 	int32_t retval = MCI_FUNC_FAILED;
 
 	MCI_CardType = MCI_CARD_UNKNOWN;
@@ -1494,10 +1456,10 @@ int32_t MCI_CardInit( void )
 		if ((retval = MCI_Acmd_SendOpCond(1)) == MCI_FUNC_OK)
 		{
             MCI_CardType = MCI_SDSC_V2_CARD;//SDSC
-            if(MCI_ReadOCR(&ccs) == MCI_FUNC_OK)
+            
+            if(CCS )
             {
-    			if( (ccs&(1<<30)) == 1)
-    				MCI_CardType = MCI_SDHC_SDXC_CARD;//SDHC or SDXC 
+    			MCI_CardType = MCI_SDHC_SDXC_CARD;//SDHC or SDXC 
             }
 
 			return MCI_FUNC_OK;	/* Found the card, it's a hD */
@@ -1933,7 +1895,6 @@ int32_t MCI_GetCardStatus(int32_t* cardStatus)
 	return retval;
 }
 
-
 /************************************************************************//**
  * @brief 		Set the length for the blocks in the next action on data 
  *				manipulation (as read, write, erase). This function is to
@@ -2291,6 +2252,8 @@ int32_t MCI_WriteBlock(uint8_t* memblock, uint32_t blockNum, uint32_t numOfBlock
 	LPC_MCI->DATALEN = BLOCK_LENGTH*numOfBlock;
 
 	Mci_Data_Xfer_End = 1;
+    Mci_Data_Xfer_ERR = 0;
+
 	txBlockCnt = 0;
 
 	MCI_TXEnable();
@@ -2376,6 +2339,7 @@ int32_t MCI_ReadBlock(uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBlock
 	LPC_MCI->DATALEN = BLOCK_LENGTH*numOfBlock;
 
 	Mci_Data_Xfer_End = 1;
+    Mci_Data_Xfer_ERR = 0;
 	rxBlockCnt = 0;
 
 	if ( MCI_Cmd_ReadBlock(blockNum, numOfBlock) != MCI_FUNC_OK )

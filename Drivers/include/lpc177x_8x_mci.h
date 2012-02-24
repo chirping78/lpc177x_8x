@@ -92,10 +92,6 @@
 /* APP_CMD, the following will a ACMD */
 #define CMD55_APP_CMD			55
 
-/* READ OCR */
-#define CMD58_READ_OCR			58
-
-
 #define OCR_INDEX			0x00FF8000
 
 
@@ -368,8 +364,6 @@ int32_t MCI_ReadBlock(uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBlock
 #if MCI_DMA_ENABLED
 void     MCI_DMA_IRQHandler (void);
 #endif
-
-int32_t MCI_ReadOCR(uint32_t* result);
 
 /**
  * @}

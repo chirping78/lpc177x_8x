@@ -156,7 +156,7 @@ Bool mci_read_configuration (void)
 		CardConfig.CardAddress = MCI_GetCardAddress();
 
 		/* Read CSD */
-		if(MCI_GetCSD((uint32_t*)&CardConfig.CSD) != MCI_FUNC_OK)
+		if(MCI_GetCSD((uint32_t*)CardConfig.CSD) != MCI_FUNC_OK)
 		{
 			break;
 		}	
@@ -165,7 +165,8 @@ Bool mci_read_configuration (void)
     	CardConfig.SectorSize = 512;
 		
 		 /* sector count */
-	    if (((CardConfig.CSD[0]>>6) & 0x3) == 0x1) /* CSD V2.0 (for High/eXtended Capacity) */
+	    if ((CardConfig.CardType == MCI_SDSC_V2_CARD)|| /* CSD V2.0 (for High/eXtended Capacity) */
+            (CardConfig.CardType == MCI_SDHC_SDXC_CARD))
 	    {
 	        /* Read C_SIZE */
 	        c_size =  (((uint32_t)CardConfig.CSD[7]<<16) + ((uint32_t)CardConfig.CSD[8]<<8) + CardConfig.CSD[9]) & 0x3FFFFF;
@@ -188,19 +189,12 @@ Bool mci_read_configuration (void)
         /* Get erase block size in unit of sector */
         switch (CardConfig.CardType)
         {
-            case MCI_SDHC_SDXC_CARD:
-            case MCI_SDSC_V2_CARD:
-                if(MCI_Cmd_SendACMD() == MCI_FUNC_OK)
-                {
-                    uint8_t respValue[16];
-                    MCI_CmdResp(CMD13_SEND_STATUS, 0, EXPECT_LONG_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
-                    CardConfig.BlockSize = 16UL << (respValue[10] >> 4); /* Calculate block size based on AU size */
-                }
-                break;
             case MCI_MMC_CARD:
                 //CardConfig.blocksize = ((uint16_t)((CardConfig.csd[10] & 124) >> 2) + 1) * (((CardConfig.csd[11] & 3) << 3) + ((CardConfig.csd[11] & 224) >> 5) + 1);
                 CardConfig.BlockSize = ((uint16_t)((CardConfig.CSD[10] & 124) >> 2) + 1) * (((CardConfig.CSD[10] & 3) << 3) + ((CardConfig.CSD[11] & 224) >> 5) + 1);
                 break;
+            case MCI_SDHC_SDXC_CARD:
+            case MCI_SDSC_V2_CARD:
             case MCI_SDSC_V1_CARD:
                 CardConfig.BlockSize = (((CardConfig.CSD[10] & 63) << 1) + ((uint16_t)(CardConfig.CSD[11] & 128) >> 7) + 1) << ((CardConfig.CSD[13] >> 6) - 1);
                 break;
@@ -403,9 +397,12 @@ DRESULT disk_write (
 	BYTE count			/* Sector count (1..255) */
 )
 {
+    uint32_t tmp;
+
 	if (drv || !count) return RES_PARERR;
 	if (Stat & STA_NOINIT) return RES_NOTRDY;
 //	if (Stat & STA_PROTECT) return RES_WRPRT;
+    for(tmp = 0x100000;tmp;tmp--);
 
 	if ( MCI_WriteBlock((uint8_t*)buff, sector, count) == MCI_FUNC_OK)
 	{
