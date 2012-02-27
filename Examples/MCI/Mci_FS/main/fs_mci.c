@@ -60,7 +60,6 @@ static volatile WORD Timer1, Timer2;
 /* Card Configuration */
 CARDCONFIG CardConfig;      /* Card configuration */
 
-
 #if MCI_DMA_ENABLED
 /******************************************************************************
 **  DMA Handler
@@ -381,7 +380,7 @@ DRESULT disk_ioctl (
 	case MMC_GET_CID :		/* Receive CID as a data block (16 bytes) */
         {
             uint8_t* cid = (uint8_t*) &CardConfig.CardID;
-    		for (n=0;n<16;n++)
+    		for (n=0;n<sizeof(st_Mci_CardId);n++)
     			*(ptr+n) = cid[n];
         }
 		res = RES_OK;

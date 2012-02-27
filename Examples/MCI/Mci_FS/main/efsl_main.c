@@ -37,7 +37,17 @@ uint32_t blen = sizeof(Buff);
 
 
 volatile uint32_t Timer = 0;		/* Performance timer (1kHz increment) */
-
+uint8_t mciFsMenu[]=
+"********************************************************************************\n\r"
+" Hello NXP Semiconductors \n\r"
+" MCI File System Example \n\r"
+"\t - MCU: LPC177x_8x \n\r"
+"\t - Core: ARM CORTEX-M3 \n\r"
+"\t - UART Communicationi: 115200 bps \n\r"
+" This example is used to demonstrate how to implement a filesystem using MCI.\n\r"
+" EFLS,a library for file systems, is used in this example. \n\r"
+" Press r to display commands which are supported.\n\r"
+"********************************************************************************\n\r";
 /* SysTick Interrupt Handler (1ms)    */
 void SysTick_Handler (void) 
 {           
@@ -64,6 +74,7 @@ int main()
     uint32_t n, m, p, cnt;
     uint32_t cclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_CPU);
     uint32_t filesize = 0;
+    uint32_t time_end;
 
 //	SystemInit();
     SysTick_Config(cclk/1000 - 1); /* Generate interrupt each 1 ms   */
@@ -71,6 +82,8 @@ int main()
 	debug_frmwrk_init(); // UART0
     xfunc_out = put_char;
 	xfunc_in  = get_char; 
+
+    xprintf("%s",mciFsMenu);
 
 	xprintf("\nMMC/SD Card Filesystem Test (P:LPC1788 L:EFSL)\n");
 
@@ -106,7 +119,6 @@ int main()
         xprintf("Sector count: %d\n", CardConfig.SectorCount);
         xprintf("Block size: %d sectors\n", CardConfig.BlockSize);
         xprintf("Card capacity: %d MByte\n\n", (((CardConfig.SectorCount >> 10) * CardConfig.SectorSize)) >> 10);
-
 		xprintf("\nDirectory of 'root':\n");
 		
 		/* list files in root directory */
@@ -140,7 +152,8 @@ int main()
                 if (p != cnt) break;                
             }
             filesize = m;
-            xprintf("%lu bytes read with %lu kB/sec.\n", m, Timer ? (m / Timer) : 0);
+            time_end = Timer;
+            xprintf("%lu bytes read in %lu milisec.\n", m, time_end);
             file_fclose( &filer ); 
 
         } else
@@ -172,7 +185,8 @@ int main()
                 m += p;
                 if (p != cnt) break;
             }
-            xprintf("%lu bytes written with %lu kB/sec.\n", m, Timer ? (m / Timer) : 0);
+            time_end = Timer;
+            xprintf("%lu bytes written in %lu milisec.\n", m, time_end);
 
             file_fclose( &filew );                          
 
