@@ -70,7 +70,61 @@ void DMA_IRQHandler (void)
    MCI_DMA_IRQHandler();
 }
 #endif
+/*-----------------------------------------------------------------------*/
+/* Get bits from an array
+/----------------------------------------------------------------------*/
+uint32_t unstuff_bits(uint8_t* resp,uint32_t start, uint32_t size)
+{                                   
+     uint32_t byte_idx_stx;                                        
+     uint8_t bit_idx_stx, bit_idx;
+     uint32_t ret, byte_idx;
 
+     byte_idx_stx = start/8;
+     bit_idx_stx = start - byte_idx_stx*8;
+
+     if(size < (8 - bit_idx_stx))       // in 1 byte
+     {
+        return ((resp[byte_idx_stx] >> bit_idx_stx) & ((1<<size) - 1));        
+     }
+
+     ret = 0;
+     
+     ret =  (resp[byte_idx_stx] >> bit_idx_stx) & ((1<<(8 - bit_idx_stx)) - 1);
+     bit_idx = 8 - bit_idx_stx;
+     size -= bit_idx;
+
+     byte_idx = 1;
+     while(size > 8)
+     {
+        ret |= resp[byte_idx_stx + byte_idx] << (bit_idx);
+        size -= 8;
+        bit_idx += 8;
+        byte_idx ++;
+     }
+     
+    
+     if(size > 0)
+     {
+        ret |= (resp[byte_idx_stx + byte_idx] & ((1<<size) - 1)) << bit_idx;
+     }
+
+     return ret;
+}
+/*-----------------------------------------------------------------------*/
+/* Swap buffer
+/----------------------------------------------------------------------*/
+static void swap_buff(uint8_t* buff, uint32_t count)
+{
+    uint8_t tmp;
+    uint32_t i;
+
+    for(i = 0; i < count/2; i++)
+    {
+        tmp = buff[i];
+        buff[i] = buff[count-i-1];
+        buff[count-i-1] = tmp;
+    }
+}
 /*-----------------------------------------------------------------------*/
 /* Initialize Disk Drive                                                  */
 /*-----------------------------------------------------------------------*/
@@ -127,6 +181,7 @@ DSTATUS disk_initialize (
 Bool mci_read_configuration (void)
 {
 	uint32_t c_size, c_size_mult, read_bl_len;
+    uint8_t csd_struct = 0;
 	
 	do
 	{
@@ -159,44 +214,60 @@ Bool mci_read_configuration (void)
 		if(MCI_GetCSD((uint32_t*)CardConfig.CSD) != MCI_FUNC_OK)
 		{
 			break;
-		}	
+		}
+        swap_buff(&CardConfig.CSD[0], sizeof(uint32_t));
+        swap_buff(&CardConfig.CSD[4], sizeof(uint32_t));
+        swap_buff(&CardConfig.CSD[8], sizeof(uint32_t));
+        swap_buff(&CardConfig.CSD[12], sizeof(uint32_t));
+		swap_buff(CardConfig.CSD, 16);	
 
 		/* sector size */
     	CardConfig.SectorSize = 512;
 		
-		 /* sector count */
-	    if ((CardConfig.CardType == MCI_SDSC_V2_CARD)|| /* CSD V2.0 (for High/eXtended Capacity) */
-            (CardConfig.CardType == MCI_SDHC_SDXC_CARD))
+        csd_struct = CardConfig.CSD[15] >> 6;
+		 /* Block count */
+	    if (csd_struct == 1)    /* CSD V2.0 */
 	    {
 	        /* Read C_SIZE */
-	        c_size =  (((uint32_t)CardConfig.CSD[7]<<16) + ((uint32_t)CardConfig.CSD[8]<<8) + CardConfig.CSD[9]) & 0x3FFFFF;
-	        /* Calculate sector count */
-	       CardConfig.SectorCount = (c_size + 1) * 1024;
+	        c_size =  unstuff_bits(CardConfig.CSD, 48,22);
+	        /* Calculate block count */
+	       CardConfig.SectorCount  = (c_size + 1) * 1024;
 
 	    } else   /* CSD V1.0 (for Standard Capacity) */
 	    {
 	        /* C_SIZE */
-	        c_size = (((uint32_t)(CardConfig.CSD[6]&0x3)<<10) + ((uint32_t)CardConfig.CSD[7]<<2) + (CardConfig.CSD[8]>>6)) & 0xFFF;
+	        c_size = unstuff_bits(CardConfig.CSD, 62,12);
 	        /* C_SIZE_MUTE */
-	        c_size_mult = ((CardConfig.CSD[9]&0x3)<<1) + ((CardConfig.CSD[10]&0x80)>>7);
+	        c_size_mult = unstuff_bits(CardConfig.CSD, 47,3);
 	        /* READ_BL_LEN */
-	        read_bl_len = CardConfig.CSD[5] & 0xF;
+	        read_bl_len = unstuff_bits(CardConfig.CSD, 80,4);
 	        /* sector count = BLOCKNR*BLOCK_LEN/512, we manually set SECTOR_SIZE to 512*/
-	        //CardConfig.SectorCount = (c_size+1)*(1<<read_bl_len) * (1<<(c_size_mult+2)) / 512;
-	        CardConfig.SectorCount = (c_size+1) << (read_bl_len + c_size_mult - 7);        
+	        CardConfig.SectorCount = (((c_size+1)* (0x01 << (c_size_mult+2))) * (0x01<<read_bl_len))/512;
 	    }
 
         /* Get erase block size in unit of sector */
         switch (CardConfig.CardType)
         {
             case MCI_MMC_CARD:
-                //CardConfig.blocksize = ((uint16_t)((CardConfig.csd[10] & 124) >> 2) + 1) * (((CardConfig.csd[11] & 3) << 3) + ((CardConfig.csd[11] & 224) >> 5) + 1);
-                CardConfig.BlockSize = ((uint16_t)((CardConfig.CSD[10] & 124) >> 2) + 1) * (((CardConfig.CSD[10] & 3) << 3) + ((CardConfig.CSD[11] & 224) >> 5) + 1);
+                 CardConfig.BlockSize = unstuff_bits(CardConfig.CSD, 42,5) + 1;
+				 CardConfig.BlockSize <<=  unstuff_bits(CardConfig.CSD, 22,4);
+                 CardConfig.BlockSize /= 512;
                 break;
             case MCI_SDHC_SDXC_CARD:
             case MCI_SDSC_V2_CARD:
+                CardConfig.BlockSize = 1;
+                break;
             case MCI_SDSC_V1_CARD:
-                CardConfig.BlockSize = (((CardConfig.CSD[10] & 63) << 1) + ((uint16_t)(CardConfig.CSD[11] & 128) >> 7) + 1) << ((CardConfig.CSD[13] >> 6) - 1);
+                if(unstuff_bits(CardConfig.CSD, 46,1))
+                {
+                     CardConfig.BlockSize = 1;
+                }
+                else
+                {
+                    CardConfig.BlockSize = unstuff_bits(CardConfig.CSD, 39,7) + 1;
+                    CardConfig.BlockSize <<=  unstuff_bits(CardConfig.CSD, 22,4);
+                    CardConfig.BlockSize /= 512;
+                }
                 break;
             default:
                 break;                
@@ -316,15 +387,6 @@ DRESULT disk_ioctl (
 		res = RES_OK;
 		break;
 
-	case MMC_GET_OCR :		/* Receive OCR as an R3 resp (4 bytes) */
-        {
-            uint8_t* ocr = (uint8_t*)&CardConfig.OCR;
-    		for (n=0;n<4;n++)
-    			*(ptr+n) = ocr[n];
-        }
-		res = RES_OK;
-		break;
-
 	case MMC_GET_SDSTAT :	/* Receive SD status as a data block (64 bytes) */
 		{
 			int32_t cardStatus;
@@ -355,9 +417,10 @@ DRESULT disk_read (
 	BYTE count			/* Sector count (1..255) */
 )
 {
+     uint32_t tmp;
 	if (drv || !count) return RES_PARERR;
 	if (Stat & STA_NOINIT) return RES_NOTRDY;
-
+    for(tmp = 0x100000;tmp;tmp--);
 	if (MCI_ReadBlock (buff, sector, count) == MCI_FUNC_OK)	
 	{
 		//while(MCI_GetBlockXferEndState() != 0);

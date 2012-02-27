@@ -13,6 +13,7 @@
 #include "diskio.h"
 #include "ff.h"
 #include "debug_frmwrk.h"
+#include "lpc177x_8x_mci.h"
 
 #if _USE_XSTRFUNC==0
 #include <string.h>
@@ -203,7 +204,7 @@ static void IoInit(void)
 int main ()
 {
 	char *ptr, *ptr2;
-	long p1, p2, p3;
+	long p1, p2, p3, xlen;
 	BYTE res, b1;    
 	WORD w1;
 	UINT s1, s2, cnt; 
@@ -215,10 +216,11 @@ int main ()
 	RTC_TIME_Type rtc;
 
 	IoInit();
-    
+  
     xputs("\nFatFs module test monitor for LPC177x_8x ("__TIME__" "__DATE__")\n");
 	xputs(_USE_LFN ? "LFN Enabled" : "LFN Disabled");
 	xprintf(", Code page: %u\n", _CODE_PAGE);
+#ifdef __PRINT_COMMANDs__
     xputs("Commands: \n");
     xputs("          dd <phy_drv#> [<sector>] - Dump secrtor\n");
     xputs("          di <phy_drv#> - Initialize disk\n");
@@ -250,7 +252,7 @@ int main ()
     #endif
     xputs("          fz [<rw size>] - Change R/W length for fr/fw/fx command       \n");
     xputs("          t [<year> <mon> <mday> <hour> <min> <sec>]        \n");
-
+#endif /*__PRINT_COMMANDs__*/
 #if _USE_LFN
 	Finfo.lfname = Lfname;
 	Finfo.lfsize = sizeof(Lfname);
@@ -295,9 +297,17 @@ int main ()
 				if (disk_ioctl((BYTE)p1, MMC_GET_CSD, Buff) == RES_OK)
 					{ xputs("CSD:\n"); put_dump(Buff, 0, 16); }
 				if (disk_ioctl((BYTE)p1, MMC_GET_CID, Buff) == RES_OK)
-					{ xputs("CID:\n"); put_dump(Buff, 0, 16); }
-				if (disk_ioctl((BYTE)p1, MMC_GET_OCR, Buff) == RES_OK)
-					{ xputs("OCR:\n"); put_dump(Buff, 0, 4); }
+				{
+                    st_Mci_CardId* cidval =  (st_Mci_CardId*)Buff;
+                    xputs("CID:\n");
+                    xprintf("\n\r\t- Manufacture ID: 0x%x\n", cidval->MID);
+            		xprintf("\n\r\t- OEM/Application ID: 0x%x\n", cidval->OID);
+            		xprintf("\n\r\t- Product Name: 0x%x\n", cidval->PNM_H);
+            		xprintf("\n\r\t- Product Revision: 0x%x\n", cidval->PRV);
+            		xprintf("\n\r\t- Product Serial Number: 0x%x\n",cidval->PSN);
+            		xprintf("\n\r\t- Manufacturing Date: 0x%x\n",cidval->MDT);
+
+                }
 				if (disk_ioctl((BYTE)p1, MMC_GET_SDSTAT, Buff) == RES_OK) {
 					xputs("SD Status:\n");put_dump(Buff, 0, 2);
 					//for (s1 = 0; s1 < 64; s1 += 16) put_dump(Buff+s1, s1, 16);
@@ -469,27 +479,28 @@ int main ()
 					p2 += s2;
 					if (cnt != s2) break;
 				}
-				xprintf("%lu bytes read with %lu kB/sec.\n", p2, Timer ? (p2 / Timer) : 0);
+				xprintf("%lu bytes read with %lu B/sec.\n", p2, Timer ? (p2 / Timer) : 0);
                 xprintf("File's content: \n%s\n",Buff);
 				break;
 
 			case 'w' :	/* fw <len> <val> - write file */
-				if (!xatoi(&ptr, &p1) || !xatoi(&ptr, &p2)) break;
-				xmemset(Buff, (BYTE)p2, blen);
+				if (!xatoi(&ptr, &p1)) break;
+				while (*ptr == ' ') ptr++;
+                xlen = xstrlen(ptr);
 				p2 = 0;
 				Timer = 0;
 				while (p1) {
-					if ((UINT)p1 >= blen) {
-						cnt = blen; p1 -= blen;
+					if ((UINT)p1 >= xlen) {
+						cnt = xlen; p1 -= xlen;
 					} else {
 						cnt = p1; p1 = 0;
 					}
-					res = f_write(&File1, Buff, cnt, &s2);
+					res = f_write(&File1, ptr, cnt, &s2);
 					if (res != FR_OK) { put_rc((FRESULT)res); break; }
 					p2 += s2;
 					if (cnt != s2) break;
 				}
-				xprintf("%lu bytes written with %lu kB/sec.\n", p2, Timer ? (p2 / Timer) : 0);
+				xprintf("%lu bytes written with %lu B/sec.\n", p2, Timer ? (p2 / Timer) : 0);
 				break;
 
 			case 'n' :	/* fn <old_name> <new_name> - Change file/dir name */
@@ -526,6 +537,7 @@ int main ()
 				Finfo.fdate = ((p1 - 1980) << 9) | ((p2 & 15) << 5) | (p3 & 31);
 				if (!xatoi(&ptr, &p1) || !xatoi(&ptr, &p2) || !xatoi(&ptr, &p3)) break;
 				Finfo.ftime = ((p1 & 31) << 11) | ((p2 & 63) << 5) | ((p3 >> 1) & 31);
+                while (*ptr == ' ') ptr++;
 				put_rc(f_utime(ptr, &Finfo));
 				break;
 
@@ -561,8 +573,10 @@ int main ()
 					if (res || s2 < s1) break;   /* error or disk full */
 				}
 				xprintf("%lu bytes copied with %lu kB/sec.\n", p1, p1 / Timer);
-				f_close(&File1);
-				f_close(&File2);
+                xprintf("Close \"%s\": ", ptr);
+				put_rc(f_close(&File1));
+                xprintf("Close \"%s\": ", ptr2);
+				put_rc(f_close(&File2));
 				break;
 
 #if _FS_RPATH
