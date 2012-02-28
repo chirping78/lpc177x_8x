@@ -46,7 +46,7 @@ include $(PROJ_ROOT)/makesection/makerule/$(DEVICE)/make.$(DEVICE).$(TOOL)
 # Pick up the assembler and C source files in the directory  
 #
 ########################################################################
-include $(PROJ_ROOT)\makesection\makerule\common\make.rules.ftypes
+include $(PROJ_ROOT)/makesection/makerule/common/make.rules.ftypes
 AFLAGS +=-I../include 
 CFLAGS +=-I../include 
 

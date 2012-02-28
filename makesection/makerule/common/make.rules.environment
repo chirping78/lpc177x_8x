@@ -22,27 +22,26 @@
 ########################################################################
 
 BUILD_ROOT =$(PROJ_ROOT)
-TOOLS_PATH =$(PROJ_ROOT)/makesection/tools
 
 FWLIB	   =Drivers
 LPC_SILENT =0
 
-ECHO		= $(TOOLS_PATH)/echo
+ECHO		= $(TOOLS_PATH)echo
 ifeq ($(LPC_SILENT), 1)
-	MAKE    = $(TOOLS_PATH)/make -s
+	MAKE    = $(TOOLS_PATH)make -s
 else	
-	MAKE    = $(TOOLS_PATH)/make
+	MAKE    = $(TOOLS_PATH)make
 endif
-MKDEPS		= $(TOOLS_PATH)/makedepend
+MKDEPS		= $(TOOLS_PATH)makedepend
 RANLIB		= ranlib
-MV			= $(TOOLS_PATH)/mv -f
-CP			= $(TOOLS_PATH)/cp
-CD			= $(TOOLS_PATH)/cd
+MV			= $(TOOLS_PATH)mv -f
+CP			= $(TOOLS_PATH)cp
+CD			= $(TOOLS_PATH)cd
 LS			= dir
-MKDIR		= $(TOOLS_PATH)/mkdir -p
-RM			= $(TOOLS_PATH)/rm -f
-RMREC		= $(TOOLS_PATH)/rm -f -r
-RMDIR		= $(TOOLS_PATH)/rm -f -r
+MKDIR		= $(TOOLS_PATH)mkdir -p
+RM			= $(TOOLS_PATH)rm -f
+RMREC		= $(TOOLS_PATH)rm -f -r
+RMDIR		= $(TOOLS_PATH)rm -f -r
 
 ASTYLE		= astyle --options=$(BUILD_ROOT)/makesection/tools/astyle.cfg 
 

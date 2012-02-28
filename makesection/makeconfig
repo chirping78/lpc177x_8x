@@ -16,6 +16,7 @@ DEVICE				=LPC177x_8x
 MANUFACTURE			=NXP
 TOOL 				=gnu
 DEBUG_MODE			=1
+TOOLS_PATH 			=$(PROJ_ROOT)/makesection/tools/
 
 
 GNU_INSTALL_ROOT	=C:/Program Files (x86)/CodeSourcery/Sourcery G++ Lite
