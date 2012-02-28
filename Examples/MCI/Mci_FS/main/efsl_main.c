@@ -218,7 +218,8 @@ int main()
                 if (p != cnt) break;                
             }
             filesize = m;
-            xprintf("%lu bytes read with %lu kB/sec.\n", m, Timer ? (m / Timer) : 0);
+            time_end = Timer;
+            xprintf("%lu bytes read in %lumiliseconds.\n", m, time_end);
             file_fclose( &filer ); 
 
         } else
