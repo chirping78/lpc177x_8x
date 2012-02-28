@@ -95,6 +95,7 @@ void c_entry (void)
 	en_Mci_CardType cardType;
 	uint32_t rcAddress;
 	uint32_t csdVal[4];
+    uint32_t errorState;
 
 	// Initialize buffers for testing later
 	
@@ -247,13 +248,20 @@ void c_entry (void)
 	{
 		//while(MCI_GetBlockXferEndState() != 0);
 		while(MCI_GetDataXferEndState() != 0);
-		
-		if(WRITE_BLOCK_NUM > 1)
+        errorState = MCI_GetXferErrState();		
+		if((WRITE_BLOCK_NUM > 1) || errorState);
 		{
 			MCI_Cmd_StopTransmission();
 		}
 		
-		_DBG("Write ");_DBD(WRITE_BLOCK_NUM);_DBG(" Blocks successfully!!!\n\r");
+        if(errorState)
+        {
+            _DBG("Write ");_DBD(WRITE_BLOCK_NUM);_DBG(" Failed (");_DBH32(errorState);_DBG_(")");
+        }
+        else
+        {
+		    _DBG("Write ");_DBD(WRITE_BLOCK_NUM);_DBG(" Blocks successfully!!!\n\r");
+        }
 	}
 
 	// Delay 500ms
@@ -269,8 +277,20 @@ void c_entry (void)
 	{
 		//while(MCI_GetBlockXferEndState() != 0);
 		while(MCI_GetDataXferEndState() != 0);
+		errorState = MCI_GetXferErrState();		
+		if((WRITE_BLOCK_NUM > 1) || errorState);
+		{
+			MCI_Cmd_StopTransmission();
+		}
 		
-		_DBG("Read ");_DBD(WRITE_BLOCK_NUM);_DBG(" Blocks successfully!!!\n\r");
+        if(errorState)
+        {
+            _DBG("Read ");_DBD(WRITE_BLOCK_NUM);_DBG(" Failed (");_DBH32(errorState);_DBG_(")");
+        }
+        else
+        {
+		    _DBG("Read ");_DBD(WRITE_BLOCK_NUM);_DBG(" Blocks successfully!!!\n\r");
+        }
 	}
 
 	retVal = MCI_FUNC_OK;

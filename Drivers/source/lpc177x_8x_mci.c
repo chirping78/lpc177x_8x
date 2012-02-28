@@ -113,6 +113,8 @@ volatile uint32_t Mci_Data_Xfer_End = 0;
 
 volatile uint32_t Mci_Data_Xfer_ERR = 0;
 
+volatile uint8_t fifo_plane = 0;
+
 volatile uint32_t CardRCA;
 
 volatile uint8_t CCS;
@@ -201,7 +203,7 @@ uint32_t MCI_SettingDma(uint8_t* memBuf, uint32_t ChannelNum, uint32_t DMAMode )
 		// Source memory
 		GPDMACfg.SrcMemAddr = (uint32_t)memBuf;
 		// Destination memory
-		GPDMACfg.DstMemAddr = (uint32_t)&LPC_MCI->FIFO;
+		GPDMACfg.DstMemAddr = (uint32_t)LPC_MCI->FIFO;
 
 		// Source connection 
 		GPDMACfg.SrcConn = 0;
@@ -213,7 +215,7 @@ uint32_t MCI_SettingDma(uint8_t* memBuf, uint32_t ChannelNum, uint32_t DMAMode )
 	{
 		/* Ch0 set for P2M transfer from MCI FIFO to memory. */
 		// Source memory
-		GPDMACfg.SrcMemAddr = (uint32_t)&LPC_MCI->FIFO;
+		GPDMACfg.SrcMemAddr = (uint32_t)LPC_MCI->FIFO;
 		// Destination memory
 		GPDMACfg.DstMemAddr = (uint32_t)memBuf;
 
@@ -305,10 +307,23 @@ void MCI_DMA_IRQHandler (void)
 int32_t MCI_ReadFifo(uint32_t * dest) 
 {
 	uint8_t i;
+    uint8_t start, end;
 
-	for (i = 0; i < 8; i++) 
+    if(fifo_plane == 0)
+    {
+        start = 0;
+        end = 7;
+    }
+    else
+    {
+        start = 8;
+        end = 15;
+    }
+    fifo_plane = (fifo_plane) ? 0:1;
+
+	for (i = start; i <= end; i++) 
 	{
-		*dest = LPC_MCI->FIFO;
+		*dest = LPC_MCI->FIFO[i];
 		
 		dest++;
 	}
@@ -327,10 +342,23 @@ int32_t MCI_ReadFifo(uint32_t * dest)
 int32_t MCI_WriteFifo(uint32_t * src)
 {
 	uint8_t i;
+    uint8_t start, end;
 
-	for (i = 0; i < 8; i++) 
+    if(fifo_plane == 0)
+    {
+        start = 0;
+        end = 7;
+    }
+    else
+    {
+        start = 8;
+        end = 15;
+    }
+    fifo_plane = (fifo_plane) ? 0:1;
+
+	for (i = start; i <= end; i++) 
 	{
-		LPC_MCI->FIFO = *src;
+		LPC_MCI->FIFO[i] = *src;
 		
 		src++;
 	}
@@ -2019,8 +2047,17 @@ uint32_t MCI_GetDataXferEndState(void)
 {
 	return Mci_Data_Xfer_End;
 }
-
-
+/************************************************************************//**
+ * @brief 		Get the error state of  the lastest data transfer
+ *
+ * @param		None
+ *
+ * @return 		Error state (stored by Mci_Data_Xfer_ERR variable)
+ ****************************************************************************/
+uint32_t MCI_GetXferErrState(void)
+{
+    return Mci_Data_Xfer_ERR;
+}
 
 /************************************************************************//**
  * @brief 		Stop the current transmission on the bus by sending command CMD12
@@ -2253,6 +2290,7 @@ int32_t MCI_WriteBlock(uint8_t* memblock, uint32_t blockNum, uint32_t numOfBlock
 
 	Mci_Data_Xfer_End = 1;
     Mci_Data_Xfer_ERR = 0;
+    fifo_plane = 0;
 
 	txBlockCnt = 0;
 
@@ -2341,6 +2379,7 @@ int32_t MCI_ReadBlock(uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBlock
 	Mci_Data_Xfer_End = 1;
     Mci_Data_Xfer_ERR = 0;
 	rxBlockCnt = 0;
+    fifo_plane = 0;
 
 	if ( MCI_Cmd_ReadBlock(blockNum, numOfBlock) != MCI_FUNC_OK )
 	{

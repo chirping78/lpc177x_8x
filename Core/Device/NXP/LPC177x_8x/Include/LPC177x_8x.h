@@ -839,7 +839,7 @@ typedef struct
        uint32_t RESERVED0[2];
   __I  uint32_t FIFOCNT;
        uint32_t RESERVED1[13];
-  __IO uint32_t FIFO;
+  __IO uint32_t FIFO[16];
 } LPC_MCI_TypeDef;
 
 /*------------- Controller Area Network (CAN) --------------------------------*/

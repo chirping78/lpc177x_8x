@@ -43,7 +43,7 @@
  * @{
  */
 
-#define MCI_DMA_ENABLED		(0)
+#define MCI_DMA_ENABLED		(1)
 
 #define HIGH_LVL		(1)
 #define LOW_LVL			(0)
@@ -352,6 +352,7 @@ int32_t MCI_GetCSD(uint32_t* csdVal);
 int32_t MCI_Cmd_SelectCard( void );
 int32_t MCI_GetCardStatus(int32_t* cardStatus);
 uint32_t MCI_GetDataXferEndState(void);
+uint32_t MCI_GetXferErrState(void);
 int32_t MCI_SetBlockLen( uint32_t blockLength );
 int32_t MCI_Acmd_SendBusWidth( uint32_t buswidth );
 int32_t MCI_Cmd_StopTransmission( void );
