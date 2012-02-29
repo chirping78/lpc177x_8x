@@ -1,3 +1,39 @@
+RELEASE LPC177x_8xCMSIS_120229
+
+***** Implementations and Improvements ****
+1. Update UART driver: 
+	- Distinct LPC_UART_TypeDef, LPC_UART1_TypeDef and LPC_UART2_TypeDef:
+		+ Add definition of UART_ID_Type.
+		+ Change the first parmeter of APIs from LPC_UART_TypeDef* type to  UART_ID_Type type.
+		+ Update API code to get the LPC_UART0~3 from UART_ID_Type parameter and use it to update UART registers.
+2. Update UART examples so that it can be used to test all UART ports.
+3. Update the burst size of ADC to 1 instead of 4.
+4. Update SSP driver: support SSP2.
+5. Add SSP_Master and SSP_Slave example. Update SSP_Dma example to test SSP2.
+6. Update EEPROM driver:
+	- Remove "while(1)" in driver code.
+	- Update EEPROM_Read function: don't send Read Command when the last byte has been already read.
+	- Update EEPROM_Erase function: 
+		+ Clear interrupt status register after data writing finished.
+7. Update ADC_Burst example: add DMA Support Option through __DMA_USED__ macro.
+8. Update EEPROM_Demo example: Add code for testing EEPROM_Erase function .
+9. Add MCI_FS example:
+	- Update MCI driver:
+		+ Distinct SD Card Ver1.0, Ver2.0 and SDHC/SDXC card.
+		+ Add function MCI_GetXferErrState to get the error status if reading/writing failed.
+		+ Update MCI FIFO: define 16 entries in the FIFO instead of 1.
+	- Add MCI_FS example.
+
+
+***** Known Issues: In this package contains some examples that can not verify now ****
+
+1./ ADC > Adc_Burst
+2./ CAN > Can_SelfTest
+Maybe they will be removed when release for customers.
+ 
+ 
+==========================================================================================================
+==========================================================================================================
 RELEASE LPC177x_8xCMSIS_120131
 
 ***** Implementations and Improvements ****

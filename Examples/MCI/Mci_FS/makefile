@@ -24,9 +24,46 @@
 # use without further testing or modification. 
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
-EXECNAME    =mci_readwrite_test
-EXDIR		=MCI/MCI_ReadWrite
+EXECNAME    =mci_fs_test
+EXDIR		=MCI/MCI_FS
 
+EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+
+#FSLIB       = EFSL
+FSLIB       = FatFs
+# Include directory
+ifeq ($(FSLIB), FatFs)
+TMPPATH 		+= -I$(EXDIRINC)/FatFs
+ADDOBJS		    +=  $(EXDIRINC)/FatFs/ff.o \
+					$(EXDIRINC)/FatFs/option/ccsbcs.o \
+					$(EXDIRINC)/main/fatfs_main.o \
+					$(EXDIRINC)/main/fs_mci.o\
+					$(EXDIRINC)/main/monitor.o
+else
+TMPPATH 		+= -I$(EXDIRINC)/efsl/conf \
+					-I$(EXDIRINC)/efsl/inc \
+					-I$(EXDIRINC)/efsl/inc/interfaces \
+					-I$(EXDIRINC)/main
+ADDOBJS		    +=  $(EXDIRINC)/efsl/src/debug.o \
+					$(EXDIRINC)/efsl/src/dir.o \
+					$(EXDIRINC)/efsl/src/disc.o \
+					$(EXDIRINC)/efsl/src/efs.o \
+					$(EXDIRINC)/efsl/src/extract.o \
+					$(EXDIRINC)/efsl/src/fat.o \
+					$(EXDIRINC)/efsl/src/file.o \
+					$(EXDIRINC)/efsl/src/fs.o \
+					$(EXDIRINC)/efsl/src/ioman.o \
+					$(EXDIRINC)/efsl/src/ls.o \
+					$(EXDIRINC)/efsl/src/mkfs.o \
+					$(EXDIRINC)/efsl/src/partition.o \
+					$(EXDIRINC)/efsl/src/plibc.o \
+					$(EXDIRINC)/efsl/src/time.o \
+					$(EXDIRINC)/efsl/src/ui.o \
+					$(EXDIRINC)/efsl/src/interfaces/if_lpc177x_8x.o \
+					$(EXDIRINC)/main/efsl_main.o \
+					$(EXDIRINC)/main/fs_mci.o \
+					$(EXDIRINC)/main/monitor.o
+endif
 
 
 ########################################################################

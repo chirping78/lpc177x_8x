@@ -46,7 +46,6 @@ uint8_t mciFsMenu[]=
 "\t - UART Communicationi: 115200 bps \n\r"
 " This example is used to demonstrate how to implement a filesystem using MCI.\n\r"
 " EFLS,a library for file systems, is used in this example. \n\r"
-" Press r to display commands which are supported.\n\r"
 "********************************************************************************\n\r";
 /* SysTick Interrupt Handler (1ms)    */
 void SysTick_Handler (void) 

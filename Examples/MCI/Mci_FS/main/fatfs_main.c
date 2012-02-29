@@ -1,7 +1,6 @@
 /*---------------------------------------------------------------------------*/
 /* FAT file system sample project for FatFs (LPC17xx)    (C)ChaN, NXP, 2010  */
 /*---------------------------------------------------------------------------*/
-
 #include <stdint.h>
 #include <stdbool.h>
 #include "LPC177x_8x.h"
@@ -588,7 +587,7 @@ void file_cmd_handle(char* ptr)
 				if (res || s2 < s1) break;   /* error or disk full */
 			}
             time_end = Timer;
-			xprintf("%lu bytes copiedin %lu miliseconds.\n", p1, time_end);
+			xprintf("%lu bytes copied in %lu miliseconds.\n", p1, time_end);
             xprintf("Close \"%s\": ", ptr);
 			put_rc(f_close(&File1));
             xprintf("Close \"%s\": ", ptr2);

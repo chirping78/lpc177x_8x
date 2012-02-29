@@ -567,10 +567,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>46</ColumnNumber>
+      <ColumnNumber>66</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>1</CurrentLine>
+      <TopLine>8</TopLine>
+      <CurrentLine>8</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\abstract.txt</PathWithFileName>
       <FilenameWithoutPath>abstract.txt</FilenameWithoutPath>
@@ -587,8 +587,8 @@
         <Doc>
           <Name>..\abstract.txt</Name>
           <ColumnNumber>66</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>27</CurrentLine>
+          <TopLine>8</TopLine>
+          <CurrentLine>8</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

@@ -59,11 +59,17 @@
 					+ P0.16 (@ J3.24) - JP13.2
 				- UART2:
 					+ JP6: 	1-2: OFF
-							3-4: OFF
-							5-6: ON
+						3-4: OFF
+						5-6: ON
 					+ JP12: 1-2
 					+ JP13: 1-2
 					+ Other jumpers: Default
+				- UART3:
+					+ P0.2 (@J5.13) - JP12.2
+					+ P0.3 (@J5.14) - JP13.2
+				- UART4:
+					+ P0.22 (@J3.25) - JP12.2
+					+ P2.9 (@J3.15) - JP13.2
 	    	2. LPC1788 IAR Start Kit Rev.B
 				- UART0: 
 					All jumpers: optional
