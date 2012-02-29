@@ -41,7 +41,7 @@ esint8 if_initInterface(hwInterface* file, eint8* opts)
 
 esint8 if_readBuf(hwInterface* file,euint32 address,euint8* buf)
 {
-	if (disk_read (0, buf, address, 1) == MCI_FUNC_OK)	
+	if (disk_read (0, buf, address, 1) == RES_OK)	
 		return 0;
 	else
 		return (-1);
@@ -55,7 +55,7 @@ esint8 if_readBuf(hwInterface* file,euint32 address,euint8* buf)
 
 esint8 if_writeBuf(hwInterface* file,euint32 address,euint8* buf)
 {
-	if ( disk_write(0, (uint8_t*)buf, address, 1) == MCI_FUNC_OK)
+	if ( disk_write(0, (uint8_t*)buf, address, 1) == RES_OK)
 		return 0;
 	else
 		return (-1);
