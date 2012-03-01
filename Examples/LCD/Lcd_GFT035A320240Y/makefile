@@ -25,7 +25,7 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =lcd_test
-EXDIR		=LCD/Lcd_GFT035A320240Y
+EXDIRINC	=$(CURDIR)
 
 # Include directory
 TMPPATH 		+= -I$(EXDIRINC)/apps  
@@ -42,5 +42,4 @@ ADDOBJS		+=  $(EXDIRINC)/app/Cursor.o \
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

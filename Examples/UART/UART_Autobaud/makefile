@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =uart_autobaud_test
-EXDIR		=UART/Uart_Autobaud
 
 
 ########################################################################
@@ -34,5 +33,5 @@ EXDIR		=UART/Uart_Autobaud
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

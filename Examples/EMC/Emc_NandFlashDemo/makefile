@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =emc_nandflash_test
-EXDIR		=EMC/Emc_NandFlashDemo
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=EMC/Emc_NandFlashDemo
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

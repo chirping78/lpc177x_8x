@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =mci_cidcard_test
-EXDIR		=MCI/Mci_CidCard
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=MCI/Mci_CidCard
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

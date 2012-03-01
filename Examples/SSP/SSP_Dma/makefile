@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =ssp_dma_test
-EXDIR		=SSP/Ssp_Dma
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=SSP/Ssp_Dma
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =gpio_ledblinky_test
-EXDIR		=GPIO/Gpio_LedBlinky
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=GPIO/Gpio_LedBlinky
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

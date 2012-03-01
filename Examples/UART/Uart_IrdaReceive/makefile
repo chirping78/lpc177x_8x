@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =uart_irdaReceive_test
-EXDIR		=UART/Uart_IrdaReceive
 
 
 ########################################################################
@@ -34,5 +33,5 @@ EXDIR		=UART/Uart_IrdaReceive
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

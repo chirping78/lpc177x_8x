@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =systick_stclk_test
-EXDIR		=SYSTICK/Systick_Stclk
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=SYSTICK/Systick_Stclk
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

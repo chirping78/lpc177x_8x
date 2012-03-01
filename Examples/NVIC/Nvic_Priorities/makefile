@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =nvic_priorities_test
-EXDIR		=NVIC/Nvic_Priorities
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=NVIC/Nvic_Priorities
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

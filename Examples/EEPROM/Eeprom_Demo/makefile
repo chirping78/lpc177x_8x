@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT			= $(CURDIR)/../../..
 EXECNAME    =eeprom_test
-EXDIR		=EEPROM/Eeprom_Demo
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=EEPROM/Eeprom_Demo
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

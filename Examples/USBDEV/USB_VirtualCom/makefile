@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =usb_virtual_com_test
-EXDIR		=USBDEV\Usb_VirtualCom
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=USBDEV\Usb_VirtualCom
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

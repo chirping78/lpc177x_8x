@@ -25,9 +25,8 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =mci_fs_test
-EXDIR		=MCI/MCI_FS
 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 
 #FSLIB       = EFSL
 FSLIB       = FatFs
@@ -72,5 +71,4 @@ endif
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

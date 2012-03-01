@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =uart_Rs485Master_test
-EXDIR		=UART/Uart_Rs485Master
 
 
 ########################################################################
@@ -34,5 +33,5 @@ EXDIR		=UART/Uart_Rs485Master
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT			= $(CURDIR)/../../..
 EXECNAME    =can_self_test
-EXDIR		=CAN/Can_Selftest
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=CAN/Can_Selftest
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

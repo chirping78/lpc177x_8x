@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT			= $(CURDIR)/../../..
 EXECNAME    =Emac_easyweb_test
-EXDIR		=EMAC/Emac_EasyWeb
 
 
 
@@ -36,4 +35,4 @@ EXDIR		=EMAC/Emac_EasyWeb
 ########################################################################
 include ../../../makesection/makeconfig 
 include ../../../makesection/makerule/example/makefile.ex
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)

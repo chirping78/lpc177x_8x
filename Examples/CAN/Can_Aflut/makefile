@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT			= $(CURDIR)/../../..
 EXECNAME    =can_aflut_test
-EXDIR		=CAN/Can_Aflut
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=CAN/Can_Aflut
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

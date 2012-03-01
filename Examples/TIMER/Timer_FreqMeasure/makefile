@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =timer_freqMeasure_test
-EXDIR		=TIMER/Timer_freqMeasure
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=TIMER/Timer_freqMeasure
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

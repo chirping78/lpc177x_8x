@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT			= $(CURDIR)/../../..
 EXECNAME    =emac_uIP_test
-EXDIR		=EMAC/Emac_uIP
 
 ########################################################################
 #
@@ -34,7 +33,7 @@ EXDIR		=EMAC/Emac_uIP
 ########################################################################
 include ../../../makesection/makeconfig 
 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 
 # Include directory
 TMPPATH 		+= -I$(EXDIRINC)/apps/webserver \

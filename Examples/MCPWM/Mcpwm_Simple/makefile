@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =mcpwm_test
-EXDIR		=MCPWM/Mcpwm_simple
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=MCPWM/Mcpwm_simple
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

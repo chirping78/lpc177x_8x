@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =usb_host_lite_test
-EXDIR		=USBHostLite/UsbHost_MassStorage
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=USBHostLite/UsbHost_MassStorage
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT			= $(CURDIR)/../../..
 EXECNAME    =dma_flash2ram_test
-EXDIR		=DMA/Dma_Flash2Ram
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=DMA/Dma_Flash2Ram
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

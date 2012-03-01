@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =pwm_single_edge_test
-EXDIR		=PWM/Pwm_SingleEdge
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=PWM/Pwm_SingleEdge
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

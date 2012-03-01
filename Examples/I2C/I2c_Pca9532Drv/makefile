@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =i2c_test
-EXDIR		=I2C/I2c_Pca9532Drv
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=I2C/I2c_Pca9532Drv
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

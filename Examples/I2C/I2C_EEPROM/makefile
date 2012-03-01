@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =i2c_eeprom_test
-EXDIR		=I2C\I2C_EEPROM
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=I2C\I2C_EEPROM
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

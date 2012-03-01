@@ -25,7 +25,6 @@
 ########################################################################
 PROJ_ROOT	= $(CURDIR)/../../..
 EXECNAME    =pwr_deep_sleep_test
-EXDIR		=PWR/Pwr_DeepSleep
 
 
 
@@ -35,5 +34,5 @@ EXDIR		=PWR/Pwr_DeepSleep
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
+EXDIRINC	=$(CURDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

@@ -25,9 +25,7 @@
 ########################################################################
 PROJ_ROOT			= $(CURDIR)/../../..
 EXECNAME    =adc_burst_test
-EXDIR		=ADC/ADC_Burst
-
-
+EXDIRINC	=$(CURDIR)
 
 ########################################################################
 #
@@ -35,5 +33,4 @@ EXDIR		=ADC/ADC_Burst
 #
 ########################################################################
 include ../../../makesection/makeconfig 
-EXDIRINC	=$(PROJ_ROOT)/Examples/$(EXDIR)
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex
