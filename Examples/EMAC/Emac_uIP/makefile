@@ -59,7 +59,7 @@ ADDOBJS		+=  $(EXDIRINC)/uip/psock.o \
 # 'lpc17xx_port' files 								
 ADDOBJS		+=  $(EXDIRINC)/lpc177x_8x_port/emac.o \
 				$(EXDIRINC)/lpc177x_8x_port/clock-arch.o \
-				$(EXDIRINC)/lpc177x_8x_port/Emac_uIp.o 
+				$(EXDIRINC)/lpc177x_8x_port/Emac_uIP.o 
 				
 				
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

@@ -30,7 +30,7 @@
 #include "usbcfg.h"
 #include "usbhw.h"
 #include "demo.h"
-#include "Pca9532.h"
+#include "pca9532.h"
 
 uint8_t InReport;                              /* HID Input Report    */
 
