@@ -1,6 +1,6 @@
  /***********************************************************************
 * $Id$		abstract.txt		2011-06-02		
-* @file		LCD\Lcd_GFT035A320240Y\abstract.txt 
+* @file		LCD\Lcd_Demo\abstract.txt 
 * @brief	Description of the LCD example.
 * @version	1.0
 * @date		02. June. 2011
@@ -24,9 +24,9 @@
 
 @Example description:
 	Purpose:
-		  This example project describes how to test LCD module on LPC1788 IAR KickStart Rev.B board		  
+		  This example project describes how to test LCD module on LPC1788.		  
 	Process:	
-		  The IAR, NXP and Onlimex logos appear on the LCD and the LCD hardware cursor moves as the 
+		  The NXP logos appear on the LCD and the LCD hardware cursor moves as the 
 		  board moves(the acceleration sensor is used).  		
 
 		  The LCD driver support all bpp values. The example tests with 2bpp, 16bpp and 24bpp (1 pixel can
@@ -49,7 +49,8 @@
 @How to run:
 	Hardware configuration:		
 		This example was tested on:
-			LPC1788 IAR Start Kit Rev.B
+			1. LPC1788 OEM Board rev A and OEM Base Board rev A
+			2. LPC1788 IAR Start Kit Rev.B
 				- 3.3VA_E	:ON
 				- VREG		:ON
 				- IO_E		:ON

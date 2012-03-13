@@ -57,6 +57,12 @@
 #define _RUNNING_NANDFLASH_K9F1G08U0C	(1)
 #define _RUNNING_NANDFLASH_K9F1G08U0A	(2)
 
+// List the LCD that have been supported
+#define _RUNNING_LCD_NONE               (0)
+#define _RUNNING_LCD_GFT035A320240Y		(1)
+#define _RUNNING_LCD_QVGA_TFT			(2)
+#define _RUNNING_LCD_G240320LTSW        (3)
+
 #if (_CURR_USING_BRD == _QVGA_BOARD)
 //Driver for PHY of LAN DP83848C IC
 #include "phylan_dp83848c.h"
@@ -102,6 +108,12 @@
 // NandFlash preset
 #define _CUR_USING_NANDFLASH			(_RUNNING_NANDFLASH_K9F1G08U0A)
 
+// LCD
+#define _CUR_USING_LCD                  (_RUNNING_LCD_G240320LTSW)
+#define LCD_CS_PORT_NUM                 (0)
+#define LCD_CS_PIN_NUM                  (16)
+#define LCD_DC_PORT_NUM                 (0)
+#define LCD_DC_PIN_NUM                  (19)
 #endif
 
 #if (_CURR_USING_BRD == _EA_PA_BOARD)
@@ -148,6 +160,13 @@
 // NandFlash preset
 #define _CUR_USING_NANDFLASH			(_RUNNING_NANDFLASH_K9F1G08U0C)
 
+// LCD
+#define _CUR_USING_LCD                  (_RUNNING_LCD_QVGA_TFT)
+#define LCD_CS_PORT_NUM                 (0)
+#define LCD_CS_PIN_NUM                  (20)
+#define LCD_DC_PORT_NUM                 (0)
+#define LCD_DC_PIN_NUM                  (19)
+
 #endif
 
 #if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
@@ -190,10 +209,16 @@
 #define BRD_TIM_CAP_LINKED_PORT		(0)
 #define BRD_TIM_CAP_LINKED_PIN		(4)
 
+// LCD
+#define _CUR_USING_LCD                  (_RUNNING_LCD_GFT035A320240Y)
 #endif
 
 #ifndef _CUR_USING_NANDFLASH
 #define _CUR_USING_NANDFLASH			(_RUNNING_NANDFLASH_NONE)
+#endif
+
+#ifndef _CUR_USING_LCD
+#define _CUR_USING_LCD                  (_RUNNING_LCD_NONE)
 #endif
 
 #endif//BSP_H

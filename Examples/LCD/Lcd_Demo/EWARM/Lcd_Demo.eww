@@ -2,7 +2,7 @@
 
 <workspace>
   <project>
-    <path>$WS_DIR$\Lcd_GFT035A320240Y.ewp</path>
+    <path>$WS_DIR$\Lcd_Demo.ewp</path>
   </project>
   <batchBuild>
     <batchDefinition>

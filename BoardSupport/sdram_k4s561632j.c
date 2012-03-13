@@ -103,6 +103,8 @@ void SDRAMInit( void )
     //enable buffers
     EMC_DynMemConfigB(0, EMC_DYNAMIC_CFG_BUFF_ENABLED);
     for(i = 100000; i;i--);
+    
+    TIM_DeInit(LPC_TIM0);
 }
 #endif /*_EMC*/
 #endif /*(_CURR_USING_BRD == _QVGA_BOARD)*/

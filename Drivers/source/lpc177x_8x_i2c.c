@@ -557,6 +557,17 @@ int32_t I2C_MasterHanleStates(en_I2C_unitId i2cId, uint32_t CodeStatus, I2C_M_SE
 			break;
         /* No status information */
 		case I2C_I2STAT_NO_INF:
+          if ((TransferCfg->tx_count <TransferCfg->tx_length)||
+               (TransferCfg->rx_count <TransferCfg->rx_length))
+          {
+            I2C_Stop(I2Cx);
+            Ret = I2C_ERR;
+          }
+          else
+          {
+            Ret = I2C_RECV_END;
+          }
+          break;
         default:
 			I2Cx->CONCLR = I2C_I2CONCLR_SIC;
 			break;

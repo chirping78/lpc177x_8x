@@ -931,28 +931,37 @@
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_adc.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\BoardSupport\lcd_qvga_tft.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_clkpwr.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\Drivers\Source\lpc177x_8x_adc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_emc.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\Drivers\Source\lpc177x_8x_clkpwr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_i2c.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\Drivers\Source\lpc177x_8x_emc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_lcd.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\Drivers\Source\lpc177x_8x_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_pinsel.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\Drivers\Source\lpc177x_8x_i2c.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_pwm.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\Drivers\Source\lpc177x_8x_lcd.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_timer.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\Drivers\Source\lpc177x_8x_pinsel.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\Drivers\Source\lpc177x_8x_pwm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\Drivers\Source\lpc177x_8x_ssp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\Drivers\Source\lpc177x_8x_timer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\BoardSupport\sdram_is42s32800d.c</name>
@@ -962,6 +971,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\BoardSupport\sdram_mt48lc8m32lfb5.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\BoardSupport\sensor_mma7455.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\BoardSupport\sensor_smb380.c</name>

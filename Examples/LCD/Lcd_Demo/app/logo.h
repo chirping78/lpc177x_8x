@@ -21,6 +21,11 @@
 
 #define   LOGO_BPP       24
 
-#define   BMP_BYTES_PP   4			
-//#define   BMP_BYTES_PP   (LOGO_BPP/8)
+#define   BMP_BYTES_PP   4	
+
+#if (LOGO_BPP < 24)
+#undef    BMP_BYTES_PP
+#define   BMP_BYTES_PP   (LOGO_BPP/8)
+#endif
+
 #endif // __LOGO_H
