@@ -978,6 +978,9 @@
     <file>
       <name>$PROJ_DIR$\..\..\..\..\BoardSupport\sensor_smb380.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\BoardSupport\tsc2046.c</name>
+    </file>
   </group>
   <group>
     <name>Readme</name>

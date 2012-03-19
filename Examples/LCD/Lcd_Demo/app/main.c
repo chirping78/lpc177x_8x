@@ -54,27 +54,19 @@
 #elif (_CURR_USING_BRD == _EA_PA_BOARD)
 #include "sdram_is42s32800d.h"
 #endif
+#include "tsc2046.h"
 
 /** @defgroup LCD_Demo	LCD Demo
  * @ingroup LCD_Examples
  * @{
  */
-#define ACCEL_SENSOR_USED               (1)
 
 #if (_CUR_USING_LCD == _RUNNING_LCD_GFT035A320240Y)
 #define   LOGO_DISPLAYED                (1)
-#else
-#define   LOGO_DISPLAYED                (0)
-#endif
+#define   TCS_USED						(0)
+#define ACCEL_SENSOR_USED               (1)
 
-#define LCD_VRAM_BASE_ADDR_UPPER 	((uint32_t)SDRAM_BASE_ADDR + 0x00100000)
-#define LCD_VRAM_BASE_ADDR_LOWER 	(LCD_VRAM_BASE_ADDR_UPPER + 1024*768*4)
-#define LCD_CURSOR_BASE_ADDR 	    ((uint32_t)0x20088800)
-
-#define TIMER0_TICK_PER_SEC   10
-#define BEEP 	 (1 << 30)
-
-#if (_CUR_USING_LCD == _RUNNING_LCD_GFT035A320240Y)
+/* LCD Config */
 #define LCD_REFRESH_FREQ     (50HZ)
 #define LCD_H_SIZE           320
 #define LCD_H_PULSE          30
@@ -86,7 +78,20 @@
 #define LCD_V_BACK_PORCH     15
 #define LCD_PIX_CLK          (6.5*1000000l)
 
-#else   /* _RUNNING_LCD_QVGA_TFT */
+/* PWM */
+#define _PWM_NO_USED    1
+#define _PWM_CHANNEL_NO 2
+#define _PWM_PORT_NUM   2
+#define _PWM_PIN_NUM    1
+#define _PWM_PIN_FUNC_NUM 1
+
+#else  /*(_CUR_USING_LCD != _RUNNING_LCD_GFT035A320240Y)*/
+
+#define   LOGO_DISPLAYED                (0)
+#define   TCS_USED						(1)
+#define   ACCEL_SENSOR_USED               (0)
+
+/* LCD Config */
 #define LCD_REFRESH_FREQ     (30HZ)
 #define LCD_H_SIZE           240
 #define LCD_H_PULSE          2
@@ -97,19 +102,25 @@
 #define LCD_V_FRONT_PORCH    1
 #define LCD_V_BACK_PORCH     2
 #define LCD_PIX_CLK          (8200000l)
-#endif   /*_CUR_USING_LCD */
 
-#define LCD_CLK_PER_LINE     (LCD_H_SIZE + LCD_H_PULSE + LCD_H_FRONT_PORCH + LCD_H_BACK_PORCH)
-#define LCD_LINES_PER_FRAME  (LCD_V_SIZE + LCD_V_PULSE + LCD_V_FRONT_PORCH + LCD_V_BACK_PORCH)
-#define LCD_PWR_ENA_DIS_DLY  10000
-#define LCD_ENA_DIS_DLY      10000
+/* PWM */
+#define _PWM_NO_USED    1
+#define _PWM_CHANNEL_NO 1
+#define _PWM_PORT_NUM   1
+#define _PWM_PIN_NUM    18
+#define _PWM_PIN_FUNC_NUM 2
 
-#define CRSR_PIX_32     0
-#define CRSR_PIX_64     1
-#define CRSR_ASYNC      0
-#define CRSR_FRAME_SYNC 2
+/* Touch Screen Config */
+#define TOUCH_AD_LEFT    3686
+#define TOUCH_AD_RIGHT   205
+#define TOUCH_AD_TOP     3842
+#define TOUCH_AD_BOTTOM  267
 
-#define TEXT_DEF_TAB_SIZE 5
+#endif  /*(_CUR_USING_LCD == _RUNNING_LCD_GFT035A320240Y)*/
+
+#define LCD_VRAM_BASE_ADDR_UPPER 	((uint32_t)SDRAM_BASE_ADDR + 0x00100000)
+#define LCD_VRAM_BASE_ADDR_LOWER 	(LCD_VRAM_BASE_ADDR_UPPER + 1024*768*4)
+#define LCD_CURSOR_BASE_ADDR 	    ((uint32_t)0x20088800)
 
 #if (LOGO_BPP == 24)
 #define MAKE_COLOR(red,green,blue)  (blue<<16|green<<8|red)
@@ -121,24 +132,9 @@
 #define MAKE_COLOR(red,green,blue)  (red)
 #endif
 
-
-#define _PWM_NO_USED    1
-#if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
-#define _PWM_CHANNEL_NO 2
-#define _PWM_PORT_NUM   2
-#define _PWM_PIN_NUM    1
-#define _PWM_PIN_FUNC_NUM 1
-#else
-#define _PWM_CHANNEL_NO 1
-#define _PWM_PORT_NUM   1
-#define _PWM_PIN_NUM    18
-#define _PWM_PIN_FUNC_NUM 2
-#endif
-
 #define _BACK_LIGHT_BASE_CLK (1000/2)
 
 uint8_t Smb380Id, Smb380Ver;
-
 #if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
 #define  AccSensor_Data_t  SMB380_Data_t
 #define  AccSensor_Init    SMB380_Init
@@ -154,6 +150,7 @@ extern uint8_t * LogoStream;
 extern uint8_t * LogoPalette;
 #endif
 extern void InitLcdController (void);
+
 Bmp_t LogoPic =
 {
   320,
@@ -335,7 +332,9 @@ void lcd_colorbars(void)
   void c_entry(void)
 {
   uint32_t i, pclk;
+#if LOGO_DISPLAYED
   uint32_t xs, ys;
+#endif
 #if ACCEL_SENSOR_USED
   AccSensor_Data_t XYZT;
 #endif
@@ -345,7 +344,12 @@ void lcd_colorbars(void)
   LCD_Cursor_Config_Type cursor_config;
   LCD_Config_Type lcd_config;
   int cursor_x = 0, cursor_y = 0;
+#if LOGO_DISPLAYED
   uint32_t start_pix_x, start_pix_y, pix_ofs;
+#endif
+#if TCS_USED
+  TSC2046_Init_Type tsc_config;
+#endif
   
   /***************/
   /** Initialize ADC */
@@ -363,9 +367,10 @@ void lcd_colorbars(void)
   /** Initialize LCD */
   /***************/
   LCD_Enable (FALSE);
+    
   // SDRAM Init	= check right board to avoid linking error
   SDRAMInit();
-
+  
   lcd_config.big_endian_byte = 0;
   lcd_config.big_endian_pixel = 0;
   lcd_config.hConfig.hbp = LCD_H_BACK_PORCH;
@@ -400,6 +405,17 @@ void lcd_colorbars(void)
   LCD_Init (&lcd_config);
   #if ((_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT) || (_CUR_USING_LCD == _RUNNING_LCD_G240320LTSW))
   InitLcdController();
+  #endif
+
+  #if TCS_USED
+  tsc_config.ad_left = TOUCH_AD_LEFT;
+  tsc_config.ad_right = TOUCH_AD_RIGHT;
+  tsc_config.ad_top = TOUCH_AD_TOP;
+  tsc_config.ad_bottom = TOUCH_AD_BOTTOM;
+  tsc_config.lcd_h_size = LCD_H_SIZE;
+  tsc_config.lcd_v_size = LCD_V_SIZE;
+  tsc_config.swap_xy = 1;
+  InitTSC2046(&tsc_config);
   #endif
 
   LCD_SetImage(LCD_PANEL_UPPER, NULL);
@@ -481,6 +497,7 @@ void lcd_colorbars(void)
   /* Initialize accellation sensor */
 #if ACCEL_SENSOR_USED
   AccSensor_Init();
+  for(i = 0; i < 0x100000;  i++);
 #endif
 
 #if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
@@ -493,7 +510,21 @@ void lcd_colorbars(void)
  	backlight = GetBacklightVal();
     SetBackLight(backlight);
 
-#if ACCEL_SENSOR_USED
+#if TCS_USED || ACCEL_SENSOR_USED
+
+#if TCS_USED
+    {
+        int16_t tmp_x = -1, tmp_y = -1;
+        for(i = 0; i < 0x10000;  i++);
+  	    GetTouchCoord((int16_t*)&tmp_x, (int16_t*)&tmp_y);
+        if((tmp_x >= 0) && (tmp_y >0))
+        {      
+          cursor_x = tmp_x - CURSOR_H_SIZE/2;
+          cursor_y = tmp_y - CURSOR_V_SIZE/2;
+        }
+        
+    }
+#elif ACCEL_SENSOR_USED
     for(i = 0; i < 0x10000;  i++);
     AccSensor_GetData (&XYZT);
     if((XYZT.AccX == 0) && (XYZT.AccY == 0))
@@ -507,7 +538,8 @@ void lcd_colorbars(void)
     cursor_y += (cursor_y*XYZT.AccY)/0x0F;
 #endif
 
-      
+#endif  /*TCS_USED*/
+    
     if((LCD_H_SIZE - CURSOR_H_SIZE/2) < cursor_x)
     {
       cursor_x = LCD_H_SIZE - CURSOR_H_SIZE/2;
@@ -527,7 +559,7 @@ void lcd_colorbars(void)
     {
       cursor_y = -(CURSOR_V_SIZE/2);
     }
-#else   
+#else  /* !(TCS_USED || ACCEL_SENSOR_USED)*/ 
     for(i = 0; i < 0x1000000;  i++);
     
     cursor_x += 32;
@@ -538,7 +570,7 @@ void lcd_colorbars(void)
       if(cursor_y >(LCD_V_SIZE - CURSOR_V_SIZE))
         cursor_y = 0;
     }
-#endif  
+#endif  /*TCS_USED || ACCEL_SENSOR_USED*/
 
     LCD_Move_Cursor(cursor_x, cursor_y);
   }

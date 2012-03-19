@@ -37,18 +37,21 @@
 /******************************************************************************
  * Defines and typedefs
  *****************************************************************************/
-#define CS_ON    (GPIO_ClearValue(LCD_CS_PORT_NUM, (1<<LCD_CS_PIN_NUM))) 
-#define CS_OFF   (GPIO_SetValue(LCD_CS_PORT_NUM, (1<<LCD_CS_PIN_NUM)))
 #define DC_CMD   (GPIO_ClearValue(LCD_DC_PORT_NUM, (1<<LCD_DC_PIN_NUM))) 
 #define DC_DATA  (GPIO_SetValue(LCD_DC_PORT_NUM, (1<<LCD_DC_PIN_NUM))) 
 
 #define SSP_PORT (LPC_SSP0)
-#define SSP_CLOCK 3000000
+#define SSP_CLOCK 1000000
 
 /******************************************************************************
  * Local Functions
  *****************************************************************************/
 
+/*********************************************************************//**
+ * @brief 		Pin configuration to communicate with LCD Controller.
+ * @param[in]	None
+ * @return 		None
+ **********************************************************************/
 static void pinConfig(void)
 {
   /*  (CS) */
@@ -76,8 +79,8 @@ writeToReg(uint16_t addr, uint16_t data)
 {
   uint8_t buf[2];
   SSP_DATA_SETUP_Type sspCfg;
+  
   DC_CMD;
-  CS_ON;
 
   buf[0] = 0;
   buf[1] = (addr & 0xff);
@@ -88,37 +91,39 @@ writeToReg(uint16_t addr, uint16_t data)
 
   SSP_ReadWrite (SSP_PORT, &sspCfg, SSP_TRANSFER_POLLING);
 
-  CS_OFF;  
-
   DC_DATA;
-  CS_ON;
   buf[0] = (data >> 8);
   buf[1] = (data & 0xff);
   SSP_ReadWrite (SSP_PORT, &sspCfg, SSP_TRANSFER_POLLING);
-  CS_OFF; 
 
   DC_CMD;
-  CS_ON;
 
   buf[0] = (0);
   buf[1] = (0x22);
   SSP_ReadWrite (SSP_PORT, &sspCfg, SSP_TRANSFER_POLLING);
-  CS_OFF; 
 }
 static void ssd1289_init(void)
 {
   writeToReg (0x00,0x0001);
   TIM_Waitms(15);
-  writeToReg (0x03,0xAEAC);
+  writeToReg (0x03,0x6E3E); //0xAEAC
   writeToReg (0x0C,0x0007);
-  writeToReg (0x0D,0x000F);
-  writeToReg (0x0E,0x2900);
-  writeToReg (0x1E,0x00B3);
+  writeToReg (0x0D,0x000E); //0x000F
+  writeToReg (0x0E,0x2C00); //0x2900
+  writeToReg (0x1E,0x00AE); //0x00B3
   TIM_Waitms(15);
+  writeToReg (0x07,0x0021);
+  TIM_Waitms(50);
+  writeToReg (0x07,0x0023);
+  TIM_Waitms(50);
+  writeToReg (0x07,0x0033);
+  TIM_Waitms(50);
+  
   writeToReg (0x01,0x2B3F);
   writeToReg (0x02,0x0600);
   writeToReg (0x10,0x0000);
-  writeToReg (0x11,0x65b0);
+  TIM_Waitms(15);
+  writeToReg (0x11,0xC5B0); //0x65b0
   TIM_Waitms(20);
   writeToReg (0x05,0x0000);
   writeToReg (0x06,0x0000);
@@ -127,7 +132,7 @@ static void ssd1289_init(void)
   writeToReg (0x07,0x0233);
   writeToReg (0x0B,0x5312);
   writeToReg (0x0F,0x0000);
-  writeToReg (0x1E,0x00AE);
+  writeToReg (0x25,0xE000); 
   TIM_Waitms(20);
   writeToReg (0x41,0x0000);
   writeToReg (0x42,0x0000);
@@ -141,12 +146,12 @@ static void ssd1289_init(void)
   TIM_Waitms(20);
   writeToReg (0x30,0x0707);
   writeToReg (0x31,0x0704);
-  writeToReg (0x32,0x0204);
-  writeToReg (0x33,0x0201);
+  writeToReg (0x32,0x0005); //0x0204
+  writeToReg (0x33,0x0402); //0x0201
   writeToReg (0x34,0x0203);
   writeToReg (0x35,0x0204);
   writeToReg (0x36,0x0204);
-  writeToReg (0x37,0x0502);
+  writeToReg (0x37,0x0401); //0x0502
   writeToReg (0x3A,0x0302);
   writeToReg (0x3B,0x0500);
   TIM_Waitms(20);

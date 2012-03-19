@@ -585,6 +585,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\BoardSupport\sensor_mma7455.c</FilePath>
             </File>
+            <File>
+              <FileName>tsc2046.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\tsc2046.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

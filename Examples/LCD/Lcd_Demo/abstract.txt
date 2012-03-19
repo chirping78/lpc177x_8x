@@ -50,6 +50,7 @@
 	Hardware configuration:		
 		This example was tested on:
 			1. LPC1788 OEM Board rev A and OEM Base Board rev A
+               Connect OEM Base Board with QVGA TFT LCD (320x240)
 			2. LPC1788 IAR Start Kit Rev.B
 				- 3.3VA_E	:ON
 				- VREG		:ON
@@ -79,5 +80,6 @@ Step to run:
 		- Step 2: Burn hex file into board (if run on ROM mode)
 		- Step 3: Configure hardware and serial display as above instruction 
 		- Step 4: Run example, observe LCD display
+        - Step 5: In case QVGA is used, touch on screen and observe the cursor moves.
 		
 		@Warning: Maybe J-LINK power source cannot supply enough power for LCD
