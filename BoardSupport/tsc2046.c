@@ -44,8 +44,8 @@
 #else
 #define TSC2046_X_COORD_MAX           (0xFF)
 #define TSC2046_Y_COORD_MAX           (0xFF)
-#define TSC2046_DELTA_X_VARIANCE      (0x0F)
-#define TSC2046_DELTA_Y_VARIANCE      (0x0F)
+#define TSC2046_DELTA_X_VARIANCE      (0x05)
+#define TSC2046_DELTA_Y_VARIANCE      (0x05)
 #endif
 #define COORD_GET_NUM                 (3)
 
@@ -160,9 +160,7 @@ static void ReadWriteTSC2046(uint8_t channel, uint16_t* data)
 	sspCfg.rx_data = &first;
 	sspCfg.length  = 1; 
     SSP_ReadWrite (TSC2046_SSP_PORT, &sspCfg, SSP_TRANSFER_POLLING);
-#if (TSC2046_CONVERSION_BITS == 8) 
-	*data = first;
-#else
+
     for(tmp = 0x10; tmp;tmp--);
 
     // Read Low byte
@@ -170,7 +168,10 @@ static void ReadWriteTSC2046(uint8_t channel, uint16_t* data)
 	sspCfg.rx_data = &second;
 	sspCfg.length  = 1; 
     SSP_ReadWrite (TSC2046_SSP_PORT, &sspCfg, SSP_TRANSFER_POLLING);
-    
+
+#if (TSC2046_CONVERSION_BITS == 8) 
+	*data = (((first&0x7F) <<8) | (second>>0)) >> 7; 
+#else    
     *data = (((first&0x7F) <<8) | (second>>0)) >> 3; 
 #endif     
     CS_OFF;

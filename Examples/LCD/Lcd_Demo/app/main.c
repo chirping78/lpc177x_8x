@@ -111,10 +111,17 @@
 #define _PWM_PIN_FUNC_NUM 2
 
 /* Touch Screen Config */
+#if (TSC2046_CONVERSION_BITS == 8)
+#define TOUCH_AD_LEFT    240
+#define TOUCH_AD_RIGHT   10
+#define TOUCH_AD_TOP     240
+#define TOUCH_AD_BOTTOM  16
+#else
 #define TOUCH_AD_LEFT    3686
 #define TOUCH_AD_RIGHT   205
 #define TOUCH_AD_TOP     3842
 #define TOUCH_AD_BOTTOM  267
+#endif
 
 #endif  /*(_CUR_USING_LCD == _RUNNING_LCD_GFT035A320240Y)*/
 
