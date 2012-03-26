@@ -28,14 +28,13 @@
 * copyright, permission, and disclaimer notice must appear in all copies of
 * this code.
 **********************************************************************/
+#if (_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT)
 #include "LPC177x_8x.h"
 #include "lpc177x_8x_ssp.h"
 #include "lpc177x_8x_pinsel.h"
 #include "lpc177x_8x_gpio.h"
 #include "tsc2046.h"
 #include "bsp.h"
-#if (_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT)
-
 #if (TSC2046_CONVERSION_BITS == 12)
 #define TSC2046_X_COORD_MAX           (0xFFF)
 #define TSC2046_Y_COORD_MAX           (0xFFF)
@@ -282,6 +281,7 @@ void GetTouchCoord(int16_t *pX, int16_t* pY)
         }
     }
 }
+
 #endif  /*_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT)*/
 
 

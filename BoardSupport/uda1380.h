@@ -2,6 +2,10 @@
 #define _UDA1380_H_
 
 #include "lpc_types.h"
+/** @defgroup  UDA_1380	UDA 1380
+ * @ingroup LPC177x_8xCMSIS_Board_Support
+ * @{
+ */
 
 #define UDA1380_SYSCLK_USED 0
 #define UDA1380_SLAVE_ADDR  0x1A
@@ -89,5 +93,8 @@ int32_t Uda1380_Init(uint32_t i2cClockFreq, uint32_t i2sClockFreq);
 int32_t Uda1380_WriteData(uint8_t reg, uint16_t data);
 int32_t Uda1380_ReadData(uint8_t reg, uint16_t *data);
 
+/**
+ * @}
+ */
 
 #endif /* _UDA1380_H_ */

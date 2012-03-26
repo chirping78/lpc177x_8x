@@ -16,6 +16,13 @@
 #include "ls.h"
 #include "lpc177x_8x_clkpwr.h"
 
+/** @defgroup MCI_EFSL	MCI EFSL 
+ * @ingroup MCI_FS
+ * Refer to @link Examples/MCI/Mci_FS/efsl/docs/manual.pdf @endlink
+ * @{
+ */
+ 
+
 /* file name could be file.txt, /file.txt, dir1/file.txt, etc,
 Note: does NOT support LFN */
 #define FILE_NAME_R  "file_r.txt"
@@ -234,3 +241,8 @@ int main()
 
 	while (1);
 }
+/**
+ * @}
+ */
+ 
+

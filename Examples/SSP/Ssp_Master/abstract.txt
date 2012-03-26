@@ -34,10 +34,10 @@
 			- MSTR = 1: SSP operates in Master mode
 			- FRF= 0: SPI Frame format
 		This example uses SSP function in MASTER mode.
-		Using _SSP_NO_USING to define which SSP periphearl will be used.
-		Using __DMA_USED__ to define if DMQ will be used.
+		Using _SSP_NO_USING to define which SSP peripheral will be used.
+		Using __DMA_USED__ to define if DMA will be used.
 		A number of bytes are transmitted between Master and Slave. 
-		After transmittion completed, two buffers will be compared, if they are not similar,
+		After transmission completed, two buffers will be compared, if they are not similar,
 		the program will enter infinite loop and print error notice to serial display.
 
 @Directory contents:

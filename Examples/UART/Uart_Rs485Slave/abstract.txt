@@ -101,7 +101,7 @@
 				- ISP_E: ON
 	
 	Step to run:
-		- Step 1: Build example.
+		- Step 1: Choose the UART component to work with by #define UART_TEST_NUM and then Build example.
 		- Step 2: Burn hex file into board (if run on ROM mode)
 		- Step 3: Connect UART on this board to COM port on your computer
 		- Step 4: Connect RS485 between master board and slave board (using ADM485)

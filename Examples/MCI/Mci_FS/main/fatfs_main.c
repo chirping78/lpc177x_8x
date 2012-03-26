@@ -14,6 +14,12 @@
 #include "debug_frmwrk.h"
 #include "lpc177x_8x_mci.h"
 
+/** @defgroup MCI_FatFS	MCI FatFS 
+ * @ingroup MCI_FS
+ * Refer to @link Examples/MCI/Mci_FS/FatFs/doc/00index_e.htm @endlink
+ * @{
+ */
+
 #if _USE_XSTRFUNC==0
 #include <string.h>
 #define xstrlen(x)      strlen(x)
@@ -673,3 +679,8 @@ int main ()
 	}											  
 	
 }
+/**
+ * @}
+ */
+ 
+

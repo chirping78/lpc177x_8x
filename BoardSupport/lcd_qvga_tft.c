@@ -34,6 +34,11 @@
 #include "lpc177x_8x_gpio.h"
 #include "bsp.h"
 #if (_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT)
+/** @defgroup LCD_QVGA  QVGA TFT LCD
+ * @ingroup LPC177x_8xCMSIS_Board_Support
+ * @{
+ */
+
 /******************************************************************************
  * Defines and typedefs
  *****************************************************************************/
@@ -102,6 +107,11 @@ writeToReg(uint16_t addr, uint16_t data)
   buf[1] = (0x22);
   SSP_ReadWrite (SSP_PORT, &sspCfg, SSP_TRANSFER_POLLING);
 }
+/*********************************************************************//**
+ * @brief 		Initialize SSD1289 LCD Controller.
+ * @param[in]	None
+ * @return 	None
+ **********************************************************************/
 static void ssd1289_init(void)
 {
   writeToReg (0x00,0x0001);
@@ -162,12 +172,12 @@ static void ssd1289_init(void)
  * Public Functions
  *****************************************************************************/
 
-/******************************************************************************
- *
- * Description:
- *    Initialize the display
- *
- *****************************************************************************/
+/*********************************************************************//**
+ * @brief 		Initialize LCD Controller.
+ * @param[in]	None
+ * @return 	None
+ **********************************************************************/
+
 void InitLcdController (void)
 {
   SSP_CFG_Type SSP_ConfigStruct;
@@ -202,5 +212,10 @@ void InitLcdController (void)
   SSP_DeInit(SSP_PORT);
   TIM_DeInit(LPC_TIM0);
 }
+
+/**
+ * @}
+ */
+
 #endif
 

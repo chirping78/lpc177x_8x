@@ -28,9 +28,9 @@
         track event occurs on input pins.
 	Process:
 		After initialize RTC, set current time for RTC with this value:
-		06:45:00PM, 2012-03-01
+		06:45:00PM, 2012-01-01
 		Using terminal, the system can be controlled to enter to Sleep Mode,
-        Power Down mode or Sleep Power Down mode. When an event occurs on an 
+        Power Down mode or Deep Power Down mode. When an event occurs on an 
         input channel, an wake-up request/interrupt is generated. So, the system 
         will exit from these states.
 
@@ -51,7 +51,7 @@
 				- PWR_SEL	:depends on power source selection
 		(Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)				
 		
-    Event Input pins:
+    	Event Input pins:
                 Channel         Pin         EA          IAR
                 0               P0.7        J5.17       EXT-7
                 1               P0.8        J3.19       EXT-8
@@ -112,5 +112,5 @@
 		- Step 5: Run example:
             - Press S to enter Sleep Mode.
             - Press P to enter Power Down Mode
-            - Press D to etner Deep Power Down Mode.
+            - Press D to enter Deep Power Down Mode.
             - Connect desired event input channel pin to GND/VCC to generate events.

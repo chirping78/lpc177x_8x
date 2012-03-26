@@ -24,6 +24,11 @@
 
 #include "lpc_types.h"
 
+/** @defgroup  Sensor_MMA7455 	I2C Sensor MMA7455 
+ * @ingroup LPC177x_8xCMSIS_Board_Support
+ * @{
+ */
+
 #define MMA7455_SPEED  200000
 #define MMA7455_ADDR   0x1D
 #define MMA7455_I2C    (I2C_1)
@@ -147,5 +152,8 @@ MMA7455_Status_t MMA7455_GetID (uint8_t *pChipId, uint8_t *pRevision);
  *************************************************************************/
 MMA7455_Status_t MMA7455_GetData (pMMA7455_Data_t pData);
 //MMA7455_Status_t MMA7455_IntClear (void);
+/**
+ * @}
+ */
 
 #endif // __MMA7455_DRV_H

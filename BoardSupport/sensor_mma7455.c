@@ -1,23 +1,34 @@
-/*************************************************************************
- *
-*    Used with ICCARM and AARM.
- *
- *    (c) Copyright IAR Systems 2007
- *
- *    File name   : MMA7455_drv.c
- *    Description : MMA7455 acceleration sensor driver (I2C data mode)
- *
- *    History :
- *    1. Date        : 13, February 2008
- *       Author      : Stanimir Bonev
- *       Description : Create
- *
- *
- *    $Revision: 22899 $
- *
- *    @Modify: NXP MCU Application Team - NguyenCao
- *    @Date: 04. March. 2011
- **************************************************************************/
+/**********************************************************************
+* $Id$		Sensor_mma7455.c			2012-03-22
+*//**
+* @file		Sensor_mma7455.c
+* @brief		MMA7455 acceleration sensor driver (I2C data mode)
+* @version	1.0
+* @date		22. March. 2012
+* @author	NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+* Permission to use, copy, modify, and distribute this software and its
+* documentation is hereby granted, under NXP Semiconductors'
+* relevant copyright in the software, without fee, provided that it
+* is used in conjunction with NXP Semiconductors microcontrollers.  This
+* copyright, permission, and disclaimer notice must appear in all copies of
+* this code.
+**********************************************************************/
+
 #ifdef __BUILD_WITH_EXAMPLE__
 #include "lpc177x_8x_libcfg.h"
 #else
@@ -28,18 +39,14 @@
 #include "lpc177x_8x_i2c.h"
 #include "lpc177x_8x_pinsel.h"
 
-/*************************************************************************
- * Function Name: MMA7455_ReadWrite
- * Parameters:  txdata  point to buffer of data which will be sent.
- *                     txlen     the length of transmit buffer
- *                     rxdata point to receive buffer
- *                     rxlen     the length of receive buffer
- *
- * Return: MMA7455_Status_t
- *
- * Description: Read/Write data to MMA7455
- *
- *************************************************************************/
+/*********************************************************************//**
+ * @brief 		Read/Write data to MMA7455
+ * @param[in]	 txdata  point to buffer of data which will be sent.
+ * @param[in]   txlen     the length of transmit buffer
+ * @param[in]  rxdata point to receive buffer
+ * @param[in]  rxlen     the length of receive buffer
+ * @return 		None
+ **********************************************************************/
 MMA7455_Status_t MMA7455_ReadWrite(uint8_t* txdata, uint32_t txlen,
 	                                      uint8_t* rxdata, uint32_t rxlen)
 {
@@ -60,16 +67,11 @@ MMA7455_Status_t MMA7455_ReadWrite(uint8_t* txdata, uint32_t txlen,
 	return MMA7455_ERR;
 }
 
-
-/*************************************************************************
- * Function Name: MMA7455_Init
- * Parameters: none
- *
- * Return: MMA7455_Status_t
- *
- * Description: MMA7455 init
- *
- *************************************************************************/
+/*********************************************************************//**
+ * @brief 		MMA7455 init
+ * @param[in]	 None
+ * @return 	 MMA7455_Status_t
+ **********************************************************************/
 MMA7455_Status_t MMA7455_Init(void)
 {
   unsigned char Data[2];
@@ -88,34 +90,28 @@ MMA7455_Status_t MMA7455_Init(void)
     return ret;
   
   Data[0] = MMA7455_CTR1_ADDR;
-  Data[1] = MMA7455_CTR1_XDA_DISABLE|MMA7455_CTR1_YDA_DISABLE|MMA7455_CTR1_ZDA_DISABLE;
+  Data[1] = MMA7455_CTR1_BANDWIDTH_125;
   return MMA7455_ReadWrite(&Data[0], 2, NULL, 0);
 }
-/*************************************************************************
- * Function Name: MMA7455_GetUserInfo
- * Parameters: UserInfo address of the variable which is used to stored User Info.
- *
- * Return: MMA7455_Status_t
- *
- * Description: Get User Info
- *
- *************************************************************************/
-MMA7455_Status_t MMA7455_GetUserInfo (uint8_t *UserInfo)
+
+/*********************************************************************//**
+ * @brief 		Get User Info
+ * @param[in]	 UserInfo address of the variable which is used to stored User Info.
+ * @return 	 MMA7455_Status_t
+ **********************************************************************/
+ MMA7455_Status_t MMA7455_GetUserInfo (uint8_t *UserInfo)
 {
   unsigned char buf[1] = {MMA7455_USER_INFO_ADDR};
   return MMA7455_ReadWrite(buf, 1, UserInfo, 1);
 }
 
-/*************************************************************************
- * Function Name: MB380_GetData
- * Parameters: none
- *
- * Return: MMA7455_Status_t
- *
- * Description: MMA7455 get data
- *
- *************************************************************************/
-MMA7455_Status_t MMA7455_GetData (pMMA7455_Data_t pData)
+
+/*********************************************************************//**
+ * @brief 		MMA7455 get data
+ * @param[in]	 pData address of the variable which is used to stored data.
+ * @return 	 MMA7455_Status_t
+ **********************************************************************/
+ MMA7455_Status_t MMA7455_GetData (pMMA7455_Data_t pData)
 {
   unsigned char buf[2];
 

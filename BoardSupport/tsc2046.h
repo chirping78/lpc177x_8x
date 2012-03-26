@@ -34,6 +34,12 @@
 
 #include "lpc_types.h"
 
+/** @defgroup  TSC2046	TSC2046
+ * @ingroup LPC177x_8xCMSIS_Board_Support
+ * @{
+ */
+
+
 #define TSC2046_CONVERSION_BITS     12
 
 #define TSC2046_SSP_CLOCK		(2000000ul)		
@@ -78,5 +84,8 @@ typedef struct
 void InitTSC2046(TSC2046_Init_Type* pConfig);	
 /* Get current Touch Coordinates */
 void GetTouchCoord(int16_t *pX, int16_t* pY);
+/**
+ * @}
+ */
 
 #endif /*_TSC2046_H_*/

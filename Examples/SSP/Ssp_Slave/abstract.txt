@@ -1,9 +1,9 @@
 /***********************************************************************
 * $Id$		abstract.txt		2012-02-15		
-* @file		SSP\Ssp_Slave\abstract.txt 
+* @file		SSP\Ssp_Master\abstract.txt 
 * @brief	Description of the SSP DMA example.
 * @version	1.0
-* @date		15. February. 2012
+* @date		15. February 2012
 * @author	NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
@@ -24,27 +24,27 @@
   
 @Example description:
 	Purpose:
-		This example describes how to use SSP peripheral as a SSP Slave.
+		This example describes how to use SSP peripheral as a SSP Master.
 	Process:
 		SSP configuration:
 			- CPHA = 0: data is sampled on the first clock edge of SCK.
 			- CPOL = 0: SCK is active high
 			- Clock rate = 1MHz
 			- DSS = 8: 8 bits per transfer
-			- MSTR = 0: SSP operates in Slave mode
+			- MSTR = 1: SSP operates in Master mode
 			- FRF= 0: SPI Frame format
-		This example uses SSP function in Slave mode.
+		This example uses SSP function in MASTER mode.
 		Using _SSP_NO_USING to define which SSP peripheral will be used.
-        Using __DMA_USED__ to disable/enable DMA usage.
-        A number of bytes are transmit between Master & Slave.
-		After transmittion completed, two buffers will be compared, if they are not similar,
+		Using __DMA_USED__ to define if DMA will be used.
+		A number of bytes are transmitted between Master and Slave. 
+		After transmission completed, two buffers will be compared, if they are not similar,
 		the program will enter infinite loop and print error notice to serial display.
 
 @Directory contents:
 	\Keil:	includes RVMDK (Keil)project and configuration files
 	\EWARM: includes EWARM (IAR) project and configuration files
 	 
-	Ssp_Slave.c: Main program
+	Ssp_Master.c: Main program
 
 @How to run:
 	Hardware configuration:		
@@ -57,28 +57,27 @@
 				- PWR_SEL	:depends on power source selection
 		(Choose correct working board by setting "_CURR_USING_BRD" marco in .\BoardSupport\bsp.h file)
 		
-		SSP Connection:
-		
+		SSP Connection:			
 			Pin Map:
-								PA brd				IAR brd     
-			- P0.15: SSP0_SCK			J5.19                           J3.19
-			- P0.16: SSP0_SSEL			J3.24                           J2.18
-	  		- P0.17: SSP0_MISO			J5.20                           J3.20
-	  		- P0.18: SSP0_MOSI			J3.23                           J1.15
+										PA brd				IAR brd
+			- P0.15: SSP0_SCK			J5.19
+			- P0.16: SSP0_SSEL			J3.24 
+	  		- P0.17: SSP0_MISO			J5.20   
+	  		- P0.18: SSP0_MOSI			J3.23    
 
 	  		- P0.7:  SSP1_SCK			J5.17				EXT-7    
-	  		- P0.6 : SSP1_SSEL			J3.18				EXT-6 
+	  		- P0.6 : SSP1_SSEL			J3.18				EXT-6   
 			- P0.8: SSP1_MISO			J3.19				EXT-8
 			- P0.9: SSP1_MOSI			J5.18				EXT-9
-                        
-			- P1.0:  SSP2_SCK	                                        	    
-			- P1.8 : SSP2_SSEL	                                        
-			- P1.4: SSP2_MISO	                                        						
-			- P1.1: SSP2_MOSI	                                        	
 
-		SCK, SSEL, MISO, MOSI pin of Slave are connected to corresponding pins of Master.
-		GND of Master board and Slave board must be connected together.
-						
+			- P1.0:  SSP2_SCK			    
+			- P1.8 : SSP2_SSEL			 
+			- P1.4: SSP2_MISO							
+			- P1.1: SSP2_MOSI			
+
+			SCK, SSEL, MISO and MOSI pin of master are connected to the coressponding pins of slave.
+			GND of 2 boards must be connected together.
+            			
 		Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
 			1. LPC1788 OEM Board rev A and OEM Base Board rev A
 				- UART0: USB serial port
@@ -130,8 +129,8 @@
 	Step to run:
 		- Step 1: Choose the SSP component by #define _SSP_NO_USING
 		- Step 2: Build example.
-		- Step 3: Burn hex file into board (if run on ROM mode)
+		- Step 3: Burn hex file into master board (if run on ROM mode)
 		- Step 4: Connect UART0\1\2 on this board to COM port on your computer
 		- Step 5: Configure hardware and serial display as above instruction 
-        - Step 5: Reset Slave board.
-        - Step 6: Reset Master board and observe SSP transfer result on serial display
+        - Step 6: Reset Slave board.
+		- Step 6: Reset Master board, press 1 and observe SSP transfer result on serial display

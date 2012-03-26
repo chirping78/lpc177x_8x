@@ -37,7 +37,7 @@
 #include "lpc177x_8x_pinsel.h"
 
 
-/** @defgroup RTC_EV	RTC Alarm
+/** @defgroup RTC_EV	RTC Event Monitor/Recorder
  * @ingroup RTC_Examples
  * @{
  */

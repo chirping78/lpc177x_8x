@@ -1,23 +1,34 @@
-/*************************************************************************
- *
-*    Used with ICCARM and AARM.
- *
- *    (c) Copyright IAR Systems 2007
- *
- *    File name   : smb380_drv.c
- *    Description : SMB380 acceleration sensor driver (I2C data mode)
- *
- *    History :
- *    1. Date        : 13, February 2008
- *       Author      : Stanimir Bonev
- *       Description : Create
- *
- *
- *    $Revision: 22899 $
- *
- *    @Modify: NXP MCU Application Team - NguyenCao
- *    @Date: 04. March. 2011
- **************************************************************************/
+/**********************************************************************
+* $Id$		Sensor_smb380.c			2012-01-12
+*//**
+* @file		Sensor_smb380.c
+* @brief		SMB380 acceleration sensor driver (I2C data mode)
+* @version	1.0
+* @date		12. January. 2012
+* @author	NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+* Permission to use, copy, modify, and distribute this software and its
+* documentation is hereby granted, under NXP Semiconductors'
+* relevant copyright in the software, without fee, provided that it
+* is used in conjunction with NXP Semiconductors microcontrollers.  This
+* copyright, permission, and disclaimer notice must appear in all copies of
+* this code.
+**********************************************************************/
+
 #ifdef __BUILD_WITH_EXAMPLE__
 #include "lpc177x_8x_libcfg.h"
 #else
@@ -28,18 +39,14 @@
 #include "lpc177x_8x_i2c.h"
 #include "lpc177x_8x_pinsel.h"
 
-/*************************************************************************
- * Function Name: SMB380_ReadWrite
- * Parameters:  txdata  point to buffer of data which will be sent.
- *                     txlen     the length of transmit buffer
- *                     rxdata point to receive buffer
- *                     rxlen     the length of receive buffer
- *
- * Return: SMB380_Status_t
- *
- * Description: Read/Write data to SMB380
- *
- *************************************************************************/
+/*********************************************************************//**
+ * @brief 		Read/Write data to SMB380
+ * @param[in]	 txdata  point to buffer of data which will be sent.
+ * @param[in]   txlen     the length of transmit buffer
+ * @param[in]  rxdata point to receive buffer
+ * @param[in]  rxlen     the length of receive buffer
+ * @return 		None
+ **********************************************************************/
 SMB380_Status_t SMB380_ReadWrite(uint8_t* txdata, uint32_t txlen,
 	                                      uint8_t* rxdata, uint32_t rxlen)
 {
@@ -61,15 +68,12 @@ SMB380_Status_t SMB380_ReadWrite(uint8_t* txdata, uint32_t txlen,
 }
 
 
-/*************************************************************************
- * Function Name: SMB380_Init
- * Parameters: none
- *
- * Return: SMB380_Status_t
- *
- * Description: SMB380 init
- *
- *************************************************************************/
+/*********************************************************************//**
+ * @brief 		SMB380 init
+ * @param[in]	 None
+ * @return 	 SMB380_Status_t
+ **********************************************************************/
+
 SMB380_Status_t SMB380_Init(void)
 {
   unsigned char Data[2];
@@ -100,15 +104,13 @@ SMB380_Status_t SMB380_Init(void)
 
   return SMB380_PASS;
 }
-/*************************************************************************
- * Function Name: SMB380_GetID
- * Parameters: none
- *
- * Return: SMB380_Status_t
- *
- * Description: SMB380 get chip ID and revision
- *
- *************************************************************************/
+/*********************************************************************//**
+ * @brief 		Get Chip ID and revision
+ * @param[in]	pChipId	pointer to Chip ID storage
+ * @param[in]	pRevision	pointer to revision storage
+ * @return 	 SMB380_Status_t
+ **********************************************************************/
+
 SMB380_Status_t SMB380_GetID (uint8_t *pChipId, uint8_t *pRevision)
 {
 unsigned char buf[2] = {SMB380_CHIP_ID};
@@ -121,15 +123,11 @@ unsigned char buf[2] = {SMB380_CHIP_ID};
   return SMB380_PASS;
 }
 
-/*************************************************************************
- * Function Name: MB380_GetData
- * Parameters: none
- *
- * Return: SMB380_Status_t
- *
- * Description: SMB380 get data
- *
- *************************************************************************/
+/*********************************************************************//**
+ * @brief 		SMB380 get data
+ * @param[in]	 pData address of the variable which is used to stored data.
+ * @return 	 SMB380_Status_t
+ **********************************************************************/
 SMB380_Status_t SMB380_GetData (pSMB380_Data_t pData)
 {
   unsigned char regaddr = SMB380_ACCX_ADDR;
