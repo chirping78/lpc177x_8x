@@ -271,7 +271,6 @@ void I2S_Stop(LPC_I2S_TypeDef *I2Sx, uint8_t TRMode) {
 		I2Sx->DAI |= I2S_DAI_RESET;
 	}
 }
-
 /********************************************************************//**
  * @brief		Set frequency for I2S
  * @param[in]	I2Sx I2S peripheral selected, should be: LPC_I2S
@@ -283,13 +282,19 @@ void I2S_Stop(LPC_I2S_TypeDef *I2Sx, uint8_t TRMode) {
  * @return 		Status: ERROR or SUCCESS
  *********************************************************************/
 Status I2S_FreqConfig(LPC_I2S_TypeDef *I2Sx, uint32_t Freq, uint8_t TRMode) {
-	uint32_t i2sMclk;
-	uint8_t bitrate, channel, wordwidth;
+	uint32_t cclk, out_clk;
+	uint8_t channel, wordwidth;
+	uint32_t x, y;
+	uint64_t divider;
+	uint16_t dif;
+	uint16_t x_divide, y_divide;
+	uint16_t ErrorOptimal = 0xFFFF;
+	
+	uint32_t N;
 
- 	//use cclk/2 as default I2S reference clock
-	i2sMclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_CPU)/2;
-	I2Sx->TXRATE = 1  | (1<<8);
-	I2Sx->RXRATE = 1  | (1<<8);
+ 	//get cclk 
+	cclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_CPU);
+
 	if(TRMode == I2S_TX_MODE)
 	{
 		channel = i2s_GetChannel(I2Sx,I2S_TX_MODE);
@@ -300,13 +305,55 @@ Status I2S_FreqConfig(LPC_I2S_TypeDef *I2Sx, uint32_t Freq, uint8_t TRMode) {
 		channel = i2s_GetChannel(I2Sx,I2S_RX_MODE);
 		wordwidth = i2s_GetWordWidth(I2Sx,I2S_RX_MODE);
 	}
-	bitrate = i2sMclk /(Freq * channel  * wordwidth) - 1;
+
+	/* Calculate X and Y divider
+	 * The MCLK rate for the I2S transmitter is determined by the value
+	 * in the I2STXRATE/I2SRXRATE register. The required I2STXRATE/I2SRXRATE
+	 * setting depends on the desired audio sample rate desired, the format
+	 * (stereo/mono) used, and the data size.
+	 * The formula is:
+	 * 		I2S_MCLK = CCLK * (X/Y) / 2
+	 * We have:
+	 * 		I2S_MCLK = Freq * channel*wordwidth * (I2Sx->TXBITRATE+1);
+	 * So: (X/Y) = (Freq * channel*wordwidth * (I2Sx->TXBITRATE+1))/CCLK*2
+	 * We use a loop function to chose the most suitable X,Y value
+	 */
+
+	/* divider is a fixed point number with 16 fractional bits */
+	divider = (((uint64_t)Freq *channel*wordwidth * 2)<<16) / cclk;
+    y_divide = 0;
+    x_divide = 0;
+	for (y = 1; y < 255; y++) {
+        for(x=1; x<y;x++)
+        {
+            if(y%x == 0)
+            {
+                N = (x<<16)/(divider*y);
+                if(N < 0x3F)
+                {
+                    out_clk = (x*cclk)/(y*channel*wordwidth*2*N);
+                    dif = (out_clk > Freq)? (out_clk - Freq): (Freq - out_clk);
+                    if(dif < ErrorOptimal)
+                    {
+                        y_divide = y;
+                        x_divide = x;
+                        ErrorOptimal = dif;
+                     }
+                }
+            }
+        }
+     }
+
+    N = (x_divide<<16)/(divider*y_divide);
+	
 	if (TRMode == I2S_TX_MODE)// Transmitter
 	{
-		I2Sx->TXBITRATE = bitrate;
+		I2Sx->TXBITRATE = N-1;
+		I2Sx->TXRATE = y_divide | (x_divide << 8);
 	} else //Receiver
 	{
-		I2Sx->RXBITRATE = bitrate;
+		I2Sx->RXBITRATE = N-1;
+		I2Sx->TXRATE = y_divide | (x_divide << 8);
 	}
 	return SUCCESS;
 }
