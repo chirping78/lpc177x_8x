@@ -541,8 +541,13 @@ void lcd_colorbars(void)
     cursor_x += XYZT.AccX/512;
     cursor_y += XYZT.AccY/512;
 #else
-    cursor_x += (cursor_x*XYZT.AccX)/0x0F; // 8g
-    cursor_y += (cursor_y*XYZT.AccY)/0x0F;
+    {
+       MMA7455_Orientation_t ori = MMA7455_GetOrientation(&XYZT);
+       if(ori & MMA7455_XUP) cursor_x++;
+       if (ori & MMA7455_XDOWN) cursor_x--;
+       if (ori & MMA7455_YUP) cursor_y++;
+       if (ori & MMA7455_YDOWN) cursor_y--;
+    }
 #endif
 
 #endif  /*TCS_USED*/

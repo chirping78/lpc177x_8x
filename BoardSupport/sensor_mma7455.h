@@ -1,23 +1,33 @@
-/*************************************************************************
- *
-*    Used with ICCARM and AARM.
- *
- *    (c) Copyright IAR Systems 2007
- *
- *    File name   : MMA7455_drv.c
- *    Description : MMA7455 acceleration sensor driver include file
- *
- *    History :
- *    1. Date        : 13, February 2008
- *       Author      : Stanimir Bonev
- *       Description : Create
- *
- *
- *    $Revision: 24636 $
- *
- *    @Modify: NXP MCU Application Team - NguyenCao
- *    @Date: 04. March. 2011
- **************************************************************************/
+/**********************************************************************
+* $Id$		Sensor_mma7455.h			2012-03-22
+*//**
+* @file		Sensor_mma7455.h
+* @brief	MMA7455 acceleration sensor driver (I2C data mode)
+* @version	1.0
+* @date		22. March. 2012
+* @author	NXP MCU SW Application Team
+* 
+* Copyright(C) 2011, NXP Semiconductor
+* All rights reserved.
+*
+***********************************************************************
+* Software that is described herein is for illustrative purposes only
+* which provides customers with programming information regarding the
+* products. This software is supplied "AS IS" without any warranties.
+* NXP Semiconductors assumes no responsibility or liability for the
+* use of the software, conveys no license or title under any patent,
+* copyright, or mask work right to the product. NXP Semiconductors
+* reserves the right to make changes in the software without
+* notification. NXP Semiconductors also make no representation or
+* warranty that such application will be suitable for the specified
+* use without further testing or modification.
+* Permission to use, copy, modify, and distribute this software and its
+* documentation is hereby granted, under NXP Semiconductors'
+* relevant copyright in the software, without fee, provided that it
+* is used in conjunction with NXP Semiconductors microcontrollers.  This
+* copyright, permission, and disclaimer notice must appear in all copies of
+* this code.
+**********************************************************************/
 
 #ifndef __MMA7455_DRV_H
 #define __MMA7455_DRV_H
@@ -29,7 +39,7 @@
  * @{
  */
 
-#define MMA7455_SPEED  200000
+#define MMA7455_SPEED  400000
 #define MMA7455_ADDR   0x1D
 #define MMA7455_I2C    (I2C_1)
 
@@ -85,73 +95,51 @@
 #define MMA7455_CTR1_YDA_DISABLE    (0x01<<4)
 #define MMA7455_CTR1_ZDA_DISABLE    (0x01<<5)
 #define MMA7455_CTR1_BANDWIDTH_125  (0x01<<7) // Default 62.5Hz
+#define MMA7455_CTR1_BANDWIDTH_65   (0x00<<7) // Default 62.5Hz
 
 #define MMA7455_CTRL2_ADDR     0x19
 
-
+#define MMA7455_GET_ACC_N_TIMES     8
+#define MMA7455_CALIB_N_TIMES       8
 
 typedef int8_t MMA7455_Status_t;
 #define MMA7455_PASS        0
 #define MMA7455_ERR         (-1)
 
+typedef uint32_t MMA7455_Orientation_t;
+#define   MMA7455_FLAT          0x00
+#define   MMA7455_XUP           0x01
+#define   MMA7455_XDOWN         0x02
+#define   MMA7455_YUP           0x04
+#define   MMA7455_YDOWN         0x08
+
 #pragma pack(1)
 typedef struct _MMA7455_Data_t
 {
-  int8_t AccX;
-  int8_t AccY;
-  int8_t AccZ;
+  int16_t AccX;
+  int16_t AccY;
+  int16_t AccZ;
 } MMA7455_Data_t, *pMMA7455_Data_t;
 
 #pragma pack()
 
-typedef enum _MMA7455_Range_t
-{
-  MMA7455_2G = 0, MMA7455_4G, MMA7455_8G
-} MMA7455_Range_t;
-
-typedef enum _MMA7455_Bandwidth_t
-{
-  MMA7455_25HZ = 0, MMA7455_50HZ, MMA7455_100HZ, MMA7455_190HZ,
-  MMA7455_375HZ, MMA7455_750HZ, MMA7455_1500HZ
-} MMA7455_Bandwidth_t;
-
-/*************************************************************************
- * Function Name: MMA7455_Init
- * Parameters: none
- *
- * Return: MMA7455_Status_t
- *
- * Description: MMA7455 init
- *
- *************************************************************************/
+/* Initialize MMA7455 */
 MMA7455_Status_t MMA7455_Init(void);
-
+/* Read/Write data on MMA7455 */
 MMA7455_Status_t MMA7455_ReadWrite(uint8_t* in_data, uint32_t txlen, 
 	                                      uint8_t* out_data, uint32_t rxlen);
-	                                      
-
-/*************************************************************************
- * Function Name: MMA7455_GetID
- * Parameters: none
- *
- * Return: MMA7455_Status_t
- *
- * Description: MMA7455 get chip ID and revision
- *
- *************************************************************************/
-MMA7455_Status_t MMA7455_GetID (uint8_t *pChipId, uint8_t *pRevision);
-
-/*************************************************************************
- * Function Name: MMA7455_GetData
- * Parameters: none
- *
- * Return: MMA7455_Status_t
- *
- * Description:
- *
- *************************************************************************/
+/* Get User Info from MMA7455 */
+MMA7455_Status_t MMA7455_GetUserInfo (uint8_t *UserInfo);
+/* Get output X,Y,Z (8 bit)*/
 MMA7455_Status_t MMA7455_GetData (pMMA7455_Data_t pData);
-//MMA7455_Status_t MMA7455_IntClear (void);
+/* Get output X,Y,Z (10 bit)*/
+MMA7455_Status_t MMA7455_Get10bitData (pMMA7455_Data_t pData);
+/* Set offset data*/
+MMA7455_Status_t MMA7455_SetOffData (pMMA7455_Data_t pData);
+/* Get Offset data */
+MMA7455_Status_t MMA7455_GetOffData (pMMA7455_Data_t pData);
+/* Get orientation */
+MMA7455_Orientation_t MMA7455_GetOrientation(pMMA7455_Data_t pData);
 /**
  * @}
  */
