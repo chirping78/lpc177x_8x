@@ -75,14 +75,6 @@ int32_t Uda1380_Init(uint32_t i2cClockFreq, uint32_t i2sClockFreq)
 	if(ret != UDA1380_FUNC_OK)
 		return ret;
 
-   	ret = Uda1380_WriteData(UDA1380_REG_MSTRMUTE,0);
-	if(ret != UDA1380_FUNC_OK)
-		return ret;
-	
-	ret = Uda1380_WriteData(UDA1380_REG_MIXSDO,0);
-	if(ret != UDA1380_FUNC_OK)
-		return ret;
-
 #if UDA1380_SYSCLK_USED //Use SYSCLK
 	ret = Uda1380_WriteData(UDA1380_REG_EVALCLK, 
 	       EVALCLK_DEC_EN | EVALCLK_DAC_EN | EVALCLK_INT_EN | EVALCLK_DAC_SEL_SYSCLK );
@@ -116,6 +108,15 @@ int32_t Uda1380_Init(uint32_t i2cClockFreq, uint32_t i2sClockFreq)
 	if(ret != UDA1380_FUNC_OK)
 		return ret;
 #endif
+
+    ret = Uda1380_WriteData(UDA1380_REG_MSTRMUTE,0x0202);
+	if(ret != UDA1380_FUNC_OK)
+		return ret;
+	
+	ret = Uda1380_WriteData(UDA1380_REG_MIXSDO,0);
+	if(ret != UDA1380_FUNC_OK)
+		return ret;
+
 	return UDA1380_FUNC_OK;
 }
 
