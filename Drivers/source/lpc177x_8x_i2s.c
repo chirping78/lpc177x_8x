@@ -282,13 +282,13 @@ void I2S_Stop(LPC_I2S_TypeDef *I2Sx, uint8_t TRMode) {
  * @return 		Status: ERROR or SUCCESS
  *********************************************************************/
 Status I2S_FreqConfig(LPC_I2S_TypeDef *I2Sx, uint32_t Freq, uint8_t TRMode) {
-	uint32_t cclk, out_clk;
+	uint32_t cclk;
 	uint8_t channel, wordwidth;
 	uint32_t x, y;
 	uint64_t divider;
 	uint16_t dif;
 	uint16_t x_divide, y_divide;
-	uint16_t ErrorOptimal = 0xFFFF;
+	uint16_t err, ErrorOptimal = 0xFFFF;
 	
 	uint32_t N;
 
@@ -321,30 +321,36 @@ Status I2S_FreqConfig(LPC_I2S_TypeDef *I2Sx, uint32_t Freq, uint8_t TRMode) {
 
 	/* divider is a fixed point number with 16 fractional bits */
 	divider = (((uint64_t)Freq *channel*wordwidth * 2)<<16) / cclk;
-    y_divide = 0;
-    x_divide = 0;
-	for (y = 1; y < 255; y++) {
-        for(x=1; x<y;x++)
-        {
-            if(y%x == 0)
-            {
-                N = (x<<16)/(divider*y);
-                if(N < 0x3F)
-                {
-                    out_clk = (x*cclk)/(y*channel*wordwidth*2*N);
-                    dif = (out_clk > Freq)? (out_clk - Freq): (Freq - out_clk);
-                    if(dif < ErrorOptimal)
-                    {
-                        y_divide = y;
-                        x_divide = x;
-                        ErrorOptimal = dif;
-                     }
-                }
-            }
-        }
-     }
 
-    N = (x_divide<<16)/(divider*y_divide);
+	/* find N that make x/y <= 1 -> divider <= 2^16 */
+	for(N=64;N>0;N--){
+		if((divider*N) < (1<<16)) break;
+	}
+
+	if(N == 0) return ERROR;
+
+	divider *= N;
+
+	for (y = 255; y > 0; y--) {
+		x = y * divider;
+		if(x & (0xFF000000)) continue;
+		dif = x & 0xFFFF;
+		if(dif>0x8000) err = 0x10000-dif;
+		else err = dif;
+		if (err == 0)
+		{
+			y_divide = y;
+			break;
+		}
+		else if (err < ErrorOptimal)
+		{
+			ErrorOptimal = err;
+			y_divide = y;
+		}
+	}
+	x_divide = ((uint64_t)y_divide * Freq *(channel*wordwidth)* N * 2)/cclk;
+	if(x_divide >= 256) x_divide = 0xFF;
+	if(x_divide == 0) x_divide = 1;
 	
 	if (TRMode == I2S_TX_MODE)// Transmitter
 	{
