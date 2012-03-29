@@ -28,7 +28,15 @@
 * copyright, permission, and disclaimer notice must appear in all copies of
 * this code.
 **********************************************************************/
+#include "bsp.h"
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+
 #if (_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT)
+#ifdef _SSP
 #include "LPC177x_8x.h"
 #include "lpc177x_8x_ssp.h"
 #include "lpc177x_8x_pinsel.h"
@@ -281,7 +289,7 @@ void GetTouchCoord(int16_t *pX, int16_t* pY)
         }
     }
 }
-
+#endif
 #endif  /*_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT)*/
 
 

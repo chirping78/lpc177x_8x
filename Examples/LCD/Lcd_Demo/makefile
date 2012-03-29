@@ -28,7 +28,7 @@ EXECNAME    =lcd_test
 EXDIRINC	=$(CURDIR)
 
 # Include directory
-TMPPATH 		+= -I$(EXDIRINC)/apps  
+TMPPATH 		+= -I$(EXDIRINC)/app  
 # Create a list of aditional files will be compiled
 # Retarget object files
 ADDOBJS		+=  $(EXDIRINC)/app/Cursor.o \

@@ -28,12 +28,20 @@
 * copyright, permission, and disclaimer notice must appear in all copies of
 * this code.
 **********************************************************************/
+#include "bsp.h"
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc177x_8x_libcfg.h"
+#else
+#include "lpc177x_8x_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+
 #include "lpc177x_8x_ssp.h"
 #include "lpc177x_8x_pinsel.h"
 #include "lpc177x_8x_timer.h"
 #include "lpc177x_8x_gpio.h"
-#include "bsp.h"
+
 #if (_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT)
+#if defined(_SSP)&& defined (_GPIO) && defined(_TIM)
 /** @defgroup LCD_QVGA  QVGA TFT LCD
  * @ingroup LPC177x_8xCMSIS_Board_Support
  * @{
@@ -216,6 +224,6 @@ void InitLcdController (void)
 /**
  * @}
  */
-
+#endif
 #endif
 
