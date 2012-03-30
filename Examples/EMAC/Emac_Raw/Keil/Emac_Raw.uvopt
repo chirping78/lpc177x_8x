@@ -606,20 +606,6 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>12</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libnosys_gnu.c</PathWithFileName>
-      <FilenameWithoutPath>libnosys_gnu.c</FilenameWithoutPath>
-    </File>
-    <File>
-      <GroupNumber>4</GroupNumber>
       <FileNumber>13</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
@@ -664,9 +650,9 @@
       <Documents>
         <Doc>
           <Name>..\abstract.txt</Name>
-          <ColumnNumber>61</ColumnNumber>
+          <ColumnNumber>35</ColumnNumber>
           <TopLine>87</TopLine>
-          <CurrentLine>99</CurrentLine>
+          <CurrentLine>98</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

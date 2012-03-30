@@ -1833,9 +1833,6 @@
       <name>$PROJ_DIR$\..\Emac_Raw.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libnosys_gnu.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\..\BoardSupport\phylan.c</name>
     </file>
   </group>

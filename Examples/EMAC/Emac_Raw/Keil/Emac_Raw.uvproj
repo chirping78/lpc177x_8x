@@ -565,11 +565,6 @@
               <FilePath>..\crc32.c</FilePath>
             </File>
             <File>
-              <FileName>libnosys_gnu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libnosys_gnu.c</FilePath>
-            </File>
-            <File>
               <FileName>Emac_Raw.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Emac_Raw.c</FilePath>
@@ -1037,11 +1032,6 @@
               <FileName>crc32.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\crc32.c</FilePath>
-            </File>
-            <File>
-              <FileName>libnosys_gnu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libnosys_gnu.c</FilePath>
             </File>
             <File>
               <FileName>Emac_Raw.c</FileName>
