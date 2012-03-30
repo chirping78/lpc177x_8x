@@ -174,12 +174,12 @@ Bmp_t LogoPic =
 };
 
 
-void DelayNS(uint32_t dly)
+void DelayMS(uint32_t dly)
 {
 	uint32_t i = 0;
 
 	for ( ; dly > 0; dly--)
-		for (i = 0; i < 5000; i++);
+		for (i = 0; i < 16000; i++);
 }
 
 /*************************************************************************
@@ -480,7 +480,7 @@ void lcd_colorbars(void)
   LogoPic.pPicStream += pix_ofs;
   LCD_LoadPic(LCD_PANEL_UPPER,xs,ys,&LogoPic,0x00);
   
-  for(i = 0x1000000; i; i--);
+  DelayMS(5000);
 #endif /*LOGO_DISPLAYED*/ 
 
   // Draw color bars
