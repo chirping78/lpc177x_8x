@@ -1,4 +1,26 @@
-RELEASE LPC177x_8xCMSIS_120229
+RELEASE LPC177x_8xCMSIS_120330
+
+***** Implementations and Improvements ****
+1. Update example code to compile ok in Linux.
+2. Remove disabling BOD in CLKPWR_DeepSleep function and CLKPWR_PowerDown function.
+3. Correct RTC_SetTime & RTC_SetAlarmTime function so that they are correct with boundary input of input parameters.
+4. Support driver for Event Monitor/Recorder. Add Rtc_EV example to test this driver.
+5. Update LCD driver & example:
+   - Support Big Endian Byte & Big Endian Pixel
+   - Support the case EA board is mounted with QVGA TFT LCD.
+   - Support TSC2046 touch screen controller and MMA7455 acceleration sensor.
+6. Update calculation of I2STXRATE and I2STXBITRATE.
+7. Documentation: update .chm file.
+
+
+***** Known Issues: In this package contains some examples that can not verify now ****
+
+1./ ADC > Adc_Burst
+2./ CAN > Can_SelfTest
+Maybe they will be removed when release for customers.
+==========================================================================================================
+========================================================================================================== 
+ RELEASE LPC177x_8xCMSIS_120229
 
 ***** Implementations and Improvements ****
 1. Update UART driver: 
