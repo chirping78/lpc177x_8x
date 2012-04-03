@@ -92,7 +92,7 @@
 int32_t Uda1380_Init(uint32_t i2cClockFreq, uint32_t i2sClockFreq);
 int32_t Uda1380_WriteData(uint8_t reg, uint16_t data);
 int32_t Uda1380_ReadData(uint8_t reg, uint16_t *data);
-
+int32_t Uda1380_Mute(Bool MuteOn);
 /**
  * @}
  */
