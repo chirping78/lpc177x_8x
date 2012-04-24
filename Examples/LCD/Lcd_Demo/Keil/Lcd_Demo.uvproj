@@ -590,6 +590,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\BoardSupport\tsc2046.c</FilePath>
             </File>
+            <File>
+              <FileName>lcd_qvga_tft_revPB1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\BoardSupport\lcd_qvga_tft_revPB1.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

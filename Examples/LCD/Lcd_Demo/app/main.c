@@ -33,11 +33,7 @@
  *    $Revision: 24636 $
  **************************************************************************/
 
-
-#include "logo.h"
-#include "Cursor.h"
-#include "sensor_smb380.h"
-#include "sensor_mma7455.h"
+#include "lcd_config.h"
 #include "lpc_types.h"
 #include "system_LPC177x_8x.h"
 #include "lpc177x_8x_clkpwr.h"
@@ -54,109 +50,17 @@
 #elif (_CURR_USING_BRD == _EA_PA_BOARD)
 #include "sdram_is42s32800d.h"
 #endif
-#include "tsc2046.h"
 
 /** @defgroup LCD_Demo	LCD Demo
  * @ingroup LCD_Examples
  * @{
  */
 
-#if (_CUR_USING_LCD == _RUNNING_LCD_GFT035A320240Y)
-#define   LOGO_DISPLAYED                (1)
-#define   TCS_USED						(0)
-#define ACCEL_SENSOR_USED               (1)
-
-/* LCD Config */
-#define LCD_REFRESH_FREQ     (50HZ)
-#define LCD_H_SIZE           320
-#define LCD_H_PULSE          30
-#define LCD_H_FRONT_PORCH    20
-#define LCD_H_BACK_PORCH     38
-#define LCD_V_SIZE           240
-#define LCD_V_PULSE          3
-#define LCD_V_FRONT_PORCH    5
-#define LCD_V_BACK_PORCH     15
-#define LCD_PIX_CLK          (6.5*1000000l)
-
-/* PWM */
-#define _PWM_NO_USED    1
-#define _PWM_CHANNEL_NO 2
-#define _PWM_PORT_NUM   2
-#define _PWM_PIN_NUM    1
-#define _PWM_PIN_FUNC_NUM 1
-
-#else  /*(_CUR_USING_LCD != _RUNNING_LCD_GFT035A320240Y)*/
-
-#define   LOGO_DISPLAYED                (0)
-#define   TCS_USED						(1)
-#define   ACCEL_SENSOR_USED               (0)
-
-/* LCD Config */
-#define LCD_REFRESH_FREQ     (30HZ)
-#define LCD_H_SIZE           240
-#define LCD_H_PULSE          2
-#define LCD_H_FRONT_PORCH    10
-#define LCD_H_BACK_PORCH     28
-#define LCD_V_SIZE           320
-#define LCD_V_PULSE          2
-#define LCD_V_FRONT_PORCH    1
-#define LCD_V_BACK_PORCH     2
-#define LCD_PIX_CLK          (8200000l)
-
-/* PWM */
-#define _PWM_NO_USED    1
-#define _PWM_CHANNEL_NO 1
-#define _PWM_PORT_NUM   1
-#define _PWM_PIN_NUM    18
-#define _PWM_PIN_FUNC_NUM 2
-
-/* Touch Screen Config */
-#if (TSC2046_CONVERSION_BITS == 8)
-#define TOUCH_AD_LEFT    240
-#define TOUCH_AD_RIGHT   10
-#define TOUCH_AD_TOP     240
-#define TOUCH_AD_BOTTOM  16
-#else
-#define TOUCH_AD_LEFT    3686
-#define TOUCH_AD_RIGHT   205
-#define TOUCH_AD_TOP     3842
-#define TOUCH_AD_BOTTOM  267
-#endif
-
-#endif  /*(_CUR_USING_LCD == _RUNNING_LCD_GFT035A320240Y)*/
-
-#define LCD_VRAM_BASE_ADDR_UPPER 	((uint32_t)SDRAM_BASE_ADDR + 0x00100000)
-#define LCD_VRAM_BASE_ADDR_LOWER 	(LCD_VRAM_BASE_ADDR_UPPER + 1024*768*4)
-#define LCD_CURSOR_BASE_ADDR 	    ((uint32_t)0x20088800)
-
-#if (LOGO_BPP == 24)
-#define MAKE_COLOR(red,green,blue)  (blue<<16|green<<8|red)
-#elif (LOGO_BPP == 16)
-#define MAKE_COLOR(red,green,blue)  (blue << 10 | green << 5 | red)
-#elif (LOGO_BPP == 8)
-#define MAKE_COLOR(red,green,blue)  (blue << 5 | green << 3 | red)
-#else
-#define MAKE_COLOR(red,green,blue)  (red)
-#endif
-
-#define _BACK_LIGHT_BASE_CLK (1000/2)
-
 uint8_t Smb380Id, Smb380Ver;
-#if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
-#define  AccSensor_Data_t  SMB380_Data_t
-#define  AccSensor_Init    SMB380_Init
-#define  AccSensor_GetData SMB380_GetData
-#else
-#define  AccSensor_Data_t  MMA7455_Data_t
-#define  AccSensor_Init    MMA7455_Init
-#define  AccSensor_GetData MMA7455_GetData
-#endif
-
 extern uint8_t * LogoStream;
 #if (LOGO_BPP == 2)
 extern uint8_t * LogoPalette;
 #endif
-extern void InitLcdController (void);
 
 Bmp_t LogoPic =
 {
@@ -181,7 +85,6 @@ void DelayMS(uint32_t dly)
 	for ( ; dly > 0; dly--)
 		for (i = 0; i < 16000; i++);
 }
-
 /*************************************************************************
  * Function Name: SetBackLight
  * Parameters: level     Backlight value
@@ -192,7 +95,8 @@ void DelayMS(uint32_t dly)
  *
  *************************************************************************/
 void SetBackLight(uint32_t level)
-{
+{ 
+#if ((_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT)||(_CUR_USING_LCD == _RUNNING_LCD_GFT035A320240Y))
   PWM_MATCHCFG_Type PWMMatchCfgDat;
   PWM_MatchUpdate(_PWM_NO_USED, _PWM_CHANNEL_NO, level, PWM_MATCH_UPDATE_NOW);
   PWMMatchCfgDat.IntOnMatch = DISABLE;
@@ -212,6 +116,11 @@ void SetBackLight(uint32_t level)
 
   /* Start PWM now */
   PWM_Cmd(_PWM_NO_USED, ENABLE);
+#else
+{
+  SetPWM(level*100/0x1000);
+}
+#endif /*((_CURR_USING_BRD == _IAR_OLIMEX_BOARD) ||(_CURR_USING_BRD == _RUNNING_LCD_QVGA_TFT))*/
 }
 
 /*************************************************************************
@@ -232,13 +141,14 @@ uint32_t GetBacklightVal (void) {
   while (!(ADC_ChannelGetStatus(LPC_ADC, BRD_ADC_PREPARED_CHANNEL, ADC_DATA_DONE)));
 
   val = ADC_ChannelGetData(LPC_ADC, BRD_ADC_PREPARED_CHANNEL);
-
+#if ((_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT)||(_CUR_USING_LCD == _RUNNING_LCD_GFT035A320240Y))
   val = (val >> 7) & 0x3F;
-
   pclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_PER);
   backlight_off = pclk/(_BACK_LIGHT_BASE_CLK*20);
   val =  val* (pclk*9/(_BACK_LIGHT_BASE_CLK*20))/0x3F;
-
+#else
+  backlight_off = 0;
+#endif
   return backlight_off + val;
 }
 /*************************************************************************
@@ -393,7 +303,11 @@ void lcd_colorbars(void)
   lcd_config.polarity.cpl = LCD_H_SIZE;
   lcd_config.polarity.invert_hsync = 1;
   lcd_config.polarity.invert_vsync = 1;
+  #if (_CUR_USING_LCD ==_RUNNING_LCD_EA_REV_PB1)
+  lcd_config.polarity.invert_panel_clock = 0;
+  #else
   lcd_config.polarity.invert_panel_clock = 1;
+  #endif
   lcd_config.lcd_panel_upper =  LCD_VRAM_BASE_ADDR_UPPER;
   lcd_config.lcd_panel_lower =  LCD_VRAM_BASE_ADDR_LOWER;
   #if (LOGO_BPP == 24)
@@ -408,10 +322,12 @@ void lcd_colorbars(void)
   lcd_config.lcd_type = LCD_TFT;
   lcd_config.lcd_palette = LogoPic.pPalette;
   lcd_config.lcd_bgr = FALSE;
-
+  
+  #if ((_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT)||(_CUR_USING_LCD == _RUNNING_LCD_EA_REV_PB1))
   LCD_Init (&lcd_config);
-  #if ((_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT) || (_CUR_USING_LCD == _RUNNING_LCD_G240320LTSW))
   InitLcdController();
+  #else
+  LCD_Init (&lcd_config);
   #endif
 
   #if TCS_USED
@@ -421,13 +337,17 @@ void lcd_colorbars(void)
   tsc_config.ad_bottom = TOUCH_AD_BOTTOM;
   tsc_config.lcd_h_size = LCD_H_SIZE;
   tsc_config.lcd_v_size = LCD_V_SIZE;
+  #if (_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT)
   tsc_config.swap_xy = 1;
+  #else
+  tsc_config.swap_xy = 1;
+  #endif
   InitTSC2046(&tsc_config);
   #endif
 
   LCD_SetImage(LCD_PANEL_UPPER, NULL);
   LCD_SetImage(LCD_PANEL_LOWER, NULL);
- 
+#if ((_CURR_USING_BRD == _IAR_OLIMEX_BOARD) ||(_CURR_USING_BRD == _RUNNING_LCD_QVGA_TFT)) 
    /***************/
   /* Initialize PWM */
   /***************/
@@ -446,11 +366,13 @@ void lcd_colorbars(void)
   PWMMatchCfgDat.ResetOnMatch = ENABLE;
   PWMMatchCfgDat.StopOnMatch = DISABLE;
   PWM_ConfigMatch(_PWM_NO_USED, &PWMMatchCfgDat);
+#endif
+
   // Set backlight
   backlight = GetBacklightVal();
   SetBackLight(backlight);
-  
-    // Enable LCD
+
+  // Enable LCD
   LCD_Enable (TRUE);
   
 #if LOGO_DISPLAYED
@@ -480,7 +402,7 @@ void lcd_colorbars(void)
   LogoPic.pPicStream += pix_ofs;
   LCD_LoadPic(LCD_PANEL_UPPER,xs,ys,&LogoPic,0x00);
   
-  DelayMS(5000);
+  DelayMS(2000);
 #endif /*LOGO_DISPLAYED*/ 
 
   // Draw color bars
@@ -522,7 +444,7 @@ void lcd_colorbars(void)
 #if TCS_USED
     {
         int16_t tmp_x = -1, tmp_y = -1;
-        for(i = 0; i < 0x10000;  i++);
+        for(i = 0; i < 0x20000;  i++);
   	    GetTouchCoord((int16_t*)&tmp_x, (int16_t*)&tmp_y);
         if((tmp_x >= 0) && (tmp_y >0))
         {      

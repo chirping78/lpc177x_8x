@@ -19,7 +19,7 @@
 
 #include "lpc177x_8x_lcd.h"
 
-#define   LOGO_BPP       24
+#define   LOGO_BPP       16
 
 #define   BMP_BYTES_PP   4	
 

@@ -42,7 +42,6 @@
 //Uda1380 link to I2C0 only
 #define UDA1380_I2C		I2C_0
 
-static int32_t Uda1380_Mute(Bool MuteOn);
 
 /*********************************************************************//**
  * @brief 		Initialize Uda1380

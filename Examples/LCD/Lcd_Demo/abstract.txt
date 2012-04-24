@@ -50,7 +50,7 @@
 	Hardware configuration:		
 		This example was tested on:
 			1. LPC1788 OEM Board rev A and OEM Base Board rev A
-               Connect OEM Base Board with QVGA TFT LCD (320x240)
+               Connect OEM Base Board with "QVGA TFT LCD (320x240)" or "EA LCD board, 7 inch TFT (800x480) rev PB1."
 			2. LPC1788 IAR Start Kit Rev.B
 				- 3.3VA_E	:ON
 				- VREG		:ON
