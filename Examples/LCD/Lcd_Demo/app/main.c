@@ -260,7 +260,7 @@ void lcd_colorbars(void)
   PWM_MATCHCFG_Type PWMMatchCfgDat;
   LCD_Cursor_Config_Type cursor_config;
   LCD_Config_Type lcd_config;
-  int cursor_x = 0, cursor_y = 0;
+  int cursor_x = 0, cursor_y = 0, draw_cursor_x, draw_cursor_y;
 #if LOGO_DISPLAYED
   uint32_t start_pix_x, start_pix_y, pix_ofs;
 #endif
@@ -413,13 +413,19 @@ void lcd_colorbars(void)
 
   cursor_config.baseaddress = LCD_CURSOR_BASE_ADDR;
   cursor_config.framesync = 1;
+#if (CURSOR_SIZE == 64)
   cursor_config.size32 = 0;
+#else
+  cursor_config.size32 = 1;
+#endif
+  cursor_config.palette[0] = (LCD_PALETTE_Type){0x00,0x00,0x00};
+  cursor_config.palette[1] = (LCD_PALETTE_Type){0xFF,0xFF,0xFF};
   LCD_Cursor_Cfg(&cursor_config);
   LCD_Cursor_SetImage((uint32_t *)Cursor, 0, sizeof(Cursor)/sizeof(uint32_t)) ;
 
-  cursor_x = (LCD_H_SIZE - CURSOR_H_SIZE)/2;
-  cursor_y = (LCD_V_SIZE - CURSOR_V_SIZE)/2;
-  LCD_Move_Cursor(cursor_x, cursor_y);
+  draw_cursor_x = (LCD_H_SIZE/2) - CURSOR_OFF_X;
+  draw_cursor_y = (LCD_V_SIZE/2) - CURSOR_OFF_Y;
+  LCD_Move_Cursor(draw_cursor_x, draw_cursor_y);
 
   LCD_Cursor_Enable(ENABLE, 0);
 
@@ -429,7 +435,7 @@ void lcd_colorbars(void)
   for(i = 0; i < 0x100000;  i++);
 #endif
 
-#if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
+#if ((_CURR_USING_BRD == _IAR_OLIMEX_BOARD) && ACCEL_SENSOR_USED)
   SMB380_GetID(&Smb380Id, &Smb380Ver);
 #endif
   
@@ -444,12 +450,18 @@ void lcd_colorbars(void)
 #if TCS_USED
     {
         int16_t tmp_x = -1, tmp_y = -1;
-        for(i = 0; i < 0x20000;  i++);
+        for(i = 0; i < 0x10000;  i++);
   	    GetTouchCoord((int16_t*)&tmp_x, (int16_t*)&tmp_y);
         if((tmp_x >= 0) && (tmp_y >0))
-        {      
-          cursor_x = tmp_x - CURSOR_H_SIZE/2;
-          cursor_y = tmp_y - CURSOR_V_SIZE/2;
+        {    
+          cursor_x = tmp_x;
+          cursor_y = tmp_y;  
+          draw_cursor_x = tmp_x - CURSOR_OFF_X;
+          draw_cursor_y = tmp_y - CURSOR_OFF_Y;
+        }
+        else
+        {
+            continue;
         }
         
     }
@@ -460,53 +472,59 @@ void lcd_colorbars(void)
       continue; 
        
 #if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
-    cursor_x += XYZT.AccX/512;
-    cursor_y += XYZT.AccY/512;
+    draw_cursor_x += XYZT.AccX/512;
+    draw_cursor_y += XYZT.AccY/512;
 #else
     {
        MMA7455_Orientation_t ori = MMA7455_GetOrientation(&XYZT);
-       if(ori & MMA7455_XUP) cursor_x++;
-       if (ori & MMA7455_XDOWN) cursor_x--;
-       if (ori & MMA7455_YUP) cursor_y++;
-       if (ori & MMA7455_YDOWN) cursor_y--;
+       if(ori & MMA7455_XUP) draw_cursor_x++;
+       if (ori & MMA7455_XDOWN) draw_cursor_x--;
+       if (ori & MMA7455_YUP) draw_cursor_y++;
+       if (ori & MMA7455_YDOWN) draw_cursor_y--;
     }
 #endif
 
 #endif  /*TCS_USED*/
     
-    if((LCD_H_SIZE - CURSOR_H_SIZE/2) < cursor_x)
+    if((LCD_H_SIZE - CURSOR_OFF_X) < draw_cursor_x)
     {
-      cursor_x = LCD_H_SIZE - CURSOR_H_SIZE/2;
+      draw_cursor_x = LCD_H_SIZE - CURSOR_OFF_X;
     }
 
-    if(-(CURSOR_H_SIZE/2) > cursor_x)
+    if(-(CURSOR_OFF_X) > draw_cursor_x)
     {
-      cursor_x = -(CURSOR_H_SIZE/2);
+      draw_cursor_x = -(CURSOR_OFF_X);
     }
 
-    if((LCD_V_SIZE - CURSOR_V_SIZE/2) < cursor_y)
+    if((LCD_V_SIZE - CURSOR_OFF_Y) < draw_cursor_y)
     {
-      cursor_y = (LCD_V_SIZE - CURSOR_V_SIZE/2);
+      draw_cursor_y = (LCD_V_SIZE - CURSOR_OFF_Y);
     }
 
-    if(-(CURSOR_V_SIZE/2) > cursor_y)
+    if(-(CURSOR_OFF_Y) > draw_cursor_y)
     {
-      cursor_y = -(CURSOR_V_SIZE/2);
+      draw_cursor_y = -(CURSOR_OFF_Y);
     }
 #else  /* !(TCS_USED || ACCEL_SENSOR_USED)*/ 
     for(i = 0; i < 0x1000000;  i++);
     
-    cursor_x += 32;
-    if(cursor_x >= (LCD_H_SIZE - CURSOR_H_SIZE))
+    draw_cursor_x += 32;
+    if(draw_cursor_x >= (LCD_H_SIZE - CURSOR_OFF_X))
     {
-      cursor_x = 0;
-      cursor_y += 32;
-      if(cursor_y >(LCD_V_SIZE - CURSOR_V_SIZE))
-        cursor_y = 0;
+      draw_cursor_x = 0;
+      draw_cursor_y += 32;
+      if(draw_cursor_y >(LCD_V_SIZE - CURSOR_OFF_Y))
+        draw_cursor_y = 0;
     }
 #endif  /*TCS_USED || ACCEL_SENSOR_USED*/
 
-    LCD_Move_Cursor(cursor_x, cursor_y);
+    LCD_Move_Cursor(draw_cursor_x, draw_cursor_y);
+#if PAINT_ON_SCREEN
+{
+    
+    LCD_PutPixel (LCD_PANEL_UPPER,cursor_x, cursor_y, 0x00) ;
+}
+#endif
   }
 }
 

@@ -25,18 +25,24 @@
 @Example description:
 	Purpose:
 		  This example project describes how to test LCD module on LPC1788.		  
-	Process:	
-		  The NXP logos appear on the LCD and the LCD hardware cursor moves as the 
-		  board moves(the acceleration sensor is used).  		
+	Process:
+		  There are some functions which this example supported. Update below macros to enable/disable the relevant 
+		  functions. These macros are defined in lcd_config.h file.
+		  - LOGO_DISPLAYED	: display an image at the center of the LCD. 
+		  - TCS_USED	  	: use touch screen controller.
+		  - ACCEL_SENSOR_USED	: use acceleration sensor to detect the board moves.
+		  - PAINT_ON_SCREEN	: paint on screen when user touches on the LCD. This function only runs if TCS_USED is set.
+		  Other configurations:
+		  - LOGO_BPP		: Defined in logo.h file. It determines the BPP used. This example tested with 2bpp, 16bpp and 24bpp.  
+		  				In case "7 inch TFT (800x480) rev PB1" is used, please don't set it as 24.
+		  Steps in the example:
+		  - Display the LOGO on screen.
+		  - Display the cursor at the center of the LCD.
+		  - Get the next cursor position using touch sensor or acceleration sensor.
+		  - Move the cursor to the above position.
+		  					  
+		  Besides, the backlight of LCD can be adjust by turn left/right potentiometer.
 
-		  The LCD driver support all bpp values. The example tests with 2bpp, 16bpp and 24bpp (1 pixel can
-		  take 3 or 4 bytes). Define the value of LOGO_BPP and BMP_BYTES_PP to determine the running mode.
-
-		  The backlight of LCD can be adjust by turn left/right potentiometer.
-
-		  This example shows basic use of I/O, interrupt and LCD controllers.
-		  
-		  This code is referenced from IAR source code.
 
 @Directory contents:
 	\EWARM: includes EWARM (IAR) project and configuration files
@@ -80,6 +86,6 @@ Step to run:
 		- Step 2: Burn hex file into board (if run on ROM mode)
 		- Step 3: Configure hardware and serial display as above instruction 
 		- Step 4: Run example, observe LCD display
-        - Step 5: In case QVGA is used, touch on screen and observe the cursor moves.
+		- Step 5: In case QVGA is used, touch on screen and observe the cursor moves.
 		
 		@Warning: Maybe J-LINK power source cannot supply enough power for LCD

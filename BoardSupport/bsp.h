@@ -67,7 +67,6 @@
 #define _RUNNING_LCD_NONE               (0)
 #define _RUNNING_LCD_GFT035A320240Y		(1)
 #define _RUNNING_LCD_QVGA_TFT			(2)
-#define _RUNNING_LCD_G240320LTSW        (3)
 #define _RUNNING_LCD_EA_REV_PB1			(4)
 
 #if (_CURR_USING_BRD == _QVGA_BOARD)

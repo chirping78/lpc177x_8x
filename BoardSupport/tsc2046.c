@@ -156,41 +156,35 @@ static void ReadWriteTSC2046(uint8_t channel, uint16_t* data)
 	uint8_t cmd;
 	uint32_t tmp;
 	SSP_DATA_SETUP_Type sspCfg;
-    uint8_t first, second;
+    uint8_t rx[2];
     
     CS_ON;
+
+    /* Send command */
 #if (TSC2046_CONVERSION_BITS == 8)      
 	cmd = START_BIT | CHANNEL_SELECT(channel)|CONVERT_MODE_8_BITS|DFR_MODE|REF_OFF_ADC_ON;
 #else
     cmd = START_BIT | CHANNEL_SELECT(channel)|CONVERT_MODE_12_BITS|DFR_MODE|REF_OFF_ADC_ON;
 #endif
-
-	sspCfg.tx_data = &cmd;
+    sspCfg.tx_data = &cmd;
 	sspCfg.rx_data = NULL;
 	sspCfg.length  = 1; 
     SSP_ReadWrite (TSC2046_SSP_PORT, &sspCfg, SSP_TRANSFER_POLLING);
 
     for(tmp = 0x100; tmp;tmp--);
-    
-    // Read High byte
+
+    /* Read the response */
     sspCfg.tx_data = NULL;
-	sspCfg.rx_data = &first;
-	sspCfg.length  = 1; 
-    SSP_ReadWrite (TSC2046_SSP_PORT, &sspCfg, SSP_TRANSFER_POLLING);
-
-    for(tmp = 0x10; tmp;tmp--);
-
-    // Read Low byte
-	sspCfg.tx_data = NULL;
-	sspCfg.rx_data = &second;
-	sspCfg.length  = 1; 
+	sspCfg.rx_data = rx;
+	sspCfg.length  = 2; 
     SSP_ReadWrite (TSC2046_SSP_PORT, &sspCfg, SSP_TRANSFER_POLLING);
 
 #if (TSC2046_CONVERSION_BITS == 8) 
-	*data = (((first&0x7F) <<8) | (second>>0)) >> 7; 
+	*data = (((rx[0]&0x7F) <<8) | (rx[1]>>0)) >> 7; 
 #else    
-    *data = (((first&0x7F) <<8) | (second>>0)) >> 3; 
-#endif     
+    *data = (((rx[0]&0x7F) <<8) | (rx[1]>>0)) >> 3; 
+#endif 
+  
     CS_OFF;
 
     for(tmp = 0x10; tmp;tmp--);
@@ -232,7 +226,7 @@ static int16_t EvalCoord(uint16_t* pPoints, uint32_t PointNum, uint16_t MaxVal, 
  * @param[in]	z2			Z2-Coordinate
  * @return 		coefficient.
  **********************************************************************/
-static int16_t CalPressure(int16_t x, int16_t y, int16_t z1, int16_t z2)
+static int16_t CalPressureCoef(int16_t x, int16_t y, int16_t z1, int16_t z2)
 {
     int16_t z = -1;
 
@@ -328,7 +322,7 @@ void GetTouchCoord(int16_t *pX, int16_t* pY)
     else
       return;
 
-    z = CalPressure(x,y,z1,z2);
+    z = CalPressureCoef(x,y,z1,z2);
     if((z < 0) || (z > 11000))
        return;
 

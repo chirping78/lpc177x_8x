@@ -458,7 +458,62 @@ void LCD_SetImage(LCD_PANEL panel, const uint8_t *pPain)
 
   	for(i = LCD_PWR_ENA_DIS_DLY; i; i--);
 }
+/*********************************************************************//**
+ * @brief		Draw a pixel on the given panel.
+ *
+ * @param[in] panel	         It can be:
+ *                                             - LCD_PANEL_UPPER
+ *                                             - LCD_PANEL_LOWER
+ * @param[in] X_Left	    X position.
+ * @param[in] Y_Up	        Y position.
+ * @param[in] color	        Color which is placed to the given pixel.
+ *
+ * @return 	None.
+ *
+ **********************************************************************/
+void LCD_PutPixel (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up, LcdPixel_t color)
+{
+    uint32_t k;
+    uint32_t * pWordData = NULL;
+    uint8_t*   pByteData = NULL;
+    uint32_t  bitOffset;
+    uint8_t*   pByteSrc = (uint8_t*)&color;
+    uint8_t  bpp = bits_per_pixel[lcd_config.lcd_bpp];
+    uint8_t  bytes_per_pixel = bpp/8;
+    uint32_t start_bit;
+  
+    if((X_Left >= lcd_hsize)||(Y_Up >= lcd_vsize))
+        return;
 
+    if(panel == LCD_PANEL_UPPER)
+    pWordData = (uint32_t*) LPC_LCD->UPBASE + LCD_GetWordOffset(X_Left,Y_Up);
+    else
+    pWordData = (uint32_t*) LPC_LCD->LPBASE + LCD_GetWordOffset(X_Left,Y_Up);
+    
+    bitOffset = LCD_GetBitOffset(X_Left,Y_Up);
+    pByteData = (uint8_t*) pWordData;
+    pByteData += bitOffset/8;
+    
+    start_bit =  bitOffset%8;
+
+    if(bpp < 8)
+    {
+	  uint8_t bit_pos = start_bit;
+	  uint8_t bit_ofs = 0;
+	  for(bit_ofs = 0;bit_ofs <bpp; bit_ofs++,bit_pos++)
+	  {
+		  *pByteData &= ~ (0x01 << bit_pos);
+		  *pByteData |= ((*pByteSrc >> (k+bit_ofs)) & 0x01) << bit_pos; 
+	  }
+    }
+    else
+    {
+	     for(k = 0; k < bytes_per_pixel; k++)
+	    {
+		   *(pByteData+ k) = *pByteSrc++;
+	    }
+    }
+}
 /*********************************************************************//**
  * @brief		Place given image to given position.
  *

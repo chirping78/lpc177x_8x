@@ -64,6 +64,9 @@
 #define   LOGO_DISPLAYED                (0)
 #define   TCS_USED						(1)
 #define   ACCEL_SENSOR_USED             (0)
+#if TCS_USED
+#define   PAINT_ON_SCREEN                (1)
+#endif
 
 /* LCD Config */
 #define LCD_H_SIZE           800
@@ -99,7 +102,10 @@
 
 #define   LOGO_DISPLAYED                (0)
 #define   TCS_USED						(1)
-#define   ACCEL_SENSOR_USED               (0)
+#define   ACCEL_SENSOR_USED             (0)
+#if TCS_USED
+#define   PAINT_ON_SCREEN                (0)
+#endif
 
 /* LCD Config */
 #define LCD_H_SIZE           240

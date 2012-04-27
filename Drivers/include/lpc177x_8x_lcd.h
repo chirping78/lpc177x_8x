@@ -218,6 +218,7 @@ void LCD_SetImage(LCD_PANEL panel,const uint8_t *pPain);
 void LCD_FillRect (LCD_PANEL panel, uint32_t startx,uint32_t endx, 
                                         uint32_t starty, uint32_t endy,
                                         LcdPixel_t color);
+void LCD_PutPixel (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up, LcdPixel_t color);
 void LCD_LoadPic (LCD_PANEL panel,uint32_t X_Left, uint32_t Y_Up, Bmp_t * pBmp, uint32_t Mask);
 
 /**
