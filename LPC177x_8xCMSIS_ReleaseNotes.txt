@@ -1,3 +1,22 @@
+RELEASE LPC177x_8xCMSIS_120427
+
+***** Implementations and Improvements ****
+1. Update ADC Driver:
+    + Stop conversion before disabling a channel.
+	+ Disable all channels before de-initialize ADC.
+2. UDA1380: Add API for mute/unmute sound.
+3. Support 7-inch LCD of Embedded Artists.
+4. Add Cortex M3 examples: Bit-Band, MPU & Priviledge.
+5. Add SSP_TI and SSP_Microwire example.
+6. Add UART example with using Hardware Flow Control.
+
+***** Known Issues: In this package contains some examples that can not verify now ****
+
+1./ ADC > Adc_Burst
+2./ CAN > Can_SelfTest
+Maybe they will be removed when release for customers.
+==========================================================================================================
+========================================================================================================== 
 RELEASE LPC177x_8xCMSIS_120330
 
 ***** Implementations and Improvements ****
