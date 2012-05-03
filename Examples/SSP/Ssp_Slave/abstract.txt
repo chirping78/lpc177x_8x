@@ -24,7 +24,7 @@
   
 @Example description:
 	Purpose:
-		This example describes how to use SSP peripheral as a SSP Master.
+		This example describes how to use SSP peripheral as a SSP Slave.
 	Process:
 		SSP configuration:
 			- CPHA = 0: data is sampled on the first clock edge of SCK.
@@ -44,7 +44,7 @@
 	\Keil:	includes RVMDK (Keil)project and configuration files
 	\EWARM: includes EWARM (IAR) project and configuration files
 	 
-	Ssp_Master.c: Main program
+	Ssp_Slave.c: Main program
 
 @How to run:
 	Hardware configuration:		
@@ -59,7 +59,7 @@
 		
 		SSP Connection:			
 			Pin Map:
-										PA brd				IAR brd
+								PA brd				IAR brd
 			- P0.15: SSP0_SCK			J5.19
 			- P0.16: SSP0_SSEL			J3.24 
 	  		- P0.17: SSP0_MISO			J5.20   
@@ -77,6 +77,7 @@
 
 			SCK, SSEL, MISO and MOSI pin of master are connected to the coressponding pins of slave.
 			GND of 2 boards must be connected together.
+			Remove jumpers on JP24~JP27 when SSP1 is used.
             			
 		Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
 			1. LPC1788 OEM Board rev A and OEM Base Board rev A
@@ -132,5 +133,5 @@
 		- Step 3: Burn hex file into master board (if run on ROM mode)
 		- Step 4: Connect UART0\1\2 on this board to COM port on your computer
 		- Step 5: Configure hardware and serial display as above instruction 
-        - Step 6: Reset Slave board.
-		- Step 6: Reset Master board, press 1 and observe SSP transfer result on serial display
+		- Step 6: Reset Slave board.
+		- Step 7: Reset Master board, press 1 and observe SSP transfer result on serial display

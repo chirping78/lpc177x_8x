@@ -35,8 +35,8 @@
 			- Clock rate = 1MHz
 			- DSS = 8: 8 bits per transfer
 			- MSTR = 0/1: SSP operates in Slave/Master mode
-			- FRF= 1: MicroWire Frame format
-		After initialize buffer, SPI master will transfer/receive data to/from SSP slave
+			- FRF= 1: TI Frame format
+		After initialize buffer, SSP master will transfer/receive data to/from SSP slave
 		in INTERRUPT mode.
 		After transmittion completed, receive and transmit buffer will be compared, if they 
 		are not similar, the program will enter infinite loop and a error notice will
@@ -70,8 +70,11 @@
 	
 
 			SCK, SSEL, MISO and MOSI pin of SSP0 are connected to the coressponding pins of SSP1.
-            Define location number by using SSP0_LOCALTION_NUM and SSP1_LOCALTION_NUM  macro.			
+            		Define location number by using SSP0_LOCALTION_NUM and SSP1_LOCALTION_NUM  macro.	
+            		Remove jumpers JP24~JP27 when Location_0 of SSP1 is used.
+            		
 		Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+
 			1. LPC1788 OEM Board rev A and OEM Base Board rev A
 				- UART0: USB serial port
 					+ All jumpers: Default
