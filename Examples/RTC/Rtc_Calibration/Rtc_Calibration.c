@@ -53,7 +53,7 @@ uint8_t menu[]=
 
 /************************** PRIVATE FUNCTIONS *************************/
 void print_menu(void);
-
+__IO uint32_t secval;
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
  * @brief		RTC interrupt handler sub-routine
@@ -62,16 +62,10 @@ void print_menu(void);
  **********************************************************************/
 void RTC_IRQHandler(void)
 {
-	uint32_t secval;
-
 	/* This is increment counter interrupt*/
 	if (RTC_GetIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE))
 	{
 		secval = RTC_GetTime (LPC_RTC, RTC_TIMETYPE_SECOND);
-
-		/* Send debug information */
-		_DBG ("Second: "); _DBD(secval);
-		_DBG_("");
 
 		// Clear pending interrupt
 		RTC_ClearIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE);
@@ -97,6 +91,7 @@ void print_menu(void)
  **********************************************************************/
 void c_entry (void)
 {
+    uint32_t pre_secval = 0, inc = 0, calib_cnt = 0;
 	/* Initialize debug via UART0
 	 * – 115200bps
 	 * – 8 data bit
@@ -125,12 +120,12 @@ void c_entry (void)
 	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_SECOND, 0);
 
 	/* Setting Timer calibration
-	 * Calibration value =  5s;
+	 * Calibration value =  6s;
 	 * Direction = Forward calibration
-	 * So after each 5s, calibration logic can periodically adjust the time counter by
+	 * So after each 6s, calibration logic can periodically adjust the time counter by
 	 * incrementing the counter by 2 instead of 1
 	 */
-	RTC_CalibConfig(LPC_RTC, 5, RTC_CALIB_DIR_FORWARD);
+	RTC_CalibConfig(LPC_RTC, 6, RTC_CALIB_DIR_FORWARD);
 	RTC_CalibCounterCmd(LPC_RTC, ENABLE);
 
 	/* Set the CIIR for second counter interrupt*/
@@ -140,7 +135,28 @@ void c_entry (void)
     NVIC_EnableIRQ(RTC_IRQn);
 
     /* Loop forever */
-    while(1);
+    while(1)
+    {
+        if(pre_secval != secval)
+        {   
+            if(pre_secval > secval)
+                inc = 60 + secval - pre_secval;
+            else
+                inc = secval - pre_secval; 
+            if(inc > 1)
+            {
+               _DBG ("Second: "); _DBD(secval); _DBG("--> Increase ");_DBD(inc); _DBG(" after ");_DBD(calib_cnt);_DBG(" seconds");
+    		    _DBG_(""); 
+                calib_cnt = 0;
+            }   
+            else
+            {
+                _DBG ("Second: "); _DBD(secval);  _DBG_(""); 
+                calib_cnt++;
+            }
+            pre_secval = secval;
+        }
+    }
 }
 
 

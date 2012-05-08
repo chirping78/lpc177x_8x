@@ -640,7 +640,7 @@ void RTC_CalibCounterCmd(LPC_RTC_TypeDef *RTCx, FunctionalState NewState)
  **********************************************************************/
 void RTC_CalibConfig(LPC_RTC_TypeDef *RTCx, uint32_t CalibValue, uint8_t CalibDir)
 {
-	RTCx->CALIBRATION = ((CalibValue - 1) & RTC_CALIBRATION_CALVAL_MASK) \
+	RTCx->CALIBRATION = ((CalibValue) & RTC_CALIBRATION_CALVAL_MASK) \
 			| ((CalibDir == RTC_CALIB_DIR_BACKWARD) ? RTC_CALIBRATION_LIBDIR : 0);
 }
 
