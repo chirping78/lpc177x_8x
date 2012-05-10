@@ -187,7 +187,7 @@ void SSP_IRQHandler(void)
 	// Disable interrupt
 	SSP_IntConfig(LPC_SSP, SSP_INTCFG_ROR|SSP_INTCFG_RT|SSP_INTCFG_RX|SSP_INTCFG_TX, DISABLE);
 
-	if(SSP_GetDataSize(LPC_SSP)>8)
+	if(SSP_GetDataSize(LPC_SSP)>SSP_DATABIT_8)
 		dataword = 1;
 	else
 		dataword = 0;
