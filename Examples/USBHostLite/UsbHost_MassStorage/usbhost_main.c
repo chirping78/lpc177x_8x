@@ -61,7 +61,7 @@
  * @}
  */
 
-/** @defgroup USBHost_Uart  USB Host Debug
+/** @defgroup USBHost_MassStorage  USB Host Debug
  * @ingroup USBHost_MassStorage
  * @{
  */
@@ -79,6 +79,9 @@ uint8_t menu[]=
 "\t - UART Communication: 115200 bps \n\r"
 " This example used to test USB Host function.\n\r"
 "********************************************************************************\n\r";
+static uint8_t file_w[80];
+static uint8_t* file_r;
+
 /*********************************************************************//**
  * @brief		Print menu
  * @param[in]	None
@@ -121,7 +124,7 @@ int main()
         if (rc == MS_FUNC_OK) {
             rc = FAT_Init();   /* Initialize the FAT16 file system                                          */
             if (rc == FAT_FUNC_OK) {
-                Main_Copy();   /* Call the application                                                      */
+                Main_ReadDir(".");
             } else {
                 return (0);
             }
@@ -132,73 +135,123 @@ int main()
 	    PRINT_Log("Not a Mass Storage device\n");							
         return (0);
     }
+
+    Main_Copy();
     while(1);
 }
 
 /*********************************************************************//**
- * @brief 			This function is used by the user to read data from the disk 
+ * @brief 			Read directory 
  * @param[in]		None
  * @return 		    None
  **********************************************************************/
-void  Main_Read (void)
+void Main_ReadDir(uint8_t* pName)
 {
-    int32_t  fdr;
-    uint32_t  bytes_read;
-    
+	int32_t  rc, i = 0, cnt = 0;
+    DIR_ENTRY *pEntry;
 
-    fdr = FILE_Open(FILENAME_R, RDONLY);
-    if (fdr > 0) {
-        PRINT_Log("Reading from %s...\n", FILENAME_R);
-        do {
-            bytes_read = FILE_Read(fdr, UserBuffer, MAX_BUFFER_SIZE);
-        } while (bytes_read);
-
-        FILE_Close(fdr);
-        PRINT_Log("Read Complete\n");
-    } else {
-        PRINT_Log("Could not open file %s\n", FILENAME_R);
-        return;
-    }
+    rc = DIR_Open(pName);	
+    PRINT_Log("Files/Folders in the directory \"%s\":\n",pName);
+    PRINT_Log("%3s\t%10s\t%6s\t%s\n","No.","Size","DIR","Name");
+	if(rc == 0)
+	{
+		while(1)
+		{
+            
+			pEntry = DIR_ReadEntry(i);
+			if(pEntry == NULL)
+				return;	
+            if(pEntry->info.FileAttr & ATTR_DIRECTORY)
+            {
+                 cnt++;
+                 PRINT_Log("%3d\t%10s\t%6s\t%s\n",cnt," ","<DIR>", pEntry->name);
+            }
+            else
+            {
+                if(pEntry->info.FileSize)
+                {
+                    cnt++;
+                    PRINT_Log("%3d\t%10d\t%6s\t%s\n",cnt,pEntry->info.FileSize," ", pEntry->name);
+                }
+            }
+			i++;
+		}
+	}
 }
-
 /*********************************************************************//**
- * @brief 			This function is used by the user to write data to disk 
+ * @brief 			Get the name of files which are objects of copying
  * @param[in]		None
- * @return 		    None
+ * @return 		    TRUE/FALSE
  **********************************************************************/
-
-void  Main_Write (void)
+static Bool get_objects(void)
 {
     int32_t  fdw;
-    int32_t  fdr;
-    uint32_t  tot_bytes_written;
-    uint32_t  bytes_written;
+    uint32_t i = 0, j = 0, k = 0;
+    int32_t exts_idx = -1;
+    DIR_ENTRY *pEntry;
 
-
-    fdr = FILE_Open(FILENAME_R, RDONLY);
-    if (fdr > 0) {
-        FILE_Read(fdr, UserBuffer, MAX_BUFFER_SIZE);
-        fdw = FILE_Open(FILENAME_W, RDWR);
-        if (fdw > 0) {
-            tot_bytes_written = 0;
-            PRINT_Log("Writing to %s...\n", FILENAME_W);
-            do {
-                bytes_written = FILE_Write(fdw, UserBuffer, MAX_BUFFER_SIZE);
-                tot_bytes_written += bytes_written;
-            } while (tot_bytes_written < WRITE_SIZE);
-            FILE_Close(fdw);
-            PRINT_Log("Write completed\n");
-        } else {
-            PRINT_Log("Could not open file %s\n", FILENAME_W);
-            return;
+     // Get name of the first file in flash drive
+    while(1)
+    {
+        pEntry = DIR_ReadEntry(i++);
+		if(pEntry == NULL)
+        {
+			return FALSE;	
         }
-        FILE_Close(fdr);
-    } else {
-        PRINT_Log("Could not open file %s\n", FILENAME_R);
-        return;
+       if(((pEntry->info.FileAttr & ATTR_DIRECTORY) == 0) &&
+            (pEntry->info.FileSize > 0))
+        {
+           file_r = pEntry->name; 
+           break;
+        }
     }
-}
 
+	// Get the name of output file
+    i = 0;
+    while(1)
+    {
+        if(file_r[i] == '.')
+        {
+            exts_idx = i;
+            break;
+        }
+        else if ((file_r[i] == 0)||(i >= 79))
+        {
+            break;
+        }
+        file_w[i] = file_r[i]; 
+        i++;
+    }
+	file_w[i++] = '_';
+	j = 1;
+	while(1)
+	{
+		file_w[i] = '0'+j;
+        if(exts_idx >= 0)
+        {
+            for(k = 0; k <= 4; k++)
+                file_w[i+k+1] = file_r[exts_idx + k];
+        }
+        file_w[i+k+1] = 0;
+
+		fdw = FILE_Open(file_w, RDONLY);
+		if(fdw > 0)
+		{
+			FILE_Close(fdw);
+			j++;
+			if(j >= 10)
+			{
+				i++;
+				j = 1;
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
+    return TRUE;
+}
 /*********************************************************************//**
  * @brief 			This function is used by the user to copy a file 
  * @param[in]		None
@@ -210,26 +263,32 @@ void  Main_Copy (void)
     int32_t  fdr;
     int32_t  fdw;
     uint32_t  bytes_read;
-
-
-    fdr = FILE_Open(FILENAME_R, RDONLY);
+    
+    if(!get_objects())
+    {
+        PRINT_Log("No file to copy\n");
+        return;
+    }
+	
+	// Copy file
+    fdr = FILE_Open(file_r, RDONLY);
     if (fdr > 0) {
-        fdw = FILE_Open(FILENAME_W, RDWR);
+        fdw = FILE_Open(file_w, RDWR);
         if (fdw > 0) {
-            PRINT_Log("Copying file...\n");
+            PRINT_Log("Copying file %s to %s...\n", file_r, file_w);
             do {
                 bytes_read = FILE_Read(fdr, UserBuffer, MAX_BUFFER_SIZE);
                 FILE_Write(fdw, UserBuffer, bytes_read);
             } while (bytes_read);
             FILE_Close(fdw);
         } else {
-            PRINT_Log("Could not open file %s\n", FILENAME_W);
+            PRINT_Log("Could not open file %s\n", file_w);
             return;
         }
         FILE_Close(fdr);
         PRINT_Log("Copy completed\n");
     } else {
-        PRINT_Log("Could not open file %s\n", FILENAME_R);
+        PRINT_Log("Could not open file %s\n", file_r);
         return;
     }
 }

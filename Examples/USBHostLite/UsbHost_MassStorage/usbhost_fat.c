@@ -66,7 +66,9 @@
 #define MAX_FILE_DESCRIPTORS 	        2	
 #define	MAX_SUB_LEN			3
 #define	MAX_NAME_LEN			80
-
+#define MAX_ENTRY_NUM			128
+DIR_ENTRY DIR_Buffer[MAX_ENTRY_NUM];
+static uint8_t  name_tmp[LONG_FILE_NAME_MAX_LEN];
 
 /*
 **************************************************************************************************************
@@ -76,6 +78,7 @@
 
 static  BOOT_SEC    FAT_BootSec;												// Store information in the boot sector.
 static  FILE_ENTRY  FAT_FileEntry[MAX_FILE_DESCRIPTORS];						// Store information of files which are being openned.
+static  DIR  		FAT_CurDirEntry;											// Store information of current dir
 static  uint8_t		g_filePath[MAX_SUB_LEN][MAX_NAME_LEN];						// Buffer to store file path after analyzing
 static  uint8_t		g_fileSubLevel;
 
@@ -85,11 +88,11 @@ static  uint8_t		g_fileSubLevel;
 **************************************************************************************************************
 */
 int32_t  FAT_FindEntry( uint8_t  *ent_name_given, FILE_ENTRY  *entry);
-int32_t  FAT_FindEntryInSector(uint32_t sec_num, uint8_t  *ent_name_given,FILE_ENTRY  *entry);
+int32_t  FAT_FindEntryInSector(uint32_t* sec_num, uint8_t  *ent_name_given,FILE_ENTRY  *entry);
 void     FAT_GetSFN(volatile  uint8_t  *entry, uint8_t  *name);
 void     FAT_GetSfnName(volatile  uint8_t  *entry, uint8_t  *name);
 void     FAT_GetSfnExt   (volatile  uint8_t  *entry, uint8_t  *ext_ptr);
-uint8_t  FAT_GetLfn (volatile  uint8_t  *entry, uint8_t  *name);
+uint8_t  FAT_GetLfn (volatile  uint8_t  **entry, uint32_t* sec_num, volatile uint8_t * start_buf, volatile uint8_t * end_buf, uint8_t  *name);
 uint8_t  FAT_LFN_ChkSum (uint8_t* name);
 int32_t  FAT_StrCaseCmp(uint8_t  *str1, uint8_t  *str2);
 uint8_t  FAT_GetStringLen(uint8_t* str);
@@ -128,6 +131,17 @@ int32_t  FAT_Init (void)
     FILE_ENTRY	*entry;
 
 	// Initialize FAT entry table
+	FAT_CurDirEntry.entry_num = 0;
+	FAT_CurDirEntry.entries = DIR_Buffer;
+	entry = &FAT_CurDirEntry.dir_info;
+	
+	entry->CurrClus       = 0;
+    entry->CurrClusOffset = 0;
+    entry->FileSize       = 0;
+    entry->EntrySec       = 0;
+    entry->EntrySecOffset = 0;
+    entry->FileStatus     = 0;
+		
     for (i=0;i<MAX_FILE_DESCRIPTORS;i++) {
     	entry = &FAT_FileEntry[i];
         entry->CurrClus       = 0;
@@ -151,9 +165,9 @@ int32_t  FAT_Init (void)
             MS_BulkRecv(FAT_BootSec.BootSecOffset, 1, FATBuffer);
         }
 		
-	for(i = 0; i< 8; i++) {
-		FAT_BootSec.OEMName[i] =  FATBuffer[3 + i];
-	}
+    	for(i = 0; i< 8; i++) {
+    		FAT_BootSec.OEMName[i] =  FATBuffer[3 + i];
+    	}
 		
         FAT_BootSec.BytsPerSec      = ReadLE16U(&FATBuffer[11]);          /* Bytes per sector              */
         FAT_BootSec.SecPerClus      = FATBuffer[13];                      /* Sectors per cluster            */
@@ -166,41 +180,40 @@ int32_t  FAT_Init (void)
                                                                           /* Bytes per cluster              */
         FAT_BootSec.BytsPerClus     = (FAT_BootSec.BytsPerSec * FAT_BootSec.SecPerClus);
                                                                           /* Root directory starting sector */
-	FAT_BootSec.FATType         = FAT_GetFATType();                   /* Type of FAT                    */
+        FAT_BootSec.FATType         = FAT_GetFATType();                   /* Type of FAT                    */
 
 		
 																		  /* Size of the FAT table		*/
- 	if((FAT_BootSec.FATType == FAT_12)||(FAT_BootSec.FATType == FAT_16)) {
-		
-		FAT_BootSec.FATSz16         = ReadLE16U(&FATBuffer[22]);          /* Size of the FAT table (FAT16)*/
-
-	} else {
-		FAT_BootSec.FATSz32			= ReadLE32U(&FATBuffer[36]);		  /* Size of the FAT table (FAT32)*/
-		FAT_BootSec.ExtFlags		= ReadLE16U(&FATBuffer[40]);
-		FAT_BootSec.FSVer			= ReadLE16U(&FATBuffer[42]);        /* the version number of the FAT32 volume*/
-		FAT_BootSec.RootClus		= ReadLE32U(&FATBuffer[44]);		/*The cluster number of the root directory*/
-		FAT_BootSec.FSInfo			= ReadLE16U(&FATBuffer[48]);		/*Sector number of FSINFO structure*/
-			
-	}
+     	if((FAT_BootSec.FATType == FAT_12)||(FAT_BootSec.FATType == FAT_16)) {
+    		
+    		FAT_BootSec.FATSz16         = ReadLE16U(&FATBuffer[22]);          /* Size of the FAT table (FAT16)*/
+    
+    	} else {
+    		FAT_BootSec.FATSz32			= ReadLE32U(&FATBuffer[36]);		  /* Size of the FAT table (FAT32)*/
+    		FAT_BootSec.ExtFlags		= ReadLE16U(&FATBuffer[40]);
+    		FAT_BootSec.FSVer			= ReadLE16U(&FATBuffer[42]);        /* the version number of the FAT32 volume*/
+    		FAT_BootSec.RootClus		= ReadLE32U(&FATBuffer[44]);		/*The cluster number of the root directory*/
+    		FAT_BootSec.FSInfo			= ReadLE16U(&FATBuffer[48]);		/*Sector number of FSINFO structure*/
+    			
+    	}
 																			/* The first sector of root directory*/
         FAT_BootSec.RootDirStartSec = FAT_BootSec.RsvdSecCnt + (GET_FAT_SIZE() * FAT_BootSec.NumFATs);
-		
+    	
                                                                       /* Sectors occupied by root directory */
         FAT_BootSec.RootDirSec      = ((FAT_BootSec.RootEntCnt * 32) + (FAT_BootSec.BytsPerSec - 1)) /
                                        (FAT_BootSec.BytsPerSec);		/* used for FAT16, FAT32 is always 0*/
                                                                           /* First data sector              */
         FAT_BootSec.FirstDataSec    = FAT_BootSec.RootDirStartSec + FAT_BootSec.RootDirSec;
-
-	rc = FAT_FUNC_OK;
-		
-	if (FAT_BootSec.FATType == FAT_16) {
-			
-	} else if (FAT_BootSec.FATType == FAT_32) {
-
-	} else {
-		rc = ERR_FAT_NOT_SUPPORTED;
-	}
-		
+    
+        rc = FAT_FUNC_OK;
+    	
+        if (FAT_BootSec.FATType == FAT_16) {
+    		
+        } else if (FAT_BootSec.FATType == FAT_32) {
+    
+        } else {
+    		rc = ERR_FAT_NOT_SUPPORTED;
+    	}	
     }
     return (rc);
 }
@@ -402,7 +415,6 @@ void  FAT_UpdateFAT (uint32_t  curr_clus,
 **************************************************************************************************************
 */
 
-
 /*********************************************************************//**
  * @brief 			Find the entry of the given file in FAT file system.
  * @param[in]		ent_name_given         File name.
@@ -438,7 +450,7 @@ int32_t  FAT_FindEntry (uint8_t  *ent_name_given,
 				sec_num < end_sec_num;
 				sec_num++)
 		{
-       		ret_code = FAT_FindEntryInSector(sec_num, (uint8_t*)g_filePath[sub_folder_cnt], entry);
+       		ret_code = FAT_FindEntryInSector(&sec_num, (uint8_t*)g_filePath[sub_folder_cnt], entry);
 			if(ret_code == FAT_FUNC_OK && sub_folder_cnt < g_fileSubLevel) { // Found a folder
 				sub_folder_cnt++;
 				break;
@@ -474,7 +486,7 @@ int32_t  FAT_FindEntry (uint8_t  *ent_name_given,
  *                               - LAST_ENTRY_FOUND
  *                               - NOT_FOUND
  **********************************************************************/
-int32_t FAT_FindEntryInSector(uint32_t sec_num, uint8_t  *ent_name_given,
+int32_t FAT_FindEntryInSector(uint32_t* sec_num, uint8_t  *ent_name_given,
 						FILE_ENTRY  *entry)
 {
 	uint8_t   ent_type;
@@ -483,7 +495,7 @@ int32_t FAT_FindEntryInSector(uint32_t sec_num, uint8_t  *ent_name_given,
 	uint8_t   sum = 0;
 	volatile uint8_t	*buf;
 
-	 MS_BulkRecv(sec_num, 1, FATBuffer);                  /* Read one sector                             */
+	 MS_BulkRecv(*sec_num, 1, FATBuffer);                  /* Read one sector                             */
 	 buf = FATBuffer;
 	 while (buf < (FATBuffer + FAT_BootSec.BytsPerSec)) {
             ent_type = FAT_ChkEntType(buf);                  /* Check for the entry type                    */
@@ -495,15 +507,14 @@ int32_t FAT_FindEntryInSector(uint32_t sec_num, uint8_t  *ent_name_given,
 					entry->CurrClus |= ReadLE16U(&buf[DIR_FST_CLUS_LO_IDX]);   /* Low word of the first cluster number     */
 					entry->CurrClusOffset = 0;
                     entry->FileSize  = ReadLE32U(&buf[DIR_SIZE_IDX]);  /* Get file size                               */   
-					entry->EntrySec = sec_num;           /* Get sector number where the filename is located */
+					entry->EntrySec = *sec_num;           /* Get sector number where the filename is located */
                     entry->EntrySecOffset = buf - FATBuffer; /* Get offset in this sector where the filename is located */
                     return (MATCH_FOUND);
                 }
             } else if (ent_type == LFN_ENTRY) {
-            	len = FAT_GetLfn(buf,ent_name_read);
+            	sum = buf[LDIR_CHK_SUM_IDX];
+            	len = FAT_GetLfn(&buf,sec_num,FATBuffer,FATBuffer+FAT_BootSec.BytsPerSec,ent_name_read);
 				if(len > 0) {
-				    sum = buf[LDIR_CHK_SUM_IDX];
-				    buf += len;
 				    if (FAT_StrCaseCmp(ent_name_given, ent_name_read) == MATCH_FOUND) {
 				    	FAT_GetSFN(buf, ent_name_read);
 						ent_type = FAT_ChkEntType(buf);
@@ -513,7 +524,7 @@ int32_t FAT_FindEntryInSector(uint32_t sec_num, uint8_t  *ent_name_given,
 				    	    entry->CurrClus |= ReadLE16U(&buf[DIR_FST_CLUS_LO_IDX]);   /* Low word of the first cluster number     */
 				    	    entry->CurrClusOffset = 0;
                             entry->FileSize  = ReadLE32U(&buf[DIR_SIZE_IDX]);  /* Get file size                               */   
-					        entry->EntrySec = sec_num;           /* Get sector number where the filename is located */
+					        entry->EntrySec = *sec_num;           /* Get sector number where the filename is located */
                             entry->EntrySecOffset = buf - FATBuffer; /* Get offset in this sector where the filename is located */
                             return (MATCH_FOUND);
     					} else {
@@ -633,7 +644,7 @@ int32_t  FAT_CreateEntry (uint8_t  *ent_name_given,
 		if(FAT_GetStringLen(g_filePath[g_fileSubLevel]) <= SHORT_FILE_NAME_LEN)
 	       FAT_PutSFN(g_filePath[g_fileSubLevel], entry);        /* Store the given short file name in that entry      */
 		else
-			FAT_PutLFN(g_filePath[g_fileSubLevel], entry);
+		   FAT_PutLFN(g_filePath[g_fileSubLevel], entry);
         return (rc);
     }
 }
@@ -749,20 +760,31 @@ void  FAT_GetSfnName (volatile  uint8_t  *entry,
  * @param[in]		name       buffer to store the file name and extension of a file
  * @return 		the number bytes used for storing the long file name.
  **********************************************************************/
- uint8_t  FAT_GetLfn (volatile  uint8_t  *entry,
+ uint8_t  FAT_GetLfn (volatile  uint8_t  **entry, uint32_t* sec_num, volatile uint8_t * start_buf, volatile uint8_t * end_buf,
                                 uint8_t  *name)
 {
-	uint32_t  cnt;
-	volatile uint8_t *buf = entry;
+	uint32_t  cnt, num_bytes = 0;
+	volatile uint8_t *buf = *entry;
 	uint8_t	  total_len = 0,end_string;
 	int8_t i = 0, j = 0, end_part;
-	uint8_t  name_tmp[LONG_FILE_NAME_MAX_LEN];
 	uint8_t  sum = 0;
+	uint8_t part_no = 0, ord;
 
 	for(i = 0; i < LONG_FILE_NAME_MAX_LEN; i++)
 		name_tmp[i] = 0;
 
 	sum = buf[LDIR_CHK_SUM_IDX];
+	ord = buf[LDIR_ORD_IDX];
+	
+	// deleted LFN?
+	if(ord&0x80)
+		return 0;
+
+	// Not Last LFN?
+	if((ord&0x40) == 0)
+		return 0;
+	
+	part_no = ord & 0x1F;
 	while (buf[LDIR_ATT_IDX] == 0x0F )	// Long directory entry
 	{
 		end_string = 0;
@@ -770,6 +792,12 @@ void  FAT_GetSfnName (volatile  uint8_t  *entry,
 		if(sum != buf[LDIR_CHK_SUM_IDX])
 			return 0;
 
+		// Check LFN number
+		ord = buf[LDIR_ORD_IDX];
+		if((ord&0x1F) != part_no)
+			return 0;
+		part_no--;
+		
 		// Get characters 1-5
 		for(cnt = LDIR_NAME_PART1_IDX; 
 			cnt <= LDIR_NAME_PART1_END_IDX; cnt+=2) {
@@ -802,6 +830,15 @@ void  FAT_GetSfnName (volatile  uint8_t  *entry,
 
 		// Get the next part
 		buf +=FAT_ENTRY_SIZE;
+		num_bytes += FAT_ENTRY_SIZE;
+
+		if(end_buf <= buf)
+		{
+			*entry = start_buf;
+			buf = start_buf;
+			*sec_num = *sec_num + 1;
+			MS_BulkRecv(*sec_num, 1, start_buf); 
+		}
 	}
 	
 	// Revert parts of file name
@@ -832,7 +869,8 @@ void  FAT_GetSfnName (volatile  uint8_t  *entry,
         *name = 0;
 		
 	}
-	return (buf-entry);
+	*entry = buf;
+	return num_bytes;
 }
 
 /*********************************************************************//**
@@ -892,6 +930,24 @@ int32_t  FAT_StrCaseCmp (uint8_t  *str1,
         return (NOT_FOUND);
     }
 }
+/*********************************************************************//**
+ * @brief 			Copy str2 to str1.
+ * @param[in]		str1               Pointer to the first string
+ * @param[in]		str2               Pointer to the second string
+ * @return 		len
+ **********************************************************************/
+int32_t  FAT_StrCopy (uint8_t  *str1,
+                            uint8_t  *str2)
+{
+	uint32_t len = 0;
+    while (*str2) {
+        *str1++ = *str2++;
+		len++;
+    }
+    *str1 = NULL;
+	return len;
+}
+
 
 /*********************************************************************//**
  * @brief 			Fills the file entry with the short file name given by the user.
@@ -1013,6 +1069,7 @@ void FAT_GetBasicName(uint8_t  *ent_name_given, uint8_t  *short_name)
 	uint8_t part_idx, char_idx, idx;
 	uint8_t sum;
 	uint8_t short_name[SHORT_FILE_NAME_LEN];
+	uint32_t sec_num = 0, sec_ofs = 0;
 
 	// Get the file name length
 	name_len = FAT_GetStringLen(ent_name_given);
@@ -1022,7 +1079,9 @@ void FAT_GetBasicName(uint8_t  *ent_name_given, uint8_t  *short_name)
 	part_num = (name_len + LDIR_FILE_NAME_LEN - 1)/LDIR_FILE_NAME_LEN;
 
 	// Read the sector
-	MS_BulkRecv(entry->EntrySec, 1, FATBuffer);
+	sec_num = entry->EntrySec;
+	sec_ofs = entry->EntrySecOffset;
+	MS_BulkRecv(sec_num, 1, FATBuffer);
 
 	idx = 0;
 	part_idx = 0;
@@ -1034,11 +1093,11 @@ void FAT_GetBasicName(uint8_t  *ent_name_given, uint8_t  *short_name)
 		for(char_idx = LDIR_NAME_PART1_IDX; 
 		       char_idx <= LDIR_NAME_PART1_END_IDX; char_idx+=2) {
 			if(idx <= name_len) {
-				FATBuffer[entry->EntrySecOffset + char_idx] = ent_name_given[idx];
-				FATBuffer[entry->EntrySecOffset + char_idx + 1] = 0;
+				FATBuffer[sec_ofs + char_idx] = ent_name_given[idx];
+				FATBuffer[sec_ofs + char_idx + 1] = 0;
 			} else {
-				FATBuffer[entry->EntrySecOffset + char_idx] = 0xFF;
-				FATBuffer[entry->EntrySecOffset + char_idx + 1] = 0xFF;
+				FATBuffer[sec_ofs + char_idx] = 0xFF;
+				FATBuffer[sec_ofs + char_idx + 1] = 0xFF;
 			}
 			idx++;
 		}
@@ -1047,11 +1106,11 @@ void FAT_GetBasicName(uint8_t  *ent_name_given, uint8_t  *short_name)
 		for(char_idx = LDIR_NAME_PART2_IDX; 
 		      char_idx <= LDIR_NAME_PART2_END_IDX; char_idx+=2) {
 			if(idx <= name_len) {
-				FATBuffer[entry->EntrySecOffset + char_idx] = ent_name_given[idx];
-				FATBuffer[entry->EntrySecOffset + char_idx + 1] = 0;
+				FATBuffer[sec_ofs + char_idx] = ent_name_given[idx];
+				FATBuffer[sec_ofs + char_idx + 1] = 0;
 			} else {
-				FATBuffer[entry->EntrySecOffset + char_idx] = 0xFF;
-				FATBuffer[entry->EntrySecOffset + char_idx + 1] = 0xFF;
+				FATBuffer[sec_ofs + char_idx] = 0xFF;
+				FATBuffer[sec_ofs + char_idx + 1] = 0xFF;
 			}
 			idx++;
 		}
@@ -1060,36 +1119,47 @@ void FAT_GetBasicName(uint8_t  *ent_name_given, uint8_t  *short_name)
 		for(char_idx = LDIR_NAME_PART3_IDX; 
 		        char_idx <= LDIR_NAME_PART3_END_IDX ; char_idx+=2) {
 			if(idx <= name_len) {
-				FATBuffer[entry->EntrySecOffset + char_idx] = ent_name_given[idx];
-				FATBuffer[entry->EntrySecOffset + char_idx + 1] = 0;
+				FATBuffer[sec_ofs + char_idx] = ent_name_given[idx];
+				FATBuffer[sec_ofs + char_idx + 1] = 0;
 			} else {
-				FATBuffer[entry->EntrySecOffset + char_idx] = 0xFF;
-				FATBuffer[entry->EntrySecOffset + char_idx + 1] = 0xFF;
+				FATBuffer[sec_ofs + char_idx] = 0xFF;
+				FATBuffer[sec_ofs + char_idx + 1] = 0xFF;
 			}
 			idx++;
 		}
 
-		FATBuffer[entry->EntrySecOffset + LDIR_ATT_IDX] = ATTR_LONG_NAME;
+		FATBuffer[sec_ofs + LDIR_ATT_IDX] = ATTR_LONG_NAME;
 
-		FATBuffer[entry->EntrySecOffset + LDIR_CHK_SUM_IDX] = sum;
-		
-		if(part_idx > 1)
-			FATBuffer[entry->EntrySecOffset + LDIR_ORD_IDX] = 0x40 + part_idx;
+		FATBuffer[sec_ofs + LDIR_CHK_SUM_IDX] = sum;
+
+		if(part_idx == part_num)
+			FATBuffer[sec_ofs + LDIR_ORD_IDX] = 0x40 + part_idx;
 		else
-			FATBuffer[entry->EntrySecOffset+ LDIR_ORD_IDX] = 0x01;
+			FATBuffer[sec_ofs+ LDIR_ORD_IDX] = part_idx;
 
-		entry->EntrySecOffset += FAT_ENTRY_SIZE;
+		sec_ofs += FAT_ENTRY_SIZE;
+		if(sec_ofs >= FAT_BootSec.BytsPerSec)
+		{
+			MS_BulkSend(entry->EntrySec, 1, FATBuffer); 			
+			sec_num++;
+			// Read the sector
+			MS_BulkRecv(sec_num, 1, FATBuffer);
+			sec_ofs = 0;
+		}
+		
 
 	}
 
 
 	// Write short directory entry
 	for(char_idx = 0; char_idx < SHORT_FILE_NAME_LEN; char_idx++) {
-		FATBuffer[entry->EntrySecOffset + char_idx] = short_name[char_idx];
+		FATBuffer[sec_ofs + char_idx] = short_name[char_idx];
 	}
-	FATBuffer[entry->EntrySecOffset + DIR_ATT_IDX] = ATTR_ARCHIVE;
+	FATBuffer[sec_ofs + DIR_ATT_IDX] = ATTR_ARCHIVE;
 	
-	MS_BulkSend(entry->EntrySec, 1, FATBuffer); 
+	MS_BulkSend(sec_num, 1, FATBuffer); 
+	entry->EntrySec = sec_num;
+	entry->EntrySecOffset = sec_ofs;
 	
 }
 
@@ -1288,6 +1358,7 @@ uint32_t  FILE_Read (          int32_t  fd,
     }
     do {
         next_clus = FAT_GetNextClus(entry->CurrClus);     /* Get next cluster                               */
+        
         if (next_clus == 0) {                             /* If the current cluster is the last cluster     */
                                                           /* If the offset is at the end of the file        */
             if (entry->CurrClusOffset == (entry->FileSize % FAT_BootSec.BytsPerClus)) {
@@ -1311,7 +1382,7 @@ uint32_t  FILE_Read (          int32_t  fd,
         total_bytes_read    += bytes_read;
         total_bytes_to_read -= bytes_read;
                                              /* If the cluster offset reaches end of the cluster, make it 0 */
-        if (entry->CurrClusOffset + bytes_read == FAT_BootSec.BytsPerClus) {
+        if (entry->CurrClusOffset + bytes_read >= FAT_BootSec.BytsPerClus) {
             entry->CurrClusOffset = 0;
         } else {
             entry->CurrClusOffset += bytes_read;        /* Else increment the cluster offset                */
@@ -1360,6 +1431,20 @@ uint32_t  FILE_Write (          int32_t  fd,
 	// Write to the end of file
     entry->CurrClus = FAT_GetEndClus(entry->CurrClus);           /* Make the current cluster as end cluster */
     entry->CurrClusOffset = entry->FileSize % FAT_BootSec.BytsPerClus;   /* Move cluster offset to file end */
+
+	// start to write to a new cluster.
+    if(entry->CurrClusOffset == 0 && entry->FileSize > 0)
+    {
+    	if (total_bytes_to_write > 0 && entry->CurrClusOffset == 0) {
+            free_clus = FAT_GetFreeClus();
+            if (free_clus == 0) {
+                return (total_bytes_written);
+            }
+            FAT_UpdateFAT(entry->CurrClus, free_clus);
+            FAT_UpdateFAT(free_clus, 0x0FFFFFFF);
+            entry->CurrClus = free_clus;
+        }
+    }
     do {
         if (total_bytes_to_write > FAT_BootSec.BytsPerClus - entry->CurrClusOffset) {
             bytes_to_write = FAT_BootSec.BytsPerClus - entry->CurrClusOffset;
@@ -1377,11 +1462,13 @@ uint32_t  FILE_Write (          int32_t  fd,
         entry->FileSize      += bytes_written;
 		FAT_UpdateFileSize(entry);
 		
-        if (entry->CurrClusOffset + bytes_written == FAT_BootSec.BytsPerClus) {
+        if (entry->CurrClusOffset + bytes_written >= FAT_BootSec.BytsPerClus) {
             entry->CurrClusOffset = 0;
         } else {
             entry->CurrClusOffset += bytes_written;
         }
+
+		// Start to write to new cluster
         if (total_bytes_to_write > 0 && entry->CurrClusOffset == 0) {
             free_clus = FAT_GetFreeClus();
             if (free_clus == 0) {
@@ -1406,15 +1493,150 @@ void  FILE_Close (int32_t  fd)
 
 
     entry = &FAT_FileEntry[fd-1];
-    MS_BulkRecv(entry->EntrySec, 1, FATBuffer);
-    WriteLE32U(&FATBuffer[entry->EntrySecOffset + 28], entry->FileSize);    /* Update the file size         */
-    MS_BulkSend(entry->EntrySec, 1, FATBuffer);
+	FAT_UpdateFileSize(entry);
     entry->CurrClus       = 0;
     entry->CurrClusOffset = 0;
     entry->FileSize       = 0;
     entry->EntrySec       = 0;
     entry->EntrySecOffset = 0;
     entry->FileStatus     = 0;
+}
+/*********************************************************************//**
+ * @brief 			Read DIR contents.
+ * @return 		Return code.
+ *					NOT_FOUND
+ *					MATCH_FOUND
+ **********************************************************************/
+int32_t  DIR_Open (uint8_t  *ent_name_given)
+{
+	int32_t rc;
+	uint32_t sec_num, first_sec_num,end_sec_num ;
+	FILE_ENTRY* entry = &FAT_CurDirEntry.dir_info;
+	uint8_t   ent_type;
+	uint8_t   ent_name_read[80];
+	uint8_t   len = 0;
+	uint8_t   sum = 0;
+	volatile uint8_t	*buf, *afile;
+	DIR_ENTRY* ptr = FAT_CurDirEntry.entries;
+
+	// Find the entry for the given folder
+	if(entry->FileStatus == 0 )
+	{
+		if(FAT_StrCaseCmp(ent_name_given,".") == 0)
+		{
+			if(FAT_BootSec.FATType == FAT_32) {
+				entry->CurrClus=  FAT_BootSec.RootClus;
+			} else {
+				entry->CurrClus =  FAT_BootSec.RootDirStartSec/FAT_BootSec.SecPerClus;
+			}
+			entry->CurrClusOffset = 0;
+			entry->FileStatus = 1;
+		}
+		else
+		{
+			rc = FAT_FindEntry(ent_name_given, entry);
+		    if (rc == MATCH_FOUND) {
+		       entry->FileStatus = 1;
+		    }
+			else
+			{
+				return NOT_FOUND;
+			}
+		}
+		
+	}
+	else
+	{
+		uint16_t    i = 0;
+    	
+		// Find in the current directory
+		for(i = 0; i < FAT_CurDirEntry.entry_num; i++)
+	    {
+			if(FAT_StrCaseCmp(ent_name_given,FAT_CurDirEntry.entries[i].name) == 0)
+			{
+				*entry = FAT_CurDirEntry.entries[i].info;
+                entry->FileStatus = 1;
+				break;
+			}
+			
+	    }
+	}
+	
+	FAT_CurDirEntry.entry_num = 0;
+	first_sec_num = FAT_GetFirstSectorOfCluster(entry->CurrClus);
+	end_sec_num = first_sec_num + FAT_BootSec.SecPerClus;
+
+	for(sec_num = first_sec_num; sec_num < end_sec_num; sec_num++)
+	{
+		// Read all sub-entries
+		MS_BulkRecv(sec_num, 1, FATBuffer);                  /* Read one sector                             */
+		buf = FATBuffer;
+		while (buf < (FATBuffer + FAT_BootSec.BytsPerSec)) {
+				rc = NOT_FOUND;
+	            ent_type = FAT_ChkEntType(buf);                  /* Check for the entry type                    */
+				if(ent_type == SFN_ENTRY ||
+					ent_type == LFN_ENTRY)
+				{
+                    afile = buf;
+		            if (ent_type == SFN_ENTRY) {                     /* If it is short entry get short file name    */
+						 FAT_GetSFN(buf, ent_name_read);
+		                 // add the entry list   
+                         FAT_StrCopy(ptr->name,ent_name_read);  
+		                 rc = MATCH_FOUND;
+		            } else if (ent_type == LFN_ENTRY) {
+						sum = buf[LDIR_CHK_SUM_IDX];
+		            	len = FAT_GetLfn(&buf,&sec_num,FATBuffer,FATBuffer+FAT_BootSec.BytsPerSec,ent_name_read);					
+						if(len > 0) {
+							FAT_StrCopy(ptr->name,ent_name_read);
+                            afile = buf;
+						    FAT_GetSFN(buf, ent_name_read);
+							ent_type = FAT_ChkEntType(buf);
+						    if(ent_type == SFN_ENTRY && sum == FAT_LFN_ChkSum((uint8_t*)buf))
+						    {
+		                        // add the entry list
+		                        rc = MATCH_FOUND;
+		    				}
+						}
+		            }
+
+					if(rc == MATCH_FOUND)
+					{
+                        ptr->info.FileAttr = afile[DIR_ATT_IDX];
+						ptr->info.CurrClus = ReadLE16U(&afile[DIR_FST_CLUS_HI_IDX])<<16 & 0xFFFF0000;	/*	High word of the first cluster number*/
+						ptr->info.CurrClus |= ReadLE16U(&afile[DIR_FST_CLUS_LO_IDX]);   /* Low word of the first cluster number     */
+						ptr->info.CurrClusOffset = 0;
+	                    ptr->info.FileSize  = ReadLE32U(&afile[DIR_SIZE_IDX]);  /* Get file size                               */   
+						ptr->info.EntrySec = sec_num;           /* Get sector number where the filename is located */
+	                    ptr->info.EntrySecOffset = afile - FATBuffer; /* Get offset in this sector where the filename is located */
+						ptr++;
+						FAT_CurDirEntry.entry_num++;
+					}
+				}
+					
+	            if (ent_type == LAST_ENTRY) {    /* If it is the last entry, no more entries will exist.  */
+	                break;
+	            }
+	            buf = buf + FAT_ENTRY_SIZE;                                  /* Move to the next entry                      */
+	        }
+	}
+	return MATCH_FOUND;
+}
+/*********************************************************************//**
+ * @brief 			Read the next entry
+ * @return 		Return code.
+ *					NOT_FOUND
+ *					MATCH_FOUND
+ **********************************************************************/
+DIR_ENTRY*  DIR_ReadEntry (uint32_t index)
+{
+	DIR_ENTRY *pEntry;
+	if(index >= FAT_CurDirEntry.entry_num)
+	{
+		return NULL;
+	}
+
+	pEntry =  &FAT_CurDirEntry.entries[index];
+	return pEntry;
 }
 
 /*********************************************************************//**

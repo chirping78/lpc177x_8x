@@ -183,6 +183,16 @@ typedef  struct  file_entry {
     uint8_t   FileStatus;                  /* File's open status                                          */
 } FILE_ENTRY;
 
+typedef struct  {
+	uint8_t     name[LONG_FILE_NAME_MAX_LEN];
+    FILE_ENTRY  info;
+}DIR_ENTRY;
+
+typedef struct  {
+	uint32_t entry_num;					/* the number of sub-entries */
+	DIR_ENTRY *entries;					/* The list of sub-entries */
+	FILE_ENTRY dir_info;				/* file entry for the dir */
+} DIR;
 /**
  * @}
  */
@@ -200,7 +210,8 @@ int32_t  FILE_Open(void  *file_name, uint8_t   flags);
 uint32_t FILE_Read(int32_t   fd, volatile  uint8_t  *buffer, uint32_t   num_bytes);
 uint32_t FILE_Write(int32_t   fd,volatile  uint8_t  *buffer,uint32_t   num_bytes);
 void     FILE_Close(int32_t   fd);
-
+int32_t  DIR_Open (uint8_t  *ent_name_given);
+DIR_ENTRY*  DIR_ReadEntry (uint32_t index);
 
 /**
  * @}

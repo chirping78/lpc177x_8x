@@ -29,7 +29,8 @@
 		USB Host port on evaluation board using NXP Semiconductors LPC177x_8x MCU.
 
 		When a USB Mass Storage device is connected, it enumerates the device, mounts the file
-		system on "USB Flash drive" and then executes a file copy.
+		system on "USB Flash drive", lists out files/folder in root directory and then executes a
+		copy of the first file in root directory.
 
 @Directory contents:
 	\Keil:	includes RVMDK (Keil)project and configuration files 

@@ -50,9 +50,6 @@
 **************************************************************************************************************
 */
 
-#define  FILENAME_R  "FILENAME_R.txt"
-#define  FILENAME_W  "Folder1\\FILENAME_W.txt"
-
 #define  MAX_BUFFER_SIZE             (4000)
 #define  WRITE_SIZE          (10 * 1000000)
 
@@ -61,9 +58,8 @@
  * @{
  */
 
-void  Main_Read (void);
-void  Main_Write(void);
 void  Main_Copy (void);
+void  Main_ReadDir (uint8_t* pName);
 
 /**
  * @}
