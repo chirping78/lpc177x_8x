@@ -152,7 +152,7 @@ void c_entry (void) {                       /* Main Program */
  */
 	I2S_MODEConf_Type I2S_ClkConfig;
 	I2S_CFG_Type I2S_ConfigStruct;
-	uint32_t i;
+	volatile uint32_t i;
 
 	Buffer_Init();
 

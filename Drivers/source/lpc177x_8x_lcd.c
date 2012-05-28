@@ -426,7 +426,7 @@ uint32_t LCD_GetBitOffset(uint32_t x, uint32_t y)
  **********************************************************************/
 void LCD_SetImage(LCD_PANEL panel, const uint8_t *pPain)
 {
-	uint32_t i;
+	volatile uint32_t i;
 	uint32_t * pWordDst = NULL;
 	uint8_t* pByteDst = NULL;
 	uint32_t bytes_num;

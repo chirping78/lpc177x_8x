@@ -154,7 +154,7 @@ void InitTSC2046(TSC2046_Init_Type *pConfig)
 static void ReadWriteTSC2046(uint8_t channel, uint16_t* data)
 {
 	uint8_t cmd;
-	uint32_t tmp;
+	volatile uint32_t tmp;
 	SSP_DATA_SETUP_Type sspCfg;
     uint8_t rx[2];
     

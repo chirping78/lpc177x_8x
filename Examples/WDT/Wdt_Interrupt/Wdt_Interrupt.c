@@ -131,7 +131,7 @@ void print_menu(void)
  **********************************************************************/
 void c_entry(void)
 {
-	uint32_t delay;
+	volatile uint32_t delay;
 	uint8_t ch;
 	
 	GPIO_Init();

@@ -421,7 +421,7 @@ void Usr_Init_Emac(void)
 {
 	/* EMAC configuration type */
 	EMAC_CFG_Type Emac_Config;
-	uint32_t i;
+	volatile uint32_t i;
 	/*
 	 * Enable P1 Ethernet Pins:
 	 * P1.0 - ENET_TXD0
@@ -493,7 +493,7 @@ int c_entry (void)
 	uint32_t i = 0;
 
 #if TX_ONLY
-	uint32_t j;
+	volatile uint32_t j;
 #endif
 
 #if BOUNCE_RX

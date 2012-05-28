@@ -257,7 +257,7 @@ void EMAC_SetPHYSpeed(uint8_t mode_100Mbps)
 int32_t EMAC_Init(EMAC_CFG_Type *EMAC_ConfigStruct)
 {
 	/* Initialize the EMAC Ethernet controller. */
-	int32_t tout, tmp;
+	volitle int32_t tout, tmp;
 
 	EMAC_Configs = *EMAC_ConfigStruct;
 
@@ -462,7 +462,7 @@ EMAC_BUFF_STATUS EMAC_GetBufferSts(EMAC_BUFF_IDX idx)
 {
     uint32_t idx;
     uint32_t  dp;
-    uint32_t i;
+    volatile uint32_t i;
 
     idx = LPC_EMAC->TxProduceIndex;
 

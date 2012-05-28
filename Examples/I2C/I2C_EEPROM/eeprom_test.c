@@ -164,7 +164,7 @@ void Error_Loop(uint32_t ErrorCode)
  **********************************************************************/
 int c_entry(void)
 {
-	int32_t tmp, i;
+	volatile int32_t tmp, i;
 
 	/* Initialize debug via UART0
 	 * – 115200bps

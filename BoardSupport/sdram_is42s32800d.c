@@ -57,7 +57,7 @@
  **********************************************************************/
 void SDRAMInit( void )
 {
-    uint32_t i;
+    volatile uint32_t i;
     volatile uint32_t dwtemp;
     EMC_DYN_MEM_Config_Type config;
     TIM_TIMERCFG_Type TIM_ConfigStruct;

@@ -39,7 +39,7 @@ static uint8_t rx_done = 0, read_done = 0;
 void Init_EMAC(void)
 {
 // Initializes the LPC_EMAC ethernet controller
-	unsigned int delay;
+	volatile unsigned int delay;
 	/* LPC_EMAC configuration type */
 	EMAC_CFG_Type Emac_Config;
 

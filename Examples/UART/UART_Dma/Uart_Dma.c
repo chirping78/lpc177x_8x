@@ -162,7 +162,7 @@ void DMA_IRQHandler (void)
 void c_entry(void)
 {
 	uint8_t *rx_char;
-	uint32_t idx;
+	volatile uint32_t idx;
 	uint8_t  stop = 0;
 	// UART Configuration structure variable
 	UART_CFG_Type UARTConfigStruct;

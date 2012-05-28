@@ -94,7 +94,7 @@ void c_entry(void)
 {
 	DAC_CONVERTER_CFG_Type DAC_ConverterConfigStruct;
 	uint32_t dac_value = 0;
-	uint32_t i;
+	volatile uint32_t i;
 
 	/* GPDMA block section -------------------------------------------- */
 

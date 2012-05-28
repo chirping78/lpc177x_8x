@@ -50,7 +50,7 @@ int32_t volatile timerdev = 0;
  **********************************************************************/
 void delay(uint32_t delayCnt)
 {
-	uint32_t i;
+	volatile uint32_t i;
 
 	for ( i = 0; i < delayCnt; i++ );
 	return;

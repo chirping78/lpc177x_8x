@@ -782,7 +782,8 @@ void MCI_IRQHandler (void)
  **********************************************************************/
 void MCI_Set_MCIClock( uint32_t ClockRate )
 {
-	uint32_t i, ClkValue = 0;
+	volatile uint32_t i;
+	uint32_t ClkValue = 0;
 
 	if ( ClockRate == MCI_SLOW_RATE )
 	{
@@ -814,7 +815,7 @@ void MCI_Set_MCIClock( uint32_t ClockRate )
  *************************************************************************/
 int32_t MCI_SetBusWidth( uint32_t width )
 {
-	uint32_t i;
+	volatile uint32_t i;
 
 	for ( i = 0; i < 0x10; i++ );	/* delay 3MCLK + 2PCLK  */
 
@@ -847,7 +848,7 @@ int32_t MCI_SetBusWidth( uint32_t width )
  ***************************************************************************/
 int32_t MCI_Init(uint8_t powerActiveLevel )
 {
-	uint32_t i;
+	 volatile uint32_t i;
 
 	MCI_CardType = MCI_CARD_UNKNOWN;
 
@@ -1002,11 +1003,17 @@ void MCI_SetOutputMode(uint32_t mode)
  *
  * @return 		None
  ***************************************************************************/
-void MCI_SendCmd(uint32_t CmdIndex, uint32_t Argument, uint32_t ExpectResp, uint32_t AllowTimeout)
+void MCI_SendCmd(st_Mci_CmdInfo* pCmdIf)
 {
-	uint32_t i, CmdData = 0;
+	volatile uint32_t i;
+	uint32_t CmdData = 0;
 	uint32_t CmdStatus;
 
+    uint32_t CmdIndex = pCmdIf->CmdIndex;
+    uint32_t Argument = pCmdIf->Argument;
+    uint32_t ExpectResp = pCmdIf->ExpectResp;
+    uint32_t AllowTimeout = pCmdIf->AllowTimeout;
+    
 	/* the command engine must be disabled when we modify the argument
 	or the peripheral resends */
 	while ( (CmdStatus = LPC_MCI->STATUS) & MCI_CMD_ACTIVE )	/* Command in progress. */
@@ -1177,12 +1184,15 @@ int32_t MCI_GetCmdResp(uint32_t ExpectCmdData, uint32_t ExpectResp, uint32_t *Cm
  *
  * @return 		MCI_FUNC_OK in case of success
  ***************************************************************************/
-int32_t MCI_CmdResp(uint32_t CmdIndex, uint32_t Argument,
-								uint32_t ExpectResp, uint32_t *CmdResp, uint32_t AllowTimeout)
+int32_t MCI_CmdResp(st_Mci_CmdInfo* pCmdIf)
 {
 	int32_t respStatus;
+    uint32_t CmdIndex = pCmdIf->CmdIndex;
+    uint32_t ExpectResp = pCmdIf->ExpectResp;
+    uint32_t *CmdResp = pCmdIf->CmdResp;
+    
 
-	MCI_SendCmd(CmdIndex, Argument, ExpectResp, AllowTimeout);
+	MCI_SendCmd(pCmdIf);
 
 	if((CmdResp != NULL) || (ExpectResp != EXPECT_NO_RESP))
 	{
@@ -1208,9 +1218,15 @@ int32_t MCI_CmdResp(uint32_t CmdIndex, uint32_t Argument,
  ***************************************************************************/
 int32_t MCI_CardReset(void)
 {
+    st_Mci_CmdInfo cmdIf;
 	/* Because CMD0 command to put the device to idle state does not need response 
 	since, it's only sending commad */
-	MCI_SendCmd(CMD0_GO_IDLE_STATE, 0x00000000, EXPECT_NO_RESP, 0);
+    cmdIf.CmdIndex = CMD0_GO_IDLE_STATE;
+    cmdIf.Argument = 0x00000000;
+    cmdIf.ExpectResp = EXPECT_NO_RESP;
+    cmdIf.AllowTimeout = 0;
+    cmdIf.CmdResp = 0;
+	MCI_SendCmd(&cmdIf);
 
 	return MCI_FUNC_OK;
 }
@@ -1225,17 +1241,23 @@ int32_t MCI_CardReset(void)
  ****************************************************************************/
 int32_t MCI_Cmd_SendOpCond( void )
 {
-	uint32_t i, retryCount;
+	volatile uint32_t i;
+	uint32_t retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
-
+    st_Mci_CmdInfo cmdIf;
 	int32_t retval = MCI_FUNC_FAILED;
 
 	retryCount = 0x200;			/* reset retry counter */
 
+    cmdIf.CmdIndex = CMD1_SEND_OP_COND;
+    cmdIf.Argument = OCR_INDEX;
+    cmdIf.ExpectResp = EXPECT_SHORT_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp = (uint32_t *)&respValue[0];
 	while ( retryCount > 0 )
 	{
-		respStatus = MCI_CmdResp(CMD1_SEND_OP_COND, OCR_INDEX, EXPECT_SHORT_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+		respStatus = MCI_CmdResp(&cmdIf);
 
 		if(respStatus & MCI_CMD_TIMEOUT)
 		{
@@ -1270,7 +1292,8 @@ int32_t MCI_Cmd_SendOpCond( void )
  ****************************************************************************/
 int32_t MCI_Cmd_SendIfCond(void)
 {
-	uint32_t i, retryCount;
+	volatile uint32_t i;
+	uint32_t retryCount;
 	uint32_t CmdArgument;
 	uint32_t respStatus;
 	uint32_t respValue[4];
@@ -1279,14 +1302,20 @@ int32_t MCI_Cmd_SendIfCond(void)
 
 	uint8_t voltageSupplied = 0x01;//in range 2.7-3.6V
 	uint8_t checkPattern = 0xAA;
-
+    st_Mci_CmdInfo cmdIf;
+    
 	CmdArgument = (voltageSupplied << MCI_CMD8_VOLTAGESUPPLIED_POS) | checkPattern;
 
 	retryCount = 20;
 
+    cmdIf.CmdIndex = CMD8_SEND_IF_COND;
+    cmdIf.Argument = CmdArgument;
+    cmdIf.ExpectResp = EXPECT_SHORT_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp = (uint32_t *)&respValue[0];
 	while ( retryCount > 0 )
 	{
-		respStatus = MCI_CmdResp(CMD8_SEND_IF_COND, CmdArgument, EXPECT_SHORT_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+		respStatus = MCI_CmdResp(&cmdIf);
 
 		if(respStatus & MCI_CMD_TIMEOUT)
 		{
@@ -1328,11 +1357,12 @@ int32_t MCI_Cmd_SendIfCond(void)
  ****************************************************************************/
 int32_t MCI_Cmd_SendACMD( void )
 {
-	uint32_t i, retryCount;
+	volatile uint32_t i;
+	uint32_t retryCount;
 	uint32_t CmdArgument;
 	uint32_t respStatus;
 	uint32_t respValue[4];
-
+     st_Mci_CmdInfo cmdIf;
 	int32_t retval = MCI_FUNC_FAILED;
 
 	if ((MCI_CardType == MCI_SDSC_V1_CARD) ||
@@ -1348,9 +1378,14 @@ int32_t MCI_Cmd_SendACMD( void )
 
 	retryCount = 20;
 
+    cmdIf.CmdIndex = CMD55_APP_CMD;
+    cmdIf.Argument = CmdArgument;
+    cmdIf.ExpectResp = EXPECT_SHORT_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp = (uint32_t *)&respValue[0];
 	while ( retryCount > 0 )
 	{
-		respStatus = MCI_CmdResp(CMD55_APP_CMD, CmdArgument, EXPECT_SHORT_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+		respStatus = MCI_CmdResp(&cmdIf);
 
 		if(respStatus != 0)
 		{
@@ -1390,9 +1425,11 @@ int32_t MCI_Cmd_SendACMD( void )
  ****************************************************************************/
 int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
 {
-	uint32_t i, retryCount;
+	volatile uint32_t i;
+	uint32_t retryCount;
 	uint32_t respStatus, argument;
 	uint32_t respValue[4];
+    st_Mci_CmdInfo cmdIf;
 
 	int32_t retval = MCI_FUNC_FAILED;
 
@@ -1401,7 +1438,13 @@ int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
 	/* timeout on SEND_OP_COND command on MMC, now, try SEND_APP_OP_COND
 	command to SD */
 	retryCount = 0x200;			/* reset retry counter */
-
+    
+    cmdIf.CmdIndex = ACMD41_SEND_APP_OP_COND;
+    cmdIf.Argument = argument;
+    cmdIf.ExpectResp = EXPECT_SHORT_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp = (uint32_t *)&respValue[0];
+    
 	while ( retryCount > 0 )
 	{
 		/* Clear Open Drain output control for SD */
@@ -1411,7 +1454,7 @@ int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
 
 		if ((retval = MCI_Cmd_SendACMD()) == MCI_FUNC_OK)
 		{
-			respStatus = MCI_CmdResp(ACMD41_SEND_APP_OP_COND, argument, EXPECT_SHORT_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+			respStatus = MCI_CmdResp(&cmdIf);
 
 			if(respStatus & MCI_CMD_TIMEOUT)
 			{
@@ -1455,7 +1498,7 @@ int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
  ****************************************************************************/
 int32_t MCI_CardInit( void )
 {
-	uint32_t i;
+	volatile uint32_t i;
 	int32_t retval = MCI_FUNC_FAILED;
 
 	MCI_CardType = MCI_CARD_UNKNOWN;
@@ -1552,17 +1595,23 @@ en_Mci_CardType MCI_GetCardType(void)
  ****************************************************************************/
 int32_t MCI_GetCID(st_Mci_CardId* cidValue)
 {
-	uint32_t i, retryCount;
+	volatile uint32_t i;
+	uint32_t retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
-
+    st_Mci_CmdInfo cmdIf;
 	/* This command is normally after CMD1(MMC) or ACMD41(SD). */
 	retryCount = 0x200;// 0x20;			/* reset retry counter */
-
+    
+    cmdIf.CmdIndex = CMD2_ALL_SEND_CID;
+    cmdIf.Argument = 0;
+    cmdIf.ExpectResp = EXPECT_LONG_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp = (uint32_t *)&respValue[0];
 	while ( retryCount > 0 )
 	{
 #if 1
-		respStatus = MCI_CmdResp(CMD2_ALL_SEND_CID, 0, EXPECT_LONG_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+		respStatus = MCI_CmdResp(&cmdIf);
 
 		/* bit 0 and bit 2 must be zero, or it's timeout or CRC error */
 		//if ((!(respStatus & MCI_CMD_TIMEOUT)) && (!(respStatus & MCI_CMD_CRC_FAIL)))
@@ -1657,11 +1706,12 @@ int32_t MCI_GetCID(st_Mci_CardId* cidValue)
  ****************************************************************************/
 int32_t MCI_SetCardAddress( void )
 {
-	uint32_t i, retryCount;
+	volatile uint32_t i;
+	uint32_t retryCount;
 	uint32_t respStatus;
 	uint32_t respValue;
 	uint32_t CmdArgument;
-
+    st_Mci_CmdInfo cmdIf;
 	int32_t retval = MCI_FUNC_FAILED;
 
 	/* If it's a SD card, SET_RELATIVE_ADDR is to get the address
@@ -1679,11 +1729,15 @@ int32_t MCI_SetCardAddress( void )
 	}
 
 	retryCount = 0x20;			/* reset retry counter */
-
+    cmdIf.CmdIndex = CMD3_SET_RELATIVE_ADDR;
+    cmdIf.Argument = CmdArgument;
+    cmdIf.ExpectResp = EXPECT_SHORT_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp = &respValue;
 	while ( retryCount > 0 )
 	{
 		/* Send CMD3 command repeatedly until the response is back correctly */
-		respStatus = MCI_CmdResp(CMD3_SET_RELATIVE_ADDR, CmdArgument, EXPECT_SHORT_RESP, &respValue, ALLOW_CMD_TIMER);
+		respStatus = MCI_CmdResp(&cmdIf);
 
 		if(respStatus & MCI_CMD_TIMEOUT)
 		{
@@ -1741,11 +1795,12 @@ uint32_t MCI_GetCardAddress(void)
  ****************************************************************************/
 int32_t MCI_GetCSD(uint32_t* csdVal)
 {
-	uint32_t i, retryCount;
+	volatile uint32_t i;
+	uint32_t retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
 	uint32_t CmdArgument;
-
+    st_Mci_CmdInfo cmdIf;
 	if ((MCI_CardType == MCI_SDSC_V1_CARD) ||
 		(MCI_CardType == MCI_SDSC_V2_CARD) ||
 		(MCI_CardType == MCI_SDHC_SDXC_CARD))
@@ -1758,13 +1813,17 @@ int32_t MCI_GetCSD(uint32_t* csdVal)
 	}
 
 	retryCount = 0x20;
-
+    cmdIf.CmdIndex = CMD9_SEND_CSD;
+    cmdIf.Argument = CmdArgument;
+    cmdIf.ExpectResp = EXPECT_LONG_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp = (uint32_t *)&respValue[0];
 	while ( retryCount > 0 )
 	{
 		/* Send SET_BLOCK_LEN command before read and write */
 		LPC_MCI->CLEAR |= (MCI_CMD_TIMEOUT | MCI_CMD_CRC_FAIL | MCI_CMD_RESP_END);
 
-		respStatus = MCI_CmdResp(CMD9_SEND_CSD, CmdArgument, EXPECT_LONG_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+		respStatus = MCI_CmdResp(&cmdIf);
 
 		if ( !respStatus )
 		{
@@ -1802,11 +1861,12 @@ int32_t MCI_GetCSD(uint32_t* csdVal)
  ****************************************************************************/
 int32_t MCI_Cmd_SelectCard( void )
 {
-	uint32_t i, retryCount;
+	volatile uint32_t i;
+	uint32_t retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
 	uint32_t CmdArgument;
-
+    st_Mci_CmdInfo cmdIf;
 	int32_t retval = MCI_FUNC_FAILED;
 
 	if ((MCI_CardType == MCI_SDSC_V1_CARD) ||
@@ -1821,13 +1881,17 @@ int32_t MCI_Cmd_SelectCard( void )
 	}
 
 	retryCount = 0x20;
-
+    cmdIf.CmdIndex = CMD7_SELECT_CARD;
+    cmdIf.Argument = CmdArgument;
+    cmdIf.ExpectResp = EXPECT_SHORT_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp =  (uint32_t *)&respValue[0];
 	while ( retryCount > 0 )
 	{
 		/* Send CMD7_SELECT_CARD command before read and write */
 		LPC_MCI->CLEAR |= (MCI_CMD_TIMEOUT | MCI_CMD_CRC_FAIL | MCI_CMD_RESP_END);
 
-		respStatus = MCI_CmdResp(CMD7_SELECT_CARD, CmdArgument, EXPECT_SHORT_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+		respStatus = MCI_CmdResp(&cmdIf);
 
 		if(respStatus)
 		{
@@ -1867,12 +1931,12 @@ int32_t MCI_Cmd_SelectCard( void )
  ****************************************************************************/
 int32_t MCI_GetCardStatus(int32_t* cardStatus)
 {
-	uint32_t i;
+	volatile uint32_t i;
 	uint32_t retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
 	uint32_t CmdArgument;
-
+    st_Mci_CmdInfo cmdIf;
 	int32_t retval = MCI_FUNC_FAILED;
 
 	if ((MCI_CardType == MCI_SDSC_V1_CARD) ||
@@ -1889,13 +1953,17 @@ int32_t MCI_GetCardStatus(int32_t* cardStatus)
 	/* Note that, since it's called after the block write and read, this timeout
 	is important based on the clock you set for the data communication. */
 	retryCount = 0x20;
-
+    cmdIf.CmdIndex = CMD13_SEND_STATUS;
+    cmdIf.Argument = CmdArgument;
+    cmdIf.ExpectResp = EXPECT_SHORT_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp =  (uint32_t *)&respValue[0];
 	while ( retryCount > 0 )
 	{
 		/* Send SELECT_CARD command before read and write */
 		LPC_MCI->CLEAR |= (MCI_CMD_TIMEOUT | MCI_CMD_CRC_FAIL | MCI_CMD_RESP_END);
 
-		respStatus = MCI_CmdResp(CMD13_SEND_STATUS, CmdArgument, EXPECT_SHORT_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+		respStatus = MCI_CmdResp(&cmdIf);
 
 		if(respStatus)
 		{
@@ -1937,19 +2005,25 @@ int32_t MCI_GetCardStatus(int32_t* cardStatus)
  ****************************************************************************/
 int32_t MCI_SetBlockLen(uint32_t blockLength)
 {
-	uint32_t i, retryCount;
+	volatile uint32_t i;
+	uint32_t retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
-
+    st_Mci_CmdInfo cmdIf;
 	int32_t retval = MCI_FUNC_FAILED;
 
 	retryCount = 0x20;
+    cmdIf.CmdIndex = CMD16_SET_BLOCK_LEN;
+    cmdIf.Argument = blockLength;
+    cmdIf.ExpectResp = EXPECT_SHORT_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp =  (uint32_t *)&respValue[0];
 	while ( retryCount > 0 )
 	{
 		/* Send SET_BLOCK_LEN command before read and write */
 		LPC_MCI->CLEAR |= (MCI_CMD_TIMEOUT | MCI_CMD_CRC_FAIL | MCI_CMD_RESP_END);
 
-		respStatus = MCI_CmdResp(CMD16_SET_BLOCK_LEN, blockLength, EXPECT_SHORT_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+		respStatus = MCI_CmdResp(&cmdIf);
 
 		if(respStatus)
 		{
@@ -1995,19 +2069,24 @@ int32_t MCI_SetBlockLen(uint32_t blockLength)
  ****************************************************************************/
 int32_t MCI_Acmd_SendBusWidth( uint32_t buswidth )
 {
-	uint32_t i, retryCount;
+	volatile uint32_t i;
+	uint32_t retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
-
+    st_Mci_CmdInfo cmdIf;
 	int32_t retval = MCI_FUNC_FAILED;
 
 	retryCount = 0x20;			/* reset retry counter */
-
+    cmdIf.CmdIndex = ACMD6_SET_BUS_WIDTH;
+    cmdIf.Argument = buswidth;
+    cmdIf.ExpectResp = EXPECT_SHORT_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp =  (uint32_t *)&respValue[0];
 	while ( retryCount > 0 )
 	{
 		if (MCI_Cmd_SendACMD() == MCI_FUNC_OK)
 		{
-			respStatus = MCI_CmdResp(ACMD6_SET_BUS_WIDTH, buswidth, EXPECT_SHORT_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+			respStatus = MCI_CmdResp(&cmdIf);
 
 			if(respStatus)
 			{
@@ -2070,19 +2149,24 @@ uint32_t MCI_GetXferErrState(void)
  ****************************************************************************/
 int32_t MCI_Cmd_StopTransmission( void )
 {
-	uint32_t i, retryCount;
+	volatile uint32_t i;
+	uint32_t retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
-
+    st_Mci_CmdInfo cmdIf;
 	int32_t retval = MCI_FUNC_FAILED;
 
 	retryCount = 0x20;
-
+    cmdIf.CmdIndex = CMD12_STOP_TRANSMISSION;
+    cmdIf.Argument = 0x00000000;
+    cmdIf.ExpectResp = EXPECT_SHORT_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp =  (uint32_t *)&respValue[0];
 	while ( retryCount > 0 )
 	{
 		LPC_MCI->CLEAR = 0x7FF;
 
-		respStatus = MCI_CmdResp(CMD12_STOP_TRANSMISSION, 0x00000000, EXPECT_SHORT_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+		respStatus = MCI_CmdResp(&cmdIf);
 
 		if(respStatus)
 		{
@@ -2122,10 +2206,11 @@ int32_t MCI_Cmd_StopTransmission( void )
  ****************************************************************************/
 int32_t MCI_Cmd_WriteBlock(uint32_t blockNum, uint32_t numOfBlock)
 {
-	uint32_t i, retryCount;
+	volatile uint32_t i;
+	uint32_t retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
-
+    st_Mci_CmdInfo cmdIf;
 	uint32_t commandID;
 
 	int32_t retval = MCI_FUNC_FAILED;
@@ -2140,11 +2225,17 @@ int32_t MCI_Cmd_WriteBlock(uint32_t blockNum, uint32_t numOfBlock)
 	}
 	
 	retryCount = 0x20;
+    cmdIf.CmdIndex = commandID;
+    cmdIf.Argument = blockNum * BLOCK_LENGTH;
+    cmdIf.ExpectResp = EXPECT_SHORT_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp =  (uint32_t *)&respValue[0];
+    
 	while ( retryCount > 0 )
 	{
 		LPC_MCI->CLEAR = 0x7FF;
 
-		respStatus = MCI_CmdResp(commandID, blockNum * BLOCK_LENGTH, EXPECT_SHORT_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+		respStatus = MCI_CmdResp(&cmdIf);
 
 		if(respStatus)
 		{
@@ -2191,11 +2282,12 @@ int32_t MCI_Cmd_WriteBlock(uint32_t blockNum, uint32_t numOfBlock)
  ****************************************************************************/
 int32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock)
 {
-	uint32_t i, retryCount;
+	volatile uint32_t i;
+	uint32_t retryCount;
 	uint32_t respStatus;
 	uint32_t respValue[4];
 	uint32_t commandID;
-
+    st_Mci_CmdInfo cmdIf;
 	int32_t retval = MCI_FUNC_FAILED;
 
 	// To Do: Read Multi-Block
@@ -2205,11 +2297,16 @@ int32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock)
 		commandID = CMD17_READ_SINGLE_BLOCK;
 
 	retryCount = 0x20;
+    cmdIf.CmdIndex = commandID;
+    cmdIf.Argument = blockNum * BLOCK_LENGTH;
+    cmdIf.ExpectResp = EXPECT_SHORT_RESP;
+    cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
+    cmdIf.CmdResp =  (uint32_t *)&respValue[0];
 	while ( retryCount > 0 )
 	{
 		LPC_MCI->CLEAR = 0x7FF;
 
-		respStatus = MCI_CmdResp(commandID, blockNum * BLOCK_LENGTH, EXPECT_SHORT_RESP, (uint32_t *)&respValue[0], ALLOW_CMD_TIMER);
+		respStatus = MCI_CmdResp(&cmdIf);
 
 		if(respStatus)
 		{
@@ -2262,9 +2359,9 @@ int32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock)
  *
  * @return 		MCI_FUNC_OK if all success
  ****************************************************************************/
-int32_t MCI_WriteBlock(uint8_t* memblock, uint32_t blockNum, uint32_t numOfBlock)
+int32_t MCI_WriteBlock(volatile uint8_t* memblock, uint32_t blockNum, uint32_t numOfBlock)
 {
-	uint32_t i;
+	volatile uint32_t i;
 	uint32_t DataCtrl = 0;
 
 	dataSrcBlock = memblock;
@@ -2348,9 +2445,9 @@ int32_t MCI_WriteBlock(uint8_t* memblock, uint32_t blockNum, uint32_t numOfBlock
  *
  * @return 		MCI_FUNC_OK if all success
  ****************************************************************************/
-int32_t MCI_ReadBlock(uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBlock)
+int32_t MCI_ReadBlock(volatile uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBlock)
 {
-	uint32_t i;
+	volatile uint32_t i;
 	uint32_t DataCtrl = 0;
 
 	dataDestBlock = destBlock;
@@ -2420,7 +2517,7 @@ int32_t MCI_ReadBlock(uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBlock
  ****************************************************************************/
 void MCI_PowerOff(void) 
 {
-	uint32_t i;
+	volatile uint32_t i;
 
 	LPC_MCI->POWER = 0;
 	

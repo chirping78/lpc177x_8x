@@ -55,7 +55,7 @@
  **********************************************************************/
 void delay (uint32_t delayCnt)
 {
-  unsigned int i;
+  volatile unsigned int i;
 
   for (i = 0; i < delayCnt; i++)
   {

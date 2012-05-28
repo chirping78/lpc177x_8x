@@ -101,7 +101,8 @@ void DoWdtValidFeed(void)
  **********************************************************************/
 void c_entry(void)
 {
-	uint32_t cnt, wdtReset;
+	volatile uint32_t cnt;
+	uint32_t wdtReset;
 
 
 	/* Initialize debug via UART0

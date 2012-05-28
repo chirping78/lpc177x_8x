@@ -416,7 +416,7 @@ DRESULT disk_read (
 	BYTE count			/* Sector count (1..255) */
 )
 {
-     uint32_t tmp;
+    volatile uint32_t tmp;
 	if (drv || !count) return RES_PARERR;
 	if (Stat & STA_NOINIT) return RES_NOTRDY;
     for(tmp = 0x100000;tmp;tmp--);
@@ -459,7 +459,7 @@ DRESULT disk_write (
 	BYTE count			/* Sector count (1..255) */
 )
 {
-    uint32_t tmp;
+    volatile uint32_t tmp;
 
 	if (drv || !count) return RES_PARERR;
 	if (Stat & STA_NOINIT) return RES_NOTRDY;

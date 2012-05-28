@@ -123,7 +123,7 @@ void print_menu(void)
 void c_entry(void)
 {
 	GPDMA_Channel_CFG_Type GPDMACfg;
-	uint32_t adc_value, tmp;
+	volatile uint32_t adc_value, tmp;
 	uint8_t  quit;
 
 	/* Initialize debug via UART0

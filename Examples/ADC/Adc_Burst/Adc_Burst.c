@@ -185,7 +185,7 @@ void DMA_IRQHandler (void)
  **********************************************************************/
 void c_entry(void)
 {
-	uint32_t tmp;
+	volatile uint32_t tmp;
 #if !__DMA_USED__
 	uint32_t adc_value;
 #endif

@@ -323,6 +323,18 @@ typedef struct mci_cid
 	uint8_t unused;
 } st_Mci_CardId;
 
+typedef struct cmd_info{
+	/** Command ID*/
+    uint32_t CmdIndex;
+	/** Command Argument*/
+    uint32_t Argument;
+	/** Expected response: no response, short response or long response */
+    uint32_t ExpectResp;
+	/** Allow timeout */
+    uint32_t AllowTimeout;
+	/** Command Response Info */
+    uint32_t *CmdResp;
+} st_Mci_CmdInfo;
 /**
  * @}
  */
@@ -333,10 +345,9 @@ typedef struct mci_cid
  */
 
 int32_t MCI_Init(uint8_t powerActiveLevel );
-void  MCI_SendCmd( uint32_t CmdIndex, uint32_t Argument, uint32_t ExpectResp, uint32_t AllowTimeout );
+void  MCI_SendCmd( st_Mci_CmdInfo* pCmdIf );
 int32_t MCI_GetCmdResp( uint32_t CmdIndex, uint32_t NeedRespFlag, uint32_t *CmdRespStatus );
-int32_t MCI_CmdResp(uint32_t CmdIndex, uint32_t Argument,
-								uint32_t ExpectResp, uint32_t *CmdResp, uint32_t AllowTimeout);
+int32_t MCI_CmdResp(st_Mci_CmdInfo *pCmdIf);
 
 void  MCI_Set_MCIClock( uint32_t clockrate );
 int32_t MCI_SetBusWidth( uint32_t width );
@@ -360,8 +371,8 @@ int32_t MCI_Cmd_StopTransmission( void );
 int32_t MCI_Cmd_WriteBlock(uint32_t blockNum, uint32_t numOfBlock);
 int32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock);
 
-int32_t MCI_WriteBlock(uint8_t* memblock, uint32_t blockNum, uint32_t numOfBlock);
-int32_t MCI_ReadBlock(uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBlock);
+int32_t MCI_WriteBlock(volatile uint8_t* memblock, uint32_t blockNum, uint32_t numOfBlock);
+int32_t MCI_ReadBlock(volatile uint8_t* destBlock, uint32_t blockNum, uint32_t numOfBlock);
 #if MCI_DMA_ENABLED
 void     MCI_DMA_IRQHandler (void);
 #endif

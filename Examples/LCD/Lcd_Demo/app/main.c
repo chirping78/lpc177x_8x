@@ -80,7 +80,7 @@ Bmp_t LogoPic =
 
 void DelayMS(uint32_t dly)
 {
-	uint32_t i = 0;
+	volatile uint32_t i = 0;
 
 	for ( ; dly > 0; dly--)
 		for (i = 0; i < 16000; i++);
@@ -248,7 +248,8 @@ void lcd_colorbars(void)
  *************************************************************************/
   void c_entry(void)
 {
-  uint32_t i, pclk;
+  volatile uint32_t i;
+  uint32_t pclk;
 #if LOGO_DISPLAYED
   uint32_t xs, ys;
 #endif

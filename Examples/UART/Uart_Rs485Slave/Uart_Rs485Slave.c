@@ -451,7 +451,7 @@ void c_entry(void)
 	UART1_RS485_CTRLCFG_Type rs485cfg;
 	uint32_t idx, len;
 	uint8_t buffer[10];
-	uint32_t tmp;
+	volatile uint32_t tmp;
 
 	// UART0 section ----------------------------------------------------
 	// Initialize UART0 pin connect

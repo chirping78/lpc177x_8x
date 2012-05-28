@@ -484,7 +484,7 @@ void print_menu()
 void c_entry(void)
 {
 	uint32_t i;
-	uint32_t cnt;
+	volatile uint32_t cnt;
 	CAN_ERROR error;
 
 	CANRxCount = CANTxCount = 0;

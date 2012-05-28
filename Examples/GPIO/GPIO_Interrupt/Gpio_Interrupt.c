@@ -88,7 +88,7 @@ void GPIO_IRQHandler(void)
  **********************************************************************/
 void delay (void)
 {
-  unsigned int i;
+  volatile unsigned int i;
 
   for (i = 0; i < 0x1000000; i++)
   {
