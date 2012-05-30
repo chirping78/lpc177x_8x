@@ -944,7 +944,7 @@ int32_t  FAT_StrCopy (uint8_t  *str1,
         *str1++ = *str2++;
 		len++;
     }
-    *str1 = NULL;
+    *str1 = 0;
 	return len;
 }
 

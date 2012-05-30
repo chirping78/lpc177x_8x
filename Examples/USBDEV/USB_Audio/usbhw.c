@@ -50,13 +50,20 @@
 
 
 #if USB_DMA
-#ifndef __GNUC__
+#if defined (__CC_ARM)
 #pragma arm section zidata = "USB_RAM"
 uint32_t UDCA[USB_EP_NUM];                     /* UDCA in USB RAM */
 
 uint32_t DD_NISO_Mem[4*DD_NISO_CNT];           /* Non-Iso DMA Descriptor Memory */
 uint32_t DD_ISO_Mem [5*DD_ISO_CNT];            /* Iso DMA Descriptor Memory */
 #pragma arm section zidata
+#elif defined ( __ICCARM__ )
+#pragma location = "USB_RAM"
+uint32_t UDCA[USB_EP_NUM];                     /* UDCA in USB RAM */
+#pragma location = "USB_RAM"
+uint32_t DD_NISO_Mem[4*DD_NISO_CNT];           /* Non-Iso DMA Descriptor Memory */
+#pragma location = "USB_RAM"
+uint32_t DD_ISO_Mem [5*DD_ISO_CNT];            /* Iso DMA Descriptor Memory */
 #else
 uint32_t UDCA[USB_EP_NUM]__attribute__((section ("USB_RAM")));                     /* UDCA in USB RAM */
 

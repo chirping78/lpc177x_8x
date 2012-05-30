@@ -691,7 +691,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\..\..\..\..\makesection\makerule\linker\ldscript_iram_iar.icf</state>
+          <state>$PROJ_DIR$\..\..\..\..\makesection\makerule\linker\ldscript_irom_iar.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
