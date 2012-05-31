@@ -419,8 +419,12 @@ void lcd_colorbars(void)
 #else
   cursor_config.size32 = 1;
 #endif
-  cursor_config.palette[0] = (LCD_PALETTE_Type){0x00,0x00,0x00};
-  cursor_config.palette[1] = (LCD_PALETTE_Type){0xFF,0xFF,0xFF};
+  cursor_config.palette[0].Red = 0x00;
+  cursor_config.palette[0].Green = 0x00;
+  cursor_config.palette[0].Blue = 0x00;
+  cursor_config.palette[1].Red = 0xFF;
+  cursor_config.palette[1].Green = 0xFF;
+  cursor_config.palette[1].Blue = 0xFF;
   LCD_Cursor_Cfg(&cursor_config);
   LCD_Cursor_SetImage((uint32_t *)Cursor, 0, sizeof(Cursor)/sizeof(uint32_t)) ;
 
