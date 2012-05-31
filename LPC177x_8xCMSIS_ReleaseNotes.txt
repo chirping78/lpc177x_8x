@@ -1,3 +1,30 @@
+RELEASE LPC177x_8xCMSIS_120531
+
+***** Implementations and Improvements ****
+1. Update RTC driver: Don't minus 1 when program the value for Calibration Value Register.
+2. Update SSP driver: Compare the return value of SSP_GetDataSize(SSPx) with  SSP_DATABIT_8 instead of 8.
+3. Add volatile description for all loop counter variables so that the delay won't be removed when optimization
+is enabled.
+4. Update MCI Driver & MCI_ReadWrite example:
+    + Create a structure to store information of a command need sending.
+    + Update the arguments of MCI_SendCmd & MCI_CmdResp function: use a structure pointer argument instead of
+     5 seperately arguments.
+    + Update the memory map in Keil Project, RAM target: the ROM size is changed from 0x4000 to 0x8000.
+5. Update USB_DEV example: use #pragma location directive instead of #pragma arm section directive in IAR.
+6. Update PWR_Sleep example: use correct linker file (ldscript_irom_iar.icf) for FLASH target.
+7. Update LCD_Demo example: fix error of invalid casting when using Keil compiler.
+8. Update USB_HostLite example: 
+    + List out files/folders in the root directory of Flash drive.
+    + Execute a copy on the first file in the root directory.
+9. Add GPIO_Output example.
+
+***** Known Issues: In this package contains some examples that can not verify now ****
+
+1./ ADC > Adc_Burst
+2./ CAN > Can_SelfTest
+Maybe they will be removed when release for customers.
+==========================================================================================================
+========================================================================================================== 
 RELEASE LPC177x_8xCMSIS_120427
 
 ***** Implementations and Improvements ****
