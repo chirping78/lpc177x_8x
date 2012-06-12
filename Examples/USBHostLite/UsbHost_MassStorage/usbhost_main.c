@@ -61,7 +61,7 @@
  * @}
  */
 
-/** @defgroup USBHost_MassStorage  USB Host Debug
+/** @defgroup USBHost_Uart  USB Host Debug
  * @ingroup USBHost_MassStorage
  * @{
  */

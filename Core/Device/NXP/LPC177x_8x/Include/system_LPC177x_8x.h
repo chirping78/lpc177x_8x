@@ -39,6 +39,9 @@ extern "C" {
 
 #include <stdint.h>
 
+/** @addtogroup LPC177x_8x_System
+ * @{
+ */
 extern uint32_t SystemCoreClock;      /*!< System Clock Frequency (Core Clock)  	*/
 extern uint32_t PeripheralClock;	    /*!< Peripheral Clock Frequency (Pclk) 	    */
 extern uint32_t EMCClock;			        /*!< EMC Clock                              */
@@ -86,4 +89,7 @@ extern void SystemCoreClockUpdate (void);
 }
 #endif
 
+/**
+ * @}
+ */
 #endif /* __SYSTEM_LPC177x_8x_H */

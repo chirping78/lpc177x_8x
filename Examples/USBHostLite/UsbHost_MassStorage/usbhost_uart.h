@@ -64,7 +64,7 @@
 
 
 /* Public Functions ----------------------------------------------------------- */
-/** @defgroup FAT Public Functions
+/** @defgroup Uart Public Functions
  * @{
  */
 

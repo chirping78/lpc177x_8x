@@ -40,6 +40,10 @@
 #include "LPC177x_8x.h"
 #include "system_LPC177x_8x.h"
 
+/** @addtogroup LPC177x_8x_System
+ * @{
+ */
+ 
 #define __CLK_DIV(x,y) (((y) == 0) ? 0: (x)/(y))
 
 /*
@@ -211,6 +215,9 @@
 //	</e>
 */
 
+/** @addtogroup LPC177x_8x_System_Defines  LPC177x_8x System Defines
+  @{
+ */
 #define CLOCK_SETUP           1
 #define SCS_Val               0x00000021
 #define CLKSRCSEL_Val         0x00000001
@@ -241,6 +248,10 @@
 
 #define FLASH_SETUP           1
 #define FLASHCFG_Val          0x00005000
+
+/*
+//-------- <<< end of configuration section >>> ------------------------------
+*/
 
 /*----------------------------------------------------------------------------
   Check the register settings
@@ -339,12 +350,17 @@
     #endif
   #endif
 
+ /**
+  * @}
+  */
 #else
         #define __CORE_CLK (IRC_OSC)
         #define __PER_CLK  (IRC_OSC)
         #define __EMC_CLK  (__CORE_CLK)
 #endif
-
+/** @addtogroup LPC177x_8x_System_Public_Variables  LPC177x_8x System Public Variables
+  @{
+ */
 /*----------------------------------------------------------------------------
   Clock Variable definitions
  *----------------------------------------------------------------------------*/
@@ -353,8 +369,13 @@ uint32_t PeripheralClock = __PER_CLK; /*!< Peripheral Clock Frequency (Pclk)  */
 uint32_t EMCClock		 = __EMC_CLK; /*!< EMC Clock Frequency 				  */
 uint32_t USBClock 		 = (48000000UL);		  /*!< USB Clock Frequency - this value will
 									be updated after call SystemCoreClockUpdate, should be 48MHz*/
+/**
+ * @}
+ */
 
-
+/** @addtogroup LPC177x_8x_System_Public_Functions  LPC177x_8x System Public Functions
+  @{
+ */
 /*----------------------------------------------------------------------------
   Clock functions
  *----------------------------------------------------------------------------*/
@@ -505,3 +526,11 @@ void SystemInit (void)
 #endif
   SystemCoreClockUpdate(); 
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
