@@ -49,7 +49,7 @@
 
 
 /* Public macros ------------------------------------------------------------- */
-/** @defgroup USB_Host Macros
+/** @defgroup USB_Host_Macros	USB Host Public Macros
  * @{
  */
 
@@ -170,7 +170,7 @@
  */
 
 /* Public Types --------------------------------------------------------------- */
-/** @defgroup  USB_Host Public Types
+/** @defgroup  USB_Host_Public_Types	USB Host Public Types
  * @{
  */
 
@@ -232,7 +232,7 @@ extern  volatile  uint8_t  *UserBuffer;      /* Buffer used by application      
 extern 	volatile  uint8_t  *USB_ConfigDescriptor;	/* Device Configuration Descriptor		*/
 
 /* Public Functions ----------------------------------------------------------- */
-/** @defgroup FAT Public Functions
+/** @defgroup USB_Host_Public_Functions USB Host Public Functions
  * @{
  */
 

@@ -45,7 +45,7 @@
  */
 
 /* Public macros ------------------------------------------------------------- */
-/** @defgroup FAT Macros
+/** @defgroup FAT_Macros FAT Macros
  * @{
  */
 
@@ -141,7 +141,7 @@
 
 
 /* Public Types --------------------------------------------------------------- */
-/** @defgroup  FAT Public Types
+/** @defgroup  FAT_Public_Types FAT Public Types
  * @{
  */
 
@@ -200,7 +200,7 @@ typedef struct  {
 
 
 /* Public Functions ----------------------------------------------------------- */
-/** @defgroup FAT Public Functions
+/** @defgroup FAT_Public_Functions FAT Public Functions
  * @{
  */
 

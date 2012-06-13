@@ -43,7 +43,7 @@
 		+ byte_offset: the number of byte in the bit-band region that contains the targeted bit
 		+ bit_number: is the bit position (0-7) of the targeted bit
 		
-		Note: In fact, the SRAM on LPC1768 just available in two ranges:
+		Note: In fact, the SRAM on LPC1788 just available in two ranges:
 					+ 0x20000000 - 0x20007FFF: for on-chip SRAM
 					+ 0x20098000 – 0x200980BF for GPIO registers
 			  So, just can set 'VAR_ADDR' with value that exits in two ranges SRAM above.
@@ -59,8 +59,8 @@
 			+ Assigned value for PERI_ADDRESS
 			Use bit-band access to:
 			+ read the value at 'PERI_BIT'
-			+ clear the value at 'PERI_BIT' and print new value of SPCR 
-			+ re-set the value at 'PERI_BIT' and print new value of SPCR
+			+ clear the value at 'PERI_BIT' and print new value at PERI_ADDRESS 
+			+ re-set the value at 'PERI_BIT' and print new value at PERI_ADDRESS
 					
 @Directory contents:
 	\EWARM: includes EWARM (IAR) project and configuration files

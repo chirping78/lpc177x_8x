@@ -47,6 +47,10 @@
  * @{
  */
 
+/** @defgroup USB_Uart_Public_Macros USB Host Debug Public Macros
+ * @{
+ */
+
 /*********************************************************************//**
  *   PRINT CONFIGURATION
  **********************************************************************/
@@ -61,10 +65,13 @@
 #define  PRINT_Err(rc)        do {} while(0)
 
 #endif
+/**
+ * @}
+ */
 
 
 /* Public Functions ----------------------------------------------------------- */
-/** @defgroup Uart Public Functions
+/** @defgroup USB_Uart_Public_Functions USB Host Debug Public Functions
  * @{
  */
 

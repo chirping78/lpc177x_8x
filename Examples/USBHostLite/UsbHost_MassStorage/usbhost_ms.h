@@ -46,7 +46,7 @@
  */
 
 /* Public macros ------------------------------------------------------------- */
-/** @defgroup MS Macros
+/** @defgroup MS_Macros MS Macros
  * @{
  */
 
@@ -88,7 +88,7 @@
 
 
 /* Public Types --------------------------------------------------------------- */
-/** @defgroup  FAT Public Types
+/** @defgroup  MS_Public_Types MS Public Types
  * @{
  */
 
@@ -108,7 +108,7 @@ typedef enum  ms_data_dir {
  */
 
 /* Public Functions ----------------------------------------------------------- */
-/** @defgroup FAT Public Functions
+/** @defgroup MS_Public_Functions MS Public Functions
  * @{
  */
 

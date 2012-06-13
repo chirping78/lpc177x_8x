@@ -57,15 +57,15 @@
 		SSP Connection:
            			
 			Pin Map:
-										LOCATION_0		LOCATION_1		 LOCATION_2
+								LOCATION_0	LOCATION_1	 LOCATION_2
 			- P0.15: SSP0_SCK			J5.19            J5-32             J5-47
 			- P0.16: SSP0_SSEL			J3.24            J5-36             J5-56
 	  		- P0.17: SSP0_MISO			J5.20            J3-35             J5-57
 	  		- P0.18: SSP0_MOSI			J3.23            J5-34             J5-49
 
-	  		- P0.7:  SSP1_SCK			J5.17			 J3-33	           J3-39
-	  		- P0.6 : SSP1_SSEL			J3.18			 J5-35	           J3-21
-			- P0.8: SSP1_MISO			J3.19			 J5-31	           J3-22
+	  		- P0.7:  SSP1_SCK			J5.17		 J3-33	           J3-39
+	  		- P0.6 : SSP1_SSEL			J3.18		 J5-35	           J3-21
+			- P0.8: SSP1_MISO			J3.19		 J5-31	           J3-22
 			- P0.9: SSP1_MOSI			J5.18            J5-33             J3-13	
             		
             		SCK, SSEL, MISO and MOSI pin of SSP0 are connected to the coressponding pins of SSP1.

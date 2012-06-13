@@ -85,7 +85,7 @@
 		- Step 4: Configure hardware and serial display as above instruction 
 		- Step 5: Run example
 				  Open PC terminal application, configure 
-				  	- 9600bps, 
+				  	- 115200bps, 
 				  	- 8 databit 
 				  	- no parity 
 				  	- 1 stop bit 
