@@ -1,3 +1,16 @@
+RELEASE LPC177x_8xCMSIS_120629
+
+***** Implementations and Improvements ****
+1. Update .chm file:
+    + Fix issue: No function is described for module "CMSIS Core function Interface".
+
+***** Known Issues: In this package contains some examples that can not verify now ****
+
+1./ ADC > Adc_Burst
+2./ CAN > Can_SelfTest
+Maybe they will be removed when release for customers.
+==========================================================================================================
+========================================================================================================== 
 RELEASE LPC177x_8xCMSIS_120531
 
 ***** Implementations and Improvements ****
