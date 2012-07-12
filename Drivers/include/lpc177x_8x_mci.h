@@ -100,8 +100,8 @@
 #define CARD_STATUS_CURRENT_STATE	0x0F << 9
 #define CARD_STATUS_ERASE_RESET		1 << 13
 
-#define MCI_SLOW_RATE			1
-#define MCI_NORMAL_RATE			2
+#define MCI_SLOW_RATE			    (400000)    /* 400KHz */
+#define MCI_NORMAL_RATE			    (25000000)  /* 25MHz */
 
 #define SD_1_BIT 			0
 #define SD_4_BIT			1
@@ -109,15 +109,7 @@
 #define CARD_UNKNOWN		0
 #define MMC_CARD			1
 #define SD_CARD				2
-								 /* MCI clk freq = Pclk/(2* (Clkdiv +1) */
-#if MCI_DMA_ENABLED
-#define MCLKDIV_SLOW		60-1 /* 59 = 400,000Hz -> @48Mhz/(2*60) */
-#define MCLKDIV_NORMAL		1-1  /* 0 = 24Mhz -> @48Mhz/(2*1) */
-#else
-#define MCLKDIV_SLOW		90-1//60-1 /* 59 = 400,000Hz -> @48Mhz/(2*60) */
-#define MCLKDIV_NORMAL		2-1//3-1  /* 2 = 8Mhz -> @48Mhz/(2*3) */
-#endif
-
+                                 
 #define DATA_TIMER_VALUE	0x10000
 
 #define EXPECT_NO_RESP		0

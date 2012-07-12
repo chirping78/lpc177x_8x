@@ -776,7 +776,7 @@ void MCI_IRQHandler (void)
  * @brief 		Set MCI clock rate, during initialization phase < 400K
  *				during data phase < 20Mhz
  *
- * @param[in]	ClockRate Clock rate to be set
+ * @param[in]	ClockRate Clock rate to be set (in MHz)
  *
  * @return 		None
  **********************************************************************/
@@ -784,17 +784,13 @@ void MCI_Set_MCIClock( uint32_t ClockRate )
 {
 	volatile uint32_t i;
 	uint32_t ClkValue = 0;
+    uint32_t pclk;
+    
+    pclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_PER);
 
-	if ( ClockRate == MCI_SLOW_RATE )
-	{
-		/* slow clock */
-		ClkValue |= MCLKDIV_SLOW;
-	}
-	else if (ClockRate == MCI_NORMAL_RATE)
-	{
-		/* normal clock */
-		ClkValue |= MCLKDIV_NORMAL;
-	}
+	ClkValue = (pclk + 2*ClockRate - 1) /(2*ClockRate); 
+    if(ClkValue)
+        ClkValue -= 1;
 
 	LPC_MCI->CLOCK &= ~(0xFF); /* clear clock divider */
 
@@ -2002,6 +1998,9 @@ int32_t MCI_GetCardStatus(int32_t* cardStatus)
  *
  * @note		CMD16 command should be sent after the card is selected by CMD7 
  *				(SELECT_CARD).
+ *  In the case of SDHC and SDXC Cards, block length set by CMD16 command doen't 
+ *  affect memory read and write commands. Always 512 Bytes fixed block length is 
+ *  used. This command is effective for LOCK_UNLOCK command..
  ****************************************************************************/
 int32_t MCI_SetBlockLen(uint32_t blockLength)
 {
@@ -2226,7 +2225,14 @@ int32_t MCI_Cmd_WriteBlock(uint32_t blockNum, uint32_t numOfBlock)
 	
 	retryCount = 0x20;
     cmdIf.CmdIndex = commandID;
-    cmdIf.Argument = blockNum * BLOCK_LENGTH;
+    if (MCI_CardType == MCI_SDHC_SDXC_CARD)
+	{
+		cmdIf.Argument = blockNum;                      /* Block Address */
+	}
+	else			
+	{
+		cmdIf.Argument = blockNum * BLOCK_LENGTH;       /* Byte Address */
+	}     
     cmdIf.ExpectResp = EXPECT_SHORT_RESP;
     cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
     cmdIf.CmdResp =  (uint32_t *)&respValue[0];
@@ -2298,7 +2304,14 @@ int32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock)
 
 	retryCount = 0x20;
     cmdIf.CmdIndex = commandID;
-    cmdIf.Argument = blockNum * BLOCK_LENGTH;
+    if (MCI_CardType == MCI_SDHC_SDXC_CARD)
+	{
+		cmdIf.Argument = blockNum;                      /* Block Address */
+	}
+	else			
+	{
+		cmdIf.Argument = blockNum * BLOCK_LENGTH;       /* Byte Address */
+	}    
     cmdIf.ExpectResp = EXPECT_SHORT_RESP;
     cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
     cmdIf.CmdResp =  (uint32_t *)&respValue[0];
