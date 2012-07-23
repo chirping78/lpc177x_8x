@@ -1144,9 +1144,6 @@ int32_t MCI_GetCmdResp(uint32_t ExpectCmdData, uint32_t ExpectResp, uint32_t *Cm
         if (ExpectResp == EXPECT_SHORT_RESP)
         {
             *(CmdResp + 0) = LPC_MCI->RESP0;
-            *(CmdResp + 1) = 0;
-            *(CmdResp + 2) = 0;
-            *(CmdResp + 3) = 0;
         }
         else if (ExpectResp == EXPECT_LONG_RESP)
         {
@@ -2385,15 +2382,9 @@ int32_t MCI_WriteBlock(volatile uint8_t* memblock, uint32_t blockNum, uint32_t n
 
     for ( i = 0; i < 0x10; i++ );
 
-    /* Below status check is redundant, but ensure card is in TRANS state
-    before writing and reading to from the card. */
-    if (MCI_CheckStatus() != MCI_FUNC_OK)
-    {
-        MCI_Cmd_StopTransmission();
-
-        return(MCI_FUNC_FAILED);
-    }
-
+    /* Wait the SD Card enters to TRANS state. */
+    while (MCI_CheckStatus() != MCI_FUNC_OK);
+    
     LPC_MCI->DATATMR = DATA_TIMER_VALUE;
 
     LPC_MCI->DATALEN = BLOCK_LENGTH*numOfBlock;
@@ -2471,14 +2462,8 @@ int32_t MCI_ReadBlock(volatile uint8_t* destBlock, uint32_t blockNum, uint32_t n
 
     for ( i = 0; i < 0x10; i++ );
 
-    /* Below status check is redundant, but ensure card is in TRANS state
-    before writing and reading to from the card. */
-    if ( MCI_CheckStatus() != MCI_FUNC_OK )
-    {
-        MCI_Cmd_StopTransmission();
-
-        return(MCI_FUNC_FAILED);
-    }
+    /* Wait the SD Card enters to TRANS state. */
+    while (MCI_CheckStatus() != MCI_FUNC_OK);
 
     MCI_RXEnable();
 

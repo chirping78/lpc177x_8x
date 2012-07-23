@@ -101,7 +101,7 @@
 #define CARD_STATUS_ERASE_RESET      ( 1 << 13)
 
 #define MCI_SLOW_RATE                (400000)    /* 400KHz */
-#define MCI_NORMAL_RATE              (25000000)  /* 25MHz */
+#define MCI_NORMAL_RATE              (20000000)  /* 20MHz */
 
 #define SD_1_BIT                     (0)
 #define SD_4_BIT                     (1)
@@ -110,7 +110,7 @@
 #define MMC_CARD                     (1)
 #define SD_CARD                      (2)
                                  
-#define DATA_TIMER_VALUE             (0x10000)
+#define DATA_TIMER_VALUE             (MCI_NORMAL_RATE/4)    // 250ms
 
 #define EXPECT_NO_RESP               (0)
 #define EXPECT_SHORT_RESP            (1)

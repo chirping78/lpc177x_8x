@@ -445,9 +445,20 @@ void file_cmd_handle(char* ptr)
 			}
             /* Note: For 4GB+ card, the displayed size may not be correct since
             the max size for 32bit is 4G */
-			xprintf("%4u File(s),%10lu bytes total\n", s1, p1);
+            if(p1 <= (uint32_t)0xFFFFFFFF)
+                xprintf("%4u File(s),%10lu bytes total\n", s1, p1);
+            else
+            {
+               xprintf("%4u File(s),%10lu KB total\n", s1, p1/1024);
+            }
 			if (f_getfree(ptr, (DWORD*)&p1, &fs) == FR_OK)
-				xprintf("%4u Dir(s), %10lu bytes free\n",s2, p1 * fs->csize * 512);
+            {
+                uint64_t free_bytes = ((uint64_t)p1) * fs->csize * 512;
+                if(free_bytes <= (uint32_t)0xFFFFFFFF) 
+                    xprintf("%4u Dir(s), %10lu bytes free\n",s2, free_bytes);
+                else
+                    xprintf("%4u Dir(s), %10lu KB free\n",s2, free_bytes/1024);
+            }
 			break;
 
 		case 'o' :	/* fo <mode> <file> - Open a file */

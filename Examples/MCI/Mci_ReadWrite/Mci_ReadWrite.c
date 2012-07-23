@@ -216,7 +216,8 @@ void c_entry (void)
 	{
 		MCI_Set_MCIClock( MCI_NORMAL_RATE );
 		
-		if (MCI_SetBusWidth( SD_4_BIT ) != MCI_FUNC_OK )
+        retVal = MCI_SetBusWidth( SD_4_BIT );
+		if (retVal != MCI_FUNC_OK )
 		{
 			_DBG("Set BandWidth is FAILED, retVal = "); _DBH32(retVal);
 			while (1);	/* fatal error */
@@ -263,9 +264,6 @@ void c_entry (void)
 		    _DBG("Write ");_DBD(WRITE_BLOCK_NUM);_DBG(" Blocks successfully!!!\n\r");
         }
 	}
-
-	// Delay 500ms
-	for ( i = 0; i < 0x500000; i++ );
 
 	retVal = MCI_ReadBlock(rdBuf, 0, WRITE_BLOCK_NUM);
 	if(retVal != MCI_FUNC_OK)
