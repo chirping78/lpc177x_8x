@@ -278,12 +278,11 @@ Bool mci_read_configuration (void)
 			break;
 		}
 
+        MCI_Set_MCIClock( MCI_NORMAL_RATE );
 		if ((CardConfig.CardType== MCI_SDSC_V1_CARD) ||
 			(CardConfig.CardType== MCI_SDSC_V2_CARD) ||
 			(CardConfig.CardType== MCI_SDHC_SDXC_CARD)) 
-		{
-				MCI_Set_MCIClock( MCI_NORMAL_RATE );
-		
+		{		
 				if (MCI_SetBusWidth( SD_4_BIT ) != MCI_FUNC_OK )
 				{
 					break;
@@ -419,7 +418,6 @@ DRESULT disk_read (
     volatile uint32_t tmp;
 	if (drv || !count) return RES_PARERR;
 	if (Stat & STA_NOINIT) return RES_NOTRDY;
-    for(tmp = 0x100000;tmp;tmp--);
 	if (MCI_ReadBlock (buff, sector, count) == MCI_FUNC_OK)	
 	{
 		//while(MCI_GetBlockXferEndState() != 0);
@@ -464,7 +462,6 @@ DRESULT disk_write (
 	if (drv || !count) return RES_PARERR;
 	if (Stat & STA_NOINIT) return RES_NOTRDY;
 //	if (Stat & STA_PROTECT) return RES_WRPRT;
-    for(tmp = 0x100000;tmp;tmp--);
 
 	if ( MCI_WriteBlock((uint8_t*)buff, sector, count) == MCI_FUNC_OK)
 	{

@@ -812,6 +812,7 @@ void MCI_Set_MCIClock( uint32_t ClockRate )
 int32_t MCI_SetBusWidth( uint32_t width )
 {
     volatile uint32_t i;
+    uint8_t bus_width = BUS_WIDTH_1BIT;
 
     for ( i = 0; i < 0x10; i++ );    /* delay 3MCLK + 2PCLK  */
 
@@ -822,9 +823,10 @@ int32_t MCI_SetBusWidth( uint32_t width )
     else if ( width == SD_4_BIT )
     {
         LPC_MCI->CLOCK |=  (1 << 11);/* 4 bit bus */
+        bus_width = BUS_WIDTH_4BITS;
     }
 
-    if ( MCI_Acmd_SendBusWidth( BUS_WIDTH_4BITS ) != MCI_FUNC_OK )
+    if ( MCI_Acmd_SendBusWidth( bus_width ) != MCI_FUNC_OK )
     {
         return(MCI_FUNC_FAILED);
     }
@@ -1748,6 +1750,8 @@ int32_t MCI_SetCardAddress( void )
         {
             CardRCA = respValue & 0xFFFF0000;    /* Save the RCA value from SD card */
 
+            MCI_SetOutputMode(MCI_OUTPUT_MODE_PUSHPULL);
+            
             return (MCI_FUNC_OK);    /* response is back and correct. */
         }
 

@@ -124,7 +124,9 @@ void c_entry (void)
 	however, to simplify the example, it doesn't configure them accordingly
 	based on the CSD register value. This is not intended to support all
 	the SD and MMC cards. */
-
+    
+    _DBG_("Init Card");
+    
 	if(MCI_Init(BRD_MCI_POWERED_ACTIVE_LEVEL) != MCI_FUNC_OK)
 	{
 		_DBG_("MCI_Init FAILED");
@@ -209,13 +211,13 @@ void c_entry (void)
 	{
 		_DBG("Card has been selected successfully!!!\n\r");
 	}
-
+	
+	MCI_Set_MCIClock( MCI_NORMAL_RATE );
+	
 	if(cardType == MCI_SDSC_V1_CARD||
 		cardType == MCI_SDSC_V2_CARD||
 		cardType == MCI_SDHC_SDXC_CARD)
 	{
-		MCI_Set_MCIClock( MCI_NORMAL_RATE );
-		
         retVal = MCI_SetBusWidth( SD_4_BIT );
 		if (retVal != MCI_FUNC_OK )
 		{

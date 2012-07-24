@@ -409,7 +409,7 @@ void file_cmd_handle(char* ptr)
 			xprintf("\r%u files, %lu bytes.\n%u folders.\n"
 					"%lu KB total disk space.\n%lu KB available.\n",
 					acc_files, acc_size, acc_dirs,
-					(fs->n_fatent - 2) * (fs->csize / 2), p2 * (fs->csize / 2)
+					(((fs->n_fatent - 2) * fs->csize) / 2), ((p2 * fs->csize) / 2)
 			);
 			break;
 
