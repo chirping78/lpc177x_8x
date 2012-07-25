@@ -63,10 +63,14 @@
 				If using I2C2
 					- SDA -> P0.10 (J3.20)
 					- SCL -> P0.11	(J3.11)
-				SDA pin on master connects with SDA pin on slave
-				SCL pin on master connects with SCL pin on slave
-				
-	Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
+                
+				SDA pin on master connects with SDA pin on slave.
+				SCL pin on master connects with SCL pin on slave.
+				Common ground should be connected between two boards.
+				Note: The I2C pins should be configured as: no pull-up, no pull-down and open drain mode. 
+				And, there are must a pull-up resistor for SDA line and for SCL line.
+                
+		Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
 			1. LPC1788 OEM Board rev A and OEM Base Board rev A
 				- UART0: USB serial port 
 					+ All jumpers: Default

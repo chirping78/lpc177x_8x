@@ -151,7 +151,6 @@ static uint32_t I2C_Start (LPC_I2C_TypeDef *I2Cx)
 	// Wait for complete
 	while (!(I2Cx->CONSET & I2C_I2CONSET_SI));
 
-	I2Cx->CONCLR = I2C_I2CONCLR_STAC;
 
 	return (I2Cx->STAT & I2C_STAT_CODE_BITMASK);
 }
@@ -172,9 +171,16 @@ static void I2C_Stop (LPC_I2C_TypeDef *I2Cx)
 		I2Cx->CONCLR = I2C_I2CONCLR_STAC;
 	}
 
-	I2Cx->CONSET = I2C_I2CONSET_STO|I2C_I2CONSET_AA;
+	I2Cx->CONSET = I2C_I2CONSET_STO;
 
 	I2Cx->CONCLR = I2C_I2CONCLR_SIC;
+    
+    // wait for stop is sent
+    while(I2Cx->CONSET & I2C_I2CONSET_STO)
+    {
+        if(I2Cx->CONSET & I2C_I2CONSET_SI)
+            I2Cx->CONCLR = I2C_I2CONCLR_SIC;
+    }
 }
 
 /********************************************************************//**
@@ -196,12 +202,6 @@ static uint32_t I2C_SendByte (LPC_I2C_TypeDef *I2Cx, uint8_t databyte)
 		(CodeStatus != I2C_I2STAT_M_TX_DAT_ACK)  )
 	{
 		return CodeStatus;
-	}
-	
-	/* Make sure start bit is not active */
-	if (I2Cx->CONSET & I2C_I2CONSET_STA)
-	{
-		I2Cx->CONCLR = I2C_I2CONCLR_STAC;
 	}
 
 	I2Cx->DAT = databyte & I2C_I2DAT_BITMASK;
@@ -332,7 +332,7 @@ void I2C_DeInit(en_I2C_unitId i2cId)
 	LPC_I2C_TypeDef* I2Cx = I2C_GetPointer(i2cId);
 
 	/* Disable I2C control */
-	I2Cx->CONCLR = I2C_I2CONCLR_I2ENC;
+	I2Cx->CONCLR = 0xFF;
 
 	switch (i2cId)
 	{
@@ -479,6 +479,8 @@ int32_t I2C_MasterHanleStates(en_I2C_unitId i2cId, uint32_t CodeStatus, I2C_M_SE
 				I2C_SendByte(I2Cx, ((TransferCfg->sl_addr7bit << 1) | 0x01));
 				Ret = I2C_BYTE_SENT;
 			}
+            // Clear STA bit after the slave address is sent
+            I2Cx->CONCLR = I2C_I2CONCLR_STAC;
 			break;
 		case I2C_I2STAT_M_TX_SLAW_ACK:
 		case I2C_I2STAT_M_TX_DAT_ACK:
@@ -495,20 +497,29 @@ int32_t I2C_MasterHanleStates(en_I2C_unitId i2cId, uint32_t CodeStatus, I2C_M_SE
 			}
 			else
 			{
-				I2C_Stop(I2Cx);
-
+				if(TransferCfg->rx_count >= TransferCfg->rx_length)
+                {
+                    I2C_Stop(I2Cx);
+                }
 				Ret = I2C_SEND_END;
 				
+                
 			}
+            
 			break;
 		case I2C_I2STAT_M_TX_DAT_NACK:
-			I2C_Stop(I2Cx);
+            if(TransferCfg->rx_count >= TransferCfg->rx_length)
+            {
+                I2C_Stop(I2Cx);
+            }
 			Ret = I2C_SEND_END;
 			break;
 		case I2C_I2STAT_M_RX_ARB_LOST:
+        case I2C_I2STAT_S_RX_ARB_LOST_M_GENCALL:
+        case I2C_I2STAT_S_TX_ARB_LOST_M_SLA:
         //case I2C_I2STAT_M_TX_ARB_LOST:
-			I2Cx->CONSET = I2C_I2CONSET_STA|I2C_I2CONSET_AA;
-			I2Cx->CONCLR = I2C_I2CONCLR_SIC;
+			I2C_Stop(I2Cx);
+            Ret = I2C_ERR;
 			break;
 		case I2C_I2STAT_M_RX_SLAR_ACK:
 			I2Cx->CONSET = I2C_I2CONSET_AA;
@@ -519,7 +530,7 @@ int32_t I2C_MasterHanleStates(en_I2C_unitId i2cId, uint32_t CodeStatus, I2C_M_SE
 		case I2C_I2STAT_M_RX_DAT_ACK:
 			if (TransferCfg->rx_count <TransferCfg->rx_length)
 			{
-				if (TransferCfg->rx_count < (TransferCfg->rx_length - 2))
+				if ((TransferCfg->rx_length > 1) && (TransferCfg->rx_count < (TransferCfg->rx_length - 2)))
 				{
 					I2C_GetByte(I2Cx, &tmp, TRUE);
 
@@ -535,19 +546,24 @@ int32_t I2C_MasterHanleStates(en_I2C_unitId i2cId, uint32_t CodeStatus, I2C_M_SE
 
 				TransferCfg->rx_count++;
 			}
-			 else
-			 {
+		    else
+			{
+                I2C_Stop(I2Cx);
 				Ret = I2C_RECV_END;
 			}
 			
 			break;
 		case I2C_I2STAT_M_RX_DAT_NACK:
 			I2C_GetByte(I2Cx, &tmp, FALSE);
-			*rxdat++ = tmp;
-			TransferCfg->rx_count++;
+            if (TransferCfg->rx_count < TransferCfg->rx_length)
+            {
+                *rxdat++ = tmp;
+                TransferCfg->rx_count++;
+            }
 			I2C_Stop(I2Cx);
 			Ret = I2C_RECV_END;
 			break;
+        
 		case I2C_I2STAT_M_RX_SLAR_NACK:
 		case I2C_I2STAT_M_TX_SLAW_NACK:
 		case I2C_I2STAT_BUS_ERROR:
@@ -788,8 +804,7 @@ void I2C_MasterHandler(en_I2C_unitId i2cId)
 			txrx_setup->tx_count = 0;
 			txrx_setup->rx_count = 0;
 			// Reset STA, STO, SI
-	        I2Cx->CONCLR = I2C_I2CONCLR_SIC|I2C_I2CONCLR_STOC|I2C_I2CONCLR_STAC;
-			I2Cx->CONSET = I2C_I2CONSET_STA;
+	        I2C_Start(I2Cx);
 			return;
 		}
 		else
@@ -807,8 +822,7 @@ void I2C_MasterHandler(en_I2C_unitId i2cId)
 		else	// Start to wait for data from Slave
 		{
 			// Reset STA, STO, SI
-			I2Cx->CONCLR = I2C_I2CONCLR_SIC|I2C_I2CONCLR_STOC|I2C_I2CONCLR_STAC;
-			I2Cx->CONSET = I2C_I2CONSET_STA;
+			I2C_Start(I2Cx);
 			return;
 		}
 	}
@@ -990,7 +1004,7 @@ retry:
 			{
 				break;
 			}
-             		CodeStatus = I2Cx->STAT & I2C_STAT_CODE_BITMASK;
+            CodeStatus = I2Cx->STAT & I2C_STAT_CODE_BITMASK;
 		}
 		return SUCCESS;
 error:
@@ -1007,8 +1021,7 @@ error:
 
 		/* First Start condition -------------------------------------------------------------- */
 		// Reset STA, STO, SI
-		I2Cx->CONCLR = I2C_I2CONCLR_SIC|I2C_I2CONCLR_STOC|I2C_I2CONCLR_STAC;
-		I2Cx->CONSET = I2C_I2CONSET_STA;
+		I2C_Start(I2Cx);
 
 		I2C_IntCmd(i2cId, TRUE);
 
