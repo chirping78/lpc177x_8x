@@ -537,7 +537,10 @@ int32_t I2C_MasterHanleStates(en_I2C_unitId i2cId,
             Ret = I2C_ERR;
 			break;
 		case I2C_I2STAT_M_RX_SLAR_ACK:
-			I2Cx->CONSET = I2C_I2CONSET_AA;
+            if(TransferCfg->rx_length > 1)
+                I2Cx->CONSET = I2C_I2CONSET_AA;
+            else
+                I2Cx->CONCLR = I2C_I2CONCLR_AAC;
 			I2Cx->CONCLR = I2C_I2CONCLR_SIC;
 
 			Ret = I2C_BYTE_RECV;
