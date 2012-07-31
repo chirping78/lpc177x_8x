@@ -1,3 +1,53 @@
+RELEASE LPC177x_8xCMSIS_120731
+
+***** Implementations and Improvements ****
+1. Update MCI Driver and examples:
+    + SDHC card support.
+          - Use block address for read/write commands in case the SDHC/SDXC card is being plugged.
+          - Increase timeout value which is set to MCIDataTimer register.
+    + Change the parameter of MCI_Set_MCIClock function: inputs SD Clock Output Frequency.
+    + Update MCI_SetCardAddress function: after CMD3 is sent, enter to push-pull mode. 
+    + Add delay 3MCLK + 2PCLK after writing to CLOCK, POWER, COMMAND & DATACTRL register.
+    + Update MCI_Init function: add a long delay before entering to power-on phase.
+    + Update MCI_SendCmd function:  
+          - Clear status register before setting a command.
+          - After setting a command, wait until command is sent.
+    + Update MCI_GetCmdResp function:
+          - In case of EXPECT_SHORT_RESP, only update the first integer entry of CmdResp argument.
+    + Update MCI_Acmd_SendOpCond function:
+          -  Increase the number of retry from 0x200 to 0x2000.
+          -  If the sending of CMD55 failed (after some retries), return immediately.
+    + Update MCI_SetBusWidth function:
+          - Only send bus width command if the card isn't MMC card.
+          - The argument for bus width command relevant to input argument. 
+    + Update functions which sends a command to the card
+          - Check the current card state before and after a command is executed to make sure 
+		the command is executed successfully .
+          - After receiving the relevant response, check if any error bit in the card status is set. 
+		If yes, return with MCI_FUNC_BAD_PARAMETERS error.
+    + Update card status check:
+          - Update MCI_GetCardStatus function: Get the card status and return regardless of the busy bit status.
+          - Update MCI_CheckStatus function: Add 1 argument to input the expected card state.
+                
+2. Update I2C driver:
+   + Clear the STA bit after writing the slave address. 
+   + Clear all bit of CONSET register in I2C_DeInit function. 
+   + After receiving ACK for SLA+R, AA bit of CONSET register only be set if the expected receive length > 1.
+   + After master sends all data, it sends REPEAT START (instead of sending STOP and then START bit) to receive 
+         data from slave. 
+   + Update I2C_Start & I2C_Stop function:
+         - Add an argument to select the mode. 
+         - In polling mode, it will wait until the START/STOP is sent.
+         - In interrupt mode, the function exits after the relevant bit of CONSET register is set.
+   + Use I2C_Start function if master needs to send START bit. 
+
+***** Known Issues: In this package contains some examples that can not verify now ****
+
+1./ ADC > Adc_Burst
+2./ CAN > Can_SelfTest
+Maybe they will be removed when release for customers.
+==========================================================================================================
+========================================================================================================== 
 RELEASE LPC177x_8xCMSIS_120629
 
 ***** Implementations and Improvements ****
