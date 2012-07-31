@@ -152,14 +152,14 @@ int main()
                 if (n>=blen) {cnt = blen; n -= blen;}
                 else         {cnt = n; n = 0;}
 
-                p =  file_read( &filer, cnt, Buff );
-                xprintf("%s\n",Buff);
+                p =  file_read( &filer, cnt, &Buff[m] );
+                xprintf("%s",&Buff[m]);
                 m += p;
                 if (p != cnt) break;                
             }
             filesize = m;
             time_end = Timer;
-            xprintf("%lu bytes read in %lu milisec.\n", m, time_end);
+            xprintf("\n%lu bytes read in %lu milisec.\n", m, time_end);
             file_fclose( &filer ); 
 
         } else
@@ -174,7 +174,6 @@ int main()
         if (file_fopen( &filew, &efs.myFs , FILE_NAME_W , 'a' ) == 0 )
         {
             xprintf(" OK. \nWriting %lu bytes ...\n", filesize);
-           
             n=filesize;
             m = 0;
             Timer = 0;
@@ -187,7 +186,7 @@ int main()
                     cnt = n;
                     n = 0;
                 }
-                p = file_write( &filew, cnt, Buff );
+                p = file_write( &filew, cnt, &Buff[m] );
                 m += p;
                 if (p != cnt) break;
             }
@@ -218,14 +217,14 @@ int main()
                 if (n>=blen) {cnt = blen; n -= blen;}
                 else         {cnt = n; n = 0;}
 
-                p =  file_read( &filer, cnt, Buff );
-                xprintf("%s\n",Buff);
+                p =  file_read( &filer, cnt, &Buff[m] );
+                xprintf("%s",&Buff[m]);
                 m += p;
                 if (p != cnt) break;                
             }
             filesize = m;
             time_end = Timer;
-            xprintf("%lu bytes read in %lumiliseconds.\n", m, time_end);
+            xprintf("\n%lu bytes read in %lumiliseconds.\n", m, time_end);
             file_fclose( &filer ); 
 
         } else

@@ -93,12 +93,92 @@
 #define CMD55_APP_CMD                (55)
 
 #define OCR_INDEX                    (0x00FF8000)
+#define RCA_ARGUMENT_POS             (16)
+#define RCA_ARGUMENT_MASK            (0xFFFF)
 
 
-#define CARD_STATUS_ACMD_ENABLE      ( 1 << 5)
-#define CARD_STATUS_RDY_DATA         ( 1 << 8)
-#define CARD_STATUS_CURRENT_STATE    (0x0F << 9)
-#define CARD_STATUS_ERASE_RESET      ( 1 << 13)
+/* Card Status (coded in 32 bits) in R1 & R1b Response */
+#define CARD_STATUS_OUT_OF_RANGE    ( 1 << 31)
+#define CARD_STATUS_ADDRESS_ERROR   ( 1 << 30)
+#define CARD_STATUS_BLOCK_LEN_ERROR ( 1 << 29)
+#define CARD_STATUS_ERASE_SEQ_ERROR ( 1 << 28)
+#define CARD_STATUS_ERASE_PARAM_ERROR ( 1 << 27)
+#define CARD_STATUS_WP_VIOLATION    ( 1 << 26)
+#define CARD_STATUS_CARD_IS_LOCKED  ( 1 << 25)
+#define CARD_STATUS_COM_CRC_ERROR   ( 1 << 23)
+#define CARD_STATUS_ILLEGAL_COMMAND ( 1 << 22)
+#define CARD_STATUS_CARD_ECC_FAILED ( 1 << 21)
+#define CARD_STATUS_CC_ERROR        ( 1 << 20)
+#define CARD_STATUS_GEN_ERROR       ( 1 << 19)
+#define CARD_STATUS_CSD_OVERWRITE   ( 1 << 16)
+#define CARD_STATUS_WP_ERASE_SKIP   ( 1 << 15)
+#define CARD_STATUS_CARD_ECC_DISABLED   ( 1 << 14)
+#define CARD_STATUS_ERASE_RESET     ( 1 << 13)
+#define CARD_STATUS_READY_FOR_DATA  ( 1 << 8)
+#define CARD_STATUS_ACMD_ENABLE     ( 1 << 5)
+#define CARD_STATUS_ERR_MASK         (0xFDF88008)
+#define CARDSTATEOF(x)              ((x>>9) & 0x0F)
+#define CARD_STATE_IDLE             (0)
+#define CARD_STATE_READY            (1)
+#define CARD_STATE_IDENT            (2)
+#define CARD_STATE_STBY             (3)
+#define CARD_STATE_TRAN             (4)
+#define CARD_STATE_DATA             (5)
+#define CARD_STATE_RCV              (6)
+#define CARD_STATE_PRG              (7)
+#define CARD_STATE_DIS              (8)
+
+
+/* CID  in R2 reponse (Code length is 136 bits) */
+#define MCI_CID_MANUFACTURER_ID_WPOS           (24)    //pos in word 0
+#define MCI_CID_MANUFACTURER_ID_WBMASK         (0xFF)
+
+#define MCI_CID_OEMAPPLICATION_ID_WPOS         (8)        //pos in word 0
+#define MCI_CID_OEMAPPLICATION_ID_WBMASK       (0xFFFF)
+
+#define MCI_CID_PRODUCTNAME_ID_H_WPOS          (0)        //pos in word 0
+#define MCI_CID_PRODUCTNAME_ID_H_WBMASK        (0xFF)
+
+#define MCI_CID_PRODUCTNAME_ID_L_WPOS          (0)        //pos in word 1
+#define MCI_CID_PRODUCTNAME_ID_L_WBMASK        (0xFFFFFFFF)
+
+#define MCI_CID_PRODUCTREVISION_ID_WPOS        (24)    //pos in word 2
+#define MCI_CID_PRODUCTREVISION_ID_WBMASK      (0xFF)
+
+#define MCI_CID_PRODUCTSERIALNUM_ID_H_WPOS     (0)    //pos in word 2
+#define MCI_CID_PRODUCTSERIALNUM_ID_H_WBMASK   (0x00FFFFFF)
+#define MCI_CID_PRODUCTSERIALNUM_ID_L_WPOS     (24)    //pos in word 3
+#define MCI_CID_PRODUCTSERIALNUM_ID_L_WBMASK   (0xFF)
+#define MCI_CID_PRODUCTSERIALNUM_ID_WBMASK     (0xFFFFFFFF)
+
+#define MCI_CID_RESERVED_ID_WPOS               (20)    //pos in word 3
+#define MCI_CID_RESERVED_ID_WBMASK             (0x1F)
+
+#define MCI_CID_MANUFACTURINGDATE_ID_WPOS      (8)    //in word 3
+#define MCI_CID_MANUFACTURINGDATE_ID_WBMASK    (0x0FFF)
+
+#define MCI_CID_CHECKSUM_ID_WPOS               (1)    //in word 3
+#define MCI_CID_CHECKSUM_ID_WBMASK             (0x7F)
+
+#define MCI_CID_UNUSED_ID_WPOS                 (0)    //in word 3
+#define MCI_CID_UNUSED_ID_WBMASK               (0x01)
+
+/* R6 (Published RCA response) */
+#define RCA_RES_CARD_STATUS_POS                (0)
+#define RCA_RES_CARD_STATUS_MASK               (0xFFFF)
+
+#define RCA_RES_NEW_PUBLISHED_RCA_POS           (16)
+#define RCA_RES_NEW_PUBLISHED_RCA_MASK          (0xFFFF)
+
+/* R7 (Card interface condition) */
+#define MCI_CMD8_VOLTAGESUPPLIED_POS           (8)
+#define MCI_CMD8_VOLTAGESUPPLIED_BMASK         (0x0F)
+#define MCI_CMD8_VOLATAGESUPPLIED_NOT_DEFINED  (0)
+#define MCI_CMD8_VOLATAGESUPPLIED_27_36        (1)  /*2.7 - 3.6V*/
+
+#define MCI_CMD8_CHECKPATTERN_POS              (0)
+#define MCI_CMD8_CHECKPATTERN_BMASK            (0xFF)
+
 
 #define MCI_SLOW_RATE                (400000)    /* 400KHz */
 #define MCI_NORMAL_RATE              (20000000)  /* 20MHz */
@@ -106,11 +186,10 @@
 #define SD_1_BIT                     (0)
 #define SD_4_BIT                     (1)
 
-#define CARD_UNKNOWN                 (0)
-#define MMC_CARD                     (1)
-#define SD_CARD                      (2)
-                                 
-#define DATA_TIMER_VALUE             (MCI_NORMAL_RATE/4)    // 250ms
+#define DATA_TIMER_VALUE_R           (MCI_NORMAL_RATE/4)    // 250ms
+#define DATA_TIMER_VALUE_W           (MCI_NORMAL_RATE)    // 1000ms
+
+#define DATA_RW_MAX_LEN              (0xFFFF)
 
 #define EXPECT_NO_RESP               (0)
 #define EXPECT_SHORT_RESP            (1)

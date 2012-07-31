@@ -288,7 +288,14 @@ Bool mci_read_configuration (void)
 					break;
 				}
 		}
-
+        else
+        {
+                if (MCI_SetBusWidth( SD_1_BIT ) != MCI_FUNC_OK )
+				{
+					break;
+				}
+        }
+        
 		/* For SDHC or SDXC, block length is fixed to 512 bytes, for others,
          the block length is set to 512 manually. */
         if (CardConfig.CardType == MCI_MMC_CARD ||
@@ -314,7 +321,8 @@ Bool mci_wait_for_ready (void)
     Timer2 = 50;    // 500ms
     while(Timer2)
 	{	
-		if(MCI_GetCardStatus(&cardSts) == MCI_FUNC_OK)
+		if((MCI_GetCardStatus(&cardSts) == MCI_FUNC_OK) &&
+            (cardSts & CARD_STATUS_READY_FOR_DATA ))
 		{
 			return TRUE;
 		}
@@ -428,6 +436,9 @@ DRESULT disk_read (
 			if(MCI_Cmd_StopTransmission()  != MCI_FUNC_OK)
 				return RES_ERROR;
 		}
+        if(MCI_GetXferErrState())
+          return RES_ERROR;
+        
 		return RES_OK;
 	}
 	else
@@ -473,6 +484,9 @@ DRESULT disk_write (
 			if(MCI_Cmd_StopTransmission()  != MCI_FUNC_OK)
 				return RES_ERROR;
 		}
+        if(MCI_GetXferErrState())
+          return RES_ERROR;
+        
 		return RES_OK;
 	}
 	else

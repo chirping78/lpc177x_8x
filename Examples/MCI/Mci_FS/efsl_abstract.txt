@@ -35,6 +35,13 @@
         - Create a new file with name is "file_w.txt" and then copy the content
         of file "file_r.txt" to the new file.
 
+        This example passed with:
+            -  PNY SD-MO2G.
+            -  Canon SD Memory Card SDC-32M
+            -  KINGMAX MMC Mobile 1GB.
+            -  Micro SDHC (Class 6) 4GB.
+            -  Transcend SD card 2GB.
+            -  Transcend Micro SDHC (Class 4) 16GB.
 		 				
 @Directory contents:
 	\Keil:	includes RVMDK (Keil)project and configuration files 

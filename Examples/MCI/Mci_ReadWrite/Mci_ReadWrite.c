@@ -95,7 +95,7 @@ void c_entry (void)
 	en_Mci_CardType cardType;
 	uint32_t rcAddress;
 	uint32_t csdVal[4];
-    uint32_t errorState;
+	uint32_t errorState;
 
 	// Initialize buffers for testing later
 	
@@ -125,7 +125,7 @@ void c_entry (void)
 	based on the CSD register value. This is not intended to support all
 	the SD and MMC cards. */
     
-    _DBG_("Init Card");
+	_DBG_("Init Card");
     
 	if(MCI_Init(BRD_MCI_POWERED_ACTIVE_LEVEL) != MCI_FUNC_OK)
 	{
@@ -157,8 +157,8 @@ void c_entry (void)
 			error = 1;
 			break;
 	}
-    if(error)
-    	while(1);
+	if(error)
+		while(1);
 	if (MCI_GetCID(&cidval) != MCI_FUNC_OK)
 	{
 		_DBG_("Get CID Failed");
@@ -174,7 +174,7 @@ void c_entry (void)
 	retVal = MCI_SetCardAddress();
 	if(retVal != MCI_FUNC_OK)
 	{
-		_DBG("Set Card Address is FAILED, retVal = "); _DBH32(retVal);
+		_DBG("Set Card Address FAILED, retVal = "); _DBH32(retVal);
 		while(1);
 	}
 	else
@@ -204,7 +204,7 @@ void c_entry (void)
 
 	if(retVal != MCI_FUNC_OK)
 	{
-		_DBG("Card Selection is FAILED, retVal = "); _DBH32(retVal);
+		_DBG("Card Selection FAILED, retVal = "); _DBH32(retVal);
 		while(1);
 	}
 	else
@@ -221,7 +221,7 @@ void c_entry (void)
         retVal = MCI_SetBusWidth( SD_4_BIT );
 		if (retVal != MCI_FUNC_OK )
 		{
-			_DBG("Set BandWidth is FAILED, retVal = "); _DBH32(retVal);
+			_DBG("Set BandWidth FAILED, retVal = "); _DBH32(retVal);
 			while (1);	/* fatal error */
 		}
 		else
@@ -233,7 +233,7 @@ void c_entry (void)
 	retVal = MCI_SetBlockLen(BLOCK_LENGTH);
 	if(retVal != MCI_FUNC_OK)
 	{
-		_DBG("Set Block Length is FAILED, retVal = "); _DBH32(retVal);
+		_DBG("Set Block Length FAILED, retVal = "); _DBH32(retVal);
 		while(1);
 	}
 	else
@@ -244,33 +244,7 @@ void c_entry (void)
 	retVal = MCI_WriteBlock(wrBuf, 0, WRITE_BLOCK_NUM);
 	if(retVal != MCI_FUNC_OK)
 	{
-		_DBG("Write Block is FAILED, retVal = "); _DBH32(retVal);
-		while(1);
-	}
-	else
-	{
-		//while(MCI_GetBlockXferEndState() != 0);
-		while(MCI_GetDataXferEndState() != 0);
-        errorState = MCI_GetXferErrState();		
-		if((WRITE_BLOCK_NUM > 1) || errorState);
-		{
-			MCI_Cmd_StopTransmission();
-		}
-		
-        if(errorState)
-        {
-            _DBG("Write ");_DBD(WRITE_BLOCK_NUM);_DBG(" Failed (");_DBH32(errorState);_DBG_(")");
-        }
-        else
-        {
-		    _DBG("Write ");_DBD(WRITE_BLOCK_NUM);_DBG(" Blocks successfully!!!\n\r");
-        }
-	}
-
-	retVal = MCI_ReadBlock(rdBuf, 0, WRITE_BLOCK_NUM);
-	if(retVal != MCI_FUNC_OK)
-	{
-		_DBG("Read Block is FAILED, retVal = "); _DBH32(retVal);
+		_DBG("Write Block FAILED, retVal = "); _DBH32(retVal);
 		while(1);
 	}
 	else
@@ -278,18 +252,60 @@ void c_entry (void)
 		//while(MCI_GetBlockXferEndState() != 0);
 		while(MCI_GetDataXferEndState() != 0);
 		errorState = MCI_GetXferErrState();		
-		if((WRITE_BLOCK_NUM > 1) || errorState);
+#if (WRITE_BLOCK_NUM == 1)        
+		if(errorState)
+#endif
 		{
-			MCI_Cmd_StopTransmission();
+			retVal = MCI_Cmd_StopTransmission();
+			if(retVal != MCI_FUNC_OK)
+			{
+			    _DBG("Stop transmission FAILED, retVal = "); _DBH32(retVal);
+			    while(1);
+			}
 		}
 		
         if(errorState)
         {
-            _DBG("Read ");_DBD(WRITE_BLOCK_NUM);_DBG(" Failed (");_DBH32(errorState);_DBG_(")");
+            _DBG("Write ");_DBD(WRITE_BLOCK_NUM);_DBG(" Block(s) FAILED (");_DBH32(errorState);_DBG_(")");
+            while(1);
         }
         else
         {
-		    _DBG("Read ");_DBD(WRITE_BLOCK_NUM);_DBG(" Blocks successfully!!!\n\r");
+            _DBG("Write ");_DBD(WRITE_BLOCK_NUM);_DBG(" Block(s) successfully!!!\n\r");
+        }
+	}
+
+	retVal = MCI_ReadBlock(rdBuf, 0, WRITE_BLOCK_NUM);
+	if(retVal != MCI_FUNC_OK)
+	{
+		_DBG("Read Block FAILED, retVal = "); _DBH32(retVal);
+		while(1);
+	}
+	else
+	{
+		//while(MCI_GetBlockXferEndState() != 0);
+		while(MCI_GetDataXferEndState() != 0);
+		errorState = MCI_GetXferErrState();		
+#if (WRITE_BLOCK_NUM == 1)        
+		if(errorState)
+#endif        
+		{
+			retVal = MCI_Cmd_StopTransmission();
+			if(retVal != MCI_FUNC_OK)
+			{
+			    _DBG("Stop transmission FAILED, retVal = "); _DBH32(retVal);
+			    while(1);
+			}
+		}
+		
+        if(errorState)
+        {
+            _DBG("Read ");_DBD(WRITE_BLOCK_NUM);_DBG(" Block(s) FAILED (");_DBH32(errorState);_DBG_(")");
+            while(1);
+        }
+        else
+        {
+            _DBG("Read ");_DBD(WRITE_BLOCK_NUM);_DBG(" Block(s) successfully!!!\n\r");
         }
 	}
 
@@ -301,7 +317,7 @@ void c_entry (void)
 		{
 			_DBG("ERROR on Read and Write at position: "); _DBH32(j);
 			retVal = MCI_FUNC_FAILED;
-			break;
+			while(1);
 		}
 	}
 

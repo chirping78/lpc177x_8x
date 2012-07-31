@@ -39,6 +39,9 @@
                     -  PNY SD-MO2G.
                     -  Canon SD Memory Card SDC-32M
                     -  KINGMAX MMC Mobile 1GB.
+                    -  Micro SDHC (Class 6) 4GB.
+                    -  Transcend SD card 2GB.
+                    -  Transcend Micro SDHC (Class 4) 16GB.
 
 		 				
 @Directory contents:
