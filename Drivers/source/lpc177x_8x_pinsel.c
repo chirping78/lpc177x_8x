@@ -156,10 +156,10 @@ PINSEL_RET_CODE PINSEL_ConfigPin ( uint8_t portnum, uint8_t pinnum, uint8_t func
  * @param[in]	portnum PORT number, should be in range: 0..3
  * @param[in]	pinnum	Pin number, should be in range: 0..31
  * @param[in] 	modenum: Mode number, should be in range: 0..3
-				- IOCON_MODE_PLAIN: Plain output
-				- IOCON_MODE_PULLDOWN: Pull-down enable
-				- IOCON_MODE_PULLUP: Pull-up enable
-				- IOCON_MODE_REPEATER: Repeater mode
+				- PINSEL_BASICMODE_PLAINOUT: Plain output
+				- PINSEL_BASICMODE_PULLDOWN: Pull-down enable
+				- PINSEL_BASICMODE_PULLUP: Pull-up enable
+				- PINSEL_BASICMODE_REPEATER: Repeater mode
  * @return 		PINSEL Return Code
  *				- PINSEL_RET_INVALID_PIN
  *				- PINSEL_RET_NOT_SUPPORT
