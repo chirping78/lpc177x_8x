@@ -22,7 +22,7 @@
 #ifdef _USB_DEV_VIRTUAL_COM
 #include "LPC177x_8x.h"
 #include "lpc_types.h"
-
+#include "usbreg.h"
 #include "usb.h"
 #include "usbcfg.h"
 #include "usbhw.h"
@@ -175,13 +175,15 @@ void VCOM_Usb2Serial(void)
   
   if (numAvailByte > 0) 
   {
-      numBytesToRead = numAvailByte > 32 ? 32 : numAvailByte;
+      numBytesToRead = numAvailByte > 64 ? 64 : numAvailByte;
       numBytesRead = CDC_RdOutBuf (&serBuf[0], &numBytesToRead);
 #if PORT_NUM
       ser_Write (1, &serBuf[0], &numBytesRead);
 #else
       ser_Write (0, &serBuf[0], &numBytesRead);
 #endif
+      /* reenable endpoint interrupt to receive other data */
+      LPC_USB->DevIntEn |= EP_SLOW_INT;
   }
 
 }

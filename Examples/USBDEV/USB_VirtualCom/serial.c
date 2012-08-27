@@ -33,7 +33,7 @@
 /*----------------------------------------------------------------------------
   Defines for ring buffers
  *---------------------------------------------------------------------------*/
-#define SER_BUF_SIZE               (128)               // serial buffer in bytes (power 2)
+#define SER_BUF_SIZE               (128*8)               // serial buffer in bytes (power 2)
 #define SER_BUF_MASK               (SER_BUF_SIZE-1ul)  // buffer size mask
 
 /* Buffer read / write macros */
