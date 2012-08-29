@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		lpc177x_8x_systick.h			2011-06-02
+* $Id$      lpc177x_8x_systick.h            2011-06-02
 *//**
-* @file		lpc177x_8x_systick.h
-* @brief	Contains all macro definitions and function prototypes
-*			support for SYSTICK firmware library on LPC177x_8x
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_systick.h
+* @brief    Contains all macro definitions and function prototypes
+*           support for SYSTICK firmware library on LPC177x_8x
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -31,7 +31,7 @@
 **********************************************************************/
 
 /* Peripheral group ----------------------------------------------------------- */
-/** @defgroup SYSTICK	SysTick (System tick timer)
+/** @defgroup SYSTICK   SysTick (System tick timer)
  * @ingroup LPC177x_8xCMSIS_FwLib_Drivers
  * @{
  */
@@ -57,30 +57,30 @@ extern "C"
 /*********************************************************************//**
  * Macro defines for System Timer Control and status (STCTRL) register
  **********************************************************************/
-#define ST_CTRL_ENABLE		((uint32_t)(1<<0))
-#define ST_CTRL_TICKINT		((uint32_t)(1<<1))
-#define ST_CTRL_CLKSOURCE	((uint32_t)(1<<2))
-#define ST_CTRL_COUNTFLAG	((uint32_t)(1<<16))
+#define ST_CTRL_ENABLE      ((uint32_t)(1<<0))
+#define ST_CTRL_TICKINT     ((uint32_t)(1<<1))
+#define ST_CTRL_CLKSOURCE   ((uint32_t)(1<<2))
+#define ST_CTRL_COUNTFLAG   ((uint32_t)(1<<16))
 
 /*********************************************************************//**
  * Macro defines for System Timer Reload value (STRELOAD) register
  **********************************************************************/
-#define ST_RELOAD_RELOAD(n)		((uint32_t)(n & 0x00FFFFFF))
+#define ST_RELOAD_RELOAD(n)     ((uint32_t)(n & 0x00FFFFFF))
 
 /*********************************************************************//**
  * Macro defines for System Timer Current value (STCURRENT) register
  **********************************************************************/
-#define ST_RELOAD_CURRENT(n)	((uint32_t)(n & 0x00FFFFFF))
+#define ST_RELOAD_CURRENT(n)    ((uint32_t)(n & 0x00FFFFFF))
 
 /*********************************************************************//**
  * Macro defines for System Timer Calibration value (STCALIB) register
  **********************************************************************/
-#define ST_CALIB_TENMS(n)		((uint32_t)(n & 0x00FFFFFF))
-#define ST_CALIB_SKEW			((uint32_t)(1<<30))
-#define ST_CALIB_NOREF			((uint32_t)(1<<31))
+#define ST_CALIB_TENMS(n)       ((uint32_t)(n & 0x00FFFFFF))
+#define ST_CALIB_SKEW           ((uint32_t)(1<<30))
+#define ST_CALIB_NOREF          ((uint32_t)(1<<31))
 
-#define CLKSOURCE_EXT			((uint32_t)(0))
-#define CLKSOURCE_CPU			((uint32_t)(1))
+#define CLKSOURCE_EXT           ((uint32_t)(0))
+#define CLKSOURCE_CPU           ((uint32_t)(1))
 
 /**
  * @}

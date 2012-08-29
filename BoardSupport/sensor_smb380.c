@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		Sensor_smb380.c			2012-01-12
+* $Id$      Sensor_smb380.c         2012-01-12
 *//**
-* @file		Sensor_smb380.c
-* @brief		SMB380 acceleration sensor driver (I2C data mode)
-* @version	1.0
-* @date		12. January. 2012
-* @author	NXP MCU SW Application Team
+* @file     Sensor_smb380.c
+* @brief        SMB380 acceleration sensor driver (I2C data mode)
+* @version  1.0
+* @date     12. January. 2012
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -40,38 +40,38 @@
 #include "lpc177x_8x_pinsel.h"
 
 /*********************************************************************//**
- * @brief 		Read/Write data to SMB380
- * @param[in]	 txdata  point to buffer of data which will be sent.
+ * @brief       Read/Write data to SMB380
+ * @param[in]    txdata  point to buffer of data which will be sent.
  * @param[in]   txlen     the length of transmit buffer
  * @param[in]  rxdata point to receive buffer
  * @param[in]  rxlen     the length of receive buffer
- * @return 		None
+ * @return      None
  **********************************************************************/
 SMB380_Status_t SMB380_ReadWrite(uint8_t* txdata, uint32_t txlen,
-	                                      uint8_t* rxdata, uint32_t rxlen)
+                                          uint8_t* rxdata, uint32_t rxlen)
 {
-	I2C_M_SETUP_Type i2cData;
-	
-	i2cData.sl_addr7bit = SMB380_ADDR;
-	i2cData.tx_length = txlen;
+    I2C_M_SETUP_Type i2cData;
+    
+    i2cData.sl_addr7bit = SMB380_ADDR;
+    i2cData.tx_length = txlen;
     i2cData.tx_data = txdata;
     i2cData.rx_data = rxdata;
-	i2cData.rx_length = rxlen;
-	i2cData.retransmissions_max = 3;	
-	
-	if (I2C_MasterTransferData(I2C_1, &i2cData, I2C_TRANSFER_POLLING) == SUCCESS)
-	{		
-		return SMB380_PASS;
-	}
+    i2cData.rx_length = rxlen;
+    i2cData.retransmissions_max = 3;    
+    
+    if (I2C_MasterTransferData(I2C_1, &i2cData, I2C_TRANSFER_POLLING) == SUCCESS)
+    {       
+        return SMB380_PASS;
+    }
 
-	return SMB380_ERR;
+    return SMB380_ERR;
 }
 
 
 /*********************************************************************//**
- * @brief 		SMB380 init
- * @param[in]	 None
- * @return 	 SMB380_Status_t
+ * @brief       SMB380 init
+ * @param[in]    None
+ * @return   SMB380_Status_t
  **********************************************************************/
 
 SMB380_Status_t SMB380_Init(void)
@@ -105,10 +105,10 @@ SMB380_Status_t SMB380_Init(void)
   return SMB380_PASS;
 }
 /*********************************************************************//**
- * @brief 		Get Chip ID and revision
- * @param[in]	pChipId	pointer to Chip ID storage
- * @param[in]	pRevision	pointer to revision storage
- * @return 	 SMB380_Status_t
+ * @brief       Get Chip ID and revision
+ * @param[in]   pChipId pointer to Chip ID storage
+ * @param[in]   pRevision   pointer to revision storage
+ * @return   SMB380_Status_t
  **********************************************************************/
 
 SMB380_Status_t SMB380_GetID (uint8_t *pChipId, uint8_t *pRevision)
@@ -124,9 +124,9 @@ unsigned char buf[2] = {SMB380_CHIP_ID};
 }
 
 /*********************************************************************//**
- * @brief 		SMB380 get data
- * @param[in]	 pData address of the variable which is used to stored data.
- * @return 	 SMB380_Status_t
+ * @brief       SMB380 get data
+ * @param[in]    pData address of the variable which is used to stored data.
+ * @return   SMB380_Status_t
  **********************************************************************/
 SMB380_Status_t SMB380_GetData (pSMB380_Data_t pData)
 {

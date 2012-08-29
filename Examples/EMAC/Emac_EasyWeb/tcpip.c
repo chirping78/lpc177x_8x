@@ -103,27 +103,27 @@ uint16_t RecdIPFrameLength;         // 16 bit IP packet length
 // easyWEB-API function
 // initalizes the LAN-controller, reset flags, starts timer-ISR
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void TCPLowLevelInit(void)
 {
-	Init_EMAC();
+    Init_EMAC();
 
-	TransmitControl = 0;
-	TCPFlags = 0;
-	TCPStateMachine = CLOSED;
-	SocketStatus = 0;
+    TransmitControl = 0;
+    TCPFlags = 0;
+    TCPStateMachine = CLOSED;
+    SocketStatus = 0;
 }
 
 // easyWEB-API function
 // does a passive open (listen on 'MyIP:TCPLocalPort' for an incoming
 // connection)
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void TCPPassiveOpen(void)
 {
@@ -139,9 +139,9 @@ void TCPPassiveOpen(void)
 // does an active open (tries to establish a connection between
 // 'MyIP:TCPLocalPort' and 'RemoteIP:TCPRemotePort')
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void TCPActiveOpen(void)
 {
@@ -160,9 +160,9 @@ void TCPActiveOpen(void)
 // easyWEB-API function
 // closes an open connection
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void TCPClose(void)
 {
@@ -183,7 +183,7 @@ void TCPClose(void)
       break;
     }
     default:
-    	break;
+        break;
   }
 }
 
@@ -192,9 +192,9 @@ void TCPClose(void)
 // NOTE: rx-buffer MUST be released periodically, else the other TCP
 //       get no ACKs for the data it sent
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void TCPReleaseRxBuffer(void)
 {
@@ -206,9 +206,9 @@ void TCPReleaseRxBuffer(void)
 // NOTE: * number of bytes to transmit must have been written to 'TCPTxDataCount'
 //       * data-count MUST NOT exceed 'MAX_TCP_TX_DATA_SIZE'
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void TCPTransmitTxBuffer(void)
 {
@@ -229,9 +229,9 @@ void TCPTransmitTxBuffer(void)
 // Reads the length of the received ethernet frame and checks if the
 // destination address is a broadcast message or not
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 unsigned int IsBroadcast(void) {
   uint16_t RecdDestMAC[3];         // 48 bit MAC
@@ -253,171 +253,171 @@ unsigned int IsBroadcast(void) {
 // must be called from user program periodically (the often - the better)
 // handles network, TCP/IP-stack and user events
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void DoNetworkStuff(void)
 {
-	if (CheckFrameReceived())                      // Packet received
-	{
-		if (IsBroadcast())
-		{
-			ProcessEthBroadcastFrame();
-		} 
-		else 
-		{
-			ProcessEthIAFrame();
-		}
-		
-		EndReadFrame();                              // release buffer in ethernet controller
-	}
+    if (CheckFrameReceived())                      // Packet received
+    {
+        if (IsBroadcast())
+        {
+            ProcessEthBroadcastFrame();
+        } 
+        else 
+        {
+            ProcessEthIAFrame();
+        }
+        
+        EndReadFrame();                              // release buffer in ethernet controller
+    }
 
-	if (TCPFlags & TCP_TIMER_RUNNING)
-	{
-		if (TCPFlags & TIMER_TYPE_RETRY)
-		{
-			if (TCPTimer > RETRY_TIMEOUT)
-			{
-				TCPRestartTimer();                       // set a new timeout
+    if (TCPFlags & TCP_TIMER_RUNNING)
+    {
+        if (TCPFlags & TIMER_TYPE_RETRY)
+        {
+            if (TCPTimer > RETRY_TIMEOUT)
+            {
+                TCPRestartTimer();                       // set a new timeout
 
-				if (RetryCounter)
-				{
-					TCPHandleRetransmission();             // resend last frame
-					RetryCounter--;
-				}
-				else
-				{
-					TCPStopTimer();
-					TCPHandleTimeout();
-				}
-			}
-		}
-		else if (TCPTimer > FIN_TIMEOUT)
-		{
-			TCPStateMachine = CLOSED;
-			TCPFlags = 0;                              // reset all flags, stop retransmission...
-			SocketStatus &= SOCK_DATA_AVAILABLE;       // clear all flags but data available
-		}
-	}
-	
-	switch (TCPStateMachine)
-	{
-		case CLOSED :
-		case LISTENING :
-		{
-			if (TCPFlags & TCP_ACTIVE_OPEN)            // stack has to open a connection?
-			{
-				if (TCPFlags & IP_ADDR_RESOLVED)         // IP resolved?
-				{
-					if (!(TransmitControl & SEND_FRAME2))  // buffer free?
-					{
-						TCPSeqNr = ((unsigned long)ISNGenHigh << 16) | (LPC_TIM0->TC & 0xFFFF);  // Keil: changed from TAR to T0TC;
-						// set local ISN
-						TCPUNASeqNr = TCPSeqNr;
-						TCPAckNr = 0;                                       // we don't know what to ACK!
-						TCPUNASeqNr++;                                      // count SYN as a byte
+                if (RetryCounter)
+                {
+                    TCPHandleRetransmission();             // resend last frame
+                    RetryCounter--;
+                }
+                else
+                {
+                    TCPStopTimer();
+                    TCPHandleTimeout();
+                }
+            }
+        }
+        else if (TCPTimer > FIN_TIMEOUT)
+        {
+            TCPStateMachine = CLOSED;
+            TCPFlags = 0;                              // reset all flags, stop retransmission...
+            SocketStatus &= SOCK_DATA_AVAILABLE;       // clear all flags but data available
+        }
+    }
+    
+    switch (TCPStateMachine)
+    {
+        case CLOSED :
+        case LISTENING :
+        {
+            if (TCPFlags & TCP_ACTIVE_OPEN)            // stack has to open a connection?
+            {
+                if (TCPFlags & IP_ADDR_RESOLVED)         // IP resolved?
+                {
+                    if (!(TransmitControl & SEND_FRAME2))  // buffer free?
+                    {
+                        TCPSeqNr = ((unsigned long)ISNGenHigh << 16) | (LPC_TIM0->TC & 0xFFFF);  // Keil: changed from TAR to T0TC;
+                        // set local ISN
+                        TCPUNASeqNr = TCPSeqNr;
+                        TCPAckNr = 0;                                       // we don't know what to ACK!
+                        TCPUNASeqNr++;                                      // count SYN as a byte
 
-						PrepareTCP_FRAME(TCP_CODE_SYN);                     // send SYN frame
+                        PrepareTCP_FRAME(TCP_CODE_SYN);                     // send SYN frame
 
-						LastFrameSent = TCP_SYN_FRAME;
+                        LastFrameSent = TCP_SYN_FRAME;
 
-						TCPStartRetryTimer();                               // we NEED a retry-timeout
+                        TCPStartRetryTimer();                               // we NEED a retry-timeout
 
-						TCPStateMachine = SYN_SENT;
-					}
-				}
-			}
-			
-			break;
-		}
-		
-		case SYN_RECD :
-		case ESTABLISHED :
-		{
-			if (TCPFlags & TCP_CLOSE_REQUESTED)                  // user has user initated a close?
-			{
-				if (!(TransmitControl & (SEND_FRAME2 | SEND_FRAME1)))   // buffers free?
-				{   
-					if (TCPSeqNr == TCPUNASeqNr)                          // all data ACKed?
-					{
-						TCPUNASeqNr++;
+                        TCPStateMachine = SYN_SENT;
+                    }
+                }
+            }
+            
+            break;
+        }
+        
+        case SYN_RECD :
+        case ESTABLISHED :
+        {
+            if (TCPFlags & TCP_CLOSE_REQUESTED)                  // user has user initated a close?
+            {
+                if (!(TransmitControl & (SEND_FRAME2 | SEND_FRAME1)))   // buffers free?
+                {   
+                    if (TCPSeqNr == TCPUNASeqNr)                          // all data ACKed?
+                    {
+                        TCPUNASeqNr++;
 
-						PrepareTCP_FRAME(TCP_CODE_FIN | TCP_CODE_ACK);
+                        PrepareTCP_FRAME(TCP_CODE_FIN | TCP_CODE_ACK);
 
-						LastFrameSent = TCP_FIN_FRAME;
+                        LastFrameSent = TCP_FIN_FRAME;
 
-						TCPStartRetryTimer();
+                        TCPStartRetryTimer();
 
-						TCPStateMachine = FIN_WAIT_1;
-					}
-				}
-			}
-			
-			break;
-		}
-		case CLOSE_WAIT :
-		{
-			if (!(TransmitControl & (SEND_FRAME2 | SEND_FRAME1)))     // buffers free?
-			{
-				if (TCPSeqNr == TCPUNASeqNr)                            // all data ACKed?
-				{
-					TCPUNASeqNr++;                                        // count FIN as a byte
+                        TCPStateMachine = FIN_WAIT_1;
+                    }
+                }
+            }
+            
+            break;
+        }
+        case CLOSE_WAIT :
+        {
+            if (!(TransmitControl & (SEND_FRAME2 | SEND_FRAME1)))     // buffers free?
+            {
+                if (TCPSeqNr == TCPUNASeqNr)                            // all data ACKed?
+                {
+                    TCPUNASeqNr++;                                        // count FIN as a byte
 
-					PrepareTCP_FRAME(TCP_CODE_FIN | TCP_CODE_ACK);        // we NEED a retry-timeout
+                    PrepareTCP_FRAME(TCP_CODE_FIN | TCP_CODE_ACK);        // we NEED a retry-timeout
 
-					LastFrameSent = TCP_FIN_FRAME;                        // time to say goodbye...
+                    LastFrameSent = TCP_FIN_FRAME;                        // time to say goodbye...
 
-					TCPStartRetryTimer();
+                    TCPStartRetryTimer();
 
-					TCPStateMachine = LAST_ACK;
-				}
-			}
-			
-			break;
-		}
-		
-		default:
-			break;
-	}
+                    TCPStateMachine = LAST_ACK;
+                }
+            }
+            
+            break;
+        }
+        
+        default:
+            break;
+    }
 
-	if (TransmitControl & SEND_FRAME2)
-	{
-		if (Rdy4Tx())                                // NOTE: when using a very fast MCU, maybe
-			SendFrame2();                              // the EMAC isn't ready yet, include
-		else 
-		{                                       // a kind of timer or counter here
-			TCPStateMachine = CLOSED;
-			SocketStatus = SOCK_ERR_ETHERNET;          // indicate an error to user
-			TCPFlags = 0;                              // clear all flags, stop timers etc.
-		}
+    if (TransmitControl & SEND_FRAME2)
+    {
+        if (Rdy4Tx())                                // NOTE: when using a very fast MCU, maybe
+            SendFrame2();                              // the EMAC isn't ready yet, include
+        else 
+        {                                       // a kind of timer or counter here
+            TCPStateMachine = CLOSED;
+            SocketStatus = SOCK_ERR_ETHERNET;          // indicate an error to user
+            TCPFlags = 0;                              // clear all flags, stop timers etc.
+        }
 
-		TransmitControl &= ~SEND_FRAME2;             // clear tx-flag
-	}
+        TransmitControl &= ~SEND_FRAME2;             // clear tx-flag
+    }
 
-	if (TransmitControl & SEND_FRAME1)
-	{
-		PrepareTCP_DATA_FRAME();                     // build frame w/ actual SEQ, ACK....
+    if (TransmitControl & SEND_FRAME1)
+    {
+        PrepareTCP_DATA_FRAME();                     // build frame w/ actual SEQ, ACK....
 
-		if (Rdy4Tx())                                // EMAC ready to accept our frame?
-			SendFrame1();                              // (see note above)
-		else 
-		{
-			TCPStateMachine = CLOSED;
-			SocketStatus = SOCK_ERR_ETHERNET;          // indicate an error to user
-			TCPFlags = 0;                              // clear all flags, stop timers etc.
-		}
+        if (Rdy4Tx())                                // EMAC ready to accept our frame?
+            SendFrame1();                              // (see note above)
+        else 
+        {
+            TCPStateMachine = CLOSED;
+            SocketStatus = SOCK_ERR_ETHERNET;          // indicate an error to user
+            TCPFlags = 0;                              // clear all flags, stop timers etc.
+        }
 
-		TransmitControl &= ~SEND_FRAME1;             // clear tx-flag
-	}
+        TransmitControl &= ~SEND_FRAME1;             // clear tx-flag
+    }
 }
 
 // easyWEB internal function
 // handles an incoming broadcast frame
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void ProcessEthBroadcastFrame(void)
 {
@@ -442,9 +442,9 @@ void ProcessEthBroadcastFrame(void)
 // handles an incoming frame that passed EMAC's address filter
 // (individual addressed = IA)
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void ProcessEthIAFrame(void)
 {
@@ -498,9 +498,9 @@ void ProcessEthIAFrame(void)
 // we've just rec'd an ICMP-frame (Internet Control Message Protocol)
 // check what to do and branch to the appropriate sub-function
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void ProcessICMPFrame(void)
 {
@@ -522,9 +522,9 @@ void ProcessICMPFrame(void)
 // we've just rec'd an TCP-frame (Transmission Control Protocol)
 // this function mainly implements the TCP state machine according to RFC793
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void ProcessTCPFrame(void)
 {
@@ -707,13 +707,13 @@ void ProcessTCPFrame(void)
           }
           case FIN_WAIT_1 :
           {
-        	  TCPStateMachine = FIN_WAIT_2;
-        	  break;
+              TCPStateMachine = FIN_WAIT_2;
+              break;
           } // ACK of our FIN?
           case CLOSING :
           {
-        	  TCPStateMachine = TIME_WAIT;
-        	  break;
+              TCPStateMachine = TIME_WAIT;
+              break;
           }  // ACK of our FIN?
           case LAST_ACK :                                            // ACK of our FIN?
           {
@@ -729,7 +729,7 @@ void ProcessTCPFrame(void)
             break;
           }
           default:
-        	  break;
+              break;
         }
 
         if (TCPStateMachine == ESTABLISHED)      // if true, give the frame buffer back
@@ -777,7 +777,7 @@ void ProcessTCPFrame(void)
             break;
           }
           default:
-        	  break;
+              break;
         }
         TCPAckNr++;                              // ACK remote's FIN flag
         PrepareTCP_FRAME(TCP_CODE_ACK);
@@ -790,9 +790,9 @@ void ProcessTCPFrame(void)
 // easyWEB internal function
 // prepares the TxFrame2-buffer to send an ARP-request
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void PrepareARP_REQUEST(void)
 {
@@ -822,9 +822,9 @@ void PrepareARP_REQUEST(void)
 // easyWEB internal function
 // prepares the TxFrame2-buffer to send an ARP-answer (reply)
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void PrepareARP_ANSWER(void)
 {
@@ -850,9 +850,9 @@ void PrepareARP_ANSWER(void)
 // easyWEB internal function
 // prepares the TxFrame2-buffer to send an ICMP-echo-reply
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void PrepareICMP_ECHO_REPLY(void)
 {
@@ -894,9 +894,9 @@ void PrepareICMP_ECHO_REPLY(void)
 // prepares the TxFrame2-buffer to send a general TCP frame
 // the TCPCode-field is passed as an argument
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void PrepareTCP_FRAME(uint16_t TCPCode)
 {
@@ -953,9 +953,9 @@ void PrepareTCP_FRAME(uint16_t TCPCode)
 // easyWEB internal function
 // prepares the TxFrame1-buffer to send a payload-packet
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void PrepareTCP_DATA_FRAME(void)
 {
@@ -992,9 +992,9 @@ void PrepareTCP_DATA_FRAME(void)
 // calculates the TCP/IP checksum. if 'IsTCP != 0', the TCP pseudo-header
 // will be included.
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 uint16_t CalcChecksum(void *Start, uint16_t Count, uint8_t IsTCP)
 {
@@ -1012,13 +1012,13 @@ uint16_t CalcChecksum(void *Start, uint16_t Count, uint8_t IsTCP)
 
   piStart = Start;                               // Keil: Line added
   while (Count > 1) {                            // sum words
-//  Sum += *((uint16_t *)Start)++;		     // Keil: Line replaced with following line
+//  Sum += *((uint16_t *)Start)++;           // Keil: Line replaced with following line
     Sum += *piStart++;
     Count -= 2;
   }
 
   if (Count)                                     // add left-over byte, if any
-//  Sum += *(uint8_t *)Start; 	         // Keil: Line replaced with following line
+//  Sum += *(uint8_t *)Start;            // Keil: Line replaced with following line
     Sum += *(uint8_t *)piStart;
 
   while (Sum >> 16)                              // fold 32-bit sum to 16 bits
@@ -1030,9 +1030,9 @@ uint16_t CalcChecksum(void *Start, uint16_t Count, uint8_t IsTCP)
 // easyWEB internal function
 // starts the timer as a retry-timer (used for retransmission-timeout)
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void TCPStartRetryTimer(void)
 {
@@ -1045,9 +1045,9 @@ void TCPStartRetryTimer(void)
 // easyWEB internal function
 // starts the timer as a 'TIME_WAIT'-timer (used to finish a TCP-session)
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void TCPStartTimeWaitTimer(void)
 {
@@ -1059,9 +1059,9 @@ void TCPStartTimeWaitTimer(void)
 // easyWEB internal function
 // restarts the timer
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void TCPRestartTimer(void)
 {
@@ -1071,9 +1071,9 @@ void TCPRestartTimer(void)
 // easyWEB internal function
 // stopps the timer
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void TCPStopTimer(void)
 {
@@ -1084,9 +1084,9 @@ void TCPStopTimer(void)
 // if a retransmission-timeout occured, check which packet
 // to resend.
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void TCPHandleRetransmission(void)
 {
@@ -1103,9 +1103,9 @@ void TCPHandleRetransmission(void)
 // easyWEB internal function
 // if all retransmissions failed, close connection and indicate an error
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void TCPHandleTimeout(void)
 {
@@ -1121,9 +1121,9 @@ void TCPHandleTimeout(void)
 
 
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 
 // easyWEB internal function
@@ -1145,18 +1145,18 @@ void TIMER0_IRQHandler(void)
 
 // easyWEB internal function
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 uint8_t* GetFrame1Buffer(void)
 {
     return ((uint8_t *)_TxFrame1 + ETH_HEADER_SIZE + IP_HEADER_SIZE + TCP_HEADER_SIZE);
 }
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 uint8_t* GetRxBuffer(void)
 {
@@ -1165,9 +1165,9 @@ uint8_t* GetRxBuffer(void)
 
 // transfers the contents of 'TxFrame1'-Buffer to the EMAC
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void SendFrame1(void)
 {
@@ -1177,9 +1177,9 @@ void SendFrame1(void)
 // easyWEB internal function
 // transfers the contents of 'TxFrame2'-Buffer to the EMAC
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void SendFrame2(void)
 {
@@ -1190,9 +1190,9 @@ void SendFrame2(void)
 // help function to write a WORD in big-endian byte-order
 // to MCU-memory
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void WriteWBE(uint8_t *Add, uint16_t Data)
 {
@@ -1204,9 +1204,9 @@ void WriteWBE(uint8_t *Add, uint16_t Data)
 // help function to write a DWORD in big-endian byte-order
 // to MCU-memory
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 void WriteDWBE(uint8_t *Add, unsigned long Data)
 {
@@ -1219,9 +1219,9 @@ void WriteDWBE(uint8_t *Add, unsigned long Data)
 // easyWEB internal function
 // help function to swap the byte order of a WORD
 /*********************************************************************//**
- * @brief		
- * @param[in]	
- * @return		
+ * @brief       
+ * @param[in]   
+ * @return      
  **********************************************************************/
 uint16_t SwapBytes(uint16_t Data)
 {

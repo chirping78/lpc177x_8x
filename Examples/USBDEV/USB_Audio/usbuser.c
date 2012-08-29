@@ -220,8 +220,8 @@ void USB_EndPoint3 (uint32_t event) {
 
   if (event == USB_EVT_OUT_DMA_EOT) {
     /* End of Transfer */
-	 if (USB_DMA_DD_Retired(0x03) && 
-	     (USB_DMA_BufAdr(0x03) != ((uint32_t)DataBuf + 2*DataIn))) {
+     if (USB_DMA_DD_Retired(0x03) && 
+         (USB_DMA_BufAdr(0x03) != ((uint32_t)DataBuf + 2*DataIn))) {
       /* Data Available */
       DataIn += P_C*P_S;                    /* Update Data In Index */
       DataIn &= B_S - 1;                    /* Adjust Data In Index */
@@ -244,7 +244,7 @@ void USB_EndPoint3 (uint32_t event) {
     DD.Cfg.Type.IsoEP = 1;                  /* Iso Endpoint */
     USB_DMA_Setup (0x03, &DD);              /* Setup DMA */
     USB_DMA_Enable(0x03);                   /* Enable DMA */
-	 
+     
   }
 #else
   event = event;

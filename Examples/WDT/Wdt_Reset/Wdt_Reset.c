@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		Wdt_Reset.c			2011-06-02
+* $Id$      Wdt_Reset.c         2011-06-02
 *//**
-* @file		Wdt_Reset.c
-* @brief	This example describes how to use WDT in reset mode
-* @version	2.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Wdt_Reset.c
+* @brief    This example describes how to use WDT in reset mode
+* @version  2.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -35,7 +35,7 @@
 #include "lpc177x_8x_gpio.h"
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup WDT_Reset	Watchdog Reset Mode
+/** @defgroup WDT_Reset Watchdog Reset Mode
  * @ingroup WDT_Examples
  * @{
  */
@@ -44,7 +44,7 @@
 
 
 //Watchodog time out in 5 seconds
-#define WDT_TIMEOUT 	5000000
+#define WDT_TIMEOUT     5000000
 
 
 /************************** PRIVATE VARIABLES *************************/
@@ -69,59 +69,59 @@ uint8_t menu1[] =
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main WDT program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main WDT program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry(void)
 {
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	_DBG(menu1);
-	
-	// Read back TimeOut flag to determine previous timeout reset
-	if (WWDT_GetStatus(WWDT_TIMEOUT_FLAG))
-	{
-		_DBG_("Last MCU reset caused by WDT TimeOut!\n\r");
-		
-		// Clear WDT TimeOut
-		WWDT_ClrTimeOutFlag();
-	} 
-	else
-	{
-		_DBG_("Last MCU reset caused by External!\n\r");
-	}
+    // print welcome screen
+    _DBG(menu1);
+    
+    // Read back TimeOut flag to determine previous timeout reset
+    if (WWDT_GetStatus(WWDT_TIMEOUT_FLAG))
+    {
+        _DBG_("Last MCU reset caused by WDT TimeOut!\n\r");
+        
+        // Clear WDT TimeOut
+        WWDT_ClrTimeOutFlag();
+    } 
+    else
+    {
+        _DBG_("Last MCU reset caused by External!\n\r");
+    }
 
-	// Initialize WDT, IRC OSC, interrupt mode, timeout = 5000000us = 5s
-	WWDT_Init(WDT_TIMEOUT);
+    // Initialize WDT, IRC OSC, interrupt mode, timeout = 5000000us = 5s
+    WWDT_Init(WDT_TIMEOUT);
 
-	WWDT_Enable(ENABLE);
+    WWDT_Enable(ENABLE);
 
-	WWDT_SetMode(WWDT_RESET_MODE, ENABLE);
-	
-	// Start watchdog with timeout given
-	WWDT_Start(WDT_TIMEOUT);
+    WWDT_SetMode(WWDT_RESET_MODE, ENABLE);
+    
+    // Start watchdog with timeout given
+    WWDT_Start(WDT_TIMEOUT);
 
-	WWDT_Feed();
-	
-	//infinite loop to wait chip reset from WDT
-	while(1);
+    WWDT_Feed();
+    
+    //infinite loop to wait chip reset from WDT
+    while(1);
 
 }
 
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

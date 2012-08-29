@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		Timer_MatchInterrupt.c			2011-06-02
+* $Id$      Timer_MatchInterrupt.c          2011-06-02
 *//**
-* @file		Timer_MatchInterrupt.c
-* @brief	This example describes how to use TIMER in interrupt mode
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Timer_MatchInterrupt.c
+* @brief    This example describes how to use TIMER in interrupt mode
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -35,7 +35,7 @@
 #include "bsp.h"
 
 
-/** @defgroup TIMER_MatchInterrupt		Timer Match Interrupt
+/** @defgroup TIMER_MatchInterrupt      Timer Match Interrupt
  * @ingroup TIMER_Examples
  * @{
  */
@@ -67,109 +67,109 @@ void print_menu(void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
- * @brief		TIMER0 interrupt handler sub-routine
- * @param[in]	None
- * @return 		None
+ * @brief       TIMER0 interrupt handler sub-routine
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void TIMER0_IRQHandler(void)
 {
-	if (TIM_GetIntStatus(BRD_TIMER_USED, TIM_MR0_INT)== SET)
-	{
-		_DBG_("Match interrupt occur...");
-	}
-	
-	TIM_ClearIntPending(BRD_TIMER_USED, TIM_MR0_INT);
+    if (TIM_GetIntStatus(BRD_TIMER_USED, TIM_MR0_INT)== SET)
+    {
+        _DBG_("Match interrupt occur...");
+    }
+    
+    TIM_ClearIntPending(BRD_TIMER_USED, TIM_MR0_INT);
 }
 
 /*********************************************************************//**
- * @brief		TIMER0 interrupt handler sub-routine
- * @param[in]	None
- * @return 		None
+ * @brief       TIMER0 interrupt handler sub-routine
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void TIMER2_IRQHandler(void)
 {
-	if (TIM_GetIntStatus(BRD_TIMER_USED, TIM_MR0_INT)== SET)
-	{
-		_DBG_("Match interrupt occur...");
-	}
-	
-	TIM_ClearIntPending(BRD_TIMER_USED, TIM_MR0_INT);
+    if (TIM_GetIntStatus(BRD_TIMER_USED, TIM_MR0_INT)== SET)
+    {
+        _DBG_("Match interrupt occur...");
+    }
+    
+    TIM_ClearIntPending(BRD_TIMER_USED, TIM_MR0_INT);
 }
 
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print menu
- * @param[in]	None
- * @return 		None
+ * @brief       Print menu
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG(menu1);
+    _DBG(menu1);
 }
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main TIMER program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main TIMER program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry(void)
 {
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 
-	// Conifg P1.28 as MAT0.0
-	PINSEL_ConfigPin(BRD_TIM_CAP_LINKED_PORT, BRD_TIM_CAP_LINKED_PIN, 3);
+    // Conifg P1.28 as MAT0.0
+    PINSEL_ConfigPin(BRD_TIM_CAP_LINKED_PORT, BRD_TIM_CAP_LINKED_PIN, 3);
 
-	// Initialize timer 0, prescale count time of 100uS
-	TIM_ConfigStruct.PrescaleOption = TIM_PRESCALE_USVAL;
-	TIM_ConfigStruct.PrescaleValue	= 100;
+    // Initialize timer 0, prescale count time of 100uS
+    TIM_ConfigStruct.PrescaleOption = TIM_PRESCALE_USVAL;
+    TIM_ConfigStruct.PrescaleValue  = 100;
 
-	// use channel 0, MR0
-	TIM_MatchConfigStruct.MatchChannel = 0;
-	// Enable interrupt when MR0 matches the value in TC register
-	TIM_MatchConfigStruct.IntOnMatch   = TRUE;
-	//Enable reset on MR0: TIMER will reset if MR0 matches it
-	TIM_MatchConfigStruct.ResetOnMatch = TRUE;
-	//Stop on MR0 if MR0 matches it
-	TIM_MatchConfigStruct.StopOnMatch  = FALSE;
-	//Toggle MR0.0 pin if MR0 matches it
-	TIM_MatchConfigStruct.ExtMatchOutputType =TIM_EXTMATCH_TOGGLE;
-	// Set Match value, count value of 10000 (10000 * 100uS = 1000000us = 1s --> 1 Hz)
-	TIM_MatchConfigStruct.MatchValue   = 10000;
+    // use channel 0, MR0
+    TIM_MatchConfigStruct.MatchChannel = 0;
+    // Enable interrupt when MR0 matches the value in TC register
+    TIM_MatchConfigStruct.IntOnMatch   = TRUE;
+    //Enable reset on MR0: TIMER will reset if MR0 matches it
+    TIM_MatchConfigStruct.ResetOnMatch = TRUE;
+    //Stop on MR0 if MR0 matches it
+    TIM_MatchConfigStruct.StopOnMatch  = FALSE;
+    //Toggle MR0.0 pin if MR0 matches it
+    TIM_MatchConfigStruct.ExtMatchOutputType =TIM_EXTMATCH_TOGGLE;
+    // Set Match value, count value of 10000 (10000 * 100uS = 1000000us = 1s --> 1 Hz)
+    TIM_MatchConfigStruct.MatchValue   = 10000;
 
-	// Set configuration for Tim_config and Tim_MatchConfig
-	TIM_Init(BRD_TIMER_USED, TIM_TIMER_MODE, &TIM_ConfigStruct);
-	TIM_ConfigMatch(BRD_TIMER_USED, &TIM_MatchConfigStruct);
+    // Set configuration for Tim_config and Tim_MatchConfig
+    TIM_Init(BRD_TIMER_USED, TIM_TIMER_MODE, &TIM_ConfigStruct);
+    TIM_ConfigMatch(BRD_TIMER_USED, &TIM_MatchConfigStruct);
 
-	/* preemption = 1, sub-priority = 1 */
-	NVIC_SetPriority(BRD_TIM_INTR_USED, ((0x01<<3)|0x01));
+    /* preemption = 1, sub-priority = 1 */
+    NVIC_SetPriority(BRD_TIM_INTR_USED, ((0x01<<3)|0x01));
 
-	/* Enable interrupt for timer 0 */
-	NVIC_EnableIRQ(BRD_TIM_INTR_USED);
+    /* Enable interrupt for timer 0 */
+    NVIC_EnableIRQ(BRD_TIM_INTR_USED);
 
-	// To start timer
-	TIM_Cmd(BRD_TIMER_USED, ENABLE);
+    // To start timer
+    TIM_Cmd(BRD_TIMER_USED, ENABLE);
 
-	while (1);
+    while (1);
 
 }
 
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

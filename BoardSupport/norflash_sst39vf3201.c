@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		norflash_sst39vf3201.c			2011-06-02
+* $Id$      norflash_sst39vf3201.c          2011-06-02
 *//**
-* @file		norflash_sst39vf3201.c
-* @brief	Contains all functions support for NOR Flash SamSung
-*			SST39VF3201
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     norflash_sst39vf3201.c
+* @brief    Contains all functions support for NOR Flash SamSung
+*           SST39VF3201
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -44,95 +44,95 @@
 int32_t volatile timerdev = 0;
 
 /*********************************************************************//**
- * @brief 		Delay
- * @param[in]	delayCnt Delay value
- * @return 		None
+ * @brief       Delay
+ * @param[in]   delayCnt Delay value
+ * @return      None
  **********************************************************************/
 void delay(uint32_t delayCnt)
 {
-	volatile uint32_t i;
+    volatile uint32_t i;
 
-	for ( i = 0; i < delayCnt; i++ );
-	return;
+    for ( i = 0; i < delayCnt; i++ );
+    return;
 }
 
 /*********************************************************************//**
- * @brief 		Initialize external NOR FLASH memory
- * @param[in]	None
- * @return 		None
+ * @brief       Initialize external NOR FLASH memory
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void NORFLASHInit( void )
 {
-	TIM_TIMERCFG_Type TIM_ConfigStruct;
-	EMC_STATIC_MEM_Config_Type config;
+    TIM_TIMERCFG_Type TIM_ConfigStruct;
+    EMC_STATIC_MEM_Config_Type config;
 
-	/**************************************************************************
-	* Initialize EMC for NOR FLASH
-	**************************************************************************/
-	config.CSn = 0;
-	config.AddressMirror = 0;
-	config.ByteLane = 1;
-	config.DataWidth = 16;
-	config.ExtendedWait = 0;
-	config.PageMode = 0;
-	config.WaitWEn = 2;
-	config.WaitOEn = 2;
-	config.WaitWr = 0x1f;
-	config.WaitPage = 0x1f;
-	config.WaitRd = 0x1f;
-	config.WaitTurn = 0x1f;	
-	StaticMem_Init(&config);
+    /**************************************************************************
+    * Initialize EMC for NOR FLASH
+    **************************************************************************/
+    config.CSn = 0;
+    config.AddressMirror = 0;
+    config.ByteLane = 1;
+    config.DataWidth = 16;
+    config.ExtendedWait = 0;
+    config.PageMode = 0;
+    config.WaitWEn = 2;
+    config.WaitOEn = 2;
+    config.WaitWr = 0x1f;
+    config.WaitPage = 0x1f;
+    config.WaitRd = 0x1f;
+    config.WaitTurn = 0x1f; 
+    StaticMem_Init(&config);
 
     // init timer
-	TIM_ConfigStruct.PrescaleOption = TIM_PRESCALE_USVAL;
-	TIM_ConfigStruct.PrescaleValue	= 1;
+    TIM_ConfigStruct.PrescaleOption = TIM_PRESCALE_USVAL;
+    TIM_ConfigStruct.PrescaleValue  = 1;
 
-		// Set configuration for Tim_config and Tim_MatchConfig
-	TIM_Init(LPC_TIM0, TIM_TIMER_MODE,&TIM_ConfigStruct);
-	TIM_Waitms(100);
+        // Set configuration for Tim_config and Tim_MatchConfig
+    TIM_Init(LPC_TIM0, TIM_TIMER_MODE,&TIM_ConfigStruct);
+    TIM_Waitms(100);
 
-	//delay time
- 	TIM_Waitms(10);
+    //delay time
+    TIM_Waitms(10);
 
-  	return;
+    return;
 }
 
 /*********************************************************************//**
- * @brief 		Toggle Bit check if the data is written or erased
- * @param[in]	Addr	address value
- * @param[in]	Data	expected data
- * @return 		Checking result, could be:
- * 					- TRUE: Done
- *					- FALSE: Timeout
+ * @brief       Toggle Bit check if the data is written or erased
+ * @param[in]   Addr    address value
+ * @param[in]   Data    expected data
+ * @return      Checking result, could be:
+ *                  - TRUE: Done
+ *                  - FALSE: Timeout
  **********************************************************************/
 uint32_t ToggleBitCheck( uint32_t Addr, uint16_t Data )
 {
-	volatile uint16_t *ip;
-	uint16_t temp1, temp2;
-	uint32_t TimeOut = PROGRAM_TIMEOUT;
+    volatile uint16_t *ip;
+    uint16_t temp1, temp2;
+    uint32_t TimeOut = PROGRAM_TIMEOUT;
 
-	while( TimeOut > 0 )
-	{
-		ip = GET_ADDR(Addr);
-		temp1 = *ip;
-		ip = GET_ADDR(Addr);
-		temp2 = *ip;
+    while( TimeOut > 0 )
+    {
+        ip = GET_ADDR(Addr);
+        temp1 = *ip;
+        ip = GET_ADDR(Addr);
+        temp2 = *ip;
 
-		if ( (temp1 == temp2) && (temp1 == Data) )
-		{
-		 	return( TRUE );
-		}
-		TimeOut--;
-	}
-	return ( FALSE );
+        if ( (temp1 == temp2) && (temp1 == Data) )
+        {
+            return( TRUE );
+        }
+        TimeOut--;
+    }
+    return ( FALSE );
 }
 
 /*********************************************************************//**
- * @brief 		Check ID from external NOR FLASH memory
- * @param[in]	None
- * @return 		Checking result, could be:
- * 					- TRUE: Correct
- *					- FALSE: Incorrect
+ * @brief       Check ID from external NOR FLASH memory
+ * @param[in]   None
+ * @return      Checking result, could be:
+ *                  - TRUE: Correct
+ *                  - FALSE: Incorrect
  **********************************************************************/
 uint32_t NORFLASHCheckID( void )
 {
@@ -166,15 +166,15 @@ uint32_t NORFLASHCheckID( void )
 
   /* Check ID */
   if ((SST_id1 == SST_ID) && (SST_id2 ==SST_39VF160))
-	return( TRUE );
+    return( TRUE );
   else
-	return( FALSE );
+    return( FALSE );
 }
 
 /*********************************************************************//**
- * @brief 		Erase external NOR FLASH memory
- * @param[in]	None
- * @return 		None
+ * @brief       Erase external NOR FLASH memory
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void NORFLASHErase( void )
 {
@@ -192,19 +192,19 @@ void NORFLASHErase( void )
   *ip = 0x0055;
   ip  = GET_ADDR(0x5555);
   *ip = 0x0010;
-  delay(10000000);				/* Use timer 1 */
+  delay(10000000);              /* Use timer 1 */
   return;
 
 }
 
 /*********************************************************************//**
- * @brief 		Program one 16-bit data into external NOR FLASH memory
- *				This "uint16_t" for the external flash is 16 bits!!!
- * @param[in]	Addr	Address value
- * @param[in]	Data	data value
- * @return 		Program result, could be:
- 					- TRUE: succesful
-					- FALSE: fail
+ * @brief       Program one 16-bit data into external NOR FLASH memory
+ *              This "uint16_t" for the external flash is 16 bits!!!
+ * @param[in]   Addr    Address value
+ * @param[in]   Data    data value
+ * @return      Program result, could be:
+                    - TRUE: succesful
+                    - FALSE: fail
  **********************************************************************/
 uint32_t NORFLASHWriteWord( uint32_t Addr, uint16_t Data )
 {
@@ -217,7 +217,7 @@ uint32_t NORFLASHWriteWord( uint32_t Addr, uint16_t Data )
   ip  = GET_ADDR(0x5555);
   *ip = 0x00A0;
 
-  ip = GET_ADDR(Addr);		/* Program 16-bit word */
+  ip = GET_ADDR(Addr);      /* Program 16-bit word */
   *ip = Data;
   return ( ToggleBitCheck( Addr, Data ) );
 }

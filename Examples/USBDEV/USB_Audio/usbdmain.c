@@ -36,12 +36,12 @@
 #include "usbaudio.h"
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup USBDEV_USBAudio	USB Audio Device
+/** @defgroup USBDEV_USBAudio   USB Audio Device
  * @ingroup USBDEV_Examples
  * @{
  */
 
-/** @defgroup USBDEV_AudioUsbHw	USB-Audio Hardware
+/** @defgroup USBDEV_AudioUsbHw USB-Audio Hardware
  * @ingroup USBDEV_USBAudio
  * @{
  */
@@ -90,7 +90,7 @@
 
 
 
-/** @defgroup USBDEV_AudioUsbCfg	USB-Audio Configuration
+/** @defgroup USBDEV_AudioUsbCfg    USB-Audio Configuration
  * @ingroup USBDEV_USBAudio
  * @{
  */
@@ -133,7 +133,7 @@ void get_potval (void) {
   while (!(ADC_ChannelGetStatus(LPC_ADC, BRD_ADC_PREPARED_CHANNEL, ADC_DATA_DONE)));
 
   val = ADC_ChannelGetData(LPC_ADC, BRD_ADC_PREPARED_CHANNEL);
-		  
+          
   PotVal = ((val >> 4) & 0xF8)  +            /* Extract potentiometer Value */
            ((val >> 3) & 0x08);
 }
@@ -160,18 +160,18 @@ void TIMER_IRQHandler(void)
     }
 
     DataOut &= B_S - 1;                     /* Adjust Buffer Out Index */
-	
+    
     val  = in_val* Volume;                  /* Apply Volume Level */
-	val >>= 16;
+    val >>= 16;
 
-	val >>= 6;								  /* 16 bit --> 10 bit */
-	val &= 0x3FF;
-	val += AMPLI_MIDDLE_VALUE;
-	
+    val >>= 6;                                /* 16 bit --> 10 bit */
+    val &= 0x3FF;
+    val += AMPLI_MIDDLE_VALUE;
+    
   } else {
     val = AMPLI_MIDDLE_VALUE;                   /* DAC Middle Point */
   }
-			
+            
    if (Mute) {
     val = AMPLI_MIDDLE_VALUE;                   /* DAC Middle Point */
   }
@@ -208,8 +208,8 @@ int main (void)
   TIM_MATCHCFG_Type TIM_MatchConfigStruct ;
 
   PINSEL_ConfigPin (BRD_ADC_PREPARED_CH_PORT, 
-  					BRD_ADC_PREPARED_CH_PIN, 
-  					BRD_ADC_PREPARED_CH_FUNC_NO);
+                    BRD_ADC_PREPARED_CH_PIN, 
+                    BRD_ADC_PREPARED_CH_FUNC_NO);
   PINSEL_SetAnalogPinMode(BRD_ADC_PREPARED_CH_PORT,BRD_ADC_PREPARED_CH_PIN,ENABLE);
 
   ADC_Init(LPC_ADC, DATA_FREQ);
@@ -220,7 +220,7 @@ int main (void)
   DAC_UpdateValue(0, AMPLI_MIDDLE_VALUE);
 
   TIM_ConfigStruct.PrescaleOption = TIM_PRESCALE_TICKVAL;
-  TIM_ConfigStruct.PrescaleValue	= 1;
+  TIM_ConfigStruct.PrescaleValue    = 1;
   TIM_Init(BRD_TIMER_USED, TIM_TIMER_MODE, &TIM_ConfigStruct);
   
   // use channel 0, MR0
@@ -245,8 +245,8 @@ int main (void)
   // To start timer
   TIM_Cmd(BRD_TIMER_USED, ENABLE);
 
-  USB_Init();				/* USB Initialization */
-  USB_Connect(TRUE);		/* USB Connect */
+  USB_Init();               /* USB Initialization */
+  USB_Connect(TRUE);        /* USB Connect */
 
 
   /********* The main Function is an endless loop ***********/ 

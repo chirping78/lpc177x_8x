@@ -234,7 +234,7 @@ smtp_configure(char *lhostname, void *server)
  */
 unsigned char
 smtp_send(char *to, char *cc, char *from,
-	  char *subject, char *msg, u16_t msglen)
+      char *subject, char *msg, u16_t msglen)
 {
   struct uip_conn *conn;
 

@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		Emc_SdramDemo.c		2011-06-02
+* $Id$      Emc_SdramDemo.c     2011-06-02
 *//**
-* @file		Emc_SdramDemo.c
-* @brief	This example describes how to use EMC interface on LPC177x_8x
-* 				to connect with external SDRAM
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Emc_SdramDemo.c
+* @brief    This example describes how to use EMC interface on LPC177x_8x
+*               to connect with external SDRAM
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -44,7 +44,7 @@
 #endif
 
 
-/** @defgroup EMC_SdramDemo	EMC SDRAM Demo
+/** @defgroup EMC_SdramDemo EMC SDRAM Demo
  * @ingroup EMC_Examples
  * @{
  */
@@ -72,40 +72,40 @@ void print_menu(void);
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print menu
- * @param[in]	None
- * @return 		None
+ * @brief       Print menu
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG_(menu);
+    _DBG_(menu);
 }
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry (void)
 {
-	uint32_t i;
-  	volatile uint32_t *wr_ptr;
-  	volatile uint8_t *char_wr_ptr;
-  	volatile uint16_t *short_wr_ptr;
+    uint32_t i;
+    volatile uint32_t *wr_ptr;
+    volatile uint8_t *char_wr_ptr;
+    volatile uint16_t *short_wr_ptr;
 
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
-	print_menu();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
+    print_menu();
 
-  	/* initialize memory */
-	_DBG_("Init SDRAM...");
+    /* initialize memory */
+    _DBG_("Init SDRAM...");
     SDRAMInit();
 
     wr_ptr = (uint32_t *)SDRAM_BASE_ADDR;
@@ -114,78 +114,78 @@ void c_entry (void)
     _DBG_("Clear content of SDRAM...");
     for ( i= 0; i < SDRAM_SIZE/4; i++ )
     {
-	  *wr_ptr++ = 0x00;
+      *wr_ptr++ = 0x00;
     }
 
     /* 8 bit write */
     _DBG_("Writing in 8 bits format...");
     for (i=0; i<SDRAM_SIZE/4; i++)
     {
-	  *char_wr_ptr++ = 0x11;
-	  *char_wr_ptr++ = 0x22;
-	  *char_wr_ptr++ = 0x33;
-	  *char_wr_ptr++ = 0x44;
+      *char_wr_ptr++ = 0x11;
+      *char_wr_ptr++ = 0x22;
+      *char_wr_ptr++ = 0x33;
+      *char_wr_ptr++ = 0x44;
     }
 
-  	/* verifying */
-  	_DBG_("Verifying data...");
- 	wr_ptr = (uint32_t *)SDRAM_BASE_ADDR;
-  	for ( i= 0; i < SDRAM_SIZE/8; i++ )
-  	{
-		if ( *wr_ptr != 0x44332211 )	/* be aware of endianess */
-		{
-	  		/* byte comparison failure */
-			_DBG_("Verifying fail, testing terminated!");
-	  		while ( 1 );	/* fatal error */
-		}
-		wr_ptr++;
-  	}
+    /* verifying */
+    _DBG_("Verifying data...");
+    wr_ptr = (uint32_t *)SDRAM_BASE_ADDR;
+    for ( i= 0; i < SDRAM_SIZE/8; i++ )
+    {
+        if ( *wr_ptr != 0x44332211 )    /* be aware of endianess */
+        {
+            /* byte comparison failure */
+            _DBG_("Verifying fail, testing terminated!");
+            while ( 1 );    /* fatal error */
+        }
+        wr_ptr++;
+    }
 
-  	/* byte comparison succeed. */
-  	_DBG_("Continue writing in 16 bits format...");
-  	wr_ptr = (uint32_t *)SDRAM_BASE_ADDR;
-  	short_wr_ptr = (uint16_t *)wr_ptr;
+    /* byte comparison succeed. */
+    _DBG_("Continue writing in 16 bits format...");
+    wr_ptr = (uint32_t *)SDRAM_BASE_ADDR;
+    short_wr_ptr = (uint16_t *)wr_ptr;
 
-  	/* Clear content before 16 bit access test */
-  	_DBG_("Clear content of SRAM...");
-  	for ( i= 0; i < SDRAM_SIZE/4; i++ )
-  	{
-		*wr_ptr++ = 0;
-  	}
+    /* Clear content before 16 bit access test */
+    _DBG_("Clear content of SRAM...");
+    for ( i= 0; i < SDRAM_SIZE/4; i++ )
+    {
+        *wr_ptr++ = 0;
+    }
 
-  	/* 16 bit write */
-  	_DBG_("Writing in 16 bits format...");
-  	for (i=0; i<(SDRAM_SIZE/4); i++)
-  	{
-		*short_wr_ptr++ = 0x5AA5;
-		*short_wr_ptr++ = 0xAA55;
-  	}
+    /* 16 bit write */
+    _DBG_("Writing in 16 bits format...");
+    for (i=0; i<(SDRAM_SIZE/4); i++)
+    {
+        *short_wr_ptr++ = 0x5AA5;
+        *short_wr_ptr++ = 0xAA55;
+    }
 
-  	/* Verifying */
-  	wr_ptr = (uint32_t *)SDRAM_BASE_ADDR;
+    /* Verifying */
+    wr_ptr = (uint32_t *)SDRAM_BASE_ADDR;
 
-	//wr_ptr -= SDRAM_BASE_ADDR/4;
-  	for ( i= 0; i < SDRAM_SIZE/4; i++ )
-  	{
-		if ( *wr_ptr != 0xAA555AA5 )	/* be aware of endianess */
-		{
-	  		/* 16-bit half word failure */
-			_DBG_("Verifying fail, testing termintated!");
-	  	while ( 1 );	/* fatal error */
-		}
-		wr_ptr++;
-  	}
+    //wr_ptr -= SDRAM_BASE_ADDR/4;
+    for ( i= 0; i < SDRAM_SIZE/4; i++ )
+    {
+        if ( *wr_ptr != 0xAA555AA5 )    /* be aware of endianess */
+        {
+            /* 16-bit half word failure */
+            _DBG_("Verifying fail, testing termintated!");
+        while ( 1 );    /* fatal error */
+        }
+        wr_ptr++;
+    }
 
-  	/* 16-bit half word comparison succeed. */
+    /* 16-bit half word comparison succeed. */
 
-	_DBG_("Verifying complete, testing terminated!");
+    _DBG_("Verifying complete, testing terminated!");
         while(1);
 }
 
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 /*****************************************************************************
 **                            End Of File

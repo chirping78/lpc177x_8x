@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		sdram_is42s32800d.h			2011-08-22
+* $Id$      sdram_is42s32800d.h         2011-08-22
 *//**
-* @file		sdram_is42s32800d.h
-* @brief	Contains all macro definitions and function prototypes
-*			support for external SDRAM ISSI IS42S32800D
-* @version	1.0
-* @date		22. August. 2011
-* @author	NXP MCU SW Application Team
+* @file     sdram_is42s32800d.h
+* @brief    Contains all macro definitions and function prototypes
+*           support for external SDRAM ISSI IS42S32800D
+* @version  1.0
+* @date     22. August. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -31,7 +31,7 @@
 **********************************************************************/
 
 /* Peripheral group ----------------------------------------------------------- */
-/** @defgroup  Sdram_IS42S32800D	Sdram IS42S32800D
+/** @defgroup  Sdram_IS42S32800D    Sdram IS42S32800D
  * @ingroup LPC177x_8xCMSIS_Board_Support
  * @{
  */
@@ -41,8 +41,8 @@
 
 #include "bsp.h"
 
-#define SDRAM_BASE_ADDR		0xA0000000
-#define SDRAM_SIZE	        0x10000000
+#define SDRAM_BASE_ADDR     0xA0000000
+#define SDRAM_SIZE          0x10000000
 
 #if (_CURR_USING_BRD == _EA_PA_BOARD)
 extern void SDRAMInit( void );

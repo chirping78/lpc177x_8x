@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		Gpio_IO.c		2011-06-02
+* $Id$      Gpio_IO.c       2011-06-02
 *//**
-* @file		Gpio_IO.c
-* @brief	This example describes how to use GPIO interrupt to drive
-* 			LEDs
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Gpio_IO.c
+* @brief    This example describes how to use GPIO interrupt to drive
+*           LEDs
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -35,7 +35,7 @@
 #include "bsp.h"
 
 
-/** @defgroup GPIO_IO	GPIO IO
+/** @defgroup GPIO_IO   GPIO IO
  * @ingroup GPIO_Examples
  * @{
  */
@@ -44,26 +44,26 @@
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry (void)
 {
-	uint8_t value = 0;
-	uint32_t i;
+    uint8_t value = 0;
+    uint32_t i;
 
-	GPIO_Init();
+    GPIO_Init();
 
-	PINSEL_ConfigPin(TEST_PORT_NUM, TEST_PIN_NUM, 0);
-	GPIO_SetDir(TEST_PORT_NUM, (1<<TEST_PIN_NUM), GPIO_DIRECTION_OUTPUT);
+    PINSEL_ConfigPin(TEST_PORT_NUM, TEST_PIN_NUM, 0);
+    GPIO_SetDir(TEST_PORT_NUM, (1<<TEST_PIN_NUM), GPIO_DIRECTION_OUTPUT);
 
-	while (1)
-	{
-		GPIO_OutputValue(TEST_PORT_NUM, (1<<TEST_PIN_NUM), value);
-		for(i = 0; i < 0x100000;i++);
-		value = (value) ? 0: 1;
-	}
+    while (1)
+    {
+        GPIO_OutputValue(TEST_PORT_NUM, (1<<TEST_PIN_NUM), value);
+        for(i = 0; i < 0x100000;i++);
+        value = (value) ? 0: 1;
+    }
 
 }
 
@@ -75,8 +75,8 @@ void c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 /*

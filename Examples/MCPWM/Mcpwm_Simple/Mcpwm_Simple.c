@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		Mcpwm_Simple.c	2011-06-02
+* $Id$      Mcpwm_Simple.c  2011-06-02
 *//**
-* @file		Mcpwm_Simple.c
-* @brief	This example used to test MCPWM driver
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Mcpwm_Simple.c
+* @brief    This example used to test MCPWM driver
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -36,27 +36,27 @@
 
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup MCPWM_Simple	MCPWM Simple
+/** @defgroup MCPWM_Simple  MCPWM Simple
  * @ingroup MCPWM_Examples
  * @{
  */
 
 /************************** PRIVATE DEFINITIONS **********************/
 /** MCPWM in 3-phase DC motor mode test */
-#define DC_MODE_TEST			0
+#define DC_MODE_TEST            0
 
 /** MCPWM in 3-phase AC motor mode test */
-#define AC_MODE_TEST			1
+#define AC_MODE_TEST            1
 
 // This define will not configure any for DC or AC mode
-#define UNUSED_TEST_MODE		2
+#define UNUSED_TEST_MODE        2
 
 
-#define MCPWM_WORKING_MODE		DC_MODE_TEST
+#define MCPWM_WORKING_MODE      DC_MODE_TEST
 
 
 /** MCPWM tested with Capture function */
-#define CAPTURE_MODE_TEST 		1
+#define CAPTURE_MODE_TEST       1
 
 /************************** PRIVATE VARIABLES *************************/
 #if CAPTURE_MODE_TEST
@@ -90,213 +90,213 @@ void MCPWM_IRQHandler(void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
- * @brief		MCPWM interrupt handler sub-routine
- * @param[in]	None
- * @return 		None
+ * @brief       MCPWM interrupt handler sub-routine
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void MCPWM_IRQHandler(void)
 {
 #if CAPTURE_MODE_TEST
-	// Check whether if capture event interrupt is set
-	if (MCPWM_GetIntStatus(LPC_MCPWM, MCPWM_INTFLAG_CAP0))
-	{
-		if (CapFlag == RESET)
-		{
-			// Store capture value
-			CapVal = MCPWM_GetCapture(LPC_MCPWM, MCPWM_CHANNEL_0);
+    // Check whether if capture event interrupt is set
+    if (MCPWM_GetIntStatus(LPC_MCPWM, MCPWM_INTFLAG_CAP0))
+    {
+        if (CapFlag == RESET)
+        {
+            // Store capture value
+            CapVal = MCPWM_GetCapture(LPC_MCPWM, MCPWM_CHANNEL_0);
 
-			// toggle capture flag
-			CapFlag = SET;
+            // toggle capture flag
+            CapFlag = SET;
 
-			// Disable interrupt for capture event
-			MCPWM_IntConfig(LPC_MCPWM, MCPWM_INTFLAG_CAP0, DISABLE);
-		}
+            // Disable interrupt for capture event
+            MCPWM_IntConfig(LPC_MCPWM, MCPWM_INTFLAG_CAP0, DISABLE);
+        }
 
-		// Clear pending interrupt
-		MCPWM_IntClear(LPC_MCPWM, MCPWM_INTFLAG_CAP0);
-	}
+        // Clear pending interrupt
+        MCPWM_IntClear(LPC_MCPWM, MCPWM_INTFLAG_CAP0);
+    }
 #endif
 }
 
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main MCPWM program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main MCPWM program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry(void)
 {
-	// MCPWM Channel configuration data
-	MCPWM_CHANNEL_CFG_Type channelsetup[3];
+    // MCPWM Channel configuration data
+    MCPWM_CHANNEL_CFG_Type channelsetup[3];
 
-	uint32_t i;
+    uint32_t i;
 
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	_DBG_(menu);
+    _DBG_(menu);
 
-	/* Pin configuration for MCPWM function:
-	 * Assign: 	- P1.19 as MCOA0 - Motor Control Channel 0 Output A
-	 * 			- P1.22 as MCOB0 - Motor Control Channel 0 Output B
-	 * 			- P1.25 as MCOA1 - Motor Control Channel 1 Output A
-	 * 			- P1.26 as MCOB1 - Motor Control Channel 1 Output B
-	 * 			- P1.28 as MCOA2 - Motor Control Channel 2 Output A
-	 * 			- P1.29 as MCOB2 - Motor Control Channel 2 Output B
-	 * 			- P1.20 as MCI0	 - Motor Control Feed Back Channel 0
-	 * Warning: According to Errata.lpc1768-18.March.2010: Input pin (MIC0-2)
-	 * on the Motor Control PWM peripheral are not functional
-	 */
+    /* Pin configuration for MCPWM function:
+     * Assign:  - P1.19 as MCOA0 - Motor Control Channel 0 Output A
+     *          - P1.22 as MCOB0 - Motor Control Channel 0 Output B
+     *          - P1.25 as MCOA1 - Motor Control Channel 1 Output A
+     *          - P1.26 as MCOB1 - Motor Control Channel 1 Output B
+     *          - P1.28 as MCOA2 - Motor Control Channel 2 Output A
+     *          - P1.29 as MCOB2 - Motor Control Channel 2 Output B
+     *          - P1.20 as MCI0  - Motor Control Feed Back Channel 0
+     * Warning: According to Errata.lpc1768-18.March.2010: Input pin (MIC0-2)
+     * on the Motor Control PWM peripheral are not functional
+     */
 
-	//MCOA0 — Motor control PWM channel 0, output A
-	PINSEL_ConfigPin (1, 19, 4);
+    //MCOA0 — Motor control PWM channel 0, output A
+    PINSEL_ConfigPin (1, 19, 4);
 
-	//MCI0 — Motor control PWM channel 0 input
-	PINSEL_ConfigPin (1, 20, 4);
+    //MCI0 — Motor control PWM channel 0 input
+    PINSEL_ConfigPin (1, 20, 4);
 
-	//MCOB0 — Motor control PWM channel 0, output B
-	PINSEL_ConfigPin (1, 22, 4);
+    //MCOB0 — Motor control PWM channel 0, output B
+    PINSEL_ConfigPin (1, 22, 4);
 
-	// Motor control PWM channel 1, output A.
-	PINSEL_ConfigPin (1, 25, 4);
+    // Motor control PWM channel 1, output A.
+    PINSEL_ConfigPin (1, 25, 4);
 
-	//MCOB1 — Motor control PWM channel 1, output B.
-	PINSEL_ConfigPin (1, 26, 4);
+    //MCOB1 — Motor control PWM channel 1, output B.
+    PINSEL_ConfigPin (1, 26, 4);
 
-	//MCOA2 — Motor control PWM channel 2, output A.
-	PINSEL_ConfigPin (1, 28, 4);
+    //MCOA2 — Motor control PWM channel 2, output A.
+    PINSEL_ConfigPin (1, 28, 4);
 
-	//MCOB2 — Motor control PWM channel 2, output B.
-	PINSEL_ConfigPin (1, 29, 1);
+    //MCOB2 — Motor control PWM channel 2, output B.
+    PINSEL_ConfigPin (1, 29, 1);
 
-	/* Disable interrupt for MCPWM  */
-	NVIC_DisableIRQ(MCPWM_IRQn);
+    /* Disable interrupt for MCPWM  */
+    NVIC_DisableIRQ(MCPWM_IRQn);
 
-	/* preemption = 1, sub-priority = 1 */
-	NVIC_SetPriority(MCPWM_IRQn, ((0x01<<3)|0x01));
+    /* preemption = 1, sub-priority = 1 */
+    NVIC_SetPriority(MCPWM_IRQn, ((0x01<<3)|0x01));
 
-	/* Init MCPWM peripheral */
-	MCPWM_Init(LPC_MCPWM);
+    /* Init MCPWM peripheral */
+    MCPWM_Init(LPC_MCPWM);
 
-	channelsetup[0].channelType = MCPWM_CHANNEL_EDGE_MODE;
-	channelsetup[0].channelPolarity = MCPWM_CHANNEL_PASSIVE_LO;
-	channelsetup[0].channelDeadtimeEnable = DISABLE;
-	channelsetup[0].channelDeadtimeValue = 0;
-	channelsetup[0].channelUpdateEnable = ENABLE;
-	channelsetup[0].channelTimercounterValue = 0;
-	channelsetup[0].channelPeriodValue = 300;
-	channelsetup[0].channelPulsewidthValue = 0;
+    channelsetup[0].channelType = MCPWM_CHANNEL_EDGE_MODE;
+    channelsetup[0].channelPolarity = MCPWM_CHANNEL_PASSIVE_LO;
+    channelsetup[0].channelDeadtimeEnable = DISABLE;
+    channelsetup[0].channelDeadtimeValue = 0;
+    channelsetup[0].channelUpdateEnable = ENABLE;
+    channelsetup[0].channelTimercounterValue = 0;
+    channelsetup[0].channelPeriodValue = 300;
+    channelsetup[0].channelPulsewidthValue = 0;
 
-	channelsetup[1].channelType = MCPWM_CHANNEL_EDGE_MODE;
-	channelsetup[1].channelPolarity = MCPWM_CHANNEL_PASSIVE_LO;
-	channelsetup[1].channelDeadtimeEnable = DISABLE;
-	channelsetup[1].channelDeadtimeValue = 0;
-	channelsetup[1].channelUpdateEnable = ENABLE;
-	channelsetup[1].channelTimercounterValue = 0;
-	channelsetup[1].channelPeriodValue = 300;
-	channelsetup[1].channelPulsewidthValue = 100;
+    channelsetup[1].channelType = MCPWM_CHANNEL_EDGE_MODE;
+    channelsetup[1].channelPolarity = MCPWM_CHANNEL_PASSIVE_LO;
+    channelsetup[1].channelDeadtimeEnable = DISABLE;
+    channelsetup[1].channelDeadtimeValue = 0;
+    channelsetup[1].channelUpdateEnable = ENABLE;
+    channelsetup[1].channelTimercounterValue = 0;
+    channelsetup[1].channelPeriodValue = 300;
+    channelsetup[1].channelPulsewidthValue = 100;
 
-	channelsetup[2].channelType = MCPWM_CHANNEL_EDGE_MODE;
-	channelsetup[2].channelPolarity = MCPWM_CHANNEL_PASSIVE_LO;
-	channelsetup[2].channelDeadtimeEnable = DISABLE;
-	channelsetup[2].channelDeadtimeValue = 0;
-	channelsetup[2].channelUpdateEnable = ENABLE;
-	channelsetup[2].channelTimercounterValue = 0;
-	channelsetup[2].channelPeriodValue = 300;
-	channelsetup[2].channelPulsewidthValue = 200;
+    channelsetup[2].channelType = MCPWM_CHANNEL_EDGE_MODE;
+    channelsetup[2].channelPolarity = MCPWM_CHANNEL_PASSIVE_LO;
+    channelsetup[2].channelDeadtimeEnable = DISABLE;
+    channelsetup[2].channelDeadtimeValue = 0;
+    channelsetup[2].channelUpdateEnable = ENABLE;
+    channelsetup[2].channelTimercounterValue = 0;
+    channelsetup[2].channelPeriodValue = 300;
+    channelsetup[2].channelPulsewidthValue = 200;
 
-	MCPWM_ConfigChannel(LPC_MCPWM, MCPWM_CHANNEL_0, &channelsetup[0]);
-	MCPWM_ConfigChannel(LPC_MCPWM, MCPWM_CHANNEL_1, &channelsetup[1]);
-	MCPWM_ConfigChannel(LPC_MCPWM, MCPWM_CHANNEL_2, &channelsetup[2]);
+    MCPWM_ConfigChannel(LPC_MCPWM, MCPWM_CHANNEL_0, &channelsetup[0]);
+    MCPWM_ConfigChannel(LPC_MCPWM, MCPWM_CHANNEL_1, &channelsetup[1]);
+    MCPWM_ConfigChannel(LPC_MCPWM, MCPWM_CHANNEL_2, &channelsetup[2]);
 
 #if (MCPWM_WORKING_MODE == DC_MODE_TEST)
-	/*
-	 * - DC mode enabled.
-	 * - Invert Output enabled
-	 * - A0 and A1 output pin is internally routed to A0 signal
-	 */
-	MCPWM_DCMode(LPC_MCPWM, ENABLE, ENABLE, (MCPWM_PATENT_A0|MCPWM_PATENT_A1));
+    /*
+     * - DC mode enabled.
+     * - Invert Output enabled
+     * - A0 and A1 output pin is internally routed to A0 signal
+     */
+    MCPWM_DCMode(LPC_MCPWM, ENABLE, ENABLE, (MCPWM_PATENT_A0|MCPWM_PATENT_A1));
 #elif (MCPWM_WORKING_MODE == AC_MODE_TEST)
-	// AC mode is enabled.
-	MCPWM_ACMode(LPC_MCPWM, ENABLE);
+    // AC mode is enabled.
+    MCPWM_ACMode(LPC_MCPWM, ENABLE);
 #endif
 
 #if CAPTURE_MODE_TEST
-	/*
-	 * Capture mode in this case is used to detect the falling edge on MCO0B output pin.
-	 * The MCFB0 input pin therefore must be connected to MCO0B. (P1.20 - P1.22)
-	 * - Capture Channel 0.
-	 * - Capture falling edge on MCFB0 input pin.
-	 * - Interrupt enabled on capture event.
-	 */
-	captureCfg.captureChannel = MCPWM_CHANNEL_0;
-	captureCfg.captureFalling = ENABLE;
-	captureCfg.captureRising = DISABLE;
-	captureCfg.hnfEnable = DISABLE;
-	captureCfg.timerReset = DISABLE;
-	MCPWM_ConfigCapture(LPC_MCPWM, MCPWM_CHANNEL_0, &captureCfg);
+    /*
+     * Capture mode in this case is used to detect the falling edge on MCO0B output pin.
+     * The MCFB0 input pin therefore must be connected to MCO0B. (P1.20 - P1.22)
+     * - Capture Channel 0.
+     * - Capture falling edge on MCFB0 input pin.
+     * - Interrupt enabled on capture event.
+     */
+    captureCfg.captureChannel = MCPWM_CHANNEL_0;
+    captureCfg.captureFalling = ENABLE;
+    captureCfg.captureRising = DISABLE;
+    captureCfg.hnfEnable = DISABLE;
+    captureCfg.timerReset = DISABLE;
+    MCPWM_ConfigCapture(LPC_MCPWM, MCPWM_CHANNEL_0, &captureCfg);
 
-	// Reset flag for the first time
-	CapFlag = RESET;
+    // Reset flag for the first time
+    CapFlag = RESET;
 
-	// Enable interrupt for capture event on MCI0 (MCFB0)
-	MCPWM_IntConfig(LPC_MCPWM, MCPWM_INTFLAG_CAP0, ENABLE);
+    // Enable interrupt for capture event on MCI0 (MCFB0)
+    MCPWM_IntConfig(LPC_MCPWM, MCPWM_INTFLAG_CAP0, ENABLE);
 
-	/* Enable interrupt for MCPWM  */
-	NVIC_EnableIRQ(MCPWM_IRQn);
+    /* Enable interrupt for MCPWM  */
+    NVIC_EnableIRQ(MCPWM_IRQn);
 #endif
 
-	MCPWM_Start(LPC_MCPWM, ENABLE, ENABLE, ENABLE);
+    MCPWM_Start(LPC_MCPWM, ENABLE, ENABLE, ENABLE);
 
-	// Main loop
-	while (1)
-	{
-		//delay
-		for(i = 0; i < 100000; i++);
+    // Main loop
+    while (1)
+    {
+        //delay
+        for(i = 0; i < 100000; i++);
 
-		channelsetup[0].channelPulsewidthValue = (channelsetup[0].channelPulsewidthValue >= 300) ?
-														0 : channelsetup[0].channelPulsewidthValue + 20;
-		channelsetup[1].channelPulsewidthValue = (channelsetup[1].channelPulsewidthValue >= 300) ?
-														0 : channelsetup[1].channelPulsewidthValue + 20;
-		channelsetup[2].channelPulsewidthValue = (channelsetup[2].channelPulsewidthValue >= 300) ?
-														0 : channelsetup[2].channelPulsewidthValue + 20;
+        channelsetup[0].channelPulsewidthValue = (channelsetup[0].channelPulsewidthValue >= 300) ?
+                                                        0 : channelsetup[0].channelPulsewidthValue + 20;
+        channelsetup[1].channelPulsewidthValue = (channelsetup[1].channelPulsewidthValue >= 300) ?
+                                                        0 : channelsetup[1].channelPulsewidthValue + 20;
+        channelsetup[2].channelPulsewidthValue = (channelsetup[2].channelPulsewidthValue >= 300) ?
+                                                        0 : channelsetup[2].channelPulsewidthValue + 20;
 
-		_DBG_("Update!");
+        _DBG_("Update!");
 
-		MCPWM_WriteToShadow(LPC_MCPWM, MCPWM_CHANNEL_0, &channelsetup[0]);
-		MCPWM_WriteToShadow(LPC_MCPWM, MCPWM_CHANNEL_1, &channelsetup[1]);
-		MCPWM_WriteToShadow(LPC_MCPWM, MCPWM_CHANNEL_2, &channelsetup[2]);
+        MCPWM_WriteToShadow(LPC_MCPWM, MCPWM_CHANNEL_0, &channelsetup[0]);
+        MCPWM_WriteToShadow(LPC_MCPWM, MCPWM_CHANNEL_1, &channelsetup[1]);
+        MCPWM_WriteToShadow(LPC_MCPWM, MCPWM_CHANNEL_2, &channelsetup[2]);
 
 #if CAPTURE_MODE_TEST
-		// Check capture flag is set or not
-		if (CapFlag)
-		{
-			// Print out the value
-			_DBG("Capture Value: ");
+        // Check capture flag is set or not
+        if (CapFlag)
+        {
+            // Print out the value
+            _DBG("Capture Value: ");
 
-			_DBD32(CapVal); _DBG_("");
+            _DBD32(CapVal); _DBG_("");
 
-			// Must be re-configure the Capture Feature as below for the next capturing,
-			//unless, it will not capture anything more.
+            // Must be re-configure the Capture Feature as below for the next capturing,
+            //unless, it will not capture anything more.
 
-			// Setup a new capture event
-			MCPWM_ConfigCapture(LPC_MCPWM, MCPWM_CHANNEL_0, &captureCfg);
+            // Setup a new capture event
+            MCPWM_ConfigCapture(LPC_MCPWM, MCPWM_CHANNEL_0, &captureCfg);
 
-			// Re-Enable interrupt for capture event on MCI0 (MCFB0)
-			MCPWM_IntConfig(LPC_MCPWM, MCPWM_INTFLAG_CAP0, ENABLE);
+            // Re-Enable interrupt for capture event on MCI0 (MCFB0)
+            MCPWM_IntConfig(LPC_MCPWM, MCPWM_INTFLAG_CAP0, ENABLE);
 
-			// Reset flag
-			CapFlag = RESET;
-		}
+            // Reset flag
+            CapFlag = RESET;
+        }
 #endif
-	}
+    }
 
 }
 
@@ -307,8 +307,8 @@ void c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 /**

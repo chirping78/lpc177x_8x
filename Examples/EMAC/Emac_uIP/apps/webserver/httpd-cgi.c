@@ -146,18 +146,18 @@ generate_tcp_stats(void *arg)
     
   conn = &uip_conns[s->count];
   return snprintf((char *)uip_appdata, UIP_APPDATA_SIZE,
-		 "<tr><td>%d</td><td>%u.%u.%u.%u:%u</td><td>%s</td><td>%u</td><td>%u</td><td>%c %c</td></tr>\r\n",
-		 htons(conn->lport),
-		 htons(conn->ripaddr[0]) >> 8,
-		 htons(conn->ripaddr[0]) & 0xff,
-		 htons(conn->ripaddr[1]) >> 8,
-		 htons(conn->ripaddr[1]) & 0xff,
-		 htons(conn->rport),
-		 states[conn->tcpstateflags & UIP_TS_MASK],
-		 conn->nrtx,
-		 conn->timer,
-		 (uip_outstanding(conn))? '*':' ',
-		 (uip_stopped(conn))? '!':' ');
+         "<tr><td>%d</td><td>%u.%u.%u.%u:%u</td><td>%s</td><td>%u</td><td>%u</td><td>%c %c</td></tr>\r\n",
+         htons(conn->lport),
+         htons(conn->ripaddr[0]) >> 8,
+         htons(conn->ripaddr[0]) & 0xff,
+         htons(conn->ripaddr[1]) >> 8,
+         htons(conn->ripaddr[1]) & 0xff,
+         htons(conn->rport),
+         states[conn->tcpstateflags & UIP_TS_MASK],
+         conn->nrtx,
+         conn->timer,
+         (uip_outstanding(conn))? '*':' ',
+         (uip_stopped(conn))? '!':' ');
 }
 /*---------------------------------------------------------------------------*/
 static
@@ -180,7 +180,7 @@ generate_net_stats(void *arg)
 {
   struct httpd_state *s = (struct httpd_state *)arg;
   return snprintf((char *)uip_appdata, UIP_APPDATA_SIZE,
-		  "%5u\n", ((uip_stats_t *)&uip_stat)[s->count]);
+          "%5u\n", ((uip_stats_t *)&uip_stat)[s->count]);
 }
 
 static

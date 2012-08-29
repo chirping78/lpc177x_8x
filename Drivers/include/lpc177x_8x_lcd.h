@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		lpc177x_8x_lcd.h			2011-10-14
+* $Id$      lpc177x_8x_lcd.h            2011-10-14
 *//**
-* @file		lpc177x_8x_lcd.h
-* @brief	Contains all functions support for LCD firmware library
-*			on LPC177x_8x
-* @version	1.0
-* @date		14. October. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_lcd.h
+* @brief    Contains all functions support for LCD firmware library
+*           on LPC177x_8x
+* @version  1.0
+* @date     14. October. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -34,7 +34,7 @@
 #ifndef __LPC177X_8X_LCD_H_
 #define __LPC177X_8X_LCD_H_
 
-/** @defgroup LCD	LCD (Liquid Crystal Display)
+/** @defgroup LCD   LCD (Liquid Crystal Display)
  * @ingroup LPC177x_8xCMSIS_FwLib_Drivers
  * @{
  */
@@ -152,9 +152,9 @@ typedef struct __LCD_VConfig_Type
 
 typedef struct __LCD_POLARITY_Type
 {
-	uint16_t cpl; // Number of pixel clocks per line 
-	uint8_t  active_high; // Signal polarity, active HIGH or LOW
-	uint8_t acb;  // AC bias pin frequency
+    uint16_t cpl; // Number of pixel clocks per line 
+    uint8_t  active_high; // Signal polarity, active HIGH or LOW
+    uint8_t acb;  // AC bias pin frequency
     uint8_t  invert_panel_clock;   // Invert Panel clock;
     uint8_t  invert_hsync;          // Invert HSYNC
     uint8_t  invert_vsync;          // Invert VSYSNC
@@ -179,7 +179,7 @@ typedef struct __LCD_Config_Type
   uint32_t  lcd_panel_upper;  // base address of frame buffer
   uint32_t  lcd_panel_lower;  // base address of frame buffer
   uint8_t*  lcd_palette;      // point to palette buffer
-  Bool		lcd_bgr;		  // False: RGB , TRUE: BGR
+  Bool      lcd_bgr;          // False: RGB , TRUE: BGR
 } LCD_Config_Type;
 
 /**

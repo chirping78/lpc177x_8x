@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		lpc177x_8x_emc.c			2011-06-02
+* $Id$      lpc177x_8x_emc.c            2011-06-02
 *//**
-* @file		lpc177x_8x_emc.c
-* @brief	Contains all functions support for EMC firmware library
-*			on LPC177x_8x
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_emc.c
+* @brief    Contains all functions support for EMC firmware library
+*           on LPC177x_8x
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -662,7 +662,7 @@ EMC_FUNC_CODE EMC_DynMemConfigAM(uint32_t index ,
           else  if(data_bus_width == 16)
                add_mapped_p1 = 1;
           else
-	     return EMC_FUNC_INVALID_PARAM;	  	
+         return EMC_FUNC_INVALID_PARAM;     
      }
      else
      {
@@ -772,8 +772,8 @@ EMC_FUNC_CODE EMC_DynMemConfigB(uint32_t index , uint32_t buff_control)
             LPC_EMC->DynamicConfig3 &= ~EMC_DYNAMIC_CFG_BUFFENABLE_BMASK;
             LPC_EMC->DynamicConfig3|= buff_control& EMC_DYNAMIC_CFG_BUFFENABLE_BMASK;
             break;
-	default:
-	   return EMC_FUNC_INVALID_PARAM;
+    default:
+       return EMC_FUNC_INVALID_PARAM;
     }
     return EMC_FUNC_OK;
 }
@@ -816,8 +816,8 @@ EMC_FUNC_CODE EMC_DynMemConfigP(uint32_t index , uint32_t permission)
             LPC_EMC->DynamicConfig3 &= ~ EMC_DYNAMIC_CFG_WRPROTECT_BMASK;
             LPC_EMC->DynamicConfig3 |= permission&EMC_DYNAMIC_CFG_WRPROTECT_BMASK;
             break;
-	default:
-	   return EMC_FUNC_INVALID_PARAM;
+    default:
+       return EMC_FUNC_INVALID_PARAM;
     }
     return EMC_FUNC_OK;
 }
@@ -858,8 +858,8 @@ EMC_FUNC_CODE EMC_DynMemRAS(uint32_t index , uint32_t ras_val)
             LPC_EMC->DynamicRasCas3 |= ( ras_val << EMC_DYNAMIC_RASCAS_RASCFG_POS)
                                             &EMC_DYNAMIC_RASCAS_RASCFG_BMASK;
             break;
-	default:
-	   return EMC_FUNC_INVALID_PARAM;
+    default:
+       return EMC_FUNC_INVALID_PARAM;
     }
     return EMC_FUNC_OK;
 }
@@ -901,8 +901,8 @@ EMC_FUNC_CODE EMC_DynMemCAS(uint32_t index , uint32_t cas_val)
             LPC_EMC->DynamicRasCas3 |= (cas_val<<EMC_DYNAMIC_RASCAS_CASCFG_POS)
                                             &EMC_DYNAMIC_RASCAS_CASCFG_BMASK;
             break;
-	default:
-	   return EMC_FUNC_INVALID_PARAM;
+    default:
+       return EMC_FUNC_INVALID_PARAM;
     }
     return EMC_FUNC_OK;
 }
@@ -973,7 +973,7 @@ EMC_FUNC_CODE EMC_StaMemConfigMW(uint32_t index , uint32_t mem_width)
             LPC_EMC->StaticConfig3 &= ~ EMC_STATIC_CFG_MEMWIDTH_BMASK;
             LPC_EMC->StaticConfig3 |= mem_width_flg;
             break;
-	default:
+    default:
             return EMC_FUNC_INVALID_PARAM;
     }
     return EMC_FUNC_OK;
@@ -1014,7 +1014,7 @@ EMC_FUNC_CODE EMC_StaMemConfigPM(uint32_t index , uint32_t page_mode)
             LPC_EMC->StaticConfig3  &= ~EMC_STATIC_CFG_PAGEMODE_MASK;
             LPC_EMC->StaticConfig3  |= page_mode&EMC_STATIC_CFG_PAGEMODE_MASK;
             break;
-	default:
+    default:
             return EMC_FUNC_INVALID_PARAM;
     }
     return EMC_FUNC_OK;
@@ -1057,7 +1057,7 @@ EMC_FUNC_CODE EMC_StaMemConfigPC(uint32_t index , uint32_t pol_val)
             LPC_EMC->StaticConfig3 &= ~EMC_STATIC_CFG_CHIPPOLARITY_MASK;
             LPC_EMC->StaticConfig3  |=  pol_val&EMC_STATIC_CFG_CHIPPOLARITY_MASK;
             break;
-	default:
+    default:
             return EMC_FUNC_INVALID_PARAM;
     }
     return EMC_FUNC_OK;
@@ -1102,7 +1102,7 @@ EMC_FUNC_CODE EMC_StaMemConfigPB(uint32_t index , uint32_t pb_val)
             LPC_EMC->StaticConfig3 &= ~EMC_STATIC_CFG_BYTELAND_MASK;
             LPC_EMC->StaticConfig3 |= pb_val&EMC_STATIC_CFG_BYTELAND_MASK;
             break;
-	default:
+    default:
             return EMC_FUNC_INVALID_PARAM;
     }
     return EMC_FUNC_OK;
@@ -1144,7 +1144,7 @@ EMC_FUNC_CODE EMC_StaMemConfigEW(uint32_t index , uint32_t ex_wait)
             LPC_EMC->StaticConfig3 &= ~EMC_STATIC_CFG_EXTWAIT_MASK;
             LPC_EMC->StaticConfig3  |=  ex_wait&EMC_STATIC_CFG_EXTWAIT_MASK;
             break;
-	default:
+    default:
             return EMC_FUNC_INVALID_PARAM;
     }
     return EMC_FUNC_OK;
@@ -1186,7 +1186,7 @@ EMC_FUNC_CODE EMC_StaMemConfigB(uint32_t index , uint32_t buf_val)
             LPC_EMC->StaticConfig3 &= ~EMC_STATIC_CFG_BUFENABLE_MASK;
             LPC_EMC->StaticConfig3  |=  buf_val&EMC_STATIC_CFG_BUFENABLE_MASK;
             break;
-	default:
+    default:
             return EMC_FUNC_INVALID_PARAM;
     }
     return EMC_FUNC_OK;
@@ -1228,7 +1228,7 @@ EMC_FUNC_CODE EMC_StaMemConfigpP(uint32_t index , uint32_t per_val)
             LPC_EMC->StaticConfig3 &= ~EMC_STATIC_CFG_WRIEPROTECT_MASK;
             LPC_EMC->StaticConfig3  |=  per_val&EMC_STATIC_CFG_WRIEPROTECT_MASK;
             break;
-	default:
+    default:
             return EMC_FUNC_INVALID_PARAM;
     }
     return EMC_FUNC_OK;
@@ -1280,7 +1280,7 @@ EMC_FUNC_CODE EMC_SetStaMemoryParameter(uint32_t index ,EMC_STA_MEM_PAR par, uin
                 case EMC_STA_MEM_WAITTURN:
                     LPC_EMC->StaticWaitTurn0 =EMC_StaticWaitTurn_WAITTURN(val);
                     break;
-	      default:
+          default:
                     return EMC_FUNC_INVALID_PARAM;
             }
             break;
@@ -1311,8 +1311,8 @@ EMC_FUNC_CODE EMC_SetStaMemoryParameter(uint32_t index ,EMC_STA_MEM_PAR par, uin
                 case EMC_STA_MEM_WAITTURN:
                     LPC_EMC->StaticWaitTurn1 =EMC_StaticWaitTurn_WAITTURN(val);
                     break;
-	       default:
-		 return EMC_FUNC_INVALID_PARAM;
+           default:
+         return EMC_FUNC_INVALID_PARAM;
 
             }
             break;
@@ -1343,8 +1343,8 @@ EMC_FUNC_CODE EMC_SetStaMemoryParameter(uint32_t index ,EMC_STA_MEM_PAR par, uin
                 case EMC_STA_MEM_WAITTURN:
                     LPC_EMC->StaticWaitTurn2 =EMC_StaticWaitTurn_WAITTURN(val);
                     break;
-	       default:
-		 return EMC_FUNC_INVALID_PARAM;
+           default:
+         return EMC_FUNC_INVALID_PARAM;
 
             }
             break;
@@ -1375,8 +1375,8 @@ EMC_FUNC_CODE EMC_SetStaMemoryParameter(uint32_t index ,EMC_STA_MEM_PAR par, uin
                 case EMC_STA_MEM_WAITTURN:
                     LPC_EMC->StaticWaitTurn3 =EMC_StaticWaitTurn_WAITTURN(val);
                     break;
-	       default:
-		return EMC_FUNC_INVALID_PARAM;
+           default:
+        return EMC_FUNC_INVALID_PARAM;
             }
             break;
     }

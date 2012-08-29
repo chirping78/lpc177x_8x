@@ -37,12 +37,12 @@ uint8_t InReport;                              /* HID Input Report    */
 uint8_t OutReport;                             /* HID Out Report      */
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup USBDEV_USBHID	USB HID Device
+/** @defgroup USBDEV_USBHID USB HID Device
  * @ingroup USBDEV_Examples
  * @{
  */
 
-/** @defgroup USBDEV_HIDUsbHw	USB-HID USB Hardware
+/** @defgroup USBDEV_HIDUsbHw   USB-HID USB Hardware
  * @ingroup USBDEV_USBHID
  * @{
  */
@@ -81,7 +81,7 @@ uint8_t OutReport;                             /* HID Out Report      */
  */
 
 
-/** @defgroup USBDEV_HIDUsbCfg	USB-HID USB Configuration
+/** @defgroup USBDEV_HIDUsbCfg  USB-HID USB Configuration
  * @ingroup USBDEV_USBHID
  * @{
  */
@@ -116,31 +116,31 @@ void GetInReport (void) {
 void SetOutReport (void) {
 
     uint32_t cnt = 0;
-	
+    
     pca9532_Configure_st_t pca9532Cfg;
-	pca9532Cfg.led_blinking_freq_0 = 30;
-	pca9532Cfg.led_freq0_unit = PCA9532_CALCULATING_TIME_IN_SECOND;
-	pca9532Cfg.duty_cycle_0 = 0;//percent//not used
+    pca9532Cfg.led_blinking_freq_0 = 30;
+    pca9532Cfg.led_freq0_unit = PCA9532_CALCULATING_TIME_IN_SECOND;
+    pca9532Cfg.duty_cycle_0 = 0;//percent//not used
 
-	pca9532Cfg.led_blinking_freq_1 = 0;
-	pca9532Cfg.led_freq1_unit = PCA9532_CALCULATING_TIME_IN_SECOND;
-	pca9532Cfg.duty_cycle_1 = 0; //not used
+    pca9532Cfg.led_blinking_freq_1 = 0;
+    pca9532Cfg.led_freq1_unit = PCA9532_CALCULATING_TIME_IN_SECOND;
+    pca9532Cfg.duty_cycle_1 = 0; //not used
 
-	for (cnt = 0; cnt < 8; cnt++)
-	{
-		pca9532Cfg.led_settings[cnt] = PCA9532_LED_LEVEL_DEFAULT;
+    for (cnt = 0; cnt < 8; cnt++)
+    {
+        pca9532Cfg.led_settings[cnt] = PCA9532_LED_LEVEL_DEFAULT;
 
-		if(OutReport & (1<<cnt))
-		{
-			pca9532Cfg.led_settings[8 + cnt] = PCA9532_LED_LEVEL_ON;
-		}
-		else
-		{
-			pca9532Cfg.led_settings[8 + cnt] = PCA9532_LED_LEVEL_OFF;
-		}
-	}
+        if(OutReport & (1<<cnt))
+        {
+            pca9532Cfg.led_settings[8 + cnt] = PCA9532_LED_LEVEL_ON;
+        }
+        else
+        {
+            pca9532Cfg.led_settings[8 + cnt] = PCA9532_LED_LEVEL_OFF;
+        }
+    }
 
-	Pca9532_LedOutputControl(&pca9532Cfg);	
+    Pca9532_LedOutputControl(&pca9532Cfg);  
 }
 
 /* Main Program */

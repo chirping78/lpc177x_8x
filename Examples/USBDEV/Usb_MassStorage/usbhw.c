@@ -175,7 +175,7 @@ void USB_Init (void) {
 #if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
   LPC_IOCON->P0_27 = 0x2;
   LPC_IOCON->P0_28 = 0x2;
-#endif	
+#endif  
 
   LPC_IOCON->P0_29 &= ~0x07;    /* P0.29 D1+, P0.30 D1- */
   LPC_IOCON->P0_29 |= 0x1;
@@ -603,7 +603,7 @@ uint32_t USB_DMA_Setup(uint32_t EPNum, USB_DMA_DESCRIPTOR *pDD) {
   *tmp++ =  pDD->Cfg.Type.LenPos << 8;
   if (iso) {
 //    *((uint32_t *)nxt) =  pDD->InfoAdr;
-	  *tmp =  pDD->InfoAdr;
+      *tmp =  pDD->InfoAdr;
   }
 
   return (TRUE); /* Success */
@@ -649,7 +649,7 @@ uint32_t USB_DMA_Status (uint32_t EPNum) {
 
   ptr = UDCA[EPAdr(EPNum)];                 /* Current Descriptor */
   if (ptr == 0)
-	return (USB_DMA_INVALID);
+    return (USB_DMA_INVALID);
 
   val = *((uint32_t *)(ptr + 3*4));            /* Status Information */
   switch ((val >> 1) & 0x0F) {
@@ -685,7 +685,7 @@ uint32_t USB_DMA_BufAdr (uint32_t EPNum) {
   ptr = UDCA[EPAdr(EPNum)];                 /* Current Descriptor */
   if (ptr == 0)
   {
-	return ((uint32_t)(-1));                /* DMA Invalid */
+    return ((uint32_t)(-1));                /* DMA Invalid */
   }
 
   val = *((uint32_t *)(ptr + 2*4));         /* Buffer Address */
@@ -708,7 +708,7 @@ uint32_t USB_DMA_BufCnt (uint32_t EPNum) {
   ptr = UDCA[EPAdr(EPNum)];                 /* Current Descriptor */
   if (ptr == 0)
   {
-	return ((uint32_t)(-1));                /* DMA Invalid */
+    return ((uint32_t)(-1));                /* DMA Invalid */
   }
   val = *((uint32_t *)(ptr + 3*4));         /* Status Information */
   return (val >> 16);                       /* Current Count */

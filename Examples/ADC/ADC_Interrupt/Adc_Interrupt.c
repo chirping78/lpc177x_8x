@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		Adc_Interrupt.c		2011-06-02
+* $Id$      Adc_Interrupt.c     2011-06-02
 *//**
-* @file		Adc_Interrupt.c
-* @brief	This example describes how to use ADC conversion in
-* 			interrupt mode
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Adc_Interrupt.c
+* @brief    This example describes how to use ADC conversion in
+*           interrupt mode
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -35,7 +35,7 @@
 #include "bsp.h"
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup ADC_Interrupt		ADC Interrupt
+/** @defgroup ADC_Interrupt     ADC Interrupt
  * @ingroup ADC_Examples
  * @{
  */
@@ -65,100 +65,100 @@ void print_menu(void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
- * @brief		ADC interrupt handler sub-routine
- * @param[in]	None
- * @return 		None
+ * @brief       ADC interrupt handler sub-routine
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void ADC_IRQHandler(void)
 {
-	adc_value = 0;
+    adc_value = 0;
 
-	if (ADC_ChannelGetStatus(LPC_ADC, BRD_ADC_PREPARED_CHANNEL, ADC_DATA_DONE))
-	{
-		adc_value =  ADC_ChannelGetData(LPC_ADC, BRD_ADC_PREPARED_CHANNEL);
+    if (ADC_ChannelGetStatus(LPC_ADC, BRD_ADC_PREPARED_CHANNEL, ADC_DATA_DONE))
+    {
+        adc_value =  ADC_ChannelGetData(LPC_ADC, BRD_ADC_PREPARED_CHANNEL);
 
-		NVIC_DisableIRQ(ADC_IRQn);
-	}
+        NVIC_DisableIRQ(ADC_IRQn);
+    }
 }
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print menu
- * @param[in]	None
- * @return 		None
+ * @brief       Print menu
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG(menu1);
+    _DBG(menu1);
 }
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main ADC program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main ADC program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry(void)
 {
-	uint32_t tmp;
+    uint32_t tmp;
     uint8_t  quit;
 
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 
-	/*
-	 * Init ADC pin that currently is being used on the board
-	 */
-	PINSEL_ConfigPin (BRD_ADC_PREPARED_CH_PORT, BRD_ADC_PREPARED_CH_PIN, BRD_ADC_PREPARED_CH_FUNC_NO);
-	PINSEL_SetAnalogPinMode(BRD_ADC_PREPARED_CH_PORT,BRD_ADC_PREPARED_CH_PIN,ENABLE);
+    /*
+     * Init ADC pin that currently is being used on the board
+     */
+    PINSEL_ConfigPin (BRD_ADC_PREPARED_CH_PORT, BRD_ADC_PREPARED_CH_PIN, BRD_ADC_PREPARED_CH_FUNC_NO);
+    PINSEL_SetAnalogPinMode(BRD_ADC_PREPARED_CH_PORT,BRD_ADC_PREPARED_CH_PIN,ENABLE);
 
-	/* Configuration for ADC:
-	 *  ADC conversion rate = 400KHz
-	 */
-	ADC_Init(LPC_ADC, 500000);
+    /* Configuration for ADC:
+     *  ADC conversion rate = 400KHz
+     */
+    ADC_Init(LPC_ADC, 500000);
 
-	ADC_IntConfig(LPC_ADC, BRD_ADC_PREPARED_INTR, ENABLE);
-	ADC_ChannelCmd(LPC_ADC, BRD_ADC_PREPARED_CHANNEL, ENABLE);
+    ADC_IntConfig(LPC_ADC, BRD_ADC_PREPARED_INTR, ENABLE);
+    ADC_ChannelCmd(LPC_ADC, BRD_ADC_PREPARED_CHANNEL, ENABLE);
 
-	/* preemption = 1, sub-priority = 1 */
-	NVIC_SetPriority(ADC_IRQn, ((0x01<<3)|0x01));
+    /* preemption = 1, sub-priority = 1 */
+    NVIC_SetPriority(ADC_IRQn, ((0x01<<3)|0x01));
 
-	while(1)
-	{
-		// Start conversion
-		ADC_StartCmd(LPC_ADC, ADC_START_NOW);
+    while(1)
+    {
+        // Start conversion
+        ADC_StartCmd(LPC_ADC, ADC_START_NOW);
 
-		/* Enable ADC in NVIC */
-		NVIC_EnableIRQ(ADC_IRQn);
+        /* Enable ADC in NVIC */
+        NVIC_EnableIRQ(ADC_IRQn);
 
-		//Display the result of conversion on the UART0
-		_DBG("ADC value on channel "); _DBD(BRD_ADC_PREPARED_CHANNEL);
-		_DBG(" is: "); _DBD32(adc_value); _DBG_("");
+        //Display the result of conversion on the UART0
+        _DBG("ADC value on channel "); _DBD(BRD_ADC_PREPARED_CHANNEL);
+        _DBG(" is: "); _DBD32(adc_value); _DBG_("");
 
-		for(tmp = 0; tmp < 1000000; tmp++);
-	    if(_DG_NONBLOCK(&quit) &&
-			(quit == 'Q' || quit == 'q'))
-			break;
-	}
+        for(tmp = 0; tmp < 1000000; tmp++);
+        if(_DG_NONBLOCK(&quit) &&
+            (quit == 'Q' || quit == 'q'))
+            break;
+    }
     _DBG_("Demo termination!!!");
 
-	ADC_DeInit(LPC_ADC);
+    ADC_DeInit(LPC_ADC);
 }
 
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 /**

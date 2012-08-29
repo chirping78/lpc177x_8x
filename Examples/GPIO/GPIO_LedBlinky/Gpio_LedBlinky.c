@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		Gpio_LedBlinky.c		2011-06-02
+* $Id$      Gpio_LedBlinky.c        2011-06-02
 *//**
-* @file		Gpio_LedBlinky.c
-* @brief	This example describes how to use GPIO interrupt to drive
-* 			LEDs
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Gpio_LedBlinky.c
+* @brief    This example describes how to use GPIO interrupt to drive
+*           LEDs
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -34,7 +34,7 @@
 #include "bsp.h"
 
 
-/** @defgroup GPIO_LedBlinky	GPIO Blinky
+/** @defgroup GPIO_LedBlinky    GPIO Blinky
  * @ingroup GPIO_Examples
  * @{
  */
@@ -52,55 +52,55 @@ void Delay (unsigned long tick);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
- * @brief		SysTick handler sub-routine (1ms)
- * @param[in]	None
- * @return 		None
+ * @brief       SysTick handler sub-routine (1ms)
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void SysTick_Handler (void)
 {
-	SysTickCnt++;
+    SysTickCnt++;
 }
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Delay function
- * @param[in]	tick - number milisecond of delay time
- * @return 		None
+ * @brief       Delay function
+ * @param[in]   tick - number milisecond of delay time
+ * @return      None
  **********************************************************************/
 void Delay (unsigned long tick)
 {
-	unsigned long systickcnt;
+    unsigned long systickcnt;
 
-	systickcnt = SysTickCnt;
-	while ((SysTickCnt - systickcnt) < tick);
+    systickcnt = SysTickCnt;
+    while ((SysTickCnt - systickcnt) < tick);
 }
 
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry (void)
 {
-	uint8_t value = 0;
-	uint32_t cclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_CPU);
+    uint8_t value = 0;
+    uint32_t cclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_CPU);
 
-	/* Generate interrupt each 1 ms   */
-	SysTick_Config(cclk/1000 - 1);
+    /* Generate interrupt each 1 ms   */
+    SysTick_Config(cclk/1000 - 1);
 
-	GPIO_Init();
+    GPIO_Init();
 
-	GPIO_SetDir(BRD_LED_1_CONNECTED_PORT, BRD_LED_1_CONNECTED_MASK, GPIO_DIRECTION_OUTPUT);
+    GPIO_SetDir(BRD_LED_1_CONNECTED_PORT, BRD_LED_1_CONNECTED_MASK, GPIO_DIRECTION_OUTPUT);
 
-	while (1)
-	{
-		GPIO_OutputValue(BRD_LED_1_CONNECTED_PORT, BRD_LED_1_CONNECTED_MASK, value);
+    while (1)
+    {
+        GPIO_OutputValue(BRD_LED_1_CONNECTED_PORT, BRD_LED_1_CONNECTED_MASK, value);
 
-		value = !value;
-		Delay(500);
-	}
+        value = !value;
+        Delay(500);
+    }
 
 }
 
@@ -112,8 +112,8 @@ void c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 /*

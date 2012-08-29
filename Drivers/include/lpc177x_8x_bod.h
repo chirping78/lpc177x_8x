@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		lpc177x_8x_bod.h			2011-12-09
+* $Id$      lpc177x_8x_bod.h            2011-12-09
 *//**
-* @file		lpc177x_8x_bod.h
-* @brief	Contain definitions & functions related to BOD.
-* @version	1.0
-* @date		09 December. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_bod.h
+* @brief    Contain definitions & functions related to BOD.
+* @version  1.0
+* @date     09 December. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -44,15 +44,15 @@
 /**********************************************************************
 ** Power Mode Control register definitions
 **********************************************************************/
-#define BOD_PCON_BODRPM	   (0x01 << 2)
-#define BOD_PCON_BOGD	   (0x01 << 3)
-#define BOD_PCON_BORD	   (0x01 << 4)
+#define BOD_PCON_BODRPM    (0x01 << 2)
+#define BOD_PCON_BOGD      (0x01 << 3)
+#define BOD_PCON_BORD      (0x01 << 4)
 
 /**********************************************************************
 ** Reset Source Identification Register definitions
 **********************************************************************/
 #define BOD_RSID_POR              (0x01 << 0)
-#define BOD_RSID_BODR	   (0x01 << 3)
+#define BOD_RSID_BODR      (0x01 << 3)
 
 /**
  * @}
@@ -68,10 +68,10 @@
 
 typedef struct 
 {
-	uint8_t Enabled;			/**< Enable BOD Circuit */
-	uint8_t PowerReduced;		/**< if ENABLE, BOD will be turned off in Power-down mode or Deep Sleep mode */
-	                            /**< So, BOD can't be used to wake-up from these mode. */
-	uint8_t ResetOnVoltageDown;		/**< if ENABLE, reset the device when the VDD(REG)(3V3) voltage < the BOD reset trip level */
+    uint8_t Enabled;            /**< Enable BOD Circuit */
+    uint8_t PowerReduced;       /**< if ENABLE, BOD will be turned off in Power-down mode or Deep Sleep mode */
+                                /**< So, BOD can't be used to wake-up from these mode. */
+    uint8_t ResetOnVoltageDown;     /**< if ENABLE, reset the device when the VDD(REG)(3V3) voltage < the BOD reset trip level */
 }BOD_Config_Type;
 
 /**

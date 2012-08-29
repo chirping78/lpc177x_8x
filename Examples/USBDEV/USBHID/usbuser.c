@@ -192,7 +192,7 @@ void USB_EndPoint1 (uint32_t event) {
       GetInReport();
       USB_WriteEP(HID_EP_IN, &InReport, sizeof(InReport));
       break;
-  }	
+  } 
 }
 
 

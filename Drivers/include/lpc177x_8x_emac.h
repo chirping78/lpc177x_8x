@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		lpc177x_8x_emac.h			2011-06-02
+* $Id$      lpc177x_8x_emac.h           2011-06-02
 *//**
-* @file		lpc177x_8x_emac.h
-* @brief	Contains all macro definitions and function prototypes
-*			support for Ethernet MAC firmware library on LPC177x_8x
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_emac.h
+* @brief    Contains all macro definitions and function prototypes
+*           support for Ethernet MAC firmware library on LPC177x_8x
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -31,7 +31,7 @@
 **********************************************************************/
 
 /* Peripheral group ----------------------------------------------------------- */
-/** @defgroup EMAC	EMAC (Ethernet Media Access Controller)
+/** @defgroup EMAC  EMAC (Ethernet Media Access Controller)
  * @ingroup LPC177x_8xCMSIS_FwLib_Drivers
  * @{
  */
@@ -54,7 +54,7 @@ extern "C"
 
 /* Ethernet MAC register definitions --------------------------------------------------------------------- */
 /* MAC Configuration Register 1 */
-#define EMAC_MAC1_MASK		0xcf1f		/*MAC1 register mask*/
+#define EMAC_MAC1_MASK      0xcf1f      /*MAC1 register mask*/
 #define EMAC_MAC1_REC_EN         0x00000001  /**< Receive Enable                    */
 #define EMAC_MAC1_PASS_ALL       0x00000002  /**< Pass All Receive Frames           */
 #define EMAC_MAC1_RX_FLOWC       0x00000004  /**< RX Flow Control                   */
@@ -68,7 +68,7 @@ extern "C"
 #define EMAC_MAC1_SOFT_RES       0x00008000  /**< Soft Reset MAC                    */
 
 /* MAC Configuration Register 2 */
-#define EMAC_MAC2_MASK		0x73ff		/*MAC2 register mask*/
+#define EMAC_MAC2_MASK      0x73ff      /*MAC2 register mask*/
 #define EMAC_MAC2_FULL_DUP       0x00000001  /**< Full-Duplex Mode                  */
 #define EMAC_MAC2_FRM_LEN_CHK    0x00000002  /**< Frame Length Checking             */
 #define EMAC_MAC2_HUGE_FRM_EN    0x00000004  /**< Huge Frame Enable                 */
@@ -86,12 +86,12 @@ extern "C"
 /* Back-to-Back Inter-Packet-Gap Register */
 /** Programmable field representing the nibble time offset of the minimum possible period
  * between the end of any transmitted packet to the beginning of the next */
-#define EMAC_IPGT_BBIPG(n)		(n&0x7F)
+#define EMAC_IPGT_BBIPG(n)      (n&0x7F)
 
 /** Recommended value for Full Duplex of Programmable field representing the nibble time
  * offset of the minimum possible period between the end of any transmitted packet to the
  * beginning of the next */
-#define EMAC_IPGT_FULL_DUP		(EMAC_IPGT_BBIPG(0x15))
+#define EMAC_IPGT_FULL_DUP      (EMAC_IPGT_BBIPG(0x15))
 
 /** Recommended value for Half Duplex of Programmable field representing the nibble time
  * offset of the minimum possible period between the end of any transmitted packet to the
@@ -100,14 +100,14 @@ extern "C"
 
 /* Non Back-to-Back Inter-Packet-Gap Register */
 /** Programmable field representing the Non-Back-to-Back Inter-Packet-Gap */
-#define EMAC_IPGR_NBBIPG_P2(n)	(n&0x7F)
+#define EMAC_IPGR_NBBIPG_P2(n)  (n&0x7F)
 
 /** Recommended value for Programmable field representing the Non-Back-to-Back Inter-Packet-Gap Part 1 */
-#define EMAC_IPGR_P2_DEF		(EMAC_IPGR_NBBIPG_P2(0x12))
+#define EMAC_IPGR_P2_DEF        (EMAC_IPGR_NBBIPG_P2(0x12))
 
 /** Programmable field representing the optional carrierSense window referenced in
  * IEEE 802.3/4.2.3.2.1 'Carrier Deference' */
-#define EMAC_IPGR_NBBIPG_P1(n)	((n&0x7F)<<8)
+#define EMAC_IPGR_NBBIPG_P1(n)  ((n&0x7F)<<8)
 
 /** Recommended value for Programmable field representing the Non-Back-to-Back Inter-Packet-Gap Part 2 */
 #define EMAC_IPGR_P1_DEF        EMAC_IPGR_NBBIPG_P1(0x0C)
@@ -115,58 +115,58 @@ extern "C"
 /* Collision Window/Retry Register */
 /** Programmable field specifying the number of retransmission attempts following a collision before
  * aborting the packet due to excessive collisions */
-#define EMAC_CLRT_MAX_RETX(n)	(n&0x0F)
+#define EMAC_CLRT_MAX_RETX(n)   (n&0x0F)
 
 /** Programmable field representing the slot time or collision window during which collisions occur
  * in properly configured networks */
-#define EMAC_CLRT_COLL(n)		((n&0x3F)<<8)
+#define EMAC_CLRT_COLL(n)       ((n&0x3F)<<8)
 
 /** Default value for Collision Window / Retry register */
 #define EMAC_CLRT_DEF           ((EMAC_CLRT_MAX_RETX(0x0F))|(EMAC_CLRT_COLL(0x37)))
 
 /* Maximum Frame Register */
 /** Represents a maximum receive frame of 1536 octets */
-#define EMAC_MAXF_MAXFRMLEN(n)	(n&0xFFFF)
-#define EMAC_MAXF_MAXFRMLEN_DEF	(0x6000)
+#define EMAC_MAXF_MAXFRMLEN(n)  (n&0xFFFF)
+#define EMAC_MAXF_MAXFRMLEN_DEF (0x6000)
 
 /* PHY Support Register */
-#define EMAC_SUPP_SPEED			0x00000100  	/**< Reduced MII Logic Current Speed   */
-//#define EMAC_SUPP_RES_RMII      0x00000800  	/**< Reset Reduced MII Logic           */
+#define EMAC_SUPP_SPEED         0x00000100      /**< Reduced MII Logic Current Speed   */
+//#define EMAC_SUPP_RES_RMII      0x00000800    /**< Reset Reduced MII Logic           */
 
 /* Test Register */
-#define EMAC_TEST_SHCUT_PQUANTA  0x00000001  	/**< Shortcut Pause Quanta             */
-#define EMAC_TEST_TST_PAUSE      0x00000002  	/**< Test Pause                        */
-#define EMAC_TEST_TST_BACKP      0x00000004  	/**< Test Back Pressure                */
+#define EMAC_TEST_SHCUT_PQUANTA  0x00000001     /**< Shortcut Pause Quanta             */
+#define EMAC_TEST_TST_PAUSE      0x00000002     /**< Test Pause                        */
+#define EMAC_TEST_TST_BACKP      0x00000004     /**< Test Back Pressure                */
 
 /* MII Management Configuration Register */
-#define EMAC_MCFG_SCAN_INC       0x00000001  	/**< Scan Increment PHY Address        */
-#define EMAC_MCFG_SUPP_PREAM     0x00000002  	/**< Suppress Preamble                 */
+#define EMAC_MCFG_SCAN_INC       0x00000001     /**< Scan Increment PHY Address        */
+#define EMAC_MCFG_SUPP_PREAM     0x00000002     /**< Suppress Preamble                 */
 #define EMAC_MCFG_CLK_SEL(n)     ((n&0x0F)<<2)  /**< Clock Select Field                 */
-#define EMAC_MCFG_RES_MII        0x00008000  	/**< Reset MII Management Hardware     */
-#define EMAC_MCFG_MII_MAXCLK	 2500000UL		/**< MII Clock max */
+#define EMAC_MCFG_RES_MII        0x00008000     /**< Reset MII Management Hardware     */
+#define EMAC_MCFG_MII_MAXCLK     2500000UL      /**< MII Clock max */
 
 /* MII Management Command Register */
-#define EMAC_MCMD_READ           0x00000001  	/**< MII Read                          */
-#define EMAC_MCMD_SCAN           0x00000002  	/**< MII Scan continuously             */
+#define EMAC_MCMD_READ           0x00000001     /**< MII Read                          */
+#define EMAC_MCMD_SCAN           0x00000002     /**< MII Scan continuously             */
 
-#define EMAC_MII_WR_TOUT         0x00050000  	/**< MII Write timeout count           */
-#define EMAC_MII_RD_TOUT         0x00050000  	/**< MII Read timeout count            */
+#define EMAC_MII_WR_TOUT         0x00050000     /**< MII Write timeout count           */
+#define EMAC_MII_RD_TOUT         0x00050000     /**< MII Read timeout count            */
 
 /* MII Management Address Register */
-#define EMAC_MADR_REG_ADR(n)     (n&0x1F)  		/**< MII Register Address field         */
+#define EMAC_MADR_REG_ADR(n)     (n&0x1F)       /**< MII Register Address field         */
 #define EMAC_MADR_PHY_ADR(n)     ((n&0x1F)<<8)  /**< PHY Address Field                  */
 
 /* MII Management Write Data Register */
-#define EMAC_MWTD_DATA(n)		(n&0xFFFF)		/**< Data field for MMI Management Write Data register */
+#define EMAC_MWTD_DATA(n)       (n&0xFFFF)      /**< Data field for MMI Management Write Data register */
 
 /* MII Management Read Data Register */
-#define EMAC_MRDD_DATA(n)		(n&0xFFFF)		/**< Data field for MMI Management Read Data register */
+#define EMAC_MRDD_DATA(n)       (n&0xFFFF)      /**< Data field for MMI Management Read Data register */
 
 /* MII Management Indicators Register */
-#define EMAC_MIND_BUSY           0x00000001  	/**< MII is Busy                       */
-#define EMAC_MIND_SCAN           0x00000002  	/**< MII Scanning in Progress          */
-#define EMAC_MIND_NOT_VAL        0x00000004  	/**< MII Read Data not valid           */
-#define EMAC_MIND_MII_LINK_FAIL  0x00000008  	/**< MII Link Failed                   */
+#define EMAC_MIND_BUSY           0x00000001     /**< MII is Busy                       */
+#define EMAC_MIND_SCAN           0x00000002     /**< MII Scanning in Progress          */
+#define EMAC_MIND_NOT_VAL        0x00000004     /**< MII Read Data not valid           */
+#define EMAC_MIND_MII_LINK_FAIL  0x00000008     /**< MII Link Failed                   */
 
 /* Station Address 0 Register */
 /* Station Address 1 Register */
@@ -175,20 +175,20 @@ extern "C"
 
 /* Control register definitions --------------------------------------------------------------------------- */
 /* Command Register */
-#define EMAC_CR_RX_EN            0x00000001  	/**< Enable Receive                    */
-#define EMAC_CR_TX_EN            0x00000002  	/**< Enable Transmit                   */
-#define EMAC_CR_REG_RES          0x00000008  	/**< Reset Host Registers              */
-#define EMAC_CR_TX_RES           0x00000010  	/**< Reset Transmit Datapath           */
-#define EMAC_CR_RX_RES           0x00000020  	/**< Reset Receive Datapath            */
-#define EMAC_CR_PASS_RUNT_FRM    0x00000040  	/**< Pass Runt Frames                  */
-#define EMAC_CR_PASS_RX_FILT     0x00000080  	/**< Pass RX Filter                    */
-#define EMAC_CR_TX_FLOW_CTRL     0x00000100  	/**< TX Flow Control                   */
-#define EMAC_CR_RMII             0x00000200  	/**< Reduced MII Interface             */
-#define EMAC_CR_FULL_DUP         0x00000400  	/**< Full Duplex                       */
+#define EMAC_CR_RX_EN            0x00000001     /**< Enable Receive                    */
+#define EMAC_CR_TX_EN            0x00000002     /**< Enable Transmit                   */
+#define EMAC_CR_REG_RES          0x00000008     /**< Reset Host Registers              */
+#define EMAC_CR_TX_RES           0x00000010     /**< Reset Transmit Datapath           */
+#define EMAC_CR_RX_RES           0x00000020     /**< Reset Receive Datapath            */
+#define EMAC_CR_PASS_RUNT_FRM    0x00000040     /**< Pass Runt Frames                  */
+#define EMAC_CR_PASS_RX_FILT     0x00000080     /**< Pass RX Filter                    */
+#define EMAC_CR_TX_FLOW_CTRL     0x00000100     /**< TX Flow Control                   */
+#define EMAC_CR_RMII             0x00000200     /**< Reduced MII Interface             */
+#define EMAC_CR_FULL_DUP         0x00000400     /**< Full Duplex                       */
 
 /* Status Register */
-#define EMAC_SR_RX_EN            0x00000001  	/**< Enable Receive                    */
-#define EMAC_SR_TX_EN            0x00000002  	/**< Enable Transmit                   */
+#define EMAC_SR_RX_EN            0x00000001     /**< Enable Receive                    */
+#define EMAC_SR_TX_EN            0x00000002     /**< Enable Transmit                   */
 
 /* Receive Descriptor Base Address Register */
 //
@@ -262,11 +262,11 @@ extern "C"
 #define EMAC_RSV_VLAN            0x40000000  /**< VLAN Frame                        */
 
 /* Flow Control Counter Register */
-#define EMAC_FCC_MIRR_CNT(n)        	(n&0xFFFF)  		/**< Mirror Counter                    */
-#define EMAC_FCC_PAUSE_TIM(n)       	((n&0xFFFF)<<16)  	/**< Pause Timer                       */
+#define EMAC_FCC_MIRR_CNT(n)            (n&0xFFFF)          /**< Mirror Counter                    */
+#define EMAC_FCC_PAUSE_TIM(n)           ((n&0xFFFF)<<16)    /**< Pause Timer                       */
 
 /* Flow Control Status Register */
-#define EMAC_FCS_MIRR_CNT(n)        	(n&0xFFFF)  		/**< Mirror Counter Current            */
+#define EMAC_FCS_MIRR_CNT(n)            (n&0xFFFF)          /**< Mirror Counter Current            */
 
 
 /* Receive filter register definitions -------------------------------------------------------- */
@@ -289,7 +289,7 @@ extern "C"
 #define EMAC_WOL_PERFECT         0x00000020  /**< Perfect Filter WoL                */
 #define EMAC_WOL_RX_FILTER       0x00000080  /**< RX Filter caused WoL              */
 #define EMAC_WOL_MAG_PACKET      0x00000100  /**< Magic Packet Filter caused WoL    */
-#define EMAC_WOL_BITMASK		 0x01BF		/**< Receive Filter WoL Status/Clear bitmasl value */
+#define EMAC_WOL_BITMASK         0x01BF     /**< Receive Filter WoL Status/Clear bitmasl value */
 
 /* Hash Filter Table LSBs Register */
 //
@@ -363,12 +363,12 @@ extern "C"
 #define TX_BUF(i)           (TX_BUF_BASE + EMAC_ETH_MAX_FLEN*i)
 
 /* RX Descriptor Control Word */
-#define EMAC_RCTRL_SIZE(n)       (n&0x7FF)  	/**< Buffer size field                  */
-#define EMAC_RCTRL_INT           0x80000000  	/**< Generate RxDone Interrupt         */
+#define EMAC_RCTRL_SIZE(n)       (n&0x7FF)      /**< Buffer size field                  */
+#define EMAC_RCTRL_INT           0x80000000     /**< Generate RxDone Interrupt         */
 
 /* RX Status Hash CRC Word */
-#define EMAC_RHASH_SA            0x000001FF  	/**< Hash CRC for Source Address       */
-#define EMAC_RHASH_DA            0x001FF000  	/**< Hash CRC for Destination Address  */
+#define EMAC_RHASH_SA            0x000001FF     /**< Hash CRC for Source Address       */
+#define EMAC_RHASH_DA            0x001FF000     /**< Hash CRC for Destination Address  */
 
 /* RX Status Information Word */
 #define EMAC_RINFO_SIZE          0x000007FF  /**< Data size in bytes                */
@@ -389,7 +389,7 @@ extern "C"
 
 /** RX Status Information word mask */
 #define EMAC_RINFO_ERR_MASK     (EMAC_RINFO_FAIL_FILT | EMAC_RINFO_CRC_ERR   | EMAC_RINFO_SYM_ERR | \
-									EMAC_RINFO_LEN_ERR   | EMAC_RINFO_ALIGN_ERR | EMAC_RINFO_OVERRUN)
+                                    EMAC_RINFO_LEN_ERR   | EMAC_RINFO_ALIGN_ERR | EMAC_RINFO_OVERRUN)
 
 /* TX Descriptor Control Word */
 #define EMAC_TCTRL_SIZE          0x000007FF  /**< Size of data buffer in bytes      */
@@ -414,60 +414,60 @@ extern "C"
 /* DP83848C PHY definition ------------------------------------------------------------ */
 
 /** PHY device reset time out definition */
-#define EMAC_PHY_RESP_TOUT		0x100000UL
+#define EMAC_PHY_RESP_TOUT      0x100000UL
 
 /* ENET Device Revision ID */
 #define EMAC_OLD_EMAC_MODULE_ID  0x39022000  /**< Rev. ID for first rev '-'         */
 
 
 /* PHY Basic Mode Control Register (BMCR) bitmap definitions */
-#define EMAC_PHY_BMCR_LOOPBACK      		(1<<14)		/**< Loop back */
-//#define EMAC_PHY_BMCR_AN					(1<<12)		/**< Auto Negotiation */
+#define EMAC_PHY_BMCR_LOOPBACK              (1<<14)     /**< Loop back */
+//#define EMAC_PHY_BMCR_AN                  (1<<12)     /**< Auto Negotiation */
 
-#define EMAC_PHY_BMCR_ISOLATE				(1<<10)		/**< Isolate */
-#define EMAC_PHY_BMCR_RE_AN					(1<<9)		/**< Restart auto negotiation */
+#define EMAC_PHY_BMCR_ISOLATE               (1<<10)     /**< Isolate */
+#define EMAC_PHY_BMCR_RE_AN                 (1<<9)      /**< Restart auto negotiation */
 
-#define EMAC_PHY_BMSR_NOPREAM				(1<<6)		/**< MF Preamable Supress */
-#define EMAC_PHY_BMSR_AUTO_DONE				(1<<5)		/**< Auto negotiation complete */
+#define EMAC_PHY_BMSR_NOPREAM               (1<<6)      /**< MF Preamable Supress */
+#define EMAC_PHY_BMSR_AUTO_DONE             (1<<5)      /**< Auto negotiation complete */
 
 
-#define EMAC_PHY_FULLD_100M      (EMAC_PHY_BMCR_SPEED_SEL | EMAC_PHY_BMCR_DUPLEX)			// Full Duplex 100Mbit
-#define EMAC_PHY_HALFD_100M      (EMAC_PHY_BMCR_SPEED_SEL | (~ EMAC_PHY_BMCR_DUPLEX))		// Half Duplex 100Mbit
-#define EMAC_PHY_FULLD_10M       ((~ EMAC_PHY_BMCR_SPEED_SEL) | EMAC_PHY_BMCR_DUPLEX)		// Full Duplex 10Mbit
-#define EMAC_PHY_HALFD_10M       ((~ EMAC_PHY_BMCR_SPEED_SEL) | (~EMAC_PHY_BMCR_DUPLEX))	// Half Duplex 10MBit
-#define EMAC_PHY_AUTO_NEG        (EMAC_PHY_BMCR_SPEED_SEL | EMAC_PHY_BMCR_AN)				// Select Auto Negotiation
+#define EMAC_PHY_FULLD_100M      (EMAC_PHY_BMCR_SPEED_SEL | EMAC_PHY_BMCR_DUPLEX)           // Full Duplex 100Mbit
+#define EMAC_PHY_HALFD_100M      (EMAC_PHY_BMCR_SPEED_SEL | (~ EMAC_PHY_BMCR_DUPLEX))       // Half Duplex 100Mbit
+#define EMAC_PHY_FULLD_10M       ((~ EMAC_PHY_BMCR_SPEED_SEL) | EMAC_PHY_BMCR_DUPLEX)       // Full Duplex 10Mbit
+#define EMAC_PHY_HALFD_10M       ((~ EMAC_PHY_BMCR_SPEED_SEL) | (~EMAC_PHY_BMCR_DUPLEX))    // Half Duplex 10MBit
+#define EMAC_PHY_AUTO_NEG        (EMAC_PHY_BMCR_SPEED_SEL | EMAC_PHY_BMCR_AN)               // Select Auto Negotiation
 
 
 
 /* EMAC PHY status type definitions */
-#define EMAC_PHY_STAT_LINK			(0)		/**< Link Status */
-#define EMAC_PHY_STAT_SPEED			(1)		/**< Speed Status */
-#define EMAC_PHY_STAT_DUP			(2)		/**< Duplex Status */
+#define EMAC_PHY_STAT_LINK          (0)     /**< Link Status */
+#define EMAC_PHY_STAT_SPEED         (1)     /**< Speed Status */
+#define EMAC_PHY_STAT_DUP           (2)     /**< Duplex Status */
 
 /* EMAC PHY device Speed definitions */
-#define EMAC_MODE_AUTO				(0)		/**< Auto-negotiation mode */
-#define EMAC_MODE_10M_FULL			(1)		/**< 10Mbps FullDuplex mode */
-#define EMAC_MODE_10M_HALF			(2)		/**< 10Mbps HalfDuplex mode */
-#define EMAC_MODE_100M_FULL			(3)		/**< 100Mbps FullDuplex mode */
-#define EMAC_MODE_100M_HALF			(4)		/**< 100Mbps HalfDuplex mode */
+#define EMAC_MODE_AUTO              (0)     /**< Auto-negotiation mode */
+#define EMAC_MODE_10M_FULL          (1)     /**< 10Mbps FullDuplex mode */
+#define EMAC_MODE_10M_HALF          (2)     /**< 10Mbps HalfDuplex mode */
+#define EMAC_MODE_100M_FULL         (3)     /**< 100Mbps FullDuplex mode */
+#define EMAC_MODE_100M_HALF         (4)     /**< 100Mbps HalfDuplex mode */
 
 /* EMAC User Buffers*/
 #define EMAC_MAX_FRAME_SIZE          (0x600)  /* 1536 */
 #define EMAC_MAX_FRAME_NUM           (2)
 
 /* EMAC Error Codes */
-#define EMAC_ALIGN_ERR				( 1 << 0)
-#define EMAC_RANGE_ERR				( 1 << 1)
-#define EMAC_LENGTH_ERR				( 1 << 2)
-#define EMAC_SYMBOL_ERR				( 1 << 3)
-#define EMAC_CRC_ERR				( 1 << 4)
-#define EMAC_RX_NO_DESC_ERR			( 1 << 5)
-#define EMAC_OVERRUN_ERR			( 1 << 6)
-#define EMAC_LATE_COLLISION_ERR		( 1 << 7)
+#define EMAC_ALIGN_ERR              ( 1 << 0)
+#define EMAC_RANGE_ERR              ( 1 << 1)
+#define EMAC_LENGTH_ERR             ( 1 << 2)
+#define EMAC_SYMBOL_ERR             ( 1 << 3)
+#define EMAC_CRC_ERR                ( 1 << 4)
+#define EMAC_RX_NO_DESC_ERR         ( 1 << 5)
+#define EMAC_OVERRUN_ERR            ( 1 << 6)
+#define EMAC_LATE_COLLISION_ERR     ( 1 << 7)
 #define EMAC_EXCESSIVE_COLLISION_ERR ( 1 << 8)
 #define EMAC_EXCESSIVE_DEFER_ERR     ( 1 << 9)
-#define EMAC_UNDERRUN_ERR			( 1 << 10)
-#define EMAC_TX_NO_DESC_ERR			( 1 << 11)
+#define EMAC_UNDERRUN_ERR           ( 1 << 10)
+#define EMAC_TX_NO_DESC_ERR         ( 1 << 11)
 #define EMAC_FILTER_FAILED_ERR      ( 1 << 12)
 
 
@@ -486,21 +486,21 @@ extern "C"
  * @brief TX Data Buffer structure definition
  */
 typedef struct {
-	uint32_t ulDataLen;			/**< Data length */
-	uint32_t *pbDataBuf;		/**< A word-align data pointer to data buffer */
+    uint32_t ulDataLen;         /**< Data length */
+    uint32_t *pbDataBuf;        /**< A word-align data pointer to data buffer */
 } EMAC_PACKETBUF_Type;
 
 /**
  * @brief PHY Configuration structure definition
  */
 typedef struct {
-   uint32_t	Mode;						/**< Supported EMAC PHY device speed, should be one of the following:
-											- EMAC_MODE_AUTO
-											- EMAC_MODE_10M_FULL
-											- EMAC_MODE_10M_HALF
-											- EMAC_MODE_100M_FULL
-											- EMAC_MODE_100M_HALF
-											*/
+   uint32_t Mode;                       /**< Supported EMAC PHY device speed, should be one of the following:
+                                            - EMAC_MODE_AUTO
+                                            - EMAC_MODE_10M_FULL
+                                            - EMAC_MODE_10M_HALF
+                                            - EMAC_MODE_100M_FULL
+                                            - EMAC_MODE_100M_HALF
+                                            */
 } EMAC_PHY_CFG_Type;
 
 
@@ -518,32 +518,32 @@ typedef void (SOFT_INT_FUNC)(void);
  */
 typedef struct {
     EMAC_PHY_CFG_Type PhyCfg;               /* PHY Configuration */
-    uint8_t           bPhyAddr;                    /* 5-bit PHY Address field */	
-    uint8_t 	*pbEMAC_Addr;				/**< Pointer to EMAC Station address that contains 6-bytes
-											of MAC address, it must be sorted in order (bEMAC_Addr[0]..[5])
-											*/
+    uint8_t           bPhyAddr;                    /* 5-bit PHY Address field */    
+    uint8_t     *pbEMAC_Addr;               /**< Pointer to EMAC Station address that contains 6-bytes
+                                            of MAC address, it must be sorted in order (bEMAC_Addr[0]..[5])
+                                            */
     uint16_t     nMaxFrameSize;              /* maximum frame length */
     PHY_INIT_FUNC *pfnPHYInit;               /* point to the funtion which will be called to initialize PHY */
     PHY_RESET_FUNC *pfnPHYReset;             /* point to the function which will be called to reset PHY */
     EMAC_FRAME_RECV_FUNC *pfnFrameReceive;     /* point to the function which will be called when a frame is received*/
     EMAC_TRANSMIT_FINISH_FUNC* pfnTransmitFinish;  /*point to the function which will be called when transmit finished*/
     EMAC_ERR_RECV_FUNC    *pfnErrorReceive;     /* point to an array of functions which will be called error occur. */
-	                                           /* Errors:
-											                     EMAC_ALIGN_ERR 
-														EMAC_RANGE_ERR
-														EMAC_LENGTH_ERR
-														EMAC_SYMBOL_ERR 
-														EMAC_CRC_ERR
-														EMAC_RX_NO_DESC_ERR
-														EMAC_OVERRUN_ERR
-														EMAC_LATE_COLLISION_ERR
-														EMAC_EXCESSIVE_COLLISION_ERR
-														EMAC_EXCESSIVE_DEFER_ERR
-														EMAC_UNDERRUN_ERR
-														EMAC_TX_NO_DESC_ERR
-											      */
+                                               /* Errors:
+                                                                 EMAC_ALIGN_ERR 
+                                                        EMAC_RANGE_ERR
+                                                        EMAC_LENGTH_ERR
+                                                        EMAC_SYMBOL_ERR 
+                                                        EMAC_CRC_ERR
+                                                        EMAC_RX_NO_DESC_ERR
+                                                        EMAC_OVERRUN_ERR
+                                                        EMAC_LATE_COLLISION_ERR
+                                                        EMAC_EXCESSIVE_COLLISION_ERR
+                                                        EMAC_EXCESSIVE_DEFER_ERR
+                                                        EMAC_UNDERRUN_ERR
+                                                        EMAC_TX_NO_DESC_ERR
+                                                  */
     EMAC_WAKEUP_FUNC *pfnWakeup;               /* point to the function which will be called when receiving wakeup interrupt */
-    SOFT_INT_FUNC *pfnSoftInt;				  /* point to the function which will be called when the interrupt caused by software occurs */					   
+    SOFT_INT_FUNC *pfnSoftInt;                /* point to the function which will be called when the interrupt caused by software occurs */                    
 } EMAC_CFG_Type;
 
 /**
@@ -560,7 +560,7 @@ typedef enum {
  */
 
 typedef enum {
-	EMAC_TX_BUFF,                   /* transmit buffer */
+    EMAC_TX_BUFF,                   /* transmit buffer */
     EMAC_RX_BUFF,                   /* receive buffer */
 } EMAC_BUFF_IDX;
 

@@ -348,7 +348,7 @@ __inline uint32_t USB_ReqGetDescriptor (void) {
             return (FALSE);
           }
           EP0Data.pData = pD;
-		  len = ((USB_STRING_DESCRIPTOR *)EP0Data.pData)->bLength;
+          len = ((USB_STRING_DESCRIPTOR *)EP0Data.pData)->bLength;
           break;
         default:
           return (FALSE);
@@ -769,7 +769,7 @@ void USB_EndPoint0 (uint32_t event) {
               if (SetupPacket.wIndex.WB.L == USB_MSC_IF_NUM) {           /* IF number correct? */
                 switch (SetupPacket.bRequest) {
                   case MSC_REQUEST_RESET:
-                    if ((SetupPacket.wValue.W == 0) &&	                 /* RESET with invalid parameters -> STALL */
+                    if ((SetupPacket.wValue.W == 0) &&                   /* RESET with invalid parameters -> STALL */
                         (SetupPacket.wLength  == 0)) {
                       if (MSC_Reset()) {
                         USB_StatusInStage();
@@ -778,7 +778,7 @@ void USB_EndPoint0 (uint32_t event) {
                     }
                     break;
                   case MSC_REQUEST_GET_MAX_LUN:
-                    if ((SetupPacket.wValue.W == 0) &&	                 /* GET_MAX_LUN with invalid parameters -> STALL */
+                    if ((SetupPacket.wValue.W == 0) &&                   /* GET_MAX_LUN with invalid parameters -> STALL */
                         (SetupPacket.wLength  == 1)) { 
                       if (MSC_GetMaxLUN()) {
                         EP0Data.pData = EP0Buf;

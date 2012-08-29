@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		lpc177x_8x_bod.c			2011-12-09
+* $Id$      lpc177x_8x_bod.c            2011-12-09
 *//**
-* @file		lpc177x_8x_bod.c
-* @brief	This is an example for how to use BOD.
-* @version	1.0
-* @date		09 December. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_bod.c
+* @brief    This is an example for how to use BOD.
+* @version  1.0
+* @date     09 December. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -36,22 +36,22 @@
 #include "bsp.h"
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup BOD_Demo		BOD Demotrastion
+/** @defgroup BOD_Demo      BOD Demotrastion
  * @ingroup BOD_Examples
  * @{
  */
-#define INT_LED_PORT	(BRD_LED_1_CONNECTED_PORT)
-#define INT_LED_BYTE	((uint32_t)BRD_LED_1_CONNECTED_PIN / 8)
-#define INT_LED_BIT	(1 << ((uint32_t)BRD_LED_1_CONNECTED_PIN % 8))
+#define INT_LED_PORT    (BRD_LED_1_CONNECTED_PORT)
+#define INT_LED_BYTE    ((uint32_t)BRD_LED_1_CONNECTED_PIN / 8)
+#define INT_LED_BIT (1 << ((uint32_t)BRD_LED_1_CONNECTED_PIN % 8))
 
-#define RESET_LED_PORT	(BRD_LED_2_CONNECTED_PORT)
-#define RESET_LED_BYTE	((uint32_t)BRD_LED_2_CONNECTED_PIN / 8)
-#define RESET_LED_BIT	(1 << ((uint32_t)BRD_LED_2_CONNECTED_PIN % 8))
+#define RESET_LED_PORT  (BRD_LED_2_CONNECTED_PORT)
+#define RESET_LED_BYTE  ((uint32_t)BRD_LED_2_CONNECTED_PIN / 8)
+#define RESET_LED_BIT   (1 << ((uint32_t)BRD_LED_2_CONNECTED_PIN % 8))
 
 /*********************************************************************//**
- * @brief		Delay function
- * @param[in]	None
- * @return 		None
+ * @brief       Delay function
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void delay (uint32_t delayCnt)
 {
@@ -63,31 +63,31 @@ void delay (uint32_t delayCnt)
   }
 }
 /*********************************************************************//**
- * @brief		BOD interrupt handler sub-routine
- * @param[in]	None
- * @return 		None
+ * @brief       BOD interrupt handler sub-routine
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void BOD_IRQHandler (void) 
 {  
     uint8_t j;
     for(j=0; j<5;j++)
     {
-	FIO_ByteSetValue(INT_LED_PORT, INT_LED_BYTE, INT_LED_BIT);
-	delay(10000000);
+    FIO_ByteSetValue(INT_LED_PORT, INT_LED_BYTE, INT_LED_BIT);
+    delay(10000000);
 
-	FIO_ByteClearValue(INT_LED_PORT, INT_LED_BYTE, INT_LED_BIT);
-	delay(10000000);
+    FIO_ByteClearValue(INT_LED_PORT, INT_LED_BYTE, INT_LED_BIT);
+    delay(10000000);
     }
 }
 /*********************************************************************//**
- * @brief		Main entry
- * @param[in]	None
- * @return 		None
+ * @brief       Main entry
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 int main (void)
-{	    		
+{               
   BOD_Config_Type Config;
-	  
+      
   GPIO_Init();
   FIO_ByteSetDir(INT_LED_PORT, INT_LED_BYTE, INT_LED_BIT, GPIO_DIRECTION_OUTPUT);
   FIO_ByteSetDir(RESET_LED_PORT, RESET_LED_BYTE, RESET_LED_BIT, GPIO_DIRECTION_OUTPUT);
@@ -103,16 +103,16 @@ int main (void)
   
   if(BOD_ResetSourceStatus())
   {
-	BOD_ResetSourceClr();
-		
-	while(1)
-	{
-		FIO_ByteSetValue(RESET_LED_PORT, RESET_LED_BYTE, RESET_LED_BIT);
-		delay(10000000);
+    BOD_ResetSourceClr();
+        
+    while(1)
+    {
+        FIO_ByteSetValue(RESET_LED_PORT, RESET_LED_BYTE, RESET_LED_BIT);
+        delay(10000000);
 
-		FIO_ByteClearValue(RESET_LED_PORT, RESET_LED_BYTE, RESET_LED_BIT);
-		delay(10000000);
-	}
+        FIO_ByteClearValue(RESET_LED_PORT, RESET_LED_BYTE, RESET_LED_BIT);
+        delay(10000000);
+    }
      }
      else
      {

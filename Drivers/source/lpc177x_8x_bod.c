@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		lpc177x_8x_bod.c			2011-12-09
+* $Id$      lpc177x_8x_bod.c            2011-12-09
 *//**
-* @file		lpc177x_8x_bod.c
-* @brief	Contain functions related to BOD.
-* @version	1.0
-* @date		09 December. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_bod.c
+* @brief    Contain functions related to BOD.
+* @version  1.0
+* @date     09 December. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -38,7 +38,7 @@
 #include "lpc177x_8x_libcfg_default.h"
 #endif /* __BUILD_WITH_EXAMPLE__ */
 #ifdef _BOD
-#include "LPC177x_8x.h"			/* LPC177x_8x Peripheral Registers */
+#include "LPC177x_8x.h"         /* LPC177x_8x Peripheral Registers */
 #include "lpc177x_8x_bod.h"
 
 /* Public Functions ----------------------------------------------------------- */
@@ -46,17 +46,17 @@
  * @{
  */
 /*********************************************************************//**
- * @brief 		Initialize BOD control register
- * @param[in] 	pConfig    BOD Configuration
- * @return 		None
+ * @brief       Initialize BOD control register
+ * @param[in]   pConfig    BOD Configuration
+ * @return      None
  **********************************************************************/
 void BOD_Init( BOD_Config_Type* pConfig )
 {
   /* Turn on/off BOD. */
   if(pConfig->Enabled == DISABLE)
   {
-  	LPC_SC->PCON |= BOD_PCON_BOGD;
-  	return;
+    LPC_SC->PCON |= BOD_PCON_BOGD;
+    return;
   }
   LPC_SC->PCON &= ~BOD_PCON_BOGD;
 
@@ -88,20 +88,20 @@ void BOD_Init( BOD_Config_Type* pConfig )
 
 
 /*********************************************************************//**
- * @brief 		Get BOD reset source status
- * @param[in] 	None
- * @return 		TRUE/FALSE
+ * @brief       Get BOD reset source status
+ * @param[in]   None
+ * @return      TRUE/FALSE
  **********************************************************************/
 int32_t BOD_ResetSourceStatus( void )
 {
    if((LPC_SC->RSID & BOD_RSID_POR) == 1)
-   	return DISABLE;
+    return DISABLE;
    return ((LPC_SC->RSID & BOD_RSID_BODR)? ENABLE:DISABLE);
 }
 /*********************************************************************//**
- * @brief 		Clear BOD reset source bit
- * @param[in] 	None
- * @return 		None
+ * @brief       Clear BOD reset source bit
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void BOD_ResetSourceClr( void )
 {

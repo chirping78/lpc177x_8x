@@ -1446,7 +1446,7 @@ int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
                 break;
             }
         }
-        else	/* The command isn't accepted by the card.*/
+        else    /* The command isn't accepted by the card.*/
         {
             return retval;
         }

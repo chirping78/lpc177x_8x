@@ -1,13 +1,13 @@
 /**********************************************************************
-* $Id$		Pwr_Sleep.c		2011-06-02
+* $Id$      Pwr_Sleep.c     2011-06-02
 *//**
-* @file		Pwr_Sleep.c
-* @brief	This example describes how to enter the system in deep
-* 			sleep mode and wake-up by using Windowed Watchdog timer
-* 			interrupt
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Pwr_Sleep.c
+* @brief    This example describes how to enter the system in deep
+*           sleep mode and wake-up by using Windowed Watchdog timer
+*           interrupt
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -36,7 +36,7 @@
 #include "lpc177x_8x_wwdt.h"
 
 
-/** @defgroup PWR_Sleep	Pwr Mgr Sleep
+/** @defgroup PWR_Sleep Pwr Mgr Sleep
  * @ingroup PWR_Examples
  * @{
  */
@@ -54,7 +54,7 @@ uint8_t menu[]=
 " Watchdog timer interrupt \n\r"
 "********************************************************************************\n\r";
 //Watchodog time out in 2 seconds
-#define WWDT_TIMEOUT 	2000000
+#define WWDT_TIMEOUT    2000000
 
 /************************** PRIVATE FUNCTIONS *************************/
 void print_menu(void);
@@ -63,59 +63,59 @@ void WDT_IRQHandler(void);
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 void WDT_IRQHandler(void)
 {
-	// Disable WDT interrupt
-	NVIC_DisableIRQ(WDT_IRQn);
-	WWDT_ClrTimeOutFlag();
+    // Disable WDT interrupt
+    NVIC_DisableIRQ(WDT_IRQn);
+    WWDT_ClrTimeOutFlag();
 }
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print Welcome menu
- * @param[in]	none
- * @return 		None
+ * @brief       Print Welcome menu
+ * @param[in]   none
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG(menu);
+    _DBG(menu);
 }
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry (void)
 {
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 
-	// Init WDT, IRC OSC, interrupt mode, timeout = 2000000 us = 2s
-	WWDT_Init(WWDT_TIMEOUT);
+    // Init WDT, IRC OSC, interrupt mode, timeout = 2000000 us = 2s
+    WWDT_Init(WWDT_TIMEOUT);
 
-	_DBG_("Press '1' to enter system in Sleep mode");
-	while(_DG !='1');
+    _DBG_("Press '1' to enter system in Sleep mode");
+    while(_DG !='1');
 
-	NVIC_EnableIRQ(WDT_IRQn);
-	WWDT_Cmd(ENABLE);
-	WWDT_Start(WWDT_TIMEOUT);
+    NVIC_EnableIRQ(WDT_IRQn);
+    WWDT_Cmd(ENABLE);
+    WWDT_Start(WWDT_TIMEOUT);
 
-	_DBG_("Enter Sleep mode!");
-	_DBG_("Wait 2s for WDT wake-up system...");
+    _DBG_("Enter Sleep mode!");
+    _DBG_("Wait 2s for WDT wake-up system...");
 
-	// Enter target into sleep mode
-	CLKPWR_Sleep();
-	_DBG_("\n\rSystem wake-up!\n\r");
-	while(1);
+    // Enter target into sleep mode
+    CLKPWR_Sleep();
+    _DBG_("\n\rSystem wake-up!\n\r");
+    while(1);
 }
 
 
@@ -126,8 +126,8 @@ void c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

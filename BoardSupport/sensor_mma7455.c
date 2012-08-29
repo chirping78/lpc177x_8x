@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		Sensor_mma7455.c			2012-03-22
+* $Id$      Sensor_mma7455.c            2012-03-22
 *//**
-* @file		Sensor_mma7455.c
-* @brief	MMA7455 acceleration sensor driver (I2C data mode)
-* @version	1.0
-* @date		22. March. 2012
-* @author	NXP MCU SW Application Team
+* @file     Sensor_mma7455.c
+* @brief    MMA7455 acceleration sensor driver (I2C data mode)
+* @version  1.0
+* @date     22. March. 2012
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -44,37 +44,37 @@
 #endif
 
 /*********************************************************************//**
- * @brief 		Read/Write data to MMA7455
- * @param[in]	 txdata  point to buffer of data which will be sent.
+ * @brief       Read/Write data to MMA7455
+ * @param[in]    txdata  point to buffer of data which will be sent.
  * @param[in]   txlen     the length of transmit buffer
  * @param[in]  rxdata point to receive buffer
  * @param[in]  rxlen     the length of receive buffer
- * @return 		None
+ * @return      None
  **********************************************************************/
 MMA7455_Status_t MMA7455_ReadWrite(uint8_t* txdata, uint32_t txlen,
-	                                      uint8_t* rxdata, uint32_t rxlen)
+                                          uint8_t* rxdata, uint32_t rxlen)
 {
-	I2C_M_SETUP_Type i2cData;
-	
-	i2cData.sl_addr7bit = MMA7455_ADDR;
-	i2cData.tx_length = txlen;
+    I2C_M_SETUP_Type i2cData;
+    
+    i2cData.sl_addr7bit = MMA7455_ADDR;
+    i2cData.tx_length = txlen;
     i2cData.tx_data = txdata;
     i2cData.rx_data = rxdata;
-	i2cData.rx_length = rxlen;
-	i2cData.retransmissions_max = 3;	
-	
-	if (I2C_MasterTransferData(I2C_0, &i2cData, I2C_TRANSFER_POLLING) == SUCCESS)
-	{		
-		return MMA7455_PASS;
-	}
+    i2cData.rx_length = rxlen;
+    i2cData.retransmissions_max = 3;    
+    
+    if (I2C_MasterTransferData(I2C_0, &i2cData, I2C_TRANSFER_POLLING) == SUCCESS)
+    {       
+        return MMA7455_PASS;
+    }
 
-	return MMA7455_ERR;
+    return MMA7455_ERR;
 }
 
 /*********************************************************************//**
- * @brief 		MMA7455 init
- * @param[in]	 None
- * @return 	 MMA7455_Status_t
+ * @brief       MMA7455 init
+ * @param[in]    None
+ * @return   MMA7455_Status_t
  **********************************************************************/
 MMA7455_Status_t MMA7455_Init(void)
 {
@@ -147,9 +147,9 @@ MMA7455_Status_t MMA7455_Init(void)
 }
 
 /*********************************************************************//**
- * @brief 		Get User Info
- * @param[in]	 UserInfo address of the variable which is used to stored User Info.
- * @return 	 MMA7455_Status_t
+ * @brief       Get User Info
+ * @param[in]    UserInfo address of the variable which is used to stored User Info.
+ * @return   MMA7455_Status_t
  **********************************************************************/
  MMA7455_Status_t MMA7455_GetUserInfo (uint8_t *UserInfo)
 {
@@ -159,9 +159,9 @@ MMA7455_Status_t MMA7455_Init(void)
 
 
 /*********************************************************************//**
- * @brief 		MMA7455 get 8 bit output data
- * @param[in]	 pData address of the variable which is used to stored data.
- * @return 	 MMA7455_Status_t
+ * @brief       MMA7455 get 8 bit output data
+ * @param[in]    pData address of the variable which is used to stored data.
+ * @return   MMA7455_Status_t
  **********************************************************************/
  MMA7455_Status_t MMA7455_GetData (pMMA7455_Data_t pData)
 {
@@ -208,9 +208,9 @@ MMA7455_Status_t MMA7455_Init(void)
   return MMA7455_PASS;
 }
 /*********************************************************************//**
- * @brief 		MMA7455 get 10 bit output data
- * @param[in]	 pData address of the variable which is used to stored data.
- * @return 	 MMA7455_Status_t
+ * @brief       MMA7455 get 10 bit output data
+ * @param[in]    pData address of the variable which is used to stored data.
+ * @return   MMA7455_Status_t
  **********************************************************************/
  MMA7455_Status_t MMA7455_Get10bitData (pMMA7455_Data_t pData)
 {
@@ -258,9 +258,9 @@ MMA7455_Status_t MMA7455_Init(void)
   return MMA7455_PASS;
 }
 /*********************************************************************//**
- * @brief 		MMA7455 get offset data
- * @param[in]	 pData address of the variable which is used to stored data.
- * @return 	 MMA7455_Status_t
+ * @brief       MMA7455 get offset data
+ * @param[in]    pData address of the variable which is used to stored data.
+ * @return   MMA7455_Status_t
  **********************************************************************/
  MMA7455_Status_t MMA7455_GetOffData (pMMA7455_Data_t pData)
 {
@@ -306,9 +306,9 @@ MMA7455_Status_t MMA7455_Init(void)
   return MMA7455_PASS;
 }
 /*********************************************************************//**
- * @brief 		MMA7455 set offset data
- * @param[in]	 pData address of the variable which stores offset data.
- * @return 	 MMA7455_Status_t
+ * @brief       MMA7455 set offset data
+ * @param[in]    pData address of the variable which stores offset data.
+ * @return   MMA7455_Status_t
  **********************************************************************/
 MMA7455_Status_t MMA7455_SetOffData (pMMA7455_Data_t pData)
 {
@@ -341,9 +341,9 @@ MMA7455_Status_t MMA7455_SetOffData (pMMA7455_Data_t pData)
   return MMA7455_PASS;
 }
 /*********************************************************************//**
- * @brief 		Get movement direction of the sensor
- * @param[in]	 pData address of the variable which is used to store offset data.
- * @return 	 MMA7455_Status_t
+ * @brief       Get movement direction of the sensor
+ * @param[in]    pData address of the variable which is used to store offset data.
+ * @return   MMA7455_Status_t
  **********************************************************************/
 MMA7455_Orientation_t MMA7455_GetOrientation(pMMA7455_Data_t pData)
 {

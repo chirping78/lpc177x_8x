@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		sdram_k4s561632j.c			2011-06-02
+* $Id$      sdram_k4s561632j.c          2011-06-02
 *//**
-* @file		sdram_k4s561632j.c
-* @brief	Contains all functions support for SAMSUNG K4S561632J
-*			(supported on LPC1788 IAR Olimex Start Kit Rev.B)
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     sdram_k4s561632j.c
+* @brief    Contains all functions support for SAMSUNG K4S561632J
+*           (supported on LPC1788 IAR Olimex Start Kit Rev.B)
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -50,10 +50,10 @@
  */
 
 /*********************************************************************//**
- * @brief 		Initialize external SDRAM memory Micron K4S561632J
- *				256Mbit(8M x 32)
- * @param[in]	None
- * @return 		None
+ * @brief       Initialize external SDRAM memory Micron K4S561632J
+ *              256Mbit(8M x 32)
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void SDRAMInit( void )
 {

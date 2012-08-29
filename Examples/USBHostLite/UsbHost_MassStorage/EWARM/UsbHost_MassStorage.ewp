@@ -1821,7 +1821,7 @@
       <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_uart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\Drivers\source\lpc177x_8x_usbhost.c</name>
+      <name>$PROJ_DIR$\..\lpc177x_8x_usbhost.c</name>
     </file>
   </group>
   <group>

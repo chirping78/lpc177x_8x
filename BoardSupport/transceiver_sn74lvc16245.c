@@ -1,17 +1,17 @@
 /**********************************************************************
-* $Id$		transceiver_sn74lvc16245.c			2011-06-02
+* $Id$      transceiver_sn74lvc16245.c          2011-06-02
 *//**
-* @file		transceiver_sn74lvc16245.c
-* @brief	This SN74LVC16245 is mounted on the LPC7188 OEM Board (target
-*			board, not for the base board)
-*			Contains all functions support this IC transceiver
-*			This is actually to do preparation for output of port 3 pins
-*			of LPC1788 (P3.0 til P3.31)
-*			For Port 4 of the LPC1788, it's already configured by the
-*			register of SJ3 jumpers (at position 1-2).
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     transceiver_sn74lvc16245.c
+* @brief    This SN74LVC16245 is mounted on the LPC7188 OEM Board (target
+*           board, not for the base board)
+*           Contains all functions support this IC transceiver
+*           This is actually to do preparation for output of port 3 pins
+*           of LPC1788 (P3.0 til P3.31)
+*           For Port 4 of the LPC1788, it's already configured by the
+*           register of SJ3 jumpers (at position 1-2).
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -44,137 +44,137 @@
 
 
 /*********************************************************************//**
- * @brief 		Init the output for SN74x by enable the OE pin
- * @param[in]	port3Grp	port 3 group number, should be:
- * 					- SN74X_PORT3_GROUP_0: group 0, from pin P3.0 .. P3.7
- * 					- SN74X_PORT3_GROUP_1: group 1, from pin P3.8 .. P3.15
- * 					- SN74X_PORT3_GROUP_2: group 2, from pin P3.16 .. P3.23
- * 					- SN74X_PORT3_GROUP_3: group 3, from pin P3.24 .. P3.31
- * @return 		None
+ * @brief       Init the output for SN74x by enable the OE pin
+ * @param[in]   port3Grp    port 3 group number, should be:
+ *                  - SN74X_PORT3_GROUP_0: group 0, from pin P3.0 .. P3.7
+ *                  - SN74X_PORT3_GROUP_1: group 1, from pin P3.8 .. P3.15
+ *                  - SN74X_PORT3_GROUP_2: group 2, from pin P3.16 .. P3.23
+ *                  - SN74X_PORT3_GROUP_3: group 3, from pin P3.24 .. P3.31
+ * @return      None
  **********************************************************************/
 void sn74x_Init(uint8_t port3Grp)
 {
-	uint8_t portCntrl;
-	uint32_t pinMaskCtrl;
-	
-	GPIO_Init();
+    uint8_t portCntrl;
+    uint32_t pinMaskCtrl;
+    
+    GPIO_Init();
 
-	switch(port3Grp)
-	{
-		case SN74X_PORT3_GROUP_0:
-			portCntrl = SN74X_OE0_CONTROLLED_PORT;
-			pinMaskCtrl = SN74X_OE0_CONTROLLED_PINMASK;
-			break;
+    switch(port3Grp)
+    {
+        case SN74X_PORT3_GROUP_0:
+            portCntrl = SN74X_OE0_CONTROLLED_PORT;
+            pinMaskCtrl = SN74X_OE0_CONTROLLED_PINMASK;
+            break;
 
-		case SN74X_PORT3_GROUP_1:
-			portCntrl = SN74X_OE1_CONTROLLED_PORT;
-			pinMaskCtrl = SN74X_OE1_CONTROLLED_PINMASK;
-			break;
+        case SN74X_PORT3_GROUP_1:
+            portCntrl = SN74X_OE1_CONTROLLED_PORT;
+            pinMaskCtrl = SN74X_OE1_CONTROLLED_PINMASK;
+            break;
 
-		case SN74X_PORT3_GROUP_2:
-			portCntrl = SN74X_OE2_CONTROLLED_PORT;
-			pinMaskCtrl = SN74X_OE2_CONTROLLED_PINMASK;
-			break;
+        case SN74X_PORT3_GROUP_2:
+            portCntrl = SN74X_OE2_CONTROLLED_PORT;
+            pinMaskCtrl = SN74X_OE2_CONTROLLED_PINMASK;
+            break;
 
-		case SN74X_PORT3_GROUP_3:
-			portCntrl = SN74X_OE3_CONTROLLED_PORT;
-			pinMaskCtrl = SN74X_OE3_CONTROLLED_PINMASK;
-			break;
+        case SN74X_PORT3_GROUP_3:
+            portCntrl = SN74X_OE3_CONTROLLED_PORT;
+            pinMaskCtrl = SN74X_OE3_CONTROLLED_PINMASK;
+            break;
 
-		default:
-			//trap the problem on input param
-			while(1);
-			break;
-	}
+        default:
+            //trap the problem on input param
+            while(1);
+            break;
+    }
 
-	GPIO_SetDir(portCntrl, pinMaskCtrl, GPIO_DIRECTION_OUTPUT);
+    GPIO_SetDir(portCntrl, pinMaskCtrl, GPIO_DIRECTION_OUTPUT);
 
-	//Set the GPIO to LOW to enable the OE pin for the SN74x IC
-	GPIO_ClearValue(portCntrl, pinMaskCtrl);
+    //Set the GPIO to LOW to enable the OE pin for the SN74x IC
+    GPIO_ClearValue(portCntrl, pinMaskCtrl);
 
-	return;
+    return;
 }
 
 /*********************************************************************//**
- * @brief 		Stop all the output from SN74x by disable OE pin
- * @param[in]	port3Grp	port 3 group number, should be:
- * 					- SN74X_PORT3_GROUP_0: group 0, from pin P3.0 .. P3.7
- * 					- SN74X_PORT3_GROUP_1: group 1, from pin P3.8 .. P3.15
- * 					- SN74X_PORT3_GROUP_2: group 2, from pin P3.16 .. P3.23
- * 					- SN74X_PORT3_GROUP_3: group 3, from pin P3.24 .. P3.31
- * @return 		None
+ * @brief       Stop all the output from SN74x by disable OE pin
+ * @param[in]   port3Grp    port 3 group number, should be:
+ *                  - SN74X_PORT3_GROUP_0: group 0, from pin P3.0 .. P3.7
+ *                  - SN74X_PORT3_GROUP_1: group 1, from pin P3.8 .. P3.15
+ *                  - SN74X_PORT3_GROUP_2: group 2, from pin P3.16 .. P3.23
+ *                  - SN74X_PORT3_GROUP_3: group 3, from pin P3.24 .. P3.31
+ * @return      None
  **********************************************************************/
 void sn74x_DeInit(uint8_t port3Grp)
 {
-	uint8_t portCntrl;
-	uint32_t pinMaskCtrl;
+    uint8_t portCntrl;
+    uint32_t pinMaskCtrl;
 
-	switch(port3Grp)
-	{
-		case SN74X_PORT3_GROUP_0:
-			portCntrl = SN74X_OE0_CONTROLLED_PORT;
-			pinMaskCtrl = SN74X_OE0_CONTROLLED_PINMASK;
-			break;
+    switch(port3Grp)
+    {
+        case SN74X_PORT3_GROUP_0:
+            portCntrl = SN74X_OE0_CONTROLLED_PORT;
+            pinMaskCtrl = SN74X_OE0_CONTROLLED_PINMASK;
+            break;
 
-		case SN74X_PORT3_GROUP_1:
-			portCntrl = SN74X_OE1_CONTROLLED_PORT;
-			pinMaskCtrl = SN74X_OE1_CONTROLLED_PINMASK;
-			break;
+        case SN74X_PORT3_GROUP_1:
+            portCntrl = SN74X_OE1_CONTROLLED_PORT;
+            pinMaskCtrl = SN74X_OE1_CONTROLLED_PINMASK;
+            break;
 
-		case SN74X_PORT3_GROUP_2:
-			portCntrl = SN74X_OE2_CONTROLLED_PORT;
-			pinMaskCtrl = SN74X_OE2_CONTROLLED_PINMASK;
-			break;
+        case SN74X_PORT3_GROUP_2:
+            portCntrl = SN74X_OE2_CONTROLLED_PORT;
+            pinMaskCtrl = SN74X_OE2_CONTROLLED_PINMASK;
+            break;
 
-		case SN74X_PORT3_GROUP_3:
-			portCntrl = SN74X_OE3_CONTROLLED_PORT;
-			pinMaskCtrl = SN74X_OE3_CONTROLLED_PINMASK;
-			break;
+        case SN74X_PORT3_GROUP_3:
+            portCntrl = SN74X_OE3_CONTROLLED_PORT;
+            pinMaskCtrl = SN74X_OE3_CONTROLLED_PINMASK;
+            break;
 
-		default:
-			//trap the problem on input param
-			while(1);
-			break;
-	}
+        default:
+            //trap the problem on input param
+            while(1);
+            break;
+    }
 
-	GPIO_SetDir(portCntrl, pinMaskCtrl, GPIO_DIRECTION_OUTPUT);
+    GPIO_SetDir(portCntrl, pinMaskCtrl, GPIO_DIRECTION_OUTPUT);
 
-	//Set the GPIO to HIGH to disable the OE pin for the SN74x IC
-	GPIO_SetValue(portCntrl, pinMaskCtrl);
+    //Set the GPIO to HIGH to disable the OE pin for the SN74x IC
+    GPIO_SetValue(portCntrl, pinMaskCtrl);
 
-	return;
+    return;
 }
 
 /*********************************************************************//**
- * @brief 		Stop all the output from SN74x by disable OE pin
- * @param[in]	dataDir	data direction, should be:
- * 					- SN74X_GRP_DATA_INPUT: data input
- * 					- SN74X_GRP_DATA_OUTPUT: data output
- * @return 		None
+ * @brief       Stop all the output from SN74x by disable OE pin
+ * @param[in]   dataDir data direction, should be:
+ *                  - SN74X_GRP_DATA_INPUT: data input
+ *                  - SN74X_GRP_DATA_OUTPUT: data output
+ * @return      None
  **********************************************************************/
 void sn74x_SetDataDir(uint8_t dataDir)
 {
-	uint32_t val = 0;
+    uint32_t val = 0;
 
-	switch (dataDir)
-	{
-		case SN74X_GRP_DATA_INPUT:
-			val = 1;
-			break;
+    switch (dataDir)
+    {
+        case SN74X_GRP_DATA_INPUT:
+            val = 1;
+            break;
 
-		case SN74X_GRP_DATA_OUTPUT:
-			val = 0;
-			break;
+        case SN74X_GRP_DATA_OUTPUT:
+            val = 0;
+            break;
 
-		default:
-			// Trap the error input
-			while(1);
-			break;
-	}
+        default:
+            // Trap the error input
+            while(1);
+            break;
+    }
 
-	GPIO_OutputValue(SN74X_DIR_CONTROLLED_PORT, SN74X_DIR_CONTROLLED_PINMASK, val);
+    GPIO_OutputValue(SN74X_DIR_CONTROLLED_PORT, SN74X_DIR_CONTROLLED_PINMASK, val);
 
-	return;
+    return;
 }
 #endif /*_GPIO*/
 /*********************************************************************************

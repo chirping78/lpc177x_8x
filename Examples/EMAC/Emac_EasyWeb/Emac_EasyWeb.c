@@ -44,87 +44,87 @@
 #include "bsp.h"
 
 
-/** @defgroup EMAC_EasyWeb	EMAC Easy Web
+/** @defgroup EMAC_EasyWeb  EMAC Easy Web
  * @ingroup EMAC_Examples
  * @{
  */
 
 /*********************************************************************//**
- * @brief		Initialization for timer
- * @param[in]	None
- * @return		None
+ * @brief       Initialization for timer
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void TC_Init(void)
 {
-	TIM_TIMERCFG_Type TIM_ConfigStruct;
-	TIM_MATCHCFG_Type TIM_MatchConfigStruct ;
-	// Initialize timer 0, prescale count time of 1ms
-	TIM_ConfigStruct.PrescaleOption = TIM_PRESCALE_USVAL;
-	TIM_ConfigStruct.PrescaleValue	= 1000;
+    TIM_TIMERCFG_Type TIM_ConfigStruct;
+    TIM_MATCHCFG_Type TIM_MatchConfigStruct ;
+    // Initialize timer 0, prescale count time of 1ms
+    TIM_ConfigStruct.PrescaleOption = TIM_PRESCALE_USVAL;
+    TIM_ConfigStruct.PrescaleValue  = 1000;
 
-	// use channel 0, MR0
-	TIM_MatchConfigStruct.MatchChannel = 0;
-	// Enable interrupt when MR0 matches the value in TC register
-	TIM_MatchConfigStruct.IntOnMatch   = TRUE;
-	//Enable reset on MR0: TIMER will reset if MR0 matches it
-	TIM_MatchConfigStruct.ResetOnMatch = TRUE;
-	//Stop on MR0 if MR0 matches it
-	TIM_MatchConfigStruct.StopOnMatch  = FALSE;
-	//Toggle MR0.0 pin if MR0 matches it
-	TIM_MatchConfigStruct.ExtMatchOutputType =TIM_EXTMATCH_TOGGLE;
-	// Set Match value, count value of 262mS
-	TIM_MatchConfigStruct.MatchValue   = 262;
+    // use channel 0, MR0
+    TIM_MatchConfigStruct.MatchChannel = 0;
+    // Enable interrupt when MR0 matches the value in TC register
+    TIM_MatchConfigStruct.IntOnMatch   = TRUE;
+    //Enable reset on MR0: TIMER will reset if MR0 matches it
+    TIM_MatchConfigStruct.ResetOnMatch = TRUE;
+    //Stop on MR0 if MR0 matches it
+    TIM_MatchConfigStruct.StopOnMatch  = FALSE;
+    //Toggle MR0.0 pin if MR0 matches it
+    TIM_MatchConfigStruct.ExtMatchOutputType =TIM_EXTMATCH_TOGGLE;
+    // Set Match value, count value of 262mS
+    TIM_MatchConfigStruct.MatchValue   = 262;
 
-	// Set configuration for Tim_config and Tim_MatchConfig
-	TIM_Init(LPC_TIM0, TIM_TIMER_MODE,&TIM_ConfigStruct);
-	TIM_ConfigMatch(LPC_TIM0,&TIM_MatchConfigStruct);
+    // Set configuration for Tim_config and Tim_MatchConfig
+    TIM_Init(LPC_TIM0, TIM_TIMER_MODE,&TIM_ConfigStruct);
+    TIM_ConfigMatch(LPC_TIM0,&TIM_MatchConfigStruct);
 
-	/* preemption = 1, sub-priority = 1 */
-	NVIC_SetPriority(TIMER0_IRQn, ((0x01<<3)|0x01));
-	/* Enable interrupt for timer 0 */
-	NVIC_EnableIRQ(TIMER0_IRQn);
-	// To start timer 0
-	TIM_Cmd(LPC_TIM0,ENABLE);
+    /* preemption = 1, sub-priority = 1 */
+    NVIC_SetPriority(TIMER0_IRQn, ((0x01<<3)|0x01));
+    /* Enable interrupt for timer 0 */
+    NVIC_EnableIRQ(TIMER0_IRQn);
+    // To start timer 0
+    TIM_Cmd(LPC_TIM0,ENABLE);
 }
 
 /*********************************************************************//**
- * @brief		Main program body
- * @param[in]	None
- * @return		None
+ * @brief       Main program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry(void)
 {
 
-	TC_Init();
+    TC_Init();
 
-	/* Select P0.25 as AD0.2
-	 */
-	PINSEL_ConfigPin (BRD_ADC_PREPARED_CH_PORT, 
-							BRD_ADC_PREPARED_CH_PIN, 
-							BRD_ADC_PREPARED_CH_FUNC_NO);
-	PINSEL_SetAnalogPinMode(BRD_ADC_PREPARED_CH_PORT,
-		                    BRD_ADC_PREPARED_CH_PIN,ENABLE);
-	
-	ADC_Init(LPC_ADC, 3000000);
-	ADC_IntConfig(LPC_ADC, BRD_ADC_PREPARED_INTR, DISABLE);
-	ADC_ChannelCmd(LPC_ADC, BRD_ADC_PREPARED_CHANNEL, ENABLE);
+    /* Select P0.25 as AD0.2
+     */
+    PINSEL_ConfigPin (BRD_ADC_PREPARED_CH_PORT, 
+                            BRD_ADC_PREPARED_CH_PIN, 
+                            BRD_ADC_PREPARED_CH_FUNC_NO);
+    PINSEL_SetAnalogPinMode(BRD_ADC_PREPARED_CH_PORT,
+                            BRD_ADC_PREPARED_CH_PIN,ENABLE);
+    
+    ADC_Init(LPC_ADC, 3000000);
+    ADC_IntConfig(LPC_ADC, BRD_ADC_PREPARED_INTR, DISABLE);
+    ADC_ChannelCmd(LPC_ADC, BRD_ADC_PREPARED_CHANNEL, ENABLE);
 
-	TCPLowLevelInit();
-	
-	HTTPStatus = 0;                                // clear HTTP-server's flag register
+    TCPLowLevelInit();
+    
+    HTTPStatus = 0;                                // clear HTTP-server's flag register
 
-	TCPLocalPort = TCP_PORT_HTTP;                  // set port we want to listen to
-																	 
-	while (1)                                      // repeat forever
-	{
-		if (!(SocketStatus & SOCK_ACTIVE))
-			TCPPassiveOpen();   // listen for incoming TCP-connection
-			
-		DoNetworkStuff();                                      // handle network and easyWEB-stack
-	                                                       // events
-		HTTPServer();
+    TCPLocalPort = TCP_PORT_HTTP;                  // set port we want to listen to
+                                                                     
+    while (1)                                      // repeat forever
+    {
+        if (!(SocketStatus & SOCK_ACTIVE))
+            TCPPassiveOpen();   // listen for incoming TCP-connection
+            
+        DoNetworkStuff();                                      // handle network and easyWEB-stack
+                                                           // events
+        HTTPServer();
 
-	}
+    }
 
 }
 
@@ -136,9 +136,9 @@ void c_entry(void)
 // not work. In this case, simply add some extra lines
 // (e.g. CR and LFs) to the HTML-code.
 /*********************************************************************//**
- * @brief		HTTP Server setup
- * @param[in]	None
- * @return		None
+ * @brief       HTTP Server setup
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void HTTPServer(void)
 {
@@ -194,59 +194,59 @@ void HTTPServer(void)
 
 // samples and returns the AD-converter value of channel 0
 /*********************************************************************//**
- * @brief		Get value from AD Converter component
- * @param[in]	None
- * @return		The value after converting from Analog to Digital
+ * @brief       Get value from AD Converter component
+ * @param[in]   None
+ * @return      The value after converting from Analog to Digital
  **********************************************************************/
 unsigned int GetAD7Val(void)
 {
-	unsigned int val;
+    unsigned int val;
 
-	ADC_StartCmd(LPC_ADC, ADC_START_NOW);
+    ADC_StartCmd(LPC_ADC, ADC_START_NOW);
 
-	//Wait conversion complete
-	while (!(ADC_ChannelGetStatus(LPC_ADC, BRD_ADC_PREPARED_CHANNEL, ADC_DATA_DONE)));
+    //Wait conversion complete
+    while (!(ADC_ChannelGetStatus(LPC_ADC, BRD_ADC_PREPARED_CHANNEL, ADC_DATA_DONE)));
 
-	val = ADC_ChannelGetData(LPC_ADC, BRD_ADC_PREPARED_CHANNEL);
+    val = ADC_ChannelGetData(LPC_ADC, BRD_ADC_PREPARED_CHANNEL);
 
-	val = val >> 2;//For displaying on webpage
-	
-	return(val*100 / 0x3FF);                      // result of A/D process
+    val = val >> 2;//For displaying on webpage
+    
+    return(val*100 / 0x3FF);                      // result of A/D process
 }
 
 // samples and returns AD-converter value of channel 1
 /*********************************************************************//**
- * @brief		Get temperature
- * @param[in]	None
- * @return		Temperature Value from ADC component
+ * @brief       Get temperature
+ * @param[in]   None
+ * @return      Temperature Value from ADC component
  **********************************************************************/
 unsigned int GetTempVal(void)
 {
-	unsigned int val;
+    unsigned int val;
 
-	ADC_StartCmd(LPC_ADC, ADC_START_NOW);
+    ADC_StartCmd(LPC_ADC, ADC_START_NOW);
 
-	//Wait conversion complete
-	while (!(ADC_ChannelGetStatus(LPC_ADC, BRD_ADC_PREPARED_CHANNEL, ADC_DATA_DONE)));
+    //Wait conversion complete
+    while (!(ADC_ChannelGetStatus(LPC_ADC, BRD_ADC_PREPARED_CHANNEL, ADC_DATA_DONE)));
 
-	val = ADC_ChannelGetData(LPC_ADC, BRD_ADC_PREPARED_CHANNEL);
+    val = ADC_ChannelGetData(LPC_ADC, BRD_ADC_PREPARED_CHANNEL);
 
-	val = val >> 2;//For displaying on webpage
+    val = val >> 2;//For displaying on webpage
 
-	return(val*100 / 0x3FF);                      // result of A/D process
+    return(val*100 / 0x3FF);                      // result of A/D process
 }
 
 // searches the TX-buffer for special strings and replaces them
 // with dynamic values (AD-converter results)
 /*********************************************************************//**
- * @brief		Insert Dynamic Value
- * @param[in]	None
- * @return		None
+ * @brief       Insert Dynamic Value
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void InsertDynamicValues(void)
 {
-	uint8_t *Key;
-	char NewKey[5];
+    uint8_t *Key;
+    char NewKey[5];
   unsigned int i;
 
   if (TCPTxDataCount < 4) return;                     // there can't be any special string
@@ -278,14 +278,14 @@ void InsertDynamicValues(void)
 }
 
 /*********************************************************************//**
- * @brief		main program
- * @param[in]	None
- * @return		int
+ * @brief       main program
+ * @param[in]   None
+ * @return      int
  **********************************************************************/
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

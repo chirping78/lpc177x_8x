@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		lpc177x_8x_dac.c			2011-06-02
+* $Id$      lpc177x_8x_dac.c            2011-06-02
 *//**
-* @file		lpc177x_8x_dac.c
-* @brief	Contains all functions support for DAC firmware library on
-*			LPC177x_8x
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_dac.c
+* @brief    Contains all functions support for DAC firmware library on
+*           LPC177x_8x
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -49,16 +49,16 @@
 /* Private Functions ---------------------------------------------------------- */
 
 /*********************************************************************//**
- * @brief		Get pointer to DAC peripheral
- * @param[in]	compId		Component ID, normally is zero (0).
- * @param[in]	pinnum		Pin number value, should be in range from 0..31
- * @return		Pointer to DAC peripheral component
+ * @brief       Get pointer to DAC peripheral
+ * @param[in]   compId      Component ID, normally is zero (0).
+ * @param[in]   pinnum      Pin number value, should be in range from 0..31
+ * @return      Pointer to DAC peripheral component
  **********************************************************************/
 static LPC_DAC_TypeDef * DAC_GetPointer(uint8_t compId)
 {
-	LPC_DAC_TypeDef *pComponent = LPC_DAC;
+    LPC_DAC_TypeDef *pComponent = LPC_DAC;
 
-	return pComponent;
+    return pComponent;
 }
 
 
@@ -69,118 +69,118 @@ static LPC_DAC_TypeDef * DAC_GetPointer(uint8_t compId)
  */
 
 /*********************************************************************//**
- * @brief 		Initial ADC configuration
- * 					- Maximum	current is 700 uA
- * 					- Value to AOUT is 0
- * @param[in] 	DAC_Id 	the ID of the DAC component that is using, should be: zero (0)
- * @return 		None
+ * @brief       Initial ADC configuration
+ *                  - Maximum   current is 700 uA
+ *                  - Value to AOUT is 0
+ * @param[in]   DAC_Id  the ID of the DAC component that is using, should be: zero (0)
+ * @return      None
  ***********************************************************************/
 void DAC_Init(uint8_t DAC_Id)
 {
-	/*
-	 * Init DAC pin connect
-	 * AOUT on P0.26
-	 */
-	PINSEL_ConfigPin(0, 26, 2);								 
+    /*
+     * Init DAC pin connect
+     * AOUT on P0.26
+     */
+    PINSEL_ConfigPin(0, 26, 2);                              
 
-	PINSEL_SetAnalogPinMode(0,26,ENABLE);
+    PINSEL_SetAnalogPinMode(0,26,ENABLE);
 
-	//Enable DAC for the pin
-	PINSEL_DacEnable(0, 26, ENABLE);
+    //Enable DAC for the pin
+    PINSEL_DacEnable(0, 26, ENABLE);
 
-	//Set maximum current output as default
-	DAC_SetBias(DAC_Id, DAC_MAX_CURRENT_700uA);
+    //Set maximum current output as default
+    DAC_SetBias(DAC_Id, DAC_MAX_CURRENT_700uA);
 }
 
 /*********************************************************************//**
- * @brief 		Update value to DAC
- * @param[in] 	DAC_Id 	the ID of the DAC component that is using, should be: zero (0)
- * @param[in] 	dac_value : value 10 bit to be converted to output
- * @return 		None
+ * @brief       Update value to DAC
+ * @param[in]   DAC_Id  the ID of the DAC component that is using, should be: zero (0)
+ * @param[in]   dac_value : value 10 bit to be converted to output
+ * @return      None
  ***********************************************************************/
 void DAC_UpdateValue (uint8_t DAC_Id,uint32_t dac_value)
 {
-	uint32_t tmp;
+    uint32_t tmp;
 
-	LPC_DAC_TypeDef* pDac = DAC_GetPointer(DAC_Id);
+    LPC_DAC_TypeDef* pDac = DAC_GetPointer(DAC_Id);
 
-	tmp = pDac->CR & DAC_BIAS_EN;
+    tmp = pDac->CR & DAC_BIAS_EN;
 
-	tmp |= DAC_VALUE(dac_value);
+    tmp |= DAC_VALUE(dac_value);
 
-	// Update value
-	pDac->CR = tmp;
+    // Update value
+    pDac->CR = tmp;
 }
 
 /*********************************************************************//**
- * @brief 		Set Maximum current for DAC
- * @param[in] 	DAC_Id 	the ID of the DAC component that is using, should be: zero (0)
- * @param[in] 	bias : 0 is 700 uA
- * 					   1    350 uA
- * @return 		None
+ * @brief       Set Maximum current for DAC
+ * @param[in]   DAC_Id  the ID of the DAC component that is using, should be: zero (0)
+ * @param[in]   bias : 0 is 700 uA
+ *                     1    350 uA
+ * @return      None
  ***********************************************************************/
 void DAC_SetBias (uint8_t DAC_Id, uint32_t bias)
 {
-	LPC_DAC_TypeDef* pDac = DAC_GetPointer(DAC_Id);
+    LPC_DAC_TypeDef* pDac = DAC_GetPointer(DAC_Id);
 
-	pDac->CR &=~DAC_BIAS_EN;
+    pDac->CR &=~DAC_BIAS_EN;
 
-	if (bias  == DAC_MAX_CURRENT_350uA)
-	{
-		pDac->CR |= DAC_BIAS_EN;
-	}
+    if (bias  == DAC_MAX_CURRENT_350uA)
+    {
+        pDac->CR |= DAC_BIAS_EN;
+    }
 }
 
 /*********************************************************************//**
- * @brief 		To enable the DMA operation and control DMA timer
- * @param[in]	DAC_Id 	the ID of the DAC component that is using, should be: zero (0)
- * @param[in] 	DAC_ConverterConfigStruct pointer to DAC_CONVERTER_CFG_Type
- * 					- DBLBUF_ENA :  enable/disable DACR double buffering feature
- * 					- CNT_ENA    :  enable/disable timer out counter
- * 					- DMA_ENA    :	enable/disable DMA access
- * @return 		None
+ * @brief       To enable the DMA operation and control DMA timer
+ * @param[in]   DAC_Id  the ID of the DAC component that is using, should be: zero (0)
+ * @param[in]   DAC_ConverterConfigStruct pointer to DAC_CONVERTER_CFG_Type
+ *                  - DBLBUF_ENA :  enable/disable DACR double buffering feature
+ *                  - CNT_ENA    :  enable/disable timer out counter
+ *                  - DMA_ENA    :  enable/disable DMA access
+ * @return      None
  ***********************************************************************/
 void DAC_ConfigDAConverterControl (uint8_t DAC_Id, DAC_CONVERTER_CFG_Type *DAC_ConverterConfigStruct)
 {
-	LPC_DAC_TypeDef* pDac = DAC_GetPointer(DAC_Id);
+    LPC_DAC_TypeDef* pDac = DAC_GetPointer(DAC_Id);
 
-	pDac->CTRL &= ~DAC_DACCTRL_MASK;
+    pDac->CTRL &= ~DAC_DACCTRL_MASK;
 
-	if (DAC_ConverterConfigStruct->DBLBUF_ENA)
-		pDac->CTRL	|= DAC_DBLBUF_ENA;
+    if (DAC_ConverterConfigStruct->DBLBUF_ENA)
+        pDac->CTRL  |= DAC_DBLBUF_ENA;
 
-	if (DAC_ConverterConfigStruct->CNT_ENA)
-		pDac->CTRL	|= DAC_CNT_ENA;
+    if (DAC_ConverterConfigStruct->CNT_ENA)
+        pDac->CTRL  |= DAC_CNT_ENA;
 
-	if (DAC_ConverterConfigStruct->DMA_ENA)
-		pDac->CTRL	|= DAC_DMA_ENA;
+    if (DAC_ConverterConfigStruct->DMA_ENA)
+        pDac->CTRL  |= DAC_DMA_ENA;
 }
 
 /*********************************************************************//**
- * @brief 		Set reload value for interrupt/DMA counter
- * @param[in] 	DAC_Id 	the ID of the DAC component that is using, should be: zero (0)
- * @param[in] 	time_out time out to reload for interrupt/DMA counter
- * @return 		None
+ * @brief       Set reload value for interrupt/DMA counter
+ * @param[in]   DAC_Id  the ID of the DAC component that is using, should be: zero (0)
+ * @param[in]   time_out time out to reload for interrupt/DMA counter
+ * @return      None
  ***********************************************************************/
 void DAC_SetDMATimeOut(uint8_t DAC_Id, uint32_t time_out)
 {
-	LPC_DAC_TypeDef* pDac = DAC_GetPointer(DAC_Id);
+    LPC_DAC_TypeDef* pDac = DAC_GetPointer(DAC_Id);
 
-	pDac->CNTVAL = DAC_CCNT_VALUE(time_out);
+    pDac->CNTVAL = DAC_CCNT_VALUE(time_out);
 }
 
 
 /*********************************************************************//**
- * @brief 		Check the interrupt/DMA counter is occured or not because of the timer counter
- * @param[in] 	DAC_Id 	the ID of the DAC component that is using, should be: zero (0)
- * @return 		None
+ * @brief       Check the interrupt/DMA counter is occured or not because of the timer counter
+ * @param[in]   DAC_Id  the ID of the DAC component that is using, should be: zero (0)
+ * @return      None
  ***********************************************************************/
 uint8_t DAC_IsIntRequested(uint8_t DAC_Id)
 {
-	LPC_DAC_TypeDef* pDac = DAC_GetPointer(DAC_Id);
+    LPC_DAC_TypeDef* pDac = DAC_GetPointer(DAC_Id);
 
-	//Return the INT_DMA_REQ bit of D/A control register
-	return (pDac->CTRL & 0x01);
+    //Return the INT_DMA_REQ bit of D/A control register
+    return (pDac->CTRL & 0x01);
 }
 
 

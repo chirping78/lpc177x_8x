@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		Sensor_mma7455.h			2012-03-22
+* $Id$      Sensor_mma7455.h            2012-03-22
 *//**
-* @file		Sensor_mma7455.h
-* @brief	MMA7455 acceleration sensor driver (I2C data mode)
-* @version	1.0
-* @date		22. March. 2012
-* @author	NXP MCU SW Application Team
+* @file     Sensor_mma7455.h
+* @brief    MMA7455 acceleration sensor driver (I2C data mode)
+* @version  1.0
+* @date     22. March. 2012
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -34,7 +34,7 @@
 
 #include "lpc_types.h"
 
-/** @defgroup  Sensor_MMA7455 	I2C Sensor MMA7455 
+/** @defgroup  Sensor_MMA7455   I2C Sensor MMA7455 
  * @ingroup LPC177x_8xCMSIS_Board_Support
  * @{
  */
@@ -127,7 +127,7 @@ typedef struct _MMA7455_Data_t
 MMA7455_Status_t MMA7455_Init(void);
 /* Read/Write data on MMA7455 */
 MMA7455_Status_t MMA7455_ReadWrite(uint8_t* in_data, uint32_t txlen, 
-	                                      uint8_t* out_data, uint32_t rxlen);
+                                          uint8_t* out_data, uint32_t rxlen);
 /* Get User Info from MMA7455 */
 MMA7455_Status_t MMA7455_GetUserInfo (uint8_t *UserInfo);
 /* Get output X,Y,Z (8 bit)*/

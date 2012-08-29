@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		Adc_Burst.c		2011-06-02
+* $Id$      Adc_Burst.c     2011-06-02
 *//**
-* @file		Adc_Burst.c
-* @brief	This example describes how to use ADC conversion in
-* 			burst mode
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Adc_Burst.c
+* @brief    This example describes how to use ADC conversion in
+*           burst mode
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -39,7 +39,7 @@
 #include "bsp.h"
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup Adc_Burst		ADC Burst
+/** @defgroup Adc_Burst     ADC Burst
  * @ingroup ADC_Examples
  * @{
  */
@@ -49,27 +49,27 @@
 #define LPC177x_8x_ADC_BURST_MULTI
 
 #ifdef LPC177x_8x_ADC_BURST_MULTI
-#define _ADC_INT_n			ADC_ADINTEN3
-#define _ADC_CHANNEL_n		ADC_CHANNEL_3
+#define _ADC_INT_n          ADC_ADINTEN3
+#define _ADC_CHANNEL_n      ADC_CHANNEL_3
 #endif
 
-#define __DMA_USED__		(0)
+#define __DMA_USED__        (0)
 /** DMA size of transfer */
-#define DMA_SIZE		8
+#define DMA_SIZE        8
 
 #ifdef LPC177x_8x_ADC_INJECT_TEST
-#define GPIO_INT	(1<<10)
+#define GPIO_INT    (1<<10)
 #if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
-#define LED_PORT	(1)			// P1.18 (LED USB Host) is used as polling LED when inject other ADC channel
-#define LED_PIN		(1<<18)
+#define LED_PORT    (1)         // P1.18 (LED USB Host) is used as polling LED when inject other ADC channel
+#define LED_PIN     (1<<18)
 #else
-#define LED_PORT	(0)			// P0.13 (LED USB Host) is used as polling LED when inject other ADC channel
-#define LED_PIN		(1<<13)
+#define LED_PORT    (0)         // P0.13 (LED USB Host) is used as polling LED when inject other ADC channel
+#define LED_PIN     (1<<13)
 #endif
 #endif /* (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)*/
 
 #if __DMA_USED__
-uint32_t s_buf[DMA_SIZE];		
+uint32_t s_buf[DMA_SIZE];       
 #endif /*__DMA_USED__*/
 /************************** PRIVATE VARIABLES *************************/
 uint8_t menu1[] =
@@ -106,189 +106,189 @@ void EINT0_IRQHandler(void);
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 #ifdef LPC177x_8x_ADC_INJECT_TEST
 /*********************************************************************//**
- * @brief		Print menu
- * @param[in]	None
- * @return 		None
+ * @brief       Print menu
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void EINT0_IRQHandler(void)
 {
-	EXTI_ClearEXTIFlag(EXTI_EINT0);
+    EXTI_ClearEXTIFlag(EXTI_EINT0);
 
-	toggle = ((toggle == TRUE) ? FALSE:TRUE);
+    toggle = ((toggle == TRUE) ? FALSE:TRUE);
 
 #ifdef LPC177x_8x_ADC_BURST_MULTI
-	if(toggle)
-	{
-		ADC_ChannelCmd(LPC_ADC,_ADC_CHANNEL_n,ENABLE);
+    if(toggle)
+    {
+        ADC_ChannelCmd(LPC_ADC,_ADC_CHANNEL_n,ENABLE);
 
-		//Turn on LED -> indicate that extended channel was enable
-		GPIO_ClearValue(LED_PORT, LED_PIN);
-	}
-	else
-	{
-		ADC_ChannelCmd(LPC_ADC,_ADC_CHANNEL_n,DISABLE);
+        //Turn on LED -> indicate that extended channel was enable
+        GPIO_ClearValue(LED_PORT, LED_PIN);
+    }
+    else
+    {
+        ADC_ChannelCmd(LPC_ADC,_ADC_CHANNEL_n,DISABLE);
 
-		// Turn off LED ->indicate that extended channel was disable
-		GPIO_SetValue(LED_PORT, LED_PIN);
-	}
+        // Turn off LED ->indicate that extended channel was disable
+        GPIO_SetValue(LED_PORT, LED_PIN);
+    }
 #endif
 }
 #endif
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print menu
- * @param[in]	None
- * @return 		None
+ * @brief       Print menu
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG(menu1);
+    _DBG(menu1);
 }
 
 #if __DMA_USED__
 /*********************************************************************//**
- * @brief		GPDMA interrupt handler sub-routine
- * @param[in]	None
- * @return 		None
+ * @brief       GPDMA interrupt handler sub-routine
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void DMA_IRQHandler (void)
 {
-	// check GPDMA interrupt on channel 0
-	if (GPDMA_IntGetStatus(GPDMA_STAT_INT, 0))
-	{
-		// Check counter terminal status
-		if(GPDMA_IntGetStatus(GPDMA_STAT_INTTC, 0))
-		{
-			// Clear terminate counter Interrupt pending
-			GPDMA_ClearIntPending (GPDMA_STATCLR_INTTC, 0);
+    // check GPDMA interrupt on channel 0
+    if (GPDMA_IntGetStatus(GPDMA_STAT_INT, 0))
+    {
+        // Check counter terminal status
+        if(GPDMA_IntGetStatus(GPDMA_STAT_INTTC, 0))
+        {
+            // Clear terminate counter Interrupt pending
+            GPDMA_ClearIntPending (GPDMA_STATCLR_INTTC, 0);
 
-			Channel0_TC++;
-		}
+            Channel0_TC++;
+        }
 
-		// Check error terminal status
-		if (GPDMA_IntGetStatus(GPDMA_STAT_INTERR, 0))
-		{
-			// Clear error counter Interrupt pending
-			GPDMA_ClearIntPending (GPDMA_STATCLR_INTERR, 0);
+        // Check error terminal status
+        if (GPDMA_IntGetStatus(GPDMA_STAT_INTERR, 0))
+        {
+            // Clear error counter Interrupt pending
+            GPDMA_ClearIntPending (GPDMA_STATCLR_INTERR, 0);
 
-			Channel0_Err++;
-		}
-	}
+            Channel0_Err++;
+        }
+    }
 }
 
 #endif /*__DMA_USED__*/
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main ADC program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main ADC program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry(void)
 {
-	volatile uint32_t tmp;
+    volatile uint32_t tmp;
 #if !__DMA_USED__
-	uint32_t adc_value;
+    uint32_t adc_value;
 #endif
     uint8_t  quit;
-	EXTI_InitTypeDef EXTICfg;
+    EXTI_InitTypeDef EXTICfg;
 #if __DMA_USED__
     GPDMA_Channel_CFG_Type GPDMACfg;
 #endif
-	
-	GPIO_Init();
-	
-	/* Initialize debug via UART0
-	* – 115200bps
-	* – 8 data bit
-	* – No parity
-	* – 1 stop bit
-	* – No flow control
-	*/
-	debug_frmwrk_init();
+    
+    GPIO_Init();
+    
+    /* Initialize debug via UART0
+    * – 115200bps
+    * – 8 data bit
+    * – No parity
+    * – 1 stop bit
+    * – No flow control
+    */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 
-	/*
-	* Init ADC pin connect
-	* AD0.2 on P0.25
-	*/
-	PINSEL_ConfigPin(BRD_ADC_PREPARED_CH_PORT, BRD_ADC_PREPARED_CH_PIN, BRD_ADC_PREPARED_CH_FUNC_NO);
-	PINSEL_SetAnalogPinMode(BRD_ADC_PREPARED_CH_PORT,BRD_ADC_PREPARED_CH_PIN,ENABLE);
+    /*
+    * Init ADC pin connect
+    * AD0.2 on P0.25
+    */
+    PINSEL_ConfigPin(BRD_ADC_PREPARED_CH_PORT, BRD_ADC_PREPARED_CH_PIN, BRD_ADC_PREPARED_CH_FUNC_NO);
+    PINSEL_SetAnalogPinMode(BRD_ADC_PREPARED_CH_PORT,BRD_ADC_PREPARED_CH_PIN,ENABLE);
 
 #ifdef LPC177x_8x_ADC_BURST_MULTI
-	/*
-	* Init ADC pin connect
-	* AD0.3 on P0.26
-	*/
-	PINSEL_ConfigPin(0, 26, 1);
+    /*
+    * Init ADC pin connect
+    * AD0.3 on P0.26
+    */
+    PINSEL_ConfigPin(0, 26, 1);
     PINSEL_SetAnalogPinMode(0,26,ENABLE);
 
 #endif
 
-	/* Configuration for ADC:
-	*  select: ADC channel 2
-	*  		ADC channel 3
-	*  ADC conversion rate = 400KHz
-	*/
-	ADC_Init(LPC_ADC, 400000);
-	ADC_ChannelCmd(LPC_ADC,BRD_ADC_PREPARED_CHANNEL,ENABLE);
+    /* Configuration for ADC:
+    *  select: ADC channel 2
+    *       ADC channel 3
+    *  ADC conversion rate = 400KHz
+    */
+    ADC_Init(LPC_ADC, 400000);
+    ADC_ChannelCmd(LPC_ADC,BRD_ADC_PREPARED_CHANNEL,ENABLE);
 
 #ifdef LPC177x_8x_ADC_BURST_MULTI
     ADC_ChannelCmd(LPC_ADC,_ADC_CHANNEL_n,ENABLE);
 #endif
 
 #ifdef LPC177x_8x_ADC_INJECT_TEST
-	//Config P2.10 as EINT0
-	PINSEL_ConfigPin(2,10,1);
-	EXTI_Init();
+    //Config P2.10 as EINT0
+    PINSEL_ConfigPin(2,10,1);
+    EXTI_Init();
 
-	EXTICfg.EXTI_Line = EXTI_EINT0;
-	/* edge sensitive */
-	EXTICfg.EXTI_Mode = EXTI_MODE_EDGE_SENSITIVE;
-	EXTICfg.EXTI_polarity = EXTI_POLARITY_LOW_ACTIVE_OR_FALLING_EDGE;
+    EXTICfg.EXTI_Line = EXTI_EINT0;
+    /* edge sensitive */
+    EXTICfg.EXTI_Mode = EXTI_MODE_EDGE_SENSITIVE;
+    EXTICfg.EXTI_polarity = EXTI_POLARITY_LOW_ACTIVE_OR_FALLING_EDGE;
 
-	EXTI_Config(&EXTICfg);
-	GPIO_SetDir(LED_PORT,LED_PIN,1);
-	GPIO_SetValue(LED_PORT,LED_PIN);
+    EXTI_Config(&EXTICfg);
+    GPIO_SetDir(LED_PORT,LED_PIN,1);
+    GPIO_SetValue(LED_PORT,LED_PIN);
 
-	NVIC_EnableIRQ(EINT0_IRQn);
+    NVIC_EnableIRQ(EINT0_IRQn);
 #endif
 
 #if __DMA_USED__
      /* Initialize GPDMA controller */
-	GPDMA_Init();
+    GPDMA_Init();
 
-	// Setup GPDMA channel --------------------------------
-	// channel 0
-	GPDMACfg.ChannelNum = 0;
-	// Source memory - unused
-	GPDMACfg.SrcMemAddr = 0;
-	// Destination memory
-	GPDMACfg.DstMemAddr = (uint32_t)s_buf;
-	// Transfer size
-	GPDMACfg.TransferSize = DMA_SIZE;
-	// Transfer width - unused
-	GPDMACfg.TransferWidth = 0;
-	// Transfer type
-	GPDMACfg.TransferType = GPDMA_TRANSFERTYPE_P2M;
-	// Source connection
-	GPDMACfg.SrcConn = GPDMA_CONN_ADC;
-	// Destination connection - unused
-	GPDMACfg.DstConn = 0;
-	// Linker List Item - unused
-	GPDMACfg.DMALLI = 0;
-	
-	/* Enable GPDMA interrupt */
-	NVIC_EnableIRQ(DMA_IRQn);
+    // Setup GPDMA channel --------------------------------
+    // channel 0
+    GPDMACfg.ChannelNum = 0;
+    // Source memory - unused
+    GPDMACfg.SrcMemAddr = 0;
+    // Destination memory
+    GPDMACfg.DstMemAddr = (uint32_t)s_buf;
+    // Transfer size
+    GPDMACfg.TransferSize = DMA_SIZE;
+    // Transfer width - unused
+    GPDMACfg.TransferWidth = 0;
+    // Transfer type
+    GPDMACfg.TransferType = GPDMA_TRANSFERTYPE_P2M;
+    // Source connection
+    GPDMACfg.SrcConn = GPDMA_CONN_ADC;
+    // Destination connection - unused
+    GPDMACfg.DstConn = 0;
+    // Linker List Item - unused
+    GPDMACfg.DMALLI = 0;
+    
+    /* Enable GPDMA interrupt */
+    NVIC_EnableIRQ(DMA_IRQn);
 
     while(1)
     {
-		 for(tmp = 0; tmp < 0x1000; tmp++);
+         for(tmp = 0; tmp < 0x1000; tmp++);
         /* Reset terminal counter */
-	    Channel0_TC = 0;
-	    /* Reset Error counter */
-	    Channel0_Err = 0;
+        Channel0_TC = 0;
+        /* Reset Error counter */
+        Channel0_Err = 0;
         for(tmp = 0; tmp < DMA_SIZE; tmp++)
         {
             s_buf[tmp] = 0;
@@ -300,7 +300,7 @@ void c_entry(void)
         // Enable GPDMA channel 1
         GPDMA_ChannelCmd(0, ENABLE);
          /* Wait for GPDMA processing complete */
-    	while ((Channel0_TC == 0));
+        while ((Channel0_TC == 0));
         GPDMA_ChannelCmd(0, DISABLE);
         
          for(tmp = 0; tmp < DMA_SIZE; tmp++)
@@ -312,47 +312,47 @@ void c_entry(void)
                 }
           }
           if(_DG_NONBLOCK(&quit) &&
-			(quit == 'Q' || quit == 'q'))
-			break;
+            (quit == 'Q' || quit == 'q'))
+            break;
     }
 #else
-	//Start burst conversion
-	ADC_BurstCmd(LPC_ADC,ENABLE);
+    //Start burst conversion
+    ADC_BurstCmd(LPC_ADC,ENABLE);
 
-	while(1)
-	{
-		adc_value =  ADC_ChannelGetData(LPC_ADC,BRD_ADC_PREPARED_CHANNEL);
-		_DBG("ADC value on channel "); _DBD(BRD_ADC_PREPARED_CHANNEL); _DBG(": ");
-		_DBD32(adc_value);
-		_DBG_("");
+    while(1)
+    {
+        adc_value =  ADC_ChannelGetData(LPC_ADC,BRD_ADC_PREPARED_CHANNEL);
+        _DBG("ADC value on channel "); _DBD(BRD_ADC_PREPARED_CHANNEL); _DBG(": ");
+        _DBD32(adc_value);
+        _DBG_("");
 
 #ifdef LPC177x_8x_ADC_BURST_MULTI
-		adc_value =  ADC_ChannelGetData(LPC_ADC,_ADC_CHANNEL_n);
-		_DBG("ADC value on channel 3: ");
-		_DBD32(adc_value);
-		_DBG_("");
+        adc_value =  ADC_ChannelGetData(LPC_ADC,_ADC_CHANNEL_n);
+        _DBG("ADC value on channel 3: ");
+        _DBD32(adc_value);
+        _DBG_("");
 #endif
-		// Wait for a while
-		for(tmp = 0; tmp < 1500000; tmp++);
+        // Wait for a while
+        for(tmp = 0; tmp < 1500000; tmp++);
 
-		if(_DG_NONBLOCK(&quit) &&
-			(quit == 'Q' || quit == 'q'))
-			break;
-	}
+        if(_DG_NONBLOCK(&quit) &&
+            (quit == 'Q' || quit == 'q'))
+            break;
+    }
 #endif /*__DMA_USED__*/
 
     _DBG_("Demo termination!!!");
-	ADC_DeInit(LPC_ADC);
-	
-	GPIO_Deinit();
-	
+    ADC_DeInit(LPC_ADC);
+    
+    GPIO_Deinit();
+    
 }
 
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 /**

@@ -73,8 +73,8 @@ typedef enum _SMB380_Bandwidth_t
 SMB380_Status_t SMB380_Init(void);
 
 SMB380_Status_t SMB380_ReadWrite(uint8_t* in_data, uint32_t txlen, 
-	                                      uint8_t* out_data, uint32_t rxlen);
-	                                      
+                                          uint8_t* out_data, uint32_t rxlen);
+                                          
 
 /*************************************************************************
  * Function Name: SMB380_GetID

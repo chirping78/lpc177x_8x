@@ -1,15 +1,15 @@
 /**********************************************************************
-* $Id$		bsp.h			2011-06-02
+* $Id$      bsp.h           2011-06-02
 *//**
-* @file		bsp.h
-* @brief	Contains basic information about the board that can
-* 			be using with the current code package. It may
-* 			include some header file for the components mounted
-* 			on the board. Or else some neccessary hardware (IOs)
-* 			settings for the using board may be involved.
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     bsp.h
+* @brief    Contains basic information about the board that can
+*           be using with the current code package. It may
+*           include some header file for the components mounted
+*           on the board. Or else some neccessary hardware (IOs)
+*           settings for the using board may be involved.
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -46,28 +46,28 @@
 
 //List the board that have been supported
 /** Default board */
-#define _DEFAULT_BOARD				(0)
+#define _DEFAULT_BOARD              (0)
 /** LPC1788 OEM board connects with QVGA base board v1.2 */
-#define _QVGA_BOARD					(1)
+#define _QVGA_BOARD                 (1)
 /** LPC1788 OEM Board rev A and OEM Base Board rev A */
-#define _EA_PA_BOARD				(2)
+#define _EA_PA_BOARD                (2)
 /** LPC1788 IAR Start Kit Rev.B */
-#define _IAR_OLIMEX_BOARD			(3)
+#define _IAR_OLIMEX_BOARD           (3)
 
 /** Current using board definition */
-#define _CURR_USING_BRD				_EA_PA_BOARD
+#define _CURR_USING_BRD             _EA_PA_BOARD
 
 
 //List the NandFlash that have been supported
-#define _RUNNING_NANDFLASH_NONE			(0)
-#define _RUNNING_NANDFLASH_K9F1G08U0C	(1)
-#define _RUNNING_NANDFLASH_K9F1G08U0A	(2)
+#define _RUNNING_NANDFLASH_NONE         (0)
+#define _RUNNING_NANDFLASH_K9F1G08U0C   (1)
+#define _RUNNING_NANDFLASH_K9F1G08U0A   (2)
 
 // List the LCD that have been supported
 #define _RUNNING_LCD_NONE               (0)
-#define _RUNNING_LCD_GFT035A320240Y		(1)
-#define _RUNNING_LCD_QVGA_TFT			(2)
-#define _RUNNING_LCD_EA_REV_PB1			(4)
+#define _RUNNING_LCD_GFT035A320240Y     (1)
+#define _RUNNING_LCD_QVGA_TFT           (2)
+#define _RUNNING_LCD_EA_REV_PB1         (4)
 
 #if (_CURR_USING_BRD == _QVGA_BOARD)
 //Driver for PHY of LAN DP83848C IC
@@ -75,44 +75,44 @@
 
 
 //ADC input preset on this board
-#define BRD_ADC_PREPARED_CHANNEL		(ADC_CHANNEL_2)
-#define BRD_ADC_PREPARED_INTR			(ADC_ADINTEN2)
+#define BRD_ADC_PREPARED_CHANNEL        (ADC_CHANNEL_2)
+#define BRD_ADC_PREPARED_INTR           (ADC_ADINTEN2)
 
-#define BRD_ADC_PREPARED_CH_PORT		(0)
-#define BRD_ADC_PREPARED_CH_PIN			(25)
-#define BRD_ADC_PREPARED_CH_FUNC_NO		(1)
+#define BRD_ADC_PREPARED_CH_PORT        (0)
+#define BRD_ADC_PREPARED_CH_PIN         (25)
+#define BRD_ADC_PREPARED_CH_FUNC_NO     (1)
 
 
 //LED indicators preset
-#define BRD_LED_1_CONNECTED_PORT		(1)
-#define BRD_LED_1_CONNECTED_PIN			(13)
-#define BRD_LED_1_CONNECTED_MASK		(1 << BRD_LED_1_CONNECTED_PIN)
+#define BRD_LED_1_CONNECTED_PORT        (1)
+#define BRD_LED_1_CONNECTED_PIN         (13)
+#define BRD_LED_1_CONNECTED_MASK        (1 << BRD_LED_1_CONNECTED_PIN)
 
-#define BRD_LED_2_CONNECTED_PORT		(0)
-#define BRD_LED_2_CONNECTED_PIN			(13)
-#define BRD_LED_2_CONNECTED_MASK		(1 << BRD_LED_2_CONNECTED_PIN)
+#define BRD_LED_2_CONNECTED_PORT        (0)
+#define BRD_LED_2_CONNECTED_PIN         (13)
+#define BRD_LED_2_CONNECTED_MASK        (1 << BRD_LED_2_CONNECTED_PIN)
 
 
 //PIO interrupt preset
-#define BRD_PIO_USED_INTR_PORT			(0)
-#define BRD_PIO_USED_INTR_PIN			(25)
-#define BRD_PIO_USED_INTR_MASK			(1 << BRD_PIO_USED_INTR_PIN)
+#define BRD_PIO_USED_INTR_PORT          (0)
+#define BRD_PIO_USED_INTR_PIN           (25)
+#define BRD_PIO_USED_INTR_MASK          (1 << BRD_PIO_USED_INTR_PIN)
 
 
 //MCI power active levell
-#define BRD_MCI_POWERED_ACTIVE_LEVEL	(0)
+#define BRD_MCI_POWERED_ACTIVE_LEVEL    (0)
 
 
 //Timer preset
-#define BRD_TIMER_USED				(LPC_TIM0)
-#define BRD_TIM_INTR_USED			(TIMER0_IRQn)
+#define BRD_TIMER_USED              (LPC_TIM0)
+#define BRD_TIM_INTR_USED           (TIMER0_IRQn)
 
-#define BRD_TIM_CAP_LINKED_PORT		(1)
-#define BRD_TIM_CAP_LINKED_PIN		(26)
+#define BRD_TIM_CAP_LINKED_PORT     (1)
+#define BRD_TIM_CAP_LINKED_PIN      (26)
 
 
 // NandFlash preset
-#define _CUR_USING_NANDFLASH			(_RUNNING_NANDFLASH_K9F1G08U0A)
+#define _CUR_USING_NANDFLASH            (_RUNNING_NANDFLASH_K9F1G08U0A)
 
 // LCD
 #define _CUR_USING_LCD                  (_RUNNING_LCD_G240320LTSW)
@@ -128,43 +128,43 @@
 
 
 //ADC input preset on this board
-#define BRD_ADC_PREPARED_CHANNEL		(ADC_CHANNEL_2)
-#define BRD_ADC_PREPARED_INTR			(ADC_ADINTEN2)
+#define BRD_ADC_PREPARED_CHANNEL        (ADC_CHANNEL_2)
+#define BRD_ADC_PREPARED_INTR           (ADC_ADINTEN2)
 
-#define BRD_ADC_PREPARED_CH_PORT		(0)
-#define BRD_ADC_PREPARED_CH_PIN			(25)
-#define BRD_ADC_PREPARED_CH_FUNC_NO		(1)
+#define BRD_ADC_PREPARED_CH_PORT        (0)
+#define BRD_ADC_PREPARED_CH_PIN         (25)
+#define BRD_ADC_PREPARED_CH_FUNC_NO     (1)
 
 
 //LED indicators preset
-#define BRD_LED_1_CONNECTED_PORT		(1)
-#define BRD_LED_1_CONNECTED_PIN			(18)
-#define BRD_LED_1_CONNECTED_MASK		(1 << BRD_LED_1_CONNECTED_PIN)
+#define BRD_LED_1_CONNECTED_PORT        (1)
+#define BRD_LED_1_CONNECTED_PIN         (18)
+#define BRD_LED_1_CONNECTED_MASK        (1 << BRD_LED_1_CONNECTED_PIN)
 
-#define BRD_LED_2_CONNECTED_PORT		(0)
-#define BRD_LED_2_CONNECTED_PIN			(13)
-#define BRD_LED_2_CONNECTED_MASK		(1 << BRD_LED_2_CONNECTED_PIN)
+#define BRD_LED_2_CONNECTED_PORT        (0)
+#define BRD_LED_2_CONNECTED_PIN         (13)
+#define BRD_LED_2_CONNECTED_MASK        (1 << BRD_LED_2_CONNECTED_PIN)
 
 //PIO interrupt preset
-#define BRD_PIO_USED_INTR_PORT			(0)
-#define BRD_PIO_USED_INTR_PIN			(25)
-#define BRD_PIO_USED_INTR_MASK			(1 << BRD_PIO_USED_INTR_PIN)
+#define BRD_PIO_USED_INTR_PORT          (0)
+#define BRD_PIO_USED_INTR_PIN           (25)
+#define BRD_PIO_USED_INTR_MASK          (1 << BRD_PIO_USED_INTR_PIN)
 
 
 //MCI power active levell
-#define BRD_MCI_POWERED_ACTIVE_LEVEL	(0)
+#define BRD_MCI_POWERED_ACTIVE_LEVEL    (0)
 
 
 //Timer preset
-#define BRD_TIMER_USED				(LPC_TIM0)
-#define BRD_TIM_INTR_USED			(TIMER0_IRQn)
+#define BRD_TIMER_USED              (LPC_TIM0)
+#define BRD_TIM_INTR_USED           (TIMER0_IRQn)
 
-#define BRD_TIM_CAP_LINKED_PORT		(1)
-#define BRD_TIM_CAP_LINKED_PIN		(26)
+#define BRD_TIM_CAP_LINKED_PORT     (1)
+#define BRD_TIM_CAP_LINKED_PIN      (26)
 
 
 // NandFlash preset
-#define _CUR_USING_NANDFLASH			(_RUNNING_NANDFLASH_K9F1G08U0C)
+#define _CUR_USING_NANDFLASH            (_RUNNING_NANDFLASH_K9F1G08U0C)
 
 // LCD
 //#define _CUR_USING_LCD                  (_RUNNING_LCD_QVGA_TFT)
@@ -182,46 +182,46 @@
 
 
 //ADC input preset on this board
-#define BRD_ADC_PREPARED_CHANNEL		(ADC_CHANNEL_7)
-#define BRD_ADC_PREPARED_INTR			(ADC_ADINTEN7)
+#define BRD_ADC_PREPARED_CHANNEL        (ADC_CHANNEL_7)
+#define BRD_ADC_PREPARED_INTR           (ADC_ADINTEN7)
 
-#define BRD_ADC_PREPARED_CH_PORT		(0)
-#define BRD_ADC_PREPARED_CH_PIN			(13)
-#define BRD_ADC_PREPARED_CH_FUNC_NO		(3)
+#define BRD_ADC_PREPARED_CH_PORT        (0)
+#define BRD_ADC_PREPARED_CH_PIN         (13)
+#define BRD_ADC_PREPARED_CH_FUNC_NO     (3)
 
 
 //LED indicators preset
-#define BRD_LED_1_CONNECTED_PORT		(1)
-#define BRD_LED_1_CONNECTED_PIN			(13)
-#define BRD_LED_1_CONNECTED_MASK		(1 << BRD_LED_1_CONNECTED_PIN)
+#define BRD_LED_1_CONNECTED_PORT        (1)
+#define BRD_LED_1_CONNECTED_PIN         (13)
+#define BRD_LED_1_CONNECTED_MASK        (1 << BRD_LED_1_CONNECTED_PIN)
 
-#define BRD_LED_2_CONNECTED_PORT		(1)
-#define BRD_LED_2_CONNECTED_PIN			(18)
-#define BRD_LED_2_CONNECTED_MASK		(1 << BRD_LED_2_CONNECTED_PIN)
+#define BRD_LED_2_CONNECTED_PORT        (1)
+#define BRD_LED_2_CONNECTED_PIN         (18)
+#define BRD_LED_2_CONNECTED_MASK        (1 << BRD_LED_2_CONNECTED_PIN)
 
 //PIO interrupt preset
-#define BRD_PIO_USED_INTR_PORT			(0)
-#define BRD_PIO_USED_INTR_PIN			(13)
-#define BRD_PIO_USED_INTR_MASK			(1 << BRD_PIO_USED_INTR_PIN)
+#define BRD_PIO_USED_INTR_PORT          (0)
+#define BRD_PIO_USED_INTR_PIN           (13)
+#define BRD_PIO_USED_INTR_MASK          (1 << BRD_PIO_USED_INTR_PIN)
 
 
 //MCI power active levell
-#define BRD_MCI_POWERED_ACTIVE_LEVEL	(1)
+#define BRD_MCI_POWERED_ACTIVE_LEVEL    (1)
 
 
 //Timer preset
-#define BRD_TIMER_USED				(LPC_TIM2)
-#define BRD_TIM_INTR_USED			(TIMER2_IRQn)
+#define BRD_TIMER_USED              (LPC_TIM2)
+#define BRD_TIM_INTR_USED           (TIMER2_IRQn)
 
-#define BRD_TIM_CAP_LINKED_PORT		(0)
-#define BRD_TIM_CAP_LINKED_PIN		(4)
+#define BRD_TIM_CAP_LINKED_PORT     (0)
+#define BRD_TIM_CAP_LINKED_PIN      (4)
 
 // LCD
 #define _CUR_USING_LCD                  (_RUNNING_LCD_GFT035A320240Y)
 #endif
 
 #ifndef _CUR_USING_NANDFLASH
-#define _CUR_USING_NANDFLASH			(_RUNNING_NANDFLASH_NONE)
+#define _CUR_USING_NANDFLASH            (_RUNNING_NANDFLASH_NONE)
 #endif
 
 #ifndef _CUR_USING_LCD

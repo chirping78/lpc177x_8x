@@ -14,7 +14,7 @@
 
 
 void init_serial (void)  {               /* Initialize Serial Interface       */
-	debug_frmwrk_init();
+    debug_frmwrk_init();
 }
 
 
@@ -25,8 +25,8 @@ int sendchar (int ch)  {                 /* Write character to Serial Port    */
    _DBC(CR);                          /* output CR */
   }
 #endif
-	_DBC(ch);
-	return (ch);
+    _DBC(ch);
+    return (ch);
 }
 
 
@@ -36,5 +36,5 @@ int getkey (void)  {                     /* Read character from Serial Port   */
 
 unsigned char getchar(void)
 {
-	return getkey();
+    return getkey();
 }

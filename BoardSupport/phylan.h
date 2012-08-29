@@ -1,13 +1,13 @@
 
 /**********************************************************************
-* $Id$		phylan.c			2011-11-01
+* $Id$      phylan.c            2011-11-01
 *//**
-* @file		phylan.c
-* @brief	Contains all macro definitions and function prototypes
-*			support for external PHY IC LAN8720 to work with LAN
-* @version	1.0
-* @date		01. November. 2011
-* @author	NXP MCU SW Application Team
+* @file     phylan.c
+* @brief    Contains all macro definitions and function prototypes
+*           support for external PHY IC LAN8720 to work with LAN
+* @version  1.0
+* @date     01. November. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -32,7 +32,7 @@
 **********************************************************************/
 #include "bsp.h"
 #if (_CURR_USING_BRD == _QVGA_BOARD)
-	//Driver for PHY of LAN DP83848C IC
+    //Driver for PHY of LAN DP83848C IC
 #include "phylan_dp83848c.h"
 #elif (_CURR_USING_BRD == _EA_PA_BOARD)
 //Driver for PHY of LAN LAN8720 IC

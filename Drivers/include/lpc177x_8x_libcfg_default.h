@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		lpc17xx_libcfg.h			2010-05-21
+* $Id$      lpc17xx_libcfg.h            2010-05-21
 ***
-* @file		lpc17xx_libcfg.h
-* @brief	Library configuration file
-* @version	2.0
-* @date		21. May. 2010
-* @author	NXP MCU SW Application Team
+* @file     lpc17xx_libcfg.h
+* @brief    Library configuration file
+* @version  2.0
+* @date     21. May. 2010
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2010, NXP Semiconductor
 * All rights reserved.

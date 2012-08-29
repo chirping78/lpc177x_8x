@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		Rtc_Calibration.c			2011-06-02
+* $Id$      Rtc_Calibration.c           2011-06-02
 *//**
-* @file		Rtc_Calibration.c
-* @brief	This example describes how to calibrate real time clock.
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Rtc_Calibration.c
+* @brief    This example describes how to calibrate real time clock.
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -34,7 +34,7 @@
 #include "lpc177x_8x_rtc.h"
 
 
-/** @defgroup RTC_Calibration	RTC Calibration
+/** @defgroup RTC_Calibration   RTC Calibration
  * @ingroup RTC_Examples
  * @{
  */
@@ -56,80 +56,80 @@ void print_menu(void);
 __IO uint32_t secval;
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
- * @brief		RTC interrupt handler sub-routine
- * @param[in]	None
- * @return 		None
+ * @brief       RTC interrupt handler sub-routine
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void RTC_IRQHandler(void)
 {
-	/* This is increment counter interrupt*/
-	if (RTC_GetIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE))
-	{
-		secval = RTC_GetTime (LPC_RTC, RTC_TIMETYPE_SECOND);
+    /* This is increment counter interrupt*/
+    if (RTC_GetIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE))
+    {
+        secval = RTC_GetTime (LPC_RTC, RTC_TIMETYPE_SECOND);
 
-		// Clear pending interrupt
-		RTC_ClearIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE);
-	}
+        // Clear pending interrupt
+        RTC_ClearIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE);
+    }
 }
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print Welcome menu
- * @param[in]	none
- * @return 		None
+ * @brief       Print Welcome menu
+ * @param[in]   none
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG(menu);
+    _DBG(menu);
 }
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry (void)
 {
     uint32_t pre_secval = 0, inc = 0, calib_cnt = 0;
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 
-	/* In this example:
-	 * Suppose that the RTC need periodically adjust after each 5 second.
-	 * And the time counter need by incrementing the counter by 2 instead of 1
-	 * We will observe timer counter after calibration via serial display
-	 */
-	// Init RTC module
-	RTC_Init(LPC_RTC);
+    /* In this example:
+     * Suppose that the RTC need periodically adjust after each 5 second.
+     * And the time counter need by incrementing the counter by 2 instead of 1
+     * We will observe timer counter after calibration via serial display
+     */
+    // Init RTC module
+    RTC_Init(LPC_RTC);
 
-	/* Enable rtc (starts increase the tick counter and second counter register) */
-	RTC_ResetClockTickCounter(LPC_RTC);
-	RTC_Cmd(LPC_RTC, ENABLE);
+    /* Enable rtc (starts increase the tick counter and second counter register) */
+    RTC_ResetClockTickCounter(LPC_RTC);
+    RTC_Cmd(LPC_RTC, ENABLE);
 
-	//Set current time = 0
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_SECOND, 0);
+    //Set current time = 0
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_SECOND, 0);
 
-	/* Setting Timer calibration
-	 * Calibration value =  6s;
-	 * Direction = Forward calibration
-	 * So after each 6s, calibration logic can periodically adjust the time counter by
-	 * incrementing the counter by 2 instead of 1
-	 */
-	RTC_CalibConfig(LPC_RTC, 6, RTC_CALIB_DIR_FORWARD);
-	RTC_CalibCounterCmd(LPC_RTC, ENABLE);
+    /* Setting Timer calibration
+     * Calibration value =  6s;
+     * Direction = Forward calibration
+     * So after each 6s, calibration logic can periodically adjust the time counter by
+     * incrementing the counter by 2 instead of 1
+     */
+    RTC_CalibConfig(LPC_RTC, 6, RTC_CALIB_DIR_FORWARD);
+    RTC_CalibCounterCmd(LPC_RTC, ENABLE);
 
-	/* Set the CIIR for second counter interrupt*/
-	RTC_CntIncrIntConfig (LPC_RTC, RTC_TIMETYPE_SECOND, ENABLE);
+    /* Set the CIIR for second counter interrupt*/
+    RTC_CntIncrIntConfig (LPC_RTC, RTC_TIMETYPE_SECOND, ENABLE);
 
     /* Enable RTC interrupt */
     NVIC_EnableIRQ(RTC_IRQn);
@@ -146,7 +146,7 @@ void c_entry (void)
             if(inc > 1)
             {
                _DBG ("Second: "); _DBD(secval); _DBG("--> Increase ");_DBD(inc); _DBG(" after ");_DBD(calib_cnt);_DBG(" seconds");
-    		    _DBG_(""); 
+                _DBG_(""); 
                 calib_cnt = 0;
             }   
             else
@@ -167,8 +167,8 @@ void c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

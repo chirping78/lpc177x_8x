@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		lpc177x_8x_exti.h			2011-06-02
+* $Id$      lpc177x_8x_exti.h           2011-06-02
 *//**
-* @file		lpc177x_8x_exti.h
-* @brief	Contains all macro definitions and function prototypes
-*			support for External Interrupt firmware library on LPC177x_8x
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_exti.h
+* @brief    Contains all macro definitions and function prototypes
+*           support for External Interrupt firmware library on LPC177x_8x
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -31,7 +31,7 @@
 **********************************************************************/
 
 /* Peripheral group ----------------------------------------------------------- */
-/** @defgroup EXTI	EXTI (External Interrupt)
+/** @defgroup EXTI  EXTI (External Interrupt)
  * @ingroup LPC177x_8xCMSIS_FwLib_Drivers
  * @{
  */
@@ -57,10 +57,10 @@ extern "C"
 /*********************************************************************//**
  * Macro defines for EXTI  control register
  **********************************************************************/
-#define EXTI_EINT0_BIT_MARK 	0x01
-#define EXTI_EINT1_BIT_MARK 	0x02
-#define EXTI_EINT2_BIT_MARK 	0x04
-#define EXTI_EINT3_BIT_MARK 	0x08
+#define EXTI_EINT0_BIT_MARK     0x01
+#define EXTI_EINT1_BIT_MARK     0x02
+#define EXTI_EINT2_BIT_MARK     0x04
+#define EXTI_EINT3_BIT_MARK     0x08
 
 /**
  * @}
@@ -76,10 +76,10 @@ extern "C"
  */
 typedef enum
 {
-	EXTI_EINT0, /*!<  External interrupt 0, P2.10 */
-	EXTI_EINT1, /*!<  External interrupt 0, P2.11 */
-	EXTI_EINT2, /*!<  External interrupt 0, P2.12 */
-	EXTI_EINT3 	/*!<  External interrupt 0, P2.13 */
+    EXTI_EINT0, /*!<  External interrupt 0, P2.10 */
+    EXTI_EINT1, /*!<  External interrupt 0, P2.11 */
+    EXTI_EINT2, /*!<  External interrupt 0, P2.12 */
+    EXTI_EINT3  /*!<  External interrupt 0, P2.13 */
 } EXTI_LINE_ENUM;
 
 /**
@@ -87,8 +87,8 @@ typedef enum
  */
 typedef enum
 {
-	EXTI_MODE_LEVEL_SENSITIVE, 	/*!< Level sensitivity is selected */
-	EXTI_MODE_EDGE_SENSITIVE  	/*!< Edge sensitivity is selected */
+    EXTI_MODE_LEVEL_SENSITIVE,  /*!< Level sensitivity is selected */
+    EXTI_MODE_EDGE_SENSITIVE    /*!< Edge sensitivity is selected */
 } EXTI_MODE_ENUM;
 
 /**
@@ -96,10 +96,10 @@ typedef enum
  */
 typedef enum
 {
-	EXTI_POLARITY_LOW_ACTIVE_OR_FALLING_EDGE,	/*!< Low active or falling edge sensitive
-												depending on pin mode */
-	EXTI_POLARITY_HIGH_ACTIVE_OR_RISING_EDGE	/*!< High active or rising edge sensitive
-												depending on pin mode */
+    EXTI_POLARITY_LOW_ACTIVE_OR_FALLING_EDGE,   /*!< Low active or falling edge sensitive
+                                                depending on pin mode */
+    EXTI_POLARITY_HIGH_ACTIVE_OR_RISING_EDGE    /*!< High active or rising edge sensitive
+                                                depending on pin mode */
 } EXTI_POLARITY_ENUM;
 
 /**
@@ -107,15 +107,15 @@ typedef enum
  */
 typedef struct
 {
-	/** Select external interrupt pin (EINT0, EINT1, EINT 2, EINT3) */
-	EXTI_LINE_ENUM EXTI_Line;
+    /** Select external interrupt pin (EINT0, EINT1, EINT 2, EINT3) */
+    EXTI_LINE_ENUM EXTI_Line;
 
-	/** Choose between Level-sensitivity or Edge sensitivity */
-	EXTI_MODE_ENUM EXTI_Mode;
+    /** Choose between Level-sensitivity or Edge sensitivity */
+    EXTI_MODE_ENUM EXTI_Mode;
 
-	/** If EXTI mode is level-sensitive: this element use to select low or high active level
-	if EXTI mode is polarity-sensitive: this element use to select falling or rising edge */
-	EXTI_POLARITY_ENUM EXTI_polarity;
+    /** If EXTI mode is level-sensitive: this element use to select low or high active level
+    if EXTI mode is polarity-sensitive: this element use to select falling or rising edge */
+    EXTI_POLARITY_ENUM EXTI_polarity;
 
 }EXTI_InitTypeDef;
 

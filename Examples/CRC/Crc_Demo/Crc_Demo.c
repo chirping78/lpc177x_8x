@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		Crc_Demo.c	2011-06-02
+* $Id$      Crc_Demo.c  2011-06-02
 *//**
-* @file		Crc_Demo.c
-* @brief	This example describe how to use CRC engine on LPC177x_8x
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Crc_Demo.c
+* @brief    This example describe how to use CRC engine on LPC177x_8x
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -32,13 +32,13 @@
 #include "lpc177x_8x_pinsel.h"
 #include "debug_frmwrk.h"
 
-/** @defgroup CRC_Demo	CRC Demo
+/** @defgroup CRC_Demo  CRC Demo
  * @ingroup CRC_Examples
  * @{
  */
 
 /************************** PRIVATE DEFINITIONS ***********************/
-#define BLOCK_SIZE		0x40
+#define BLOCK_SIZE      0x40
 
 /************************** PRIVATE VARIABLES *************************/
 uint8_t menu[] =
@@ -62,98 +62,98 @@ void print_menu(void);
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Initialize block data
- * @param[in]	None
- * @return 		None
+ * @brief       Initialize block data
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void Init_BlockData(void)
 {
-	uint32_t i;
-	for(i=0;i<BLOCK_SIZE;i++)
-	{
-		BlockData[i] = i;
-	}
+    uint32_t i;
+    for(i=0;i<BLOCK_SIZE;i++)
+    {
+        BlockData[i] = i;
+    }
 }
 /*********************************************************************//**
- * @brief		print menu
- * @param[in]	None
- * @return 		None
+ * @brief       print menu
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG(menu);
+    _DBG(menu);
 }
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main ADC program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main ADC program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry(void)
 {
-	uint32_t result, i;
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
-	print_menu();
+    uint32_t result, i;
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
+    print_menu();
 
-	Init_BlockData();
+    Init_BlockData();
 
-	_DBG_("Block data: ");
-	for(i=0;i<BLOCK_SIZE;i++)
-	{
-		_DBH32(BlockData[i]);_DBG("	 ");
-	}
-	while(!CRC_init_flag)
-	{
-		_DBG_("\n\rChoose what polynomial that you want to use, type:");
-		_DBG_("\t - '1': CRC-CCITT");
-		_DBG_("\t - '2': CRC-16");
-		_DBG_("\t - '3': CRC-32");
-		_DBG_("\t - 'Q': Quit");
-		switch(_DG)
-		{
-		case '1':
-			CRC_Init(CRC_POLY_CRCCCITT);
-			_DBG("CRC-CCITT Result: ");
-			result = CRC_CalcBlockChecksum(BlockData, BLOCK_SIZE, CRC_WR_8BIT);
-			_DBH32(result);_DBG_("");
-			break;
-		case '2':
-			CRC_Init(CRC_POLY_CRC16);
-			_DBG("CRC-16 Result: ");
-			result = CRC_CalcBlockChecksum(BlockData, BLOCK_SIZE/2, CRC_WR_16BIT);
-			_DBH32(result);_DBG_("");
-			break;
-		case '3':
-			CRC_Init(CRC_POLY_CRC32);
-			_DBG("CRC-32 Result: ");
-			result = CRC_CalcBlockChecksum(BlockData, BLOCK_SIZE/4, CRC_WR_32BIT);
-			_DBH32(result);_DBG_("");
-			break;
-		case'q':
-		case'Q':
-			_DBG_("Demo terminated!!!");
-			CRC_init_flag = TRUE;
-			break;
-		default:
-			_DBG_("Invalid input, pls type again!");
-			break;
-		}
-	}
-	while(1);
+    _DBG_("Block data: ");
+    for(i=0;i<BLOCK_SIZE;i++)
+    {
+        _DBH32(BlockData[i]);_DBG("  ");
+    }
+    while(!CRC_init_flag)
+    {
+        _DBG_("\n\rChoose what polynomial that you want to use, type:");
+        _DBG_("\t - '1': CRC-CCITT");
+        _DBG_("\t - '2': CRC-16");
+        _DBG_("\t - '3': CRC-32");
+        _DBG_("\t - 'Q': Quit");
+        switch(_DG)
+        {
+        case '1':
+            CRC_Init(CRC_POLY_CRCCCITT);
+            _DBG("CRC-CCITT Result: ");
+            result = CRC_CalcBlockChecksum(BlockData, BLOCK_SIZE, CRC_WR_8BIT);
+            _DBH32(result);_DBG_("");
+            break;
+        case '2':
+            CRC_Init(CRC_POLY_CRC16);
+            _DBG("CRC-16 Result: ");
+            result = CRC_CalcBlockChecksum(BlockData, BLOCK_SIZE/2, CRC_WR_16BIT);
+            _DBH32(result);_DBG_("");
+            break;
+        case '3':
+            CRC_Init(CRC_POLY_CRC32);
+            _DBG("CRC-32 Result: ");
+            result = CRC_CalcBlockChecksum(BlockData, BLOCK_SIZE/4, CRC_WR_32BIT);
+            _DBH32(result);_DBG_("");
+            break;
+        case'q':
+        case'Q':
+            _DBG_("Demo terminated!!!");
+            CRC_init_flag = TRUE;
+            break;
+        default:
+            _DBG_("Invalid input, pls type again!");
+            break;
+        }
+    }
+    while(1);
 }
 
 /* Support required entry point for other toolchain */
 int main (void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

@@ -66,20 +66,20 @@ void ser_OpenPort (char portNum) {
 
   if ( portNum == 0 )
   {
-	/* Port 0 */
-	NVIC_DisableIRQ(UART0_IRQn);
-	LPC_IOCON->P0_2  &= ~0x07;
-	LPC_IOCON->P0_2  |= 1; /* U0_TXD @ P0.2 */
-	LPC_IOCON->P0_3  &= ~0x07;
-	LPC_IOCON->P0_3  |= 1; /* U0_RXD @ P0.3 */
+    /* Port 0 */
+    NVIC_DisableIRQ(UART0_IRQn);
+    LPC_IOCON->P0_2  &= ~0x07;
+    LPC_IOCON->P0_2  |= 1; /* U0_TXD @ P0.2 */
+    LPC_IOCON->P0_3  &= ~0x07;
+    LPC_IOCON->P0_3  |= 1; /* U0_RXD @ P0.3 */
   }
   else
   {
-	/* Port 1 */
-	LPC_IOCON->P2_0  &= ~0x07;
-	LPC_IOCON->P2_0  |= 2; /* U1_TXD @ P2.0 */
-	LPC_IOCON->P2_1  &= ~0x07;
-	LPC_IOCON->P2_1  |= 2; /* U1_RXD @ P2.1 */
+    /* Port 1 */
+    LPC_IOCON->P2_0  &= ~0x07;
+    LPC_IOCON->P2_0  |= 2; /* U1_TXD @ P2.0 */
+    LPC_IOCON->P2_1  &= ~0x07;
+    LPC_IOCON->P2_1  |= 2; /* U1_RXD @ P2.1 */
   }
   return;
 }
@@ -90,21 +90,21 @@ void ser_OpenPort (char portNum) {
 void ser_ClosePort (char portNum ) {
   if ( portNum == 0 )
   {
-	/* POrt 0 */
-	LPC_IOCON->P0_2  &= ~0x07;
-	LPC_IOCON->P0_3  &= ~0x07;
-	/* Disable the interrupt in the VIC and UART controllers */
-	LPC_UART0->IER = 0;
-	NVIC_DisableIRQ(UART0_IRQn);
+    /* POrt 0 */
+    LPC_IOCON->P0_2  &= ~0x07;
+    LPC_IOCON->P0_3  &= ~0x07;
+    /* Disable the interrupt in the VIC and UART controllers */
+    LPC_UART0->IER = 0;
+    NVIC_DisableIRQ(UART0_IRQn);
   }
   else
   {
-	/* Port 1 */
-	LPC_IOCON->P2_0  &= ~0x07;
-	LPC_IOCON->P2_1  &= ~0x07;
-	/* Disable the interrupt in the VIC and UART controllers */
-	LPC_UART1->IER = 0;
-	NVIC_DisableIRQ(UART1_IRQn);
+    /* Port 1 */
+    LPC_IOCON->P2_0  &= ~0x07;
+    LPC_IOCON->P2_1  &= ~0x07;
+    /* Disable the interrupt in the VIC and UART controllers */
+    LPC_UART1->IER = 0;
+    NVIC_DisableIRQ(UART1_IRQn);
   }
   return;
 }
@@ -168,7 +168,7 @@ void ser_InitPort0 (unsigned long baudrate, unsigned int  databits,
   SER_BUF_RESET(ser_in);                               // reset in buffer
 
 
-  dll = (PeripheralClock/16)/baudrate ;	              /*baud rate */
+  dll = (PeripheralClock/16)/baudrate ;               /*baud rate */
   LPC_UART0->FDR = 0;                             // Fractional divider not used
   LPC_UART0->LCR = 0x80 | lcr_d | lcr_p | lcr_s;  // Data bits, Parity,   Stop bit
   LPC_UART0->DLL = dll;                           // Baud Rate depending on PCLK
@@ -176,7 +176,7 @@ void ser_InitPort0 (unsigned long baudrate, unsigned int  databits,
   LPC_UART0->LCR = 0x00 | lcr_d | lcr_p | lcr_s;  // DLAB = 0
   LPC_UART0->IER = 0x03;                          // Enable TX/RX interrupts
 
-  LPC_UART0->FCR = 0x07;				/* Enable and reset TX and RX FIFO. */
+  LPC_UART0->FCR = 0x07;                /* Enable and reset TX and RX FIFO. */
   ser_txRestart = 1;                                   // TX fifo is empty
 
   /* Enable the UART Interrupt */
@@ -242,7 +242,7 @@ void ser_InitPort1 (unsigned long baudrate, unsigned int  databits,
   SER_BUF_RESET(ser_out);                              // reset out buffer
   SER_BUF_RESET(ser_in);                               // reset in buffer
 
-  dll = (PeripheralClock/16)/baudrate ;	/*baud rate */
+  dll = (PeripheralClock/16)/baudrate ; /*baud rate */
   LPC_UART1->FDR = 0;                             // Fractional divider not used
   LPC_UART1->LCR = 0x80 | lcr_d | lcr_p | lcr_s;  // Data bits, Parity,   Stop bit
   LPC_UART1->DLL = dll;                           // Baud Rate depending on PCLK
@@ -250,7 +250,7 @@ void ser_InitPort1 (unsigned long baudrate, unsigned int  databits,
   LPC_UART1->LCR = 0x00 | lcr_d | lcr_p | lcr_s;  // DLAB = 0
   LPC_UART1->IER = 0x03;                          // Enable TX/RX interrupts
 
-  LPC_UART1->FCR = 0x07;				/* Enable and reset TX and RX FIFO. */
+  LPC_UART1->FCR = 0x07;                /* Enable and reset TX and RX FIFO. */
   ser_txRestart = 1;                                   // TX fifo is empty
 
   /* Enable the UART Interrupt */
@@ -264,7 +264,7 @@ void ser_InitPort1 (unsigned long baudrate, unsigned int  databits,
 int ser_Read (char *buffer, const int *length) {
   int bytesToRead, bytesRead;
 
-  /* Read *length bytes, block if *bytes are not avaialable	*/
+  /* Read *length bytes, block if *bytes are not avaialable */
   bytesToRead = *length;
   bytesToRead = (bytesToRead < (*length)) ? bytesToRead : (*length);
   bytesRead = bytesToRead;
@@ -294,14 +294,14 @@ int ser_Write (char portNum, const char *buffer, int *length) {
 
   if (ser_txRestart) {
     ser_txRestart = 0;
-	if ( portNum == 0 )
-	{
-	  LPC_UART0->THR = SER_BUF_RD(ser_out);             // Write to the Tx Register
+    if ( portNum == 0 )
+    {
+      LPC_UART0->THR = SER_BUF_RD(ser_out);             // Write to the Tx Register
     }
-	else
-	{
+    else
+    {
       LPC_UART1->THR = SER_BUF_RD(ser_out);             // Write to the Tx Register
-	}
+    }
   }
 
   return (bytesWritten);
@@ -341,13 +341,13 @@ void UART0_IRQHandler(void)
     }
   }
   if ((iir & 0x2)) {                           // TXMIS pending
-	if (SER_BUF_COUNT(ser_out) != 0) {
+    if (SER_BUF_COUNT(ser_out) != 0) {
       LPC_UART0->THR = SER_BUF_RD(ser_out);         // Write to the Tx FIFO
       ser_txRestart = 0;
     }
-	else {
+    else {
       ser_txRestart = 1;
-	}
+    }
   }
   ser_lineState = LPC_UART0->LSR & 0x1E;            // update linestate
   return;
@@ -368,13 +368,13 @@ void UART1_IRQHandler(void)
     }
   }
   if ((iir & 0x2)) {                           // TXMIS pending
-	if (SER_BUF_COUNT(ser_out) != 0) {
+    if (SER_BUF_COUNT(ser_out) != 0) {
       LPC_UART1->THR = SER_BUF_RD(ser_out);         // Write to the Tx FIFO
       ser_txRestart = 0;
     }
-	else {
+    else {
       ser_txRestart = 1;
-	}
+    }
   }
   ser_lineState = ((LPC_UART1->MSR<<8)|LPC_UART1->LSR) & 0xE01E;    // update linestate
   return;

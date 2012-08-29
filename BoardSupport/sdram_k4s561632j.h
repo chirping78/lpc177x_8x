@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		sdram_k4s561632j.h			2011-06-02
+* $Id$      sdram_k4s561632j.h          2011-06-02
 *//**
-* @file		sdram_k4s561632j.h
-* @brief	Contains all macro definitions for SAMSUNG K4S561632J
-*			(supported on LPC1788 IAR Olimex Start Kit Rev.B)
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     sdram_k4s561632j.h
+* @brief    Contains all macro definitions for SAMSUNG K4S561632J
+*           (supported on LPC1788 IAR Olimex Start Kit Rev.B)
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -31,7 +31,7 @@
 **********************************************************************/
 
 /* Peripheral group ----------------------------------------------------------- */
-/** @defgroup  Sdram_K4S561632J	Sdram K4S561632J
+/** @defgroup  Sdram_K4S561632J Sdram K4S561632J
  * @ingroup LPC177x_8xCMSIS_Board_Support
  * @{
  */
@@ -42,8 +42,8 @@
 
 #if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
 
-#define SDRAM_BASE_ADDR		0xA0000000
-#define SDRAM_SIZE	        0x10000000
+#define SDRAM_BASE_ADDR     0xA0000000
+#define SDRAM_SIZE          0x10000000
 
 #define SDRAM_REFRESH         7813
 #define SDRAM_TRP             20

@@ -16,7 +16,7 @@
 #include "ls.h"
 #include "lpc177x_8x_clkpwr.h"
 
-/** @defgroup MCI_EFSL	MCI EFSL 
+/** @defgroup MCI_EFSL  MCI EFSL 
  * @ingroup MCI_FS
  * Refer to @link Examples/MCI/Mci_FS/efsl/docs/manual.pdf @endlink
  * @{
@@ -43,7 +43,7 @@ uint8_t Buff[1024];
 uint32_t blen = sizeof(Buff);
 
 
-volatile uint32_t Timer = 0;		/* Performance timer (1kHz increment) */
+volatile uint32_t Timer = 0;        /* Performance timer (1kHz increment) */
 uint8_t mciFsMenu[]=
 "********************************************************************************\n\r"
 " Hello NXP Semiconductors \n\r"
@@ -57,14 +57,14 @@ uint8_t mciFsMenu[]=
 /* SysTick Interrupt Handler (1ms)    */
 void SysTick_Handler (void) 
 {           
-	static uint32_t div10;
+    static uint32_t div10;
 
-	Timer++;
+    Timer++;
 
-	if (++div10 >= 10) {
-		div10 = 0;
-		disk_timerproc();		/* Disk timer function (100Hz) */
-	}
+    if (++div10 >= 10) {
+        div10 = 0;
+        disk_timerproc();       /* Disk timer function (100Hz) */
+    }
 }
 void put_char(unsigned char ch)
 {
@@ -76,32 +76,32 @@ unsigned char get_char(void)
 }
 int main()
 {
-	int8_t res;
+    int8_t res;
     uint32_t n, m, p, cnt;
     uint32_t cclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_CPU);
     uint32_t filesize = 0;
     uint32_t time_end;
 
-//	SystemInit();
+//  SystemInit();
     SysTick_Config(cclk/1000 - 1); /* Generate interrupt each 1 ms   */
 
-	debug_frmwrk_init(); // UART0
+    debug_frmwrk_init(); // UART0
     xfunc_out = put_char;
-	xfunc_in  = get_char; 
+    xfunc_in  = get_char; 
 
     xprintf("%s",mciFsMenu);
 
-	xprintf("\nMMC/SD Card Filesystem Test (P:LPC1788 L:EFSL)\n");
+    xprintf("\nMMC/SD Card Filesystem Test (P:LPC1788 L:EFSL)\n");
 
-	xprintf("\nCARD init...");
+    xprintf("\nCARD init...");
 
-	// init file system
-	if ( ( res = efs_init( &efs, 0 ) ) != 0 ) {
-		xprintf("failed with %d\n",res);
-	}
-	else 
-	{
-		xprintf("ok\n");
+    // init file system
+    if ( ( res = efs_init( &efs, 0 ) ) != 0 ) {
+        xprintf("failed with %d\n",res);
+    }
+    else 
+    {
+        xprintf("ok\n");
 
         xprintf("Card type: ");
         switch (CardConfig.CardType)
@@ -125,15 +125,15 @@ int main()
         xprintf("Sector count: %d\n", CardConfig.SectorCount);
         xprintf("Block size: %d sectors\n", CardConfig.BlockSize);
         xprintf("Card capacity: %d MByte\n\n", (((CardConfig.SectorCount >> 10) * CardConfig.SectorSize)) >> 10);
-		xprintf("\nDirectory of 'root':\n");
-		
-		/* list files in root directory */
-		ls_openDir( &list, &(efs.myFs) , "/");
-		while ( ls_getNext( &list ) == 0 ) {
-			// list.currentEntry is the current file
-			list.currentEntry.FileName[LIST_MAXLENFILENAME-1] = '\0';
-			xprintf("%s, 0x%x bytes\n", list.currentEntry.FileName, list.currentEntry.FileSize ) ;
-		}
+        xprintf("\nDirectory of 'root':\n");
+        
+        /* list files in root directory */
+        ls_openDir( &list, &(efs.myFs) , "/");
+        while ( ls_getNext( &list ) == 0 ) {
+            // list.currentEntry is the current file
+            list.currentEntry.FileName[LIST_MAXLENFILENAME-1] = '\0';
+            xprintf("%s, 0x%x bytes\n", list.currentEntry.FileName, list.currentEntry.FileSize ) ;
+        }
 #if READ_TEST_ENABLED!=0
         /* Read test */
         xprintf("\nFile read test:\n");
@@ -233,12 +233,12 @@ int main()
         }
 #endif
         /* close file system */
-	    fs_umount( &efs.myFs ) ;
+        fs_umount( &efs.myFs ) ;
     }
 
-	xprintf("\nEFSL test complete.\n");
+    xprintf("\nEFSL test complete.\n");
 
-	while (1);
+    while (1);
 }
 /**
  * @}

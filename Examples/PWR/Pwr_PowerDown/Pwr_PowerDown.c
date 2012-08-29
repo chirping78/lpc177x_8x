@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		Pwr_PowerDown.c		2011-06-02
+* $Id$      Pwr_PowerDown.c     2011-06-02
 *//**
-* @file		PPwr_PowerDown.c
-* @brief	This example describes how to enter the system in Power
-* 			Down mode and wake-up by using NMI (Non-maskable Interrupt)
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     PPwr_PowerDown.c
+* @brief    This example describes how to enter the system in Power
+*           Down mode and wake-up by using NMI (Non-maskable Interrupt)
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -36,7 +36,7 @@
 #include "lpc177x_8x_pinsel.h"
 
 
-/** @defgroup PWR_PowerDown	Pwr Mgr Power Down
+/** @defgroup PWR_PowerDown Pwr Mgr Power Down
  * @ingroup PWR_Examples
  * @{
  */
@@ -59,67 +59,67 @@ void NMI_Handler(void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
- * @brief		Non-Maskable interrupt handler
- * @param[in]	none
- * @return 		None
+ * @brief       Non-Maskable interrupt handler
+ * @param[in]   none
+ * @return      None
  **********************************************************************/
 void NMI_Handler(void)
 {
-	//do nothing
+    //do nothing
 }
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print Welcome menu
- * @param[in]	none
- * @return 		None
+ * @brief       Print Welcome menu
+ * @param[in]   none
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG(menu);
+    _DBG(menu);
 }
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry (void)
 {
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 
-	/* Pin selection:
-	 * P2.10 as NMI
-	 */
+    /* Pin selection:
+     * P2.10 as NMI
+     */
 
-	PINSEL_ConfigPin(2,10,2);
+    PINSEL_ConfigPin(2,10,2);
 
-	SCB->ICSR |=(((uint32_t)1)<<31); 	//changes NMI exception state to pending
+    SCB->ICSR |=(((uint32_t)1)<<31);    //changes NMI exception state to pending
 
-	_DBG_("Press '1' to enter system in PowerDown mode");
-	while(_DG !='1');
+    _DBG_("Press '1' to enter system in PowerDown mode");
+    while(_DG !='1');
 
-	_DBG_("Enter PowerDown mode...");
-	_DBG_("Press INT0 button to wake-up system");
+    _DBG_("Enter PowerDown mode...");
+    _DBG_("Press INT0 button to wake-up system");
 
-	// Enter target power down mode
+    // Enter target power down mode
 
-	CLKPWR_PowerDown();
-	SystemInit();
-	debug_frmwrk_init();
-	_DBG_("\n\rSystem waked-up!");
-	while(1);
+    CLKPWR_PowerDown();
+    SystemInit();
+    debug_frmwrk_init();
+    _DBG_("\n\rSystem waked-up!");
+    while(1);
 }
 
 
@@ -130,8 +130,8 @@ void c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

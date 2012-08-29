@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		eeprom_test.c  				2012-01-18
+* $Id$      eeprom_test.c               2012-01-18
 *//**
-* @file		eeprom_test.c  
-* @brief	An example of I2C using polling mode to test the I2C driver.
-* 			Using EEPROM EEPROM to transfer a number of data byte.
-* @version	1.0
-* @date		18. Janurary. 2012
-* @author	NXP MCU SW Application Team
+* @file     eeprom_test.c  
+* @brief    An example of I2C using polling mode to test the I2C driver.
+*           Using EEPROM EEPROM to transfer a number of data byte.
+* @version  1.0
+* @date     18. Janurary. 2012
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -39,18 +39,18 @@
 #include "debug_frmwrk.h"
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup I2C_EEPROM_polling	I2C_EEPROM
+/** @defgroup I2C_EEPROM_polling    I2C_EEPROM
  * @ingroup I2C_Examples
  * @{
  */
 
 /************************** PRIVATE DEFINITIONS *************************/
 /** Used I2C device definition, should be 0 or 2 */
-#define I2CDEV	0
+#define I2CDEV  0
 
 /* Definition of internal register of EEPROM EEPROM */
 /* 16 bit address */
-#define EEPROM_SLVADDR		(0xA0>>1)
+#define EEPROM_SLVADDR      (0xA0>>1)
 #define ADDRESS_OFFSET      (0)
 #define ADDRESS_SIZE        (2)
 #define DATA_OFFSET         (2)
@@ -90,149 +90,149 @@ void Error_Loop(uint32_t ErrorCode);
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief	Write a number of data byte into EEPROM EEPROM
- * @param[in]	None
- * @return 	0: if success, otherwise (-1) returned.
+ * @brief   Write a number of data byte into EEPROM EEPROM
+ * @param[in]   None
+ * @return  0: if success, otherwise (-1) returned.
  **********************************************************************/
 int32_t EEPROM_Write(void)
 {
-	txsetup.sl_addr7bit = EEPROM_SLVADDR;
-	txsetup.tx_data = EEPROM_wrdat;
-	txsetup.tx_length = sizeof(EEPROM_wrdat);
-	txsetup.rx_data = NULL;
-	txsetup.rx_length = 0;
-	txsetup.retransmissions_max = 3;
+    txsetup.sl_addr7bit = EEPROM_SLVADDR;
+    txsetup.tx_data = EEPROM_wrdat;
+    txsetup.tx_length = sizeof(EEPROM_wrdat);
+    txsetup.rx_data = NULL;
+    txsetup.rx_length = 0;
+    txsetup.retransmissions_max = 3;
 
-  	if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) == SUCCESS){
-		return (0);
-	} else {
-		return (-1);
-	}
+    if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) == SUCCESS){
+        return (0);
+    } else {
+        return (-1);
+    }
 }
 /*********************************************************************//**
- * @brief	Read a number of data byte from EEPROM EEPROM
- * @param[in]	None
- * @return 	0: if success, otherwise (-1) returned.
+ * @brief   Read a number of data byte from EEPROM EEPROM
+ * @param[in]   None
+ * @return  0: if success, otherwise (-1) returned.
  **********************************************************************/
 int32_t EEPROM_Read(void)
 {
 
-	rxsetup.sl_addr7bit = EEPROM_SLVADDR;
-	rxsetup.tx_data = EEPROM_wrdat;	// Get address to read at writing address
-	rxsetup.tx_length = ADDRESS_SIZE;
-	rxsetup.rx_data = EEPROM_rddat;
-	rxsetup.rx_length = sizeof(EEPROM_rddat);
-	rxsetup.retransmissions_max = 3;
+    rxsetup.sl_addr7bit = EEPROM_SLVADDR;
+    rxsetup.tx_data = EEPROM_wrdat; // Get address to read at writing address
+    rxsetup.tx_length = ADDRESS_SIZE;
+    rxsetup.rx_data = EEPROM_rddat;
+    rxsetup.rx_length = sizeof(EEPROM_rddat);
+    rxsetup.retransmissions_max = 3;
 
-	if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &rxsetup, I2C_TRANSFER_POLLING) == SUCCESS){
-		return (0);
-	} else {
-		return (-1);
-	}
+    if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &rxsetup, I2C_TRANSFER_POLLING) == SUCCESS){
+        return (0);
+    } else {
+        return (-1);
+    }
 }
 
 /*********************************************************************//**
- * @brief	Print menu
- * @param[in]	menu    Menu String
- * @return 	None
+ * @brief   Print menu
+ * @param[in]   menu    Menu String
+ * @return  None
  **********************************************************************/
 void print_menu(uint8_t* menu)
 {
-	_DBG_(menu);
+    _DBG_(menu);
 }
 
 /*********************************************************************//**
- * @brief		A subroutine that will be called if there's any error
- * 				on I2C operation
- * @param[in]	ErrorCode Error Code Input
- * @return 		None
+ * @brief       A subroutine that will be called if there's any error
+ *              on I2C operation
+ * @param[in]   ErrorCode Error Code Input
+ * @return      None
  **********************************************************************/
 void Error_Loop(uint32_t ErrorCode)
 {
-	/*
-	 * Insert your code here...
-	 */
-	while(1);
+    /*
+     * Insert your code here...
+     */
+    while(1);
 }
 
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief	c_entry: Main program body
- * @param[in]	None
- * @return 	int
+ * @brief   c_entry: Main program body
+ * @param[in]   None
+ * @return  int
  **********************************************************************/
 int c_entry(void)
 {
-	volatile int32_t tmp, i;
+    volatile int32_t tmp, i;
 
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	print_menu(menu1);
+    // print welcome screen
+    print_menu(menu1);
 
-	/*
-	 * Init I2C pin connect
-	 */
-	PINSEL_ConfigPin (0, 27, 1);
-	PINSEL_ConfigPin (0, 28, 1);
+    /*
+     * Init I2C pin connect
+     */
+    PINSEL_ConfigPin (0, 27, 1);
+    PINSEL_ConfigPin (0, 28, 1);
 
-	/* I2C block ------------------------------------------------------------------- */
-	// Initialize I2C peripheral
-	I2C_Init((en_I2C_unitId)I2CDEV, 200000);
+    /* I2C block ------------------------------------------------------------------- */
+    // Initialize I2C peripheral
+    I2C_Init((en_I2C_unitId)I2CDEV, 200000);
 
-	/* Enable I2C1 operation */
-	I2C_Cmd((en_I2C_unitId)I2CDEV, I2C_MASTER_MODE, ENABLE);
+    /* Enable I2C1 operation */
+    I2C_Cmd((en_I2C_unitId)I2CDEV, I2C_MASTER_MODE, ENABLE);
 
-	EEPROM_wrdat[ADDRESS_OFFSET] =  (WRITE_ADDRESS >> 8)&0xFF;
-	EEPROM_wrdat[ADDRESS_OFFSET+1] = WRITE_ADDRESS & 0xFF;
-	for(i = 0; i<DATA_SIZE; i++)
-	{
-	     EEPROM_wrdat[i+DATA_OFFSET] = i;
-	}
+    EEPROM_wrdat[ADDRESS_OFFSET] =  (WRITE_ADDRESS >> 8)&0xFF;
+    EEPROM_wrdat[ADDRESS_OFFSET+1] = WRITE_ADDRESS & 0xFF;
+    for(i = 0; i<DATA_SIZE; i++)
+    {
+         EEPROM_wrdat[i+DATA_OFFSET] = i;
+    }
 
-	/* Transmit data ---------------------------------------------------------- */
-	_DBG_("Sending...");
-	if (EEPROM_Write() == (-1)){
-		_DBG_("Error while sending data");
-		Error_Loop(txsetup.status);
-	}
-	_DBG_("Complete!");
+    /* Transmit data ---------------------------------------------------------- */
+    _DBG_("Sending...");
+    if (EEPROM_Write() == (-1)){
+        _DBG_("Error while sending data");
+        Error_Loop(txsetup.status);
+    }
+    _DBG_("Complete!");
 
-	// wait for a while
-	for (tmp = 0x100000; tmp; tmp--);
+    // wait for a while
+    for (tmp = 0x100000; tmp; tmp--);
 
-	/* Receive data ---------------------------------------------------------- */
-	_DBG_("Reading...");
-	if (EEPROM_Read() == (-1)){
-		_DBG_("Error while reading data");
-		Error_Loop(rxsetup.status);
-	}
-	_DBG_("Complete!");
+    /* Receive data ---------------------------------------------------------- */
+    _DBG_("Reading...");
+    if (EEPROM_Read() == (-1)){
+        _DBG_("Error while reading data");
+        Error_Loop(rxsetup.status);
+    }
+    _DBG_("Complete!");
 
-	// Verify data
-	for (tmp = sizeof(EEPROM_rddat)-1; tmp>=0; tmp--){
-		if (EEPROM_rddat[tmp] != EEPROM_wrdat[tmp+DATA_OFFSET]){
-			_DBG_("Verify Data error!");
-			break;
-		}
-	}
+    // Verify data
+    for (tmp = sizeof(EEPROM_rddat)-1; tmp>=0; tmp--){
+        if (EEPROM_rddat[tmp] != EEPROM_wrdat[tmp+DATA_OFFSET]){
+            _DBG_("Verify Data error!");
+            break;
+        }
+    }
 
-	if(tmp < 0)
-	{
- 		_DBG_("Verify Successfully"); 
-	}
+    if(tmp < 0)
+    {
+        _DBG_("Verify Successfully"); 
+    }
 
-	 print_menu(menu2);
-	/* Loop forever */
-	while(1);
+     print_menu(menu2);
+    /* Loop forever */
+    while(1);
 }
 
 /* With ARM and GHS toolsets, the entry point is main() - this will
@@ -248,19 +248,19 @@ int main(void)
 
 #ifdef  DEBUG
 /*******************************************************************************
-* @brief		Reports the name of the source file and the source line number
-* 				where the CHECK_PARAM error has occurred.
-* @param[in]	file Pointer to the source file name
+* @brief        Reports the name of the source file and the source line number
+*               where the CHECK_PARAM error has occurred.
+* @param[in]    file Pointer to the source file name
 * @param[in]    line assert_param error line source number
-* @return		None
+* @return       None
 *******************************************************************************/
 void check_failed(uint8_t *file, uint32_t line)
 {
-	/* User can add his own implementation to report the file name and line number,
-	 ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+    /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
-	/* Infinite loop */
-	while(1);
+    /* Infinite loop */
+    while(1);
 }
 #endif
 

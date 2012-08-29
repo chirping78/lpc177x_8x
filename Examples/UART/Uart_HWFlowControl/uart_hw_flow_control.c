@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		uart_hw_flow_control.c				2012-04-17
+* $Id$      uart_hw_flow_control.c              2012-04-17
 *//**
-* @file		uart_hw_flow_control.c
-* @brief	This example describes how to using UART Hardware flow
-* 			control mode
-* @version	1.0
-* @date		17. April. 2012
-* @author	NXP MCU SW Application Team
+* @file     uart_hw_flow_control.c
+* @brief    This example describes how to using UART Hardware flow
+*           control mode
+* @version  1.0
+* @date     17. April. 2012
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -34,7 +34,7 @@
 #include "lpc177x_8x_pinsel.h"
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup UART_HWFlowControl	HWFlowControl
+/** @defgroup UART_HWFlowControl    HWFlowControl
  * @ingroup UART_Examples
  * @{
  */
@@ -62,74 +62,74 @@ void print_menu(void);
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print Welcome menu
- * @param[in]	none
- * @return 		None
+ * @brief       Print Welcome menu
+ * @param[in]   none
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	UART_Send(TEST_UART, menu1, sizeof(menu1), BLOCKING);
+    UART_Send(TEST_UART, menu1, sizeof(menu1), BLOCKING);
 }
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main UART program body
- * @param[in]	None
- * @return 		int
+ * @brief       c_entry: Main UART program body
+ * @param[in]   None
+ * @return      int
  **********************************************************************/
 int c_entry(void)
 {
-	// UART Configuration structure variable
-	UART_CFG_Type UARTConfigStruct;
-	// UART FIFO configuration Struct variable
-	UART_FIFO_CFG_Type UARTFIFOConfigStruct;
+    // UART Configuration structure variable
+    UART_CFG_Type UARTConfigStruct;
+    // UART FIFO configuration Struct variable
+    UART_FIFO_CFG_Type UARTFIFOConfigStruct;
 
-	uint32_t idx, len;
-	__IO FlagStatus exitflag;
-	uint8_t buffer[10];
+    uint32_t idx, len;
+    __IO FlagStatus exitflag;
+    uint8_t buffer[10];
 
-	/*
-	 * Initialize UART1 pin connect
-	 */
+    /*
+     * Initialize UART1 pin connect
+     */
     PINSEL_ConfigPin(0, 15, 1);//UART1 - TXD
-	PINSEL_ConfigPin(0, 16, 1);//UART1 - RXD
-	PINSEL_ConfigPin(0, 17, 1);//UART1 - CTS
-	PINSEL_ConfigPin(0, 22, 1);//UART1 - RTS
+    PINSEL_ConfigPin(0, 16, 1);//UART1 - RXD
+    PINSEL_ConfigPin(0, 17, 1);//UART1 - CTS
+    PINSEL_ConfigPin(0, 22, 1);//UART1 - RTS
 
-	/* Initialize UART Configuration parameter structure to default state:
-	 * Baudrate = 115200bps
-	 * 8 data bit
-	 * 1 Stop bit
-	 * None parity
-	 */
-	UART_ConfigStructInit(&UARTConfigStruct);
+    /* Initialize UART Configuration parameter structure to default state:
+     * Baudrate = 115200bps
+     * 8 data bit
+     * 1 Stop bit
+     * None parity
+     */
+    UART_ConfigStructInit(&UARTConfigStruct);
 
-	// Initialize UART0 peripheral with given to corresponding parameter
-	UART_Init(TEST_UART, &UARTConfigStruct);
+    // Initialize UART0 peripheral with given to corresponding parameter
+    UART_Init(TEST_UART, &UARTConfigStruct);
 
-	/* Initialize FIFOConfigStruct to default state:
-	 * 				- FIFO_DMAMode = DISABLE
-	 * 				- FIFO_Level = UART_FIFO_TRGLEV0
-	 * 				- FIFO_ResetRxBuf = ENABLE
-	 * 				- FIFO_ResetTxBuf = ENABLE
-	 * 				- FIFO_State = ENABLE
-	 */
-	UART_FIFOConfigStructInit(&UARTFIFOConfigStruct);
+    /* Initialize FIFOConfigStruct to default state:
+     *              - FIFO_DMAMode = DISABLE
+     *              - FIFO_Level = UART_FIFO_TRGLEV0
+     *              - FIFO_ResetRxBuf = ENABLE
+     *              - FIFO_ResetTxBuf = ENABLE
+     *              - FIFO_State = ENABLE
+     */
+    UART_FIFOConfigStructInit(&UARTFIFOConfigStruct);
 
-	// Initialize FIFO for UART0 peripheral
-	UART_FIFOConfig(TEST_UART, &UARTFIFOConfigStruct);
+    // Initialize FIFO for UART0 peripheral
+    UART_FIFOConfig(TEST_UART, &UARTFIFOConfigStruct);
 
-	// Configure UART1 hardware flow control RTS/CTS
-	UART_FullModemForcePinState(TEST_UART,UART1_MODEM_PIN_RTS,ACTIVE);
+    // Configure UART1 hardware flow control RTS/CTS
+    UART_FullModemForcePinState(TEST_UART,UART1_MODEM_PIN_RTS,ACTIVE);
 
-	// Enable UART Transmit
-	UART_TxCmd(TEST_UART, ENABLE);
+    // Enable UART Transmit
+    UART_TxCmd(TEST_UART, ENABLE);
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 
-	// Reset exit flag
-	exitflag = RESET;
+    // Reset exit flag
+    exitflag = RESET;
 
     /* Read some data from the buffer */
     while (exitflag == RESET)
@@ -147,7 +147,7 @@ int c_entry(void)
             if (buffer[idx] == 27)
             {
                 /* ESC key, set exit flag */
-            	UART_Send(TEST_UART, menu2, sizeof(menu2), BLOCKING);
+                UART_Send(TEST_UART, menu2, sizeof(menu2), BLOCKING);
                 exitflag = SET;
             }
             else if (buffer[idx] == 'r')
@@ -157,7 +157,7 @@ int c_entry(void)
             else
             {
                 /* Echo it back */
-            	UART_Send(TEST_UART, &buffer[idx], 1, BLOCKING);
+                UART_Send(TEST_UART, &buffer[idx], 1, BLOCKING);
             }
             idx++;
         }

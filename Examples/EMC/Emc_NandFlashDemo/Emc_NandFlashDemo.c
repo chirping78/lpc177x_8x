@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		Emc_NandFlashDemo.c	2011-06-02
+* $Id$      Emc_NandFlashDemo.c 2011-06-02
 *//**
-* @file		Emc_NandFlashDemo.c
-* @brief	This example describes how to use EMC interface on LPC177x_8x
-* 			to connect with Nand Flash K9F1G08U0A on EA board
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Emc_NandFlashDemo.c
+* @brief    This example describes how to use EMC interface on LPC177x_8x
+*           to connect with Nand Flash K9F1G08U0A on EA board
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -37,7 +37,7 @@
 #include "debug_frmwrk.h"
 
 
-/** @defgroup EMC_NandFlashDemo	EMC NandFlash Demo
+/** @defgroup EMC_NandFlashDemo EMC NandFlash Demo
  * @ingroup EMC_Examples
  * @{
  */
@@ -64,96 +64,96 @@ void print_menu(void);
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print menu
- * @param[in]	None
- * @return 		None
+ * @brief       Print menu
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG_(menu);
+    _DBG_(menu);
 }
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main ADC program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main ADC program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry(void)
 {
     uint32_t FlashID;
     uint32_t i;
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 
-	_DBG_("Init NAND Flash...");
+    _DBG_("Init NAND Flash...");
 
     /* initialize memory */
     NandFlash_Init();
     NandFlash_Reset();
 
-	_DBG("Read NAND Flash ID:  ");
+    _DBG("Read NAND Flash ID:  ");
     FlashID = NandFlash_ReadId();
     if ( (FlashID & 0xFFFF0000) != K9FXX_ID )
     {
-    	_DBG_("Error in reading NAND Flash ID, testing terminated!");
-    	while( 1 );	/* Fatal error */
+        _DBG_("Error in reading NAND Flash ID, testing terminated!");
+        while( 1 ); /* Fatal error */
     }
 
-	_DBH32_(FlashID);_DBG_("");
+    _DBH32_(FlashID);_DBG_("");
 
-	_DBG_("Checking valid block...");
+    _DBG_("Checking valid block...");
     if ( NandFlash_ValidBlockCheck() == FALSE )
     {
-    	_DBG_("Valid block checking error, testing terminated! At block(s): ");
-    	///while ( 1 );		// Fatal error
+        _DBG_("Valid block checking error, testing terminated! At block(s): ");
+        ///while ( 1 );     // Fatal error
 
-		for(i = 0; i < NANDFLASH_NUMOF_BLOCK; i++)
-		{
-			if (InvalidBlockTable[i] == FALSE)
-			{
-				_DBD32(i);_DBG("   ");
-			}
-		}
+        for(i = 0; i < NANDFLASH_NUMOF_BLOCK; i++)
+        {
+            if (InvalidBlockTable[i] == FALSE)
+            {
+                _DBD32(i);_DBG("   ");
+            }
+        }
     }
 
     /**************************************************************
-    * NandFlash_BlockErase() could scrub off all the invalid 	    *
-    * block infomation including the factory initial invalid	    *
+    * NandFlash_BlockErase() could scrub off all the invalid        *
+    * block infomation including the factory initial invalid        *
     * block table information. Per Samsung's K9F1G08 Users Manual,*
-    * "Any intentional erasure of the initial invalid block		*
-    * information is prohibited.									*
-    *	However, during the driver debugging, it may create lot of  *
-    *	invalid blocks. Below NandFlash_BlockErase() is used to deal *
+    * "Any intentional erasure of the initial invalid block     *
+    * information is prohibited.                                    *
+    *   However, during the driver debugging, it may create lot of  *
+    *   invalid blocks. Below NandFlash_BlockErase() is used to deal *
     * with situation like that.                                   *
-    *																*
+    *                                                               *
     ***************************************************************/
     /* Erase the entire NAND FLASH */
     _DBG_("Erase entire NAND Flash...");
 
     for ( i = 0; i < NANDFLASH_NUMOF_BLOCK; i++ )
     {
-	  	if ( NandFlash_BlockErase(i) == FALSE )
-	  	{
-			_DBG("Erase NAND Flash fail at block: ");_DBD32(i);_DBG_("");
-	  	}
+        if ( NandFlash_BlockErase(i) == FALSE )
+        {
+            _DBG("Erase NAND Flash fail at block: ");_DBD32(i);_DBG_("");
+        }
     }
 
     /* For the test program, the pattern for the whole page 2048 bytes
     is organized as: 0x0, 0x1, ... 0xFF, 0x0, 0x01...... */
     for ( i = 0; i < NANDFLASH_RW_PAGE_SIZE; i++ )
     {
-	  	ReadBuf[i] = 0;
-	  	WriteBuf[i] = i;
+        ReadBuf[i] = 0;
+        WriteBuf[i] = i;
     }
 
     /* If it's a valid block, program all the pages of this block,
@@ -162,30 +162,30 @@ void c_entry(void)
 
     if ( InvalidBlockTable[0] == 0 )
     {
-    	_DBG_("Write a block of 2K data to NAND Flash...");
-	  	if ( NandFlash_PageProgram( 0, 0, &WriteBuf[0] ) == FALSE )
-		  	{
-	  			_DBG_("Writing fail, testing terminated!");
-	  			while ( 1 );	/* Fatal error */
-		  	}
+        _DBG_("Write a block of 2K data to NAND Flash...");
+        if ( NandFlash_PageProgram( 0, 0, &WriteBuf[0] ) == FALSE )
+            {
+                _DBG_("Writing fail, testing terminated!");
+                while ( 1 );    /* Fatal error */
+            }
 
-	  	_DBG_("Read back a block of 2K data from NAND Flash...");
-	  	if ( NandFlash_PageRead( 0, 0, &ReadBuf[0] ) == FALSE )
-		  	{
-	  			_DBG_("Reading fail, testing terminated!");
-	  			while ( 1 );	/* Fatal error */
-		  	}
+        _DBG_("Read back a block of 2K data from NAND Flash...");
+        if ( NandFlash_PageRead( 0, 0, &ReadBuf[0] ) == FALSE )
+            {
+                _DBG_("Reading fail, testing terminated!");
+                while ( 1 );    /* Fatal error */
+            }
 
-	  	/* Comparison read and write buffer */
-	  	_DBG_("Verify data...");
-	  	for ( i = 0; i < NANDFLASH_RW_PAGE_SIZE; i++ )
-	  	{
-			if ( ReadBuf[i] != WriteBuf[i] )
-			{
-			  	_DBG_("Verifying fail, testing terminated!");
-				while ( 1 );	/* Fatal error */
-			}
-	  	}
+        /* Comparison read and write buffer */
+        _DBG_("Verify data...");
+        for ( i = 0; i < NANDFLASH_RW_PAGE_SIZE; i++ )
+        {
+            if ( ReadBuf[i] != WriteBuf[i] )
+            {
+                _DBG_("Verifying fail, testing terminated!");
+                while ( 1 );    /* Fatal error */
+            }
+        }
     }
 
     _DBG_("Verifying complete! Testing terminated!");
@@ -199,8 +199,8 @@ void c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

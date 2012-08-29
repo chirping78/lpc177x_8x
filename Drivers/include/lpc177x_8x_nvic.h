@@ -1,14 +1,14 @@
 /**********************************************************************
-* $Id$		lpc177x_8x_nvic.h			2011-06-02
+* $Id$      lpc177x_8x_nvic.h           2011-06-02
 *//**
-* @file		lpc177x_8x_nvic.h
-* @brief	Contains all macro definitions and function prototypes
-*			support for Nesting Vectored Interrupt firmware library
-*			on LPC177x_8x. The main NVIC functions are defined in
-*			core_cm3.h
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_nvic.h
+* @brief    Contains all macro definitions and function prototypes
+*           support for Nesting Vectored Interrupt firmware library
+*           on LPC177x_8x. The main NVIC functions are defined in
+*           core_cm3.h
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.

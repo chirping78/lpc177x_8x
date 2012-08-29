@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		norflash_sst39vf3201.h			2011-06-02
+* $Id$      norflash_sst39vf3201.h          2011-06-02
 *//**
-* @file		norflash_sst39vf3201.h
-* @brief	Contains all macro definitions and function prototypes
-*			support for external NOR Flash SamSung SST39VF3201
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     norflash_sst39vf3201.h
+* @brief    Contains all macro definitions and function prototypes
+*           support for external NOR Flash SamSung SST39VF3201
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -43,18 +43,18 @@
 /*****************************************************************************
  * Defines and typedefs
  ****************************************************************************/
-#define NOR_FLASH_BASE		0x80000000
-#define NOR_FLASH_SIZE		0x00100000
+#define NOR_FLASH_BASE      0x80000000
+#define NOR_FLASH_SIZE      0x00100000
 
-#define GET_ADDR(addr)	(volatile uint16_t *)(NOR_FLASH_BASE | ((addr)<<1))
+#define GET_ADDR(addr)  (volatile uint16_t *)(NOR_FLASH_BASE | ((addr)<<1))
 
-#define SECTOR_SIZE		0x800	/* Must be 2048 words for 39VF160 */
-#define BLOCK_SIZE		0x8000	/* Must be 32K words for 39VF160  */
+#define SECTOR_SIZE     0x800   /* Must be 2048 words for 39VF160 */
+#define BLOCK_SIZE      0x8000  /* Must be 32K words for 39VF160  */
 
-#define SST_ID			0xBF    /* SST Manufacturer's ID code   */
-#define SST_39VF160		0x235B  /* SST 39VF160 device code      */
+#define SST_ID          0xBF    /* SST Manufacturer's ID code   */
+#define SST_39VF160     0x235B  /* SST 39VF160 device code      */
 
-#define PROGRAM_TIMEOUT	0x08000000
+#define PROGRAM_TIMEOUT 0x08000000
 
 extern void NORFLASHInit( void );
 extern void NORFLASHErase( void );

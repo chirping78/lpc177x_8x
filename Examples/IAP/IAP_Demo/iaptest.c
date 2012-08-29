@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		iaptest.c			2011-11-21
+* $Id$      iaptest.c           2011-11-21
 *//**
-* @file		lpc177x_8x_iap.h
- * @brief	       IAP demo
-* @version	1.0
-* @date		21. November. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_iap.h
+ * @brief          IAP demo
+* @version  1.0
+* @date     21. November. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -38,7 +38,7 @@
 
 /** The area will be erase and program */
 #define FLASH_PROG_AREA_START       0x8000
-#define FLASH_PROG_AREA_SIZE		0x1000
+#define FLASH_PROG_AREA_SIZE        0x1000
 
 
 /** The origin buffer on RAM */
@@ -50,7 +50,7 @@ uint8_t buffer[BUFF_SIZE];
 uint8_t __attribute__ ((aligned (4))) buffer[BUFF_SIZE];
 #endif
 
-/** @defgroup IAP_Demo	IAP Demo
+/** @defgroup IAP_Demo  IAP Demo
  * @ingroup IAP_Examples
  * @{
  */
@@ -67,15 +67,15 @@ uint8_t menu[]=
 "********************************************************************************\n\r";
 
 /*********************************************************************//**
- * @brief		The entry of the program
+ * @brief       The entry of the program
  *
  * @param[in]None
  *
- * @return 	None.
+ * @return  None.
  *
  **********************************************************************/
 void c_entry (void)
-{	    		
+{               
   uint32_t result[4];
   uint8_t ver_major, ver_minor;
   uint32_t i;
@@ -124,8 +124,8 @@ void c_entry (void)
   for(i = 0; i < 4; i++)
   {
      _DBD32(result[i]);
-	 if(i<3)
-	   _DBG("-");
+     if(i<3)
+       _DBG("-");
   }
   _DBG_("");
 
@@ -141,12 +141,12 @@ void c_entry (void)
   if(status != CMD_SUCCESS)
   {
      _DBG("Blank Check failed with code is ");_DBD(status);_DBG_("");
-	 if(status == SECTOR_NOT_BLANK)
-	 {
-	   _DBG(">>>>The first non-blank sector is sector ");
-	   _DBD(flash_prog_area_sec_start + result[0]);
-	   _DBG_("");
-	 }
+     if(status == SECTOR_NOT_BLANK)
+     {
+       _DBG(">>>>The first non-blank sector is sector ");
+       _DBD(flash_prog_area_sec_start + result[0]);
+       _DBG_("");
+     }
      while(1); 
   }
 
@@ -160,10 +160,10 @@ void c_entry (void)
   for ( i = 0; i < FLASH_PROG_AREA_SIZE/BUFF_SIZE; i++ )
   {
     ptr = (uint8_t*)(FLASH_PROG_AREA_START + i*BUFF_SIZE);
-	status =  CopyRAM2Flash(ptr, buffer,IAP_WRITE_1024);
-	if(status != CMD_SUCCESS)
-	{
-	   _DBG("Program chip failed with code is ");_DBD(status);_DBG_("");
+    status =  CopyRAM2Flash(ptr, buffer,IAP_WRITE_1024);
+    if(status != CMD_SUCCESS)
+    {
+       _DBG("Program chip failed with code is ");_DBD(status);_DBG_("");
        while(1);
     }
   }
@@ -171,12 +171,12 @@ void c_entry (void)
   for ( i = 0; i < FLASH_PROG_AREA_SIZE/BUFF_SIZE; i++ )
   {
     ptr = (uint8_t*)(FLASH_PROG_AREA_START + i*BUFF_SIZE);
-	status =  Compare(ptr, buffer,BUFF_SIZE);
-	if(status != CMD_SUCCESS)
-	{
-	   _DBG("Compare memory failed with code is ");_DBD(status);_DBG_("");
+    status =  Compare(ptr, buffer,BUFF_SIZE);
+    if(status != CMD_SUCCESS)
+    {
+       _DBG("Compare memory failed with code is ");_DBD(status);_DBG_("");
        while(1);
-	}
+    }
   }
 
    _DBG_("Program chip: Success");
@@ -187,11 +187,11 @@ void c_entry (void)
 }
 
 /*********************************************************************//**
- * @brief		The main program
+ * @brief       The main program
  *
  * @param[in] None
  *
- * @return 	None.
+ * @return  None.
  *
  **********************************************************************/
  int main (void)

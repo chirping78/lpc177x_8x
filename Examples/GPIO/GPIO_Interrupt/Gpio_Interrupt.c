@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		Gpio_Interrupt.c		2011-06-02
+* $Id$      Gpio_Interrupt.c        2011-06-02
 *//**
-* @file		Gpio_Interrupt.c
-* @brief	This example used to test GPIO interrupt function
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Gpio_Interrupt.c
+* @brief    This example used to test GPIO interrupt function
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -34,20 +34,20 @@
 #include "bsp.h"
 
 
-/** @defgroup GPIO_Interrupt	GPIO Interrupt
+/** @defgroup GPIO_Interrupt    GPIO Interrupt
  * @ingroup GPIO_Examples
  * @{
  */
 
 /************************** PRIVATE DEFINITIONS *************************/
 
-#define LED1_PORT	(BRD_LED_1_CONNECTED_PORT)
-#define LED1_BYTE	((uint32_t)BRD_LED_1_CONNECTED_PIN / 8)
-#define LED1_BIT	(1 << ((uint32_t)BRD_LED_1_CONNECTED_PIN % 8))
+#define LED1_PORT   (BRD_LED_1_CONNECTED_PORT)
+#define LED1_BYTE   ((uint32_t)BRD_LED_1_CONNECTED_PIN / 8)
+#define LED1_BIT    (1 << ((uint32_t)BRD_LED_1_CONNECTED_PIN % 8))
 
-#define LED2_PORT	(BRD_LED_2_CONNECTED_PORT)
-#define LED2_BYTE	((uint32_t)BRD_LED_2_CONNECTED_PIN / 8)
-#define LED2_BIT	(1 << ((uint32_t)BRD_LED_2_CONNECTED_PIN % 8))
+#define LED2_PORT   (BRD_LED_2_CONNECTED_PORT)
+#define LED2_BYTE   ((uint32_t)BRD_LED_2_CONNECTED_PIN / 8)
+#define LED2_BIT    (1 << ((uint32_t)BRD_LED_2_CONNECTED_PIN % 8))
 
 
 /************************** PRIVATE FUNCTIONS *************************/
@@ -57,34 +57,34 @@ void delay (void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
- * @brief		External interrupt 3 handler sub-routine
- * @param[in]	None
- * @return 		None
+ * @brief       External interrupt 3 handler sub-routine
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void GPIO_IRQHandler(void)
 {
-	int j;
+    int j;
 
-	if(GPIO_GetIntStatus(BRD_PIO_USED_INTR_PORT, BRD_PIO_USED_INTR_PIN, 1))
-	{
-		GPIO_ClearInt(BRD_PIO_USED_INTR_PORT, BRD_PIO_USED_INTR_MASK);
+    if(GPIO_GetIntStatus(BRD_PIO_USED_INTR_PORT, BRD_PIO_USED_INTR_PIN, 1))
+    {
+        GPIO_ClearInt(BRD_PIO_USED_INTR_PORT, BRD_PIO_USED_INTR_MASK);
 
-		for (j = 0; j < 10; j++)
-		{
-			FIO_ByteSetValue(LED2_PORT, LED2_BYTE, LED2_BIT);
-			delay();
+        for (j = 0; j < 10; j++)
+        {
+            FIO_ByteSetValue(LED2_PORT, LED2_BYTE, LED2_BIT);
+            delay();
 
-			FIO_ByteClearValue(LED2_PORT, LED2_BYTE, LED2_BIT);
-			delay();
-		}
-	}
+            FIO_ByteClearValue(LED2_PORT, LED2_BYTE, LED2_BIT);
+            delay();
+        }
+    }
 }
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Delay function
- * @param[in]	None
- * @return 		None
+ * @brief       Delay function
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void delay (void)
 {
@@ -99,37 +99,37 @@ void delay (void)
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry (void)
 {
-	GPIO_Init();
-	
-	FIO_ByteSetDir(LED1_PORT, LED1_BYTE, LED1_BIT, GPIO_DIRECTION_OUTPUT);
+    GPIO_Init();
+    
+    FIO_ByteSetDir(LED1_PORT, LED1_BYTE, LED1_BIT, GPIO_DIRECTION_OUTPUT);
 
-	FIO_ByteSetDir(LED2_PORT, LED2_BYTE, LED2_BIT, GPIO_DIRECTION_OUTPUT);
+    FIO_ByteSetDir(LED2_PORT, LED2_BYTE, LED2_BIT, GPIO_DIRECTION_OUTPUT);
 
-	// Turn off all LEDs
-	FIO_ByteClearValue(LED1_PORT, LED1_BYTE, LED1_BIT);
-	FIO_ByteClearValue(LED2_PORT, LED2_BYTE, LED2_BIT);
+    // Turn off all LEDs
+    FIO_ByteClearValue(LED1_PORT, LED1_BYTE, LED1_BIT);
+    FIO_ByteClearValue(LED2_PORT, LED2_BYTE, LED2_BIT);
 
-	// Enable GPIO interrupt that connects with ADC potentiometer
-	GPIO_IntCmd(BRD_PIO_USED_INTR_PORT, BRD_PIO_USED_INTR_MASK, 1);
+    // Enable GPIO interrupt that connects with ADC potentiometer
+    GPIO_IntCmd(BRD_PIO_USED_INTR_PORT, BRD_PIO_USED_INTR_MASK, 1);
 
-	NVIC_SetPriority(GPIO_IRQn, 1);
-	NVIC_EnableIRQ(GPIO_IRQn);
+    NVIC_SetPriority(GPIO_IRQn, 1);
+    NVIC_EnableIRQ(GPIO_IRQn);
 
-	while (1)
-	{
-		FIO_ByteSetValue(LED1_PORT, LED1_BYTE, LED1_BIT);
-		delay();
+    while (1)
+    {
+        FIO_ByteSetValue(LED1_PORT, LED1_BYTE, LED1_BIT);
+        delay();
 
-		FIO_ByteClearValue(LED1_PORT, LED1_BYTE, LED1_BIT);
-		delay();
-	}
-	
+        FIO_ByteClearValue(LED1_PORT, LED1_BYTE, LED1_BIT);
+        delay();
+    }
+    
 }
 
 
@@ -140,8 +140,8 @@ void c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 /*

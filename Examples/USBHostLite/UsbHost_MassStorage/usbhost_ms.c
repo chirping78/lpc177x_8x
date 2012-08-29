@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		usbhost_ms.c			2011-09-05
+* $Id$      usbhost_ms.c            2011-09-05
 *//**
-* @file		usbhost_ms.c
-* @brief		Implementation of B Mass Storage class.
-* @version	1.0
-* @date		05. September. 2011
-* @author	NXP MCU SW Application Team
+* @file     usbhost_ms.c
+* @brief        Implementation of B Mass Storage class.
+* @version  1.0
+* @date     05. September. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -51,9 +51,9 @@ static uint32_t  MS_BlkSize;
 
 
 /*********************************************************************//**
- * @brief 			initializes the mass storage interface.
- * @param[in]		None.
- * @return 		MS_FUNC_OK		              if Success
+ * @brief           initializes the mass storage interface.
+ * @param[in]       None.
+ * @return      MS_FUNC_OK                    if Success
  *                         ERR_INVALID_BOOTSIG    if Failed
  **********************************************************************/
 int32_t MS_Init (uint32_t *blkSize, uint32_t *numBlks, uint8_t *inquiryResult)
@@ -76,16 +76,16 @@ int32_t MS_Init (uint32_t *blkSize, uint32_t *numBlks, uint8_t *inquiryResult)
         return (rc);
     }
     rc = MS_ReadCapacity(numBlks, blkSize);                         /* Read capacity of the disk         */
-    MS_BlkSize = *blkSize;						// Set global
+    MS_BlkSize = *blkSize;                      // Set global
     rc = MS_Inquire (inquiryResult);
     return (rc);
 }
 
 
 /*********************************************************************//**
- * @brief 			get  the maximum logical unit from the device.
- * @param[in]		None.
- * @return 		The maximum logical uint
+ * @brief           get  the maximum logical unit from the device.
+ * @param[in]       None.
+ * @return      The maximum logical uint
  **********************************************************************/
 int32_t  MS_GetMaxLUN (void)
 {
@@ -103,10 +103,10 @@ int32_t  MS_GetMaxLUN (void)
 
 
 /*********************************************************************//**
- * @brief 			get sense information from the device.
- * @param[in]		None.
- * @return 		MS_FUNC_OK       if Success
- *				ERR_MS_CMD_FAILED if failed
+ * @brief           get sense information from the device.
+ * @param[in]       None.
+ * @return      MS_FUNC_OK       if Success
+ *              ERR_MS_CMD_FAILED if failed
  **********************************************************************/
  int32_t  MS_GetSenseInfo (void)
 {
@@ -130,10 +130,10 @@ int32_t  MS_GetMaxLUN (void)
 }
 
 /*********************************************************************//**
- * @brief 			test whether the unit is ready or not.
- * @param[in]		None.
- * @return 		MS_FUNC_OK       if Success
- *				ERR_MS_CMD_FAILED if failed
+ * @brief           test whether the unit is ready or not.
+ * @param[in]       None.
+ * @return      MS_FUNC_OK       if Success
+ *              ERR_MS_CMD_FAILED if failed
  **********************************************************************/
  int32_t  MS_TestUnitReady (void)
 {
@@ -154,10 +154,10 @@ int32_t  MS_GetMaxLUN (void)
 }
 
 /*********************************************************************//**
- * @brief 			read the capacity of the mass storage device.
- * @param[in]		None.
- * @return 		MS_FUNC_OK       if Success
- *				ERR_MS_CMD_FAILED if failed
+ * @brief           read the capacity of the mass storage device.
+ * @param[in]       None.
+ * @return      MS_FUNC_OK       if Success
+ *              ERR_MS_CMD_FAILED if failed
  **********************************************************************/
 int32_t MS_ReadCapacity (uint32_t *numBlks, uint32_t *blkSize)
 {
@@ -170,9 +170,9 @@ int32_t MS_ReadCapacity (uint32_t *numBlks, uint32_t *blkSize)
         rc = Host_ProcessTD(EDBulkIn, TD_IN, TDBuffer, 8);
         if (rc == MS_FUNC_OK) {
             if (numBlks)
-            	*numBlks = ReadBE32U(&TDBuffer[0]);
+                *numBlks = ReadBE32U(&TDBuffer[0]);
             if (blkSize)
-            	*blkSize = ReadBE32U(&TDBuffer[4]);
+                *blkSize = ReadBE32U(&TDBuffer[4]);
             rc = Host_ProcessTD(EDBulkIn, TD_IN, TDBuffer, CSW_SIZE);
             if (rc == MS_FUNC_OK) {
                 if (TDBuffer[12] != 0) {
@@ -187,15 +187,15 @@ int32_t MS_ReadCapacity (uint32_t *numBlks, uint32_t *blkSize)
 
 
 /*********************************************************************//**
- * @brief 			Inquiry the mass storage device.
- * @param[in]		None.
- * @return 		MS_FUNC_OK       if Success
- *				ERR_MS_CMD_FAILED if failed
+ * @brief           Inquiry the mass storage device.
+ * @param[in]       None.
+ * @return      MS_FUNC_OK       if Success
+ *              ERR_MS_CMD_FAILED if failed
  **********************************************************************/
 int32_t MS_Inquire (uint8_t *response)
 {
     int32_t rc;
-	uint32_t i;
+    uint32_t i;
 
     Fill_MSCommand(0, 0, 0, MS_DATA_DIR_IN, SCSI_CMD_INQUIRY, 6);
     rc = Host_ProcessTD(EDBulkOut, TD_OUT, TDBuffer, CBW_SIZE);
@@ -203,18 +203,18 @@ int32_t MS_Inquire (uint8_t *response)
         rc = Host_ProcessTD(EDBulkIn, TD_IN, TDBuffer, INQUIRY_LENGTH);
         if (rc == MS_FUNC_OK) {
             if (response) {
-		for ( i = 0; i < INQUIRY_LENGTH; i++ )
-			*response++ = *TDBuffer++;
+        for ( i = 0; i < INQUIRY_LENGTH; i++ )
+            *response++ = *TDBuffer++;
 #if 0
-            	MemCpy (response, TDBuffer, INQUIRY_LENGTH);
-	        	StrNullTrailingSpace (response->vendorID, SCSI_INQUIRY_VENDORCHARS);
-	        	StrNullTrailingSpace (response->productID, SCSI_INQUIRY_PRODUCTCHARS);
-	        	StrNullTrailingSpace (response->productRev, SCSI_INQUIRY_REVCHARS);
+                MemCpy (response, TDBuffer, INQUIRY_LENGTH);
+                StrNullTrailingSpace (response->vendorID, SCSI_INQUIRY_VENDORCHARS);
+                StrNullTrailingSpace (response->productID, SCSI_INQUIRY_PRODUCTCHARS);
+                StrNullTrailingSpace (response->productRev, SCSI_INQUIRY_REVCHARS);
 #endif
             }
             rc = Host_ProcessTD(EDBulkIn, TD_IN, TDBuffer, CSW_SIZE);
             if (rc == MS_FUNC_OK) {
-                if (TDBuffer[12] != 0) {	// bCSWStatus byte
+                if (TDBuffer[12] != 0) {    // bCSWStatus byte
                     rc = ERR_MS_CMD_FAILED;
                 }
             }
@@ -224,10 +224,10 @@ int32_t MS_Inquire (uint8_t *response)
 }
     
 /*********************************************************************//**
- * @brief 			receive the bulk data.
- * @param[in]		None.
- * @return 		MS_FUNC_OK       if Success
- *				ERR_MS_CMD_FAILED if failed
+ * @brief           receive the bulk data.
+ * @param[in]       None.
+ * @return      MS_FUNC_OK       if Success
+ *              ERR_MS_CMD_FAILED if failed
  **********************************************************************/
  int32_t  MS_BulkRecv (          uint32_t   block_number,
                                    uint16_t   num_blocks,
@@ -237,7 +237,7 @@ int32_t MS_Inquire (uint8_t *response)
     int i;
     volatile uint8_t *c = user_buffer;
     for (i=0;i<MS_BlkSize*num_blocks;i++)
-    	*c++ = 0;
+        *c++ = 0;
 
 
     Fill_MSCommand(block_number, MS_BlkSize, num_blocks, MS_DATA_DIR_IN, SCSI_CMD_READ_10, 10);
@@ -258,10 +258,10 @@ int32_t MS_Inquire (uint8_t *response)
 }
 
 /*********************************************************************//**
- * @brief 			send the bulk data.
- * @param[in]		None.
- * @return 		MS_FUNC_OK       if Success
- *				ERR_MS_CMD_FAILED if failed
+ * @brief           send the bulk data.
+ * @param[in]       None.
+ * @return      MS_FUNC_OK       if Success
+ *              ERR_MS_CMD_FAILED if failed
  **********************************************************************/
 int32_t  MS_BulkSend (          uint32_t   block_number,
                                    uint16_t   num_blocks,
@@ -288,15 +288,15 @@ int32_t  MS_BulkSend (          uint32_t   block_number,
 }
 
 /*********************************************************************//**
- * @brief 			 fill the mass storage command.
- * @param[in]		block_number	 The block number.
- * @param[in]		block_size        The block size
- * @param[in]	       num_blocks      The number of blocks
- * @param[in]	       direction           The flow direction
- * @param[in]	       scsi_cmd          The command
- * @param[in]	       scsi_cmd_len    The command length
- * @return 		MS_FUNC_OK       if Success
- *				ERR_MS_CMD_FAILED if failed
+ * @brief            fill the mass storage command.
+ * @param[in]       block_number     The block number.
+ * @param[in]       block_size        The block size
+ * @param[in]          num_blocks      The number of blocks
+ * @param[in]          direction           The flow direction
+ * @param[in]          scsi_cmd          The command
+ * @param[in]          scsi_cmd_len    The command length
+ * @return      MS_FUNC_OK       if Success
+ *              ERR_MS_CMD_FAILED if failed
  **********************************************************************/
 void  Fill_MSCommand (uint32_t   block_number,
                       uint32_t   block_size,
@@ -325,8 +325,8 @@ void  Fill_MSCommand (uint32_t   block_number,
              data_len = 18;
              break;
         case SCSI_CMD_INQUIRY:
-        	 data_len = 36;
-        	 break;
+             data_len = 36;
+             break;
         default:
              data_len = block_size * num_blocks;
              break;

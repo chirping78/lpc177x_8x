@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		tsc2046.c			2012-03-13
+* $Id$      tsc2046.c           2012-03-13
 *//**
-* @file		tsc2046.c
-* @brief	Contains all functions to control TSC2046 using SPI
-* @version	1.0
-* @date		13. March. 2012
-* @author	NXP MCU SW Application Team
+* @file     tsc2046.c
+* @brief    Contains all functions to control TSC2046 using SPI
+* @version  1.0
+* @date     13. March. 2012
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -65,7 +65,7 @@
 #define COORD_GET_NUM                 (3)
 
 /** SSP Configuration */
-#define TSC2046_SSP_PORT	            (LPC_SSP0)
+#define TSC2046_SSP_PORT                (LPC_SSP0)
 #define TSC2046_CS_PORT_NUM             (LCD_CS_PORT_NUM)
 #define TSC2046_CS_PIN_NUM              (LCD_CS_PIN_NUM)
 
@@ -81,32 +81,32 @@ static TSC2046_Init_Type TSC_Config;
 
 
 /*********************************************************************//**
- * @brief 		Enable Touch Screen Controller.
- * @param[in]	None
- * @return 		None
+ * @brief       Enable Touch Screen Controller.
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 static void EnableTS(void)
 {
-	uint8_t cmd;
-	SSP_DATA_SETUP_Type sspCfg;
+    uint8_t cmd;
+    SSP_DATA_SETUP_Type sspCfg;
 
 #if (TSC2046_CONVERSION_BITS == 8)     
-	cmd = START_BIT | CHANNEL_SELECT(Y_MEASURE)|CONVERT_MODE_8_BITS|DFR_MODE|PD_ENABLED;
+    cmd = START_BIT | CHANNEL_SELECT(Y_MEASURE)|CONVERT_MODE_8_BITS|DFR_MODE|PD_ENABLED;
 #else
-	cmd = START_BIT | CHANNEL_SELECT(Y_MEASURE)|CONVERT_MODE_12_BITS|DFR_MODE|PD_ENABLED;
+    cmd = START_BIT | CHANNEL_SELECT(Y_MEASURE)|CONVERT_MODE_12_BITS|DFR_MODE|PD_ENABLED;
 #endif    
-	sspCfg.tx_data = &cmd;
-	sspCfg.rx_data = NULL;
-	sspCfg.length  = 1; 
+    sspCfg.tx_data = &cmd;
+    sspCfg.rx_data = NULL;
+    sspCfg.length  = 1; 
     CS_ON;
     SSP_ReadWrite (TSC2046_SSP_PORT, &sspCfg, SSP_TRANSFER_POLLING);
     CS_OFF;
 }
 
 /*********************************************************************//**
- * @brief 		Initialize TSC2046.
- * @param[in]	pConfig  TSC Configuration
- * @return 		None
+ * @brief       Initialize TSC2046.
+ * @param[in]   pConfig  TSC Configuration
+ * @return      None
  **********************************************************************/
 void InitTSC2046(TSC2046_Init_Type *pConfig)
 {
@@ -142,45 +142,45 @@ void InitTSC2046(TSC2046_Init_Type *pConfig)
 
 }
 /*********************************************************************//**
- * @brief 		Send/Receive data to/from TSC2046.
- * @param[in]	channel     It should be
+ * @brief       Send/Receive data to/from TSC2046.
+ * @param[in]   channel     It should be
  *                          X_MEASURE
  *                          Y_MEASURE
  *                          Z1_MEASURE
  *                          Z2_MEASURE
- * @param[out]	data       Received data
- * @return 		None
+ * @param[out]  data       Received data
+ * @return      None
  **********************************************************************/
 static void ReadWriteTSC2046(uint8_t channel, uint16_t* data)
 {
-	uint8_t cmd;
-	volatile uint32_t tmp;
-	SSP_DATA_SETUP_Type sspCfg;
+    uint8_t cmd;
+    volatile uint32_t tmp;
+    SSP_DATA_SETUP_Type sspCfg;
     uint8_t rx[2];
     
     CS_ON;
 
     /* Send command */
 #if (TSC2046_CONVERSION_BITS == 8)      
-	cmd = START_BIT | CHANNEL_SELECT(channel)|CONVERT_MODE_8_BITS|DFR_MODE|REF_OFF_ADC_ON;
+    cmd = START_BIT | CHANNEL_SELECT(channel)|CONVERT_MODE_8_BITS|DFR_MODE|REF_OFF_ADC_ON;
 #else
     cmd = START_BIT | CHANNEL_SELECT(channel)|CONVERT_MODE_12_BITS|DFR_MODE|REF_OFF_ADC_ON;
 #endif
     sspCfg.tx_data = &cmd;
-	sspCfg.rx_data = NULL;
-	sspCfg.length  = 1; 
+    sspCfg.rx_data = NULL;
+    sspCfg.length  = 1; 
     SSP_ReadWrite (TSC2046_SSP_PORT, &sspCfg, SSP_TRANSFER_POLLING);
 
     for(tmp = 0x100; tmp;tmp--);
 
     /* Read the response */
     sspCfg.tx_data = NULL;
-	sspCfg.rx_data = rx;
-	sspCfg.length  = 2; 
+    sspCfg.rx_data = rx;
+    sspCfg.length  = 2; 
     SSP_ReadWrite (TSC2046_SSP_PORT, &sspCfg, SSP_TRANSFER_POLLING);
 
 #if (TSC2046_CONVERSION_BITS == 8) 
-	*data = (((rx[0]&0x7F) <<8) | (rx[1]>>0)) >> 7; 
+    *data = (((rx[0]&0x7F) <<8) | (rx[1]>>0)) >> 7; 
 #else    
     *data = (((rx[0]&0x7F) <<8) | (rx[1]>>0)) >> 3; 
 #endif 
@@ -191,12 +191,12 @@ static void ReadWriteTSC2046(uint8_t channel, uint16_t* data)
 }
 
 /*********************************************************************//**
- * @brief 		Evaluate the coords received from TSC.
- * @param[in]	pPoints    list of coords
- * @param[in]	PointNum   the number of entries in above list
- * @param[in]	MaxVal     the maximum value of a coord
- * @param[in]	MaxDelta   the maximum delta between coords
- * @return 		-1: Invalid coords, coord in case it is valid.
+ * @brief       Evaluate the coords received from TSC.
+ * @param[in]   pPoints    list of coords
+ * @param[in]   PointNum   the number of entries in above list
+ * @param[in]   MaxVal     the maximum value of a coord
+ * @param[in]   MaxDelta   the maximum delta between coords
+ * @return      -1: Invalid coords, coord in case it is valid.
  **********************************************************************/
 static int16_t EvalCoord(uint16_t* pPoints, uint32_t PointNum, uint16_t MaxVal, uint16_t MaxDelta)
 {
@@ -219,12 +219,12 @@ static int16_t EvalCoord(uint16_t* pPoints, uint32_t PointNum, uint16_t MaxVal, 
    return coord/PointNum;
 }
 /*********************************************************************//**
- * @brief 		Calculate the coefficient of pressure 
- * @param[in]	x			X-Coordinate
- * @param[in]	y			Y-Coordinate
- * @param[in]	z1			Z1-Coordinate
- * @param[in]	z2			Z2-Coordinate
- * @return 		coefficient.
+ * @brief       Calculate the coefficient of pressure 
+ * @param[in]   x           X-Coordinate
+ * @param[in]   y           Y-Coordinate
+ * @param[in]   z1          Z1-Coordinate
+ * @param[in]   z2          Z2-Coordinate
+ * @return      coefficient.
  **********************************************************************/
 static int16_t CalPressureCoef(int16_t x, int16_t y, int16_t z1, int16_t z2)
 {
@@ -235,12 +235,12 @@ static int16_t CalPressureCoef(int16_t x, int16_t y, int16_t z1, int16_t z2)
     return z;
 }
 /*********************************************************************//**
- * @brief 		convert the coord received from TSC to a value on truly LCD.
- * @param[in]	Coord       received coord
- * @param[in]	MinVal    the minimum value of a coord
- * @param[in]	MaxVal     the maximum value of a coord
- * @param[in]	TrueSize   the size on LCD
- * @return 		the coord after converting.
+ * @brief       convert the coord received from TSC to a value on truly LCD.
+ * @param[in]   Coord       received coord
+ * @param[in]   MinVal    the minimum value of a coord
+ * @param[in]   MaxVal     the maximum value of a coord
+ * @param[in]   TrueSize   the size on LCD
+ * @return      the coord after converting.
  **********************************************************************/
 static int16_t ConvertCoord(int16_t Coord, int16_t MinVal, int16_t MaxVal, int16_t TrueSize)
 {
@@ -263,60 +263,60 @@ static int16_t ConvertCoord(int16_t Coord, int16_t MinVal, int16_t MaxVal, int16
     return ret;
 }
 /*********************************************************************//**
- * @brief 		Get Touch coordinates.
- * @param[out]	pX     X-Coord
- * @param[out]	pY     Y-Coord
- * @return 		None
+ * @brief       Get Touch coordinates.
+ * @param[out]  pX     X-Coord
+ * @param[out]  pY     Y-Coord
+ * @return      None
  **********************************************************************/
 void GetTouchCoord(int16_t *pX, int16_t* pY)
 {
-	uint16_t i, tmp;
+    uint16_t i, tmp;
     int16_t coord, x=-1, y=-1, z1=-1, z2=-1, z;
 
     coord = 0;
     // Get X-Coordinate
-	for(i = 0; i < COORD_GET_NUM; i++)
-	{
-		ReadWriteTSC2046(X_MEASURE,&tmp);
+    for(i = 0; i < COORD_GET_NUM; i++)
+    {
+        ReadWriteTSC2046(X_MEASURE,&tmp);
         X_Points[i] = tmp;
-	}
-	coord = EvalCoord(X_Points,COORD_GET_NUM,TSC2046_X_COORD_MAX,TSC2046_DELTA_X_VARIANCE);
+    }
+    coord = EvalCoord(X_Points,COORD_GET_NUM,TSC2046_X_COORD_MAX,TSC2046_DELTA_X_VARIANCE);
     if(coord > 0)
       x = coord;
     else
       return;
 
     // Get Y-Coordinate
-	for(i = 0; i < COORD_GET_NUM; i++)
-	{
-		ReadWriteTSC2046(Y_MEASURE,&tmp);
-		Y_Points[i] = tmp;
-	}
-	coord = EvalCoord(Y_Points,COORD_GET_NUM,TSC2046_Y_COORD_MAX,TSC2046_DELTA_Y_VARIANCE);
+    for(i = 0; i < COORD_GET_NUM; i++)
+    {
+        ReadWriteTSC2046(Y_MEASURE,&tmp);
+        Y_Points[i] = tmp;
+    }
+    coord = EvalCoord(Y_Points,COORD_GET_NUM,TSC2046_Y_COORD_MAX,TSC2046_DELTA_Y_VARIANCE);
     if(coord > 0)
       y = coord;
     else
       return;
 
     // Get Z1-Coordinate
-	for(i = 0; i < COORD_GET_NUM; i++)
-	{
-		ReadWriteTSC2046(Z1_MEASURE,&tmp);
+    for(i = 0; i < COORD_GET_NUM; i++)
+    {
+        ReadWriteTSC2046(Z1_MEASURE,&tmp);
         Z1_Points[i] = tmp;
-	}
-	coord = EvalCoord(Z1_Points,COORD_GET_NUM,TSC2046_Z1_COORD_MAX,TSC2046_DELTA_Z1_VARIANCE);
+    }
+    coord = EvalCoord(Z1_Points,COORD_GET_NUM,TSC2046_Z1_COORD_MAX,TSC2046_DELTA_Z1_VARIANCE);
     if(coord > 0)
       z1 = coord;
     else
       return;
 
     // Get Z2-Coordinate
-	for(i = 0; i < COORD_GET_NUM; i++)
-	{
-		ReadWriteTSC2046(Z2_MEASURE,&tmp);
+    for(i = 0; i < COORD_GET_NUM; i++)
+    {
+        ReadWriteTSC2046(Z2_MEASURE,&tmp);
         Z2_Points[i] = tmp;
-	}
-	coord = EvalCoord(Z2_Points,COORD_GET_NUM,TSC2046_Z2_COORD_MAX,TSC2046_DELTA_Z2_VARIANCE);
+    }
+    coord = EvalCoord(Z2_Points,COORD_GET_NUM,TSC2046_Z2_COORD_MAX,TSC2046_DELTA_Z2_VARIANCE);
     if(coord > 0)
       z2 = coord;
     else
@@ -331,12 +331,12 @@ void GetTouchCoord(int16_t *pX, int16_t* pY)
     {
         if(TSC_Config.swap_xy)
         {
-            *pY = ConvertCoord(x,TSC_Config.ad_top,TSC_Config.ad_bottom,TSC_Config.lcd_v_size);	
+            *pY = ConvertCoord(x,TSC_Config.ad_top,TSC_Config.ad_bottom,TSC_Config.lcd_v_size); 
             *pX = ConvertCoord(y,TSC_Config.ad_left,TSC_Config.ad_right,TSC_Config.lcd_h_size);
         }
         else
         {
-            *pX = ConvertCoord(x,TSC_Config.ad_top,TSC_Config.ad_bottom,TSC_Config.lcd_v_size);	
+            *pX = ConvertCoord(x,TSC_Config.ad_top,TSC_Config.ad_bottom,TSC_Config.lcd_v_size); 
             *pY = ConvertCoord(y,TSC_Config.ad_left,TSC_Config.ad_right,TSC_Config.lcd_h_size);
         }
     }

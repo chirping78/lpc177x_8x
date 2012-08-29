@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		Rtc_Alarm.c			2011-06-02
+* $Id$      Rtc_Alarm.c         2011-06-02
 *//**
-* @file		Rtc_Alarm.c
-* @brief	This example describes how to use RTC to generate interrupt
-* 			in Second Counter Increment Interrupt (1s) and generate
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Rtc_Alarm.c
+* @brief    This example describes how to use RTC to generate interrupt
+*           in Second Counter Increment Interrupt (1s) and generate
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -34,7 +34,7 @@
 #include "debug_frmwrk.h"
 
 
-/** @defgroup RTC_Alarm	RTC Alarm
+/** @defgroup RTC_Alarm RTC Alarm
  * @ingroup RTC_Examples
  * @{
  */
@@ -60,116 +60,116 @@ void print_menu(void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
- * @brief		RTC interrupt handler sub-routine
- * @param[in]	None
- * @return 		None
+ * @brief       RTC interrupt handler sub-routine
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void RTC_IRQHandler(void)
 {
-	uint32_t secval;
+    uint32_t secval;
 
-	/* This is increment counter interrupt*/
-	if (RTC_GetIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE))
-	{
-		secval = RTC_GetTime (LPC_RTC, RTC_TIMETYPE_SECOND);
+    /* This is increment counter interrupt*/
+    if (RTC_GetIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE))
+    {
+        secval = RTC_GetTime (LPC_RTC, RTC_TIMETYPE_SECOND);
 
-		/* Send debug information */
-		_DBG ("Second: "); _DBD(secval);
-		_DBG_("");
+        /* Send debug information */
+        _DBG ("Second: "); _DBD(secval);
+        _DBG_("");
 
-		// Clear pending interrupt
-		RTC_ClearIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE);
-	}
+        // Clear pending interrupt
+        RTC_ClearIntPending(LPC_RTC, RTC_INT_COUNTER_INCREASE);
+    }
 
-	/* Continue to check the Alarm match*/
-	if (RTC_GetIntPending(LPC_RTC, RTC_INT_ALARM))
-	{
-		/* Send debug information */
-		_DBG_ ("ALARM 10s matched!");
+    /* Continue to check the Alarm match*/
+    if (RTC_GetIntPending(LPC_RTC, RTC_INT_ALARM))
+    {
+        /* Send debug information */
+        _DBG_ ("ALARM 10s matched!");
 
-		// Clear pending interrupt
-		RTC_ClearIntPending(LPC_RTC, RTC_INT_ALARM);
-	}
+        // Clear pending interrupt
+        RTC_ClearIntPending(LPC_RTC, RTC_INT_ALARM);
+    }
 }
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print menu
- * @param[in]	None
- * @return 		None
+ * @brief       Print menu
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG(menu1);
+    _DBG(menu1);
 }
 
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main RTC program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main RTC program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry(void)
 {
-	RTC_TIME_Type RTCFullTime;
+    RTC_TIME_Type RTCFullTime;
 
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 
-	/* RTC Block section ------------------------------------------------------ */
-	// Init RTC module
-	RTC_Init(LPC_RTC);
+    /* RTC Block section ------------------------------------------------------ */
+    // Init RTC module
+    RTC_Init(LPC_RTC);
 
     /* Disable RTC interrupt */
     NVIC_DisableIRQ(RTC_IRQn);
     /* preemption = 1, sub-priority = 1 */
     NVIC_SetPriority(RTC_IRQn, ((0x01<<3)|0x01));
 
-	/* Enable rtc (starts increase the tick counter and second counter register) */
-	RTC_ResetClockTickCounter(LPC_RTC);
-	RTC_Cmd(LPC_RTC, ENABLE);
-	RTC_CalibCounterCmd(LPC_RTC, DISABLE);
+    /* Enable rtc (starts increase the tick counter and second counter register) */
+    RTC_ResetClockTickCounter(LPC_RTC);
+    RTC_Cmd(LPC_RTC, ENABLE);
+    RTC_CalibCounterCmd(LPC_RTC, DISABLE);
 
-	/* Set current time for RTC */
-	// Current time is 06:45:00PM, 2011-03-25
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_SECOND, 0);
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_MINUTE, 45);
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_HOUR, 18);
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_MONTH, 3);
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_YEAR, 2011);
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_DAYOFMONTH, 25);
+    /* Set current time for RTC */
+    // Current time is 06:45:00PM, 2011-03-25
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_SECOND, 0);
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_MINUTE, 45);
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_HOUR, 18);
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_MONTH, 3);
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_YEAR, 2011);
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_DAYOFMONTH, 25);
 
-	/* Set ALARM time for second */
-	RTC_SetAlarmTime (LPC_RTC, RTC_TIMETYPE_SECOND, 10);
+    /* Set ALARM time for second */
+    RTC_SetAlarmTime (LPC_RTC, RTC_TIMETYPE_SECOND, 10);
 
-	// Get and print current time
-	RTC_GetFullTime (LPC_RTC, &RTCFullTime);
-	_DBG( "Current time set to: ");
-	_DBD((RTCFullTime.HOUR)); _DBG (":");
-	_DBD ((RTCFullTime.MIN)); _DBG (":");
-	_DBD ((RTCFullTime.SEC)); _DBG("  ");
-	_DBD ((RTCFullTime.DOM)); _DBG("/");
-	_DBD ((RTCFullTime.MONTH)); _DBG("/");
-	_DBD16 ((RTCFullTime.YEAR)); _DBG_("");
+    // Get and print current time
+    RTC_GetFullTime (LPC_RTC, &RTCFullTime);
+    _DBG( "Current time set to: ");
+    _DBD((RTCFullTime.HOUR)); _DBG (":");
+    _DBD ((RTCFullTime.MIN)); _DBG (":");
+    _DBD ((RTCFullTime.SEC)); _DBG("  ");
+    _DBD ((RTCFullTime.DOM)); _DBG("/");
+    _DBD ((RTCFullTime.MONTH)); _DBG("/");
+    _DBD16 ((RTCFullTime.YEAR)); _DBG_("");
 
-	_DBG("Second ALARM set to ");
-	_DBD (RTC_GetAlarmTime (LPC_RTC, RTC_TIMETYPE_SECOND));
-	_DBG_("s");
+    _DBG("Second ALARM set to ");
+    _DBD (RTC_GetAlarmTime (LPC_RTC, RTC_TIMETYPE_SECOND));
+    _DBG_("s");
 
-	/* Set the CIIR for second counter interrupt*/
-	RTC_CntIncrIntConfig (LPC_RTC, RTC_TIMETYPE_SECOND, ENABLE);
-	/* Set the AMR for 10s match alarm interrupt */
-	RTC_AlarmIntConfig (LPC_RTC, RTC_TIMETYPE_SECOND, ENABLE);
+    /* Set the CIIR for second counter interrupt*/
+    RTC_CntIncrIntConfig (LPC_RTC, RTC_TIMETYPE_SECOND, ENABLE);
+    /* Set the AMR for 10s match alarm interrupt */
+    RTC_AlarmIntConfig (LPC_RTC, RTC_TIMETYPE_SECOND, ENABLE);
 
     /* Enable RTC interrupt */
     NVIC_EnableIRQ(RTC_IRQn);
@@ -187,8 +187,8 @@ void c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

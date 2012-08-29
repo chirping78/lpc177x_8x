@@ -2,7 +2,7 @@
 #define _UDA1380_H_
 
 #include "lpc_types.h"
-/** @defgroup  UDA_1380	UDA 1380
+/** @defgroup  UDA_1380 UDA 1380
  * @ingroup LPC177x_8xCMSIS_Board_Support
  * @{
  */
@@ -12,23 +12,23 @@
 #define UDA1380_CMD_BUFF_SIZE 3
 
 /** UDA1380 Registers */
-#define UDA1380_REG_EVALCLK	0x00
-#define UDA1380_REG_I2S		0x01
-#define UDA1380_REG_PWRCTRL	0x02
-#define UDA1380_REG_ANAMIX	0x03
-#define UDA1380_REG_HEADAMP	0x04
-#define UDA1380_REG_MSTRVOL	0x10
-#define UDA1380_REG_MIXVOL	0x11
-#define UDA1380_REG_MODEBBT	0x12
+#define UDA1380_REG_EVALCLK 0x00
+#define UDA1380_REG_I2S     0x01
+#define UDA1380_REG_PWRCTRL 0x02
+#define UDA1380_REG_ANAMIX  0x03
+#define UDA1380_REG_HEADAMP 0x04
+#define UDA1380_REG_MSTRVOL 0x10
+#define UDA1380_REG_MIXVOL  0x11
+#define UDA1380_REG_MODEBBT 0x12
 #define UDA1380_REG_MSTRMUTE  0x13
-#define UDA1380_REG_MIXSDO	  0x14
-#define UDA1380_REG_DECVOL	  0x20
-#define UDA1380_REG_PGA		  0x21
-#define UDA1380_REG_ADC		  0x22
-#define UDA1380_REG_AGC		  0x23
-#define UDA1380_REG_L3		  0x7f
+#define UDA1380_REG_MIXSDO    0x14
+#define UDA1380_REG_DECVOL    0x20
+#define UDA1380_REG_PGA       0x21
+#define UDA1380_REG_ADC       0x22
+#define UDA1380_REG_AGC       0x23
+#define UDA1380_REG_L3        0x7f
 #define UDA1380_REG_HEADPHONE 0x18
-#define UDA1380_REG_DEC		  0x28
+#define UDA1380_REG_DEC       0x28
 
 // UDA1380_REG_EVALCLK bit defines
 #define EVALCLK_ADC_EN           0x0800  // Enable ADC clock

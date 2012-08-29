@@ -64,7 +64,7 @@
 #include <string.h>
 
 #ifdef __ICCARM__
-	#pragma pack(1)
+    #pragma pack(1)
 #endif
 
 //#if defined ( __CC_ARM   )
@@ -86,11 +86,11 @@ struct arp_hdr {
 } /*PACK_STRUCT_END*/;
 
 #ifdef __ICCARM__
-	#pragma pack()
+    #pragma pack()
 #endif
 
 #ifdef __ICCARM__
-	#pragma pack(1)
+    #pragma pack(1)
 #endif
 
 //#if defined ( __CC_ARM   )
@@ -114,7 +114,7 @@ struct ethip_hdr {
 } /*PACK_STRUCT_END*/;
 
 #ifdef __ICCARM__
-	#pragma pack()
+    #pragma pack()
 #endif
 
 #define ARP_REQUEST 1
@@ -197,13 +197,13 @@ uip_arp_update(u16_t *ipaddr, struct uip_eth_addr *ethaddr)
       /* Check if the source IP address of the incoming packet matches
          the IP address in this ARP table entry. */
       if(ipaddr[0] == tabptr->ipaddr[0] &&
-	 ipaddr[1] == tabptr->ipaddr[1]) {
+     ipaddr[1] == tabptr->ipaddr[1]) {
 
-	/* An old entry found, update this and return. */
-	memcpy(tabptr->ethaddr.addr, ethaddr->addr, 6);
-	tabptr->time = arptime;
+    /* An old entry found, update this and return. */
+    memcpy(tabptr->ethaddr.addr, ethaddr->addr, 6);
+    tabptr->time = arptime;
 
-	return;
+    return;
       }
     }
   }
@@ -228,8 +228,8 @@ uip_arp_update(u16_t *ipaddr, struct uip_eth_addr *ethaddr)
     for(i = 0; i < UIP_ARPTAB_SIZE; ++i) {
       tabptr = &arp_table[i];
       if(arptime - tabptr->time > tmpage) {
-	tmpage = arptime - tabptr->time;
-	c = i;
+    tmpage = arptime - tabptr->time;
+    c = i;
       }
     }
     i = c;
@@ -316,8 +316,8 @@ uip_arp_arpin(void)
        reply. */
     if(uip_ipaddr_cmp(BUF->dipaddr, uip_hostaddr)) {
       /* First, we register the one who made the request in our ARP
-	 table, since it is likely that we will do more communication
-	 with this host in the future. */
+     table, since it is likely that we will do more communication
+     with this host in the future. */
       uip_arp_update(BUF->sipaddr, &BUF->shwaddr);
 
       /* The reply opcode is 2. */
@@ -395,8 +395,8 @@ uip_arp_out(void)
     /* Check if the destination address is on the local network. */
     if(!uip_ipaddr_maskcmp(IPBUF->destipaddr, uip_hostaddr, uip_netmask)) {
       /* Destination address was not on the local network, so we need to
-	 use the default router's IP address instead of the destination
-	 address when determining the MAC address. */
+     use the default router's IP address instead of the destination
+     address when determining the MAC address. */
       uip_ipaddr_copy(ipaddr, uip_draddr);
     } else {
       /* Else, we use the destination IP address. */
@@ -406,13 +406,13 @@ uip_arp_out(void)
     for(i = 0; i < UIP_ARPTAB_SIZE; ++i) {
       tabptr = &arp_table[i];
       if(uip_ipaddr_cmp(ipaddr, tabptr->ipaddr)) {
-	break;
+    break;
       }
     }
 
     if(i == UIP_ARPTAB_SIZE) {
       /* The destination address was not in our ARP table, so we
-	 overwrite the IP packet with an ARP request. */
+     overwrite the IP packet with an ARP request. */
 
       memset(BUF->ethhdr.dest.addr, 0xff, 6);
       memset(BUF->dhwaddr.addr, 0x00, 6);

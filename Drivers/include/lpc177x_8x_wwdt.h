@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		lpc177x_8x_wwdt.h			2011-06-02
+* $Id$      lpc177x_8x_wwdt.h           2011-06-02
 *//**
-* @file		lpc177x_8x_wwdt.h
-* @brief	Contains all macro definitions and function prototypes
-*			support forWindow Watchdog Timer firmware library on LPC177x_8x
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_wwdt.h
+* @brief    Contains all macro definitions and function prototypes
+*           support forWindow Watchdog Timer firmware library on LPC177x_8x
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -31,7 +31,7 @@
 **********************************************************************/
 
 /* Peripheral group ----------------------------------------------------------- */
-/** @defgroup WWDT	WWDT (Windowed Watchdog Timer)
+/** @defgroup WWDT  WWDT (Windowed Watchdog Timer)
  * @ingroup LPC177x_8xCMSIS_FwLib_Drivers
  * @{
  */
@@ -55,69 +55,69 @@ extern "C"
 
 
 // time is calculated by usec
-#define WDT_GET_FROM_USEC(time)		(time/((WWDT_US_INDEX * 4)/WDT_OSC))
-#define WDT_GET_USEC(counter)		(counter * ((WWDT_US_INDEX * 4)/WDT_OSC))
+#define WDT_GET_FROM_USEC(time)     (time/((WWDT_US_INDEX * 4)/WDT_OSC))
+#define WDT_GET_USEC(counter)       (counter * ((WWDT_US_INDEX * 4)/WDT_OSC))
 
 
-#define WWDT_FUNC_OK			(0)
-#define WWDT_FUNC_BAD_PARAM		(-1)
+#define WWDT_FUNC_OK            (0)
+#define WWDT_FUNC_BAD_PARAM     (-1)
 
 
 /* --------------------- BIT DEFINITIONS -------------------------------------- */
 /** WWDT interrupt enable bit */
-#define WWDT_WDMOD_WDEN			    ((uint32_t)(1<<0))
+#define WWDT_WDMOD_WDEN             ((uint32_t)(1<<0))
 /** WWDT interrupt enable bit */
-#define WWDT_WDMOD_WDRESET			((uint32_t)(1<<1))
+#define WWDT_WDMOD_WDRESET          ((uint32_t)(1<<1))
 /** WWDT time out flag bit */
-#define WWDT_WDMOD_WDTOF			((uint32_t)(1<<2))
+#define WWDT_WDMOD_WDTOF            ((uint32_t)(1<<2))
 /** WDT Time Out flag bit */
-#define WWDT_WDMOD_WDINT			((uint32_t)(1<<3))
+#define WWDT_WDMOD_WDINT            ((uint32_t)(1<<3))
 /** WWDT Protect flag bit */
-#define WWDT_WDMOD_WDPROTECT		((uint32_t)(1<<4))
+#define WWDT_WDMOD_WDPROTECT        ((uint32_t)(1<<4))
 
 /** Define divider index for microsecond ( us ) */
-#define WWDT_US_INDEX		((uint32_t)(1000000))
+#define WWDT_US_INDEX       ((uint32_t)(1000000))
 
 /** WWDT Time out minimum value */
-#define WWDT_TIMEOUT_MIN	((uint32_t)(0xFF))
+#define WWDT_TIMEOUT_MIN    ((uint32_t)(0xFF))
 /** WWDT Time out maximum value */
-#define WWDT_TIMEOUT_MAX	((uint32_t)(0x00FFFFFF))
+#define WWDT_TIMEOUT_MAX    ((uint32_t)(0x00FFFFFF))
 
 /** WWDT Warning minimum value */
-#define WWDT_WARNINT_MIN	((uint32_t)(0xFF))
+#define WWDT_WARNINT_MIN    ((uint32_t)(0xFF))
 /** WWDT Warning maximum value */
-#define WWDT_WARNINT_MAX	((uint32_t)(0x000003FF))
+#define WWDT_WARNINT_MAX    ((uint32_t)(0x000003FF))
 
 /** WWDT Windowed minimum value */
-#define WWDT_WINDOW_MIN		((uint32_t)(0xFF))
+#define WWDT_WINDOW_MIN     ((uint32_t)(0xFF))
 /** WWDT Windowed minimum value */
-#define WWDT_WINDOW_MAX		((uint32_t)(0x00FFFFFF))
+#define WWDT_WINDOW_MAX     ((uint32_t)(0x00FFFFFF))
 
 /** WWDT timer constant register mask */
-#define WWDT_WDTC_MASK			((uint32_t)(0x00FFFFFF))
+#define WWDT_WDTC_MASK          ((uint32_t)(0x00FFFFFF))
 /** WWDT warning value register mask */
-#define WWDT_WDWARNINT_MASK		((uint32_t)(0x000003FF))
+#define WWDT_WDWARNINT_MASK     ((uint32_t)(0x000003FF))
 /** WWDT feed sequence register mask */
-#define WWDT_WDFEED_MASK 		((uint32_t)(0x000000FF))
+#define WWDT_WDFEED_MASK        ((uint32_t)(0x000000FF))
 
 /** WWDT flag */
-#define WWDT_WARNINT_FLAG		((uint8_t)(0))
-#define WWDT_TIMEOUT_FLAG		((uint8_t)(1))
+#define WWDT_WARNINT_FLAG       ((uint8_t)(0))
+#define WWDT_TIMEOUT_FLAG       ((uint8_t)(1))
 
 /** WWDT mode definitions */
-#define WWDT_PROTECT_MODE		((uint8_t)(0))
-#define WWDT_RESET_MODE			((uint8_t)(1))
+#define WWDT_PROTECT_MODE       ((uint8_t)(0))
+#define WWDT_RESET_MODE         ((uint8_t)(1))
 
 
 /* WWDT Timer value definition (us) */
-#define WWDT_TIMEOUT_USEC_MIN			((uint32_t)(WDT_GET_USEC(WWDT_TIMEOUT_MIN)))//microseconds
-#define WWDT_TIMEOUT_USEC_MAX			((uint32_t)(WDT_GET_USEC(WWDT_TIMEOUT_MAX)))
+#define WWDT_TIMEOUT_USEC_MIN           ((uint32_t)(WDT_GET_USEC(WWDT_TIMEOUT_MIN)))//microseconds
+#define WWDT_TIMEOUT_USEC_MAX           ((uint32_t)(WDT_GET_USEC(WWDT_TIMEOUT_MAX)))
 
-#define WWDT_TIMEWARN_USEC_MIN			((uint32_t)(WDT_GET_USEC(WWDT_WARNINT_MIN)))
-#define WWDT_TIMEWARN_USEC_MAX			((uint32_t)(WDT_GET_USEC(WWDT_WARNINT_MAX)))
+#define WWDT_TIMEWARN_USEC_MIN          ((uint32_t)(WDT_GET_USEC(WWDT_WARNINT_MIN)))
+#define WWDT_TIMEWARN_USEC_MAX          ((uint32_t)(WDT_GET_USEC(WWDT_WARNINT_MAX)))
 
-#define WWDT_TIMEWINDOWED_USEC_MIN		((uint32_t)(WDT_GET_USEC(WWDT_WINDOW_MIN)))
-#define WWDT_TIMEWINDOWED_USEC_MAX		((uint32_t)(WDT_GET_USEC(WWDT_WINDOW_MAX)))
+#define WWDT_TIMEWINDOWED_USEC_MIN      ((uint32_t)(WDT_GET_USEC(WWDT_WINDOW_MIN)))
+#define WWDT_TIMEWINDOWED_USEC_MAX      ((uint32_t)(WDT_GET_USEC(WWDT_WINDOW_MAX)))
 
 
 /**
@@ -134,12 +134,12 @@ extern "C"
 
 typedef struct Wdt_Config
 {
-	uint8_t wdtEnable;		/**< if ENABLE -> the enable bit is enabled */
-	uint8_t wdtReset;		/**< if ENABLE -> the Reset bit is enabled */
-	uint8_t wdtProtect;		/**< if ENABLE -> the Protect bit is enabled */
-	uint32_t wdtTmrConst;	/**< Set the constant value to timeout the WDT */
-	uint32_t wdtWarningVal;	/**< Set the value to warn the WDT with interrupt */
-	uint32_t wdtWindowVal;	/**< Set a window vaule for WDT */
+    uint8_t wdtEnable;      /**< if ENABLE -> the enable bit is enabled */
+    uint8_t wdtReset;       /**< if ENABLE -> the Reset bit is enabled */
+    uint8_t wdtProtect;     /**< if ENABLE -> the Protect bit is enabled */
+    uint32_t wdtTmrConst;   /**< Set the constant value to timeout the WDT */
+    uint32_t wdtWarningVal; /**< Set the value to warn the WDT with interrupt */
+    uint32_t wdtWindowVal;  /**< Set a window vaule for WDT */
 }st_Wdt_Config;
 
 /**

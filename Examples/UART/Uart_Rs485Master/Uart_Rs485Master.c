@@ -1,13 +1,13 @@
 /**********************************************************************
-* $Id$		Uart_Rs485Master.c			2011-06-02
+* $Id$      Uart_Rs485Master.c          2011-06-02
 *//**
-* @file		Uart_Rs485Master.c
-* @brief	This example used to test RS485 functionality on UART1 of
-*			LPC1768.In this case, RS485 function on UART1 acts as Master
-*			on RS485 bus.
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Uart_Rs485Master.c
+* @brief    This example used to test RS485 functionality on UART1 of
+*           LPC1768.In this case, RS485 function on UART1 acts as Master
+*           on RS485 bus.
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -35,30 +35,30 @@
 #include "lpc177x_8x_pinsel.h"
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup UART_RS485_Master	UART RS485 Master
+/** @defgroup UART_RS485_Master UART RS485 Master
  * @ingroup UART_RS485_Examples
  * @{
  */
 
 /************************** PRIVATE DEFINITIONS *************************/
-#define UART_TEST_NUM		3     // must differ from UART0
+#define UART_TEST_NUM       3     // must differ from UART0
 
 #if (UART_TEST_NUM == 1)
-#define _LPC_UART			UART_1
-#define _UART_IRQ			UART1_IRQn
-#define _UART_IRQHander		UART1_IRQHandler
+#define _LPC_UART           UART_1
+#define _UART_IRQ           UART1_IRQn
+#define _UART_IRQHander     UART1_IRQHandler
 #elif (UART_TEST_NUM == 2)
-#define _LPC_UART			UART_2
-#define _UART_IRQ			UART2_IRQn
-#define _UART_IRQHander		UART2_IRQHandler
+#define _LPC_UART           UART_2
+#define _UART_IRQ           UART2_IRQn
+#define _UART_IRQHander     UART2_IRQHandler
 #elif (UART_TEST_NUM == 3)
-#define _LPC_UART			UART_3
-#define _UART_IRQ			UART3_IRQn
-#define _UART_IRQHander		UART3_IRQHandler
+#define _LPC_UART           UART_3
+#define _UART_IRQ           UART3_IRQn
+#define _UART_IRQHander     UART3_IRQHandler
 #elif (UART_TEST_NUM == 4)
-#define _LPC_UART			UART_4
-#define _UART_IRQ			UART4_IRQn
-#define _UART_IRQHander		UART4_IRQHandler
+#define _LPC_UART           UART_4
+#define _UART_IRQ           UART4_IRQn
+#define _UART_IRQHander     UART4_IRQHandler
 #endif
 
 // Slave Address
@@ -68,7 +68,7 @@
 /* buffer size definition */
 #define UART_RING_BUFSIZE 256
 
-#define NUM_OF_WAITING		5
+#define NUM_OF_WAITING      5
 
 /* Buf mask */
 #define __BUF_MASK (UART_RING_BUFSIZE-1)
@@ -79,8 +79,8 @@
 /* Check buf is empty */
 #define __BUF_IS_EMPTY(head, tail) ((head&__BUF_MASK)==(tail&__BUF_MASK))
 /* Reset buf */
-#define __BUF_RESET(bufidx)	(bufidx=0)
-#define __BUF_INCR(bufidx)	(bufidx=(bufidx+1)&__BUF_MASK)
+#define __BUF_RESET(bufidx) (bufidx=0)
+#define __BUF_INCR(bufidx)  (bufidx=(bufidx+1)&__BUF_MASK)
 
 /************************** PRIVATE VARIABLES *************************/
 uint8_t menu1[] = "Hello NXP Semiconductors \n\r";
@@ -126,413 +126,413 @@ void print_menu(void);
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 
 /*********************************************************************//**
- * @brief		UART2 interrupt handler sub-routine
- * @param[in]	None
- * @return 		None
+ * @brief       UART2 interrupt handler sub-routine
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void _UART_IRQHander(void)
 {
-	uint32_t intsrc, tmp, tmp1;
+    uint32_t intsrc, tmp, tmp1;
 
-	/* Determine the interrupt source */
-	intsrc = UART_GetIntId(_LPC_UART);
-	
-	tmp = intsrc & UART_IIR_INTID_MASK;
+    /* Determine the interrupt source */
+    intsrc = UART_GetIntId(_LPC_UART);
+    
+    tmp = intsrc & UART_IIR_INTID_MASK;
 
-	// Receive Line Status
-	if (tmp == UART_IIR_INTID_RLS)
-	{
-		// Check line status
-		tmp1 = UART_GetLineStatus(_LPC_UART);
+    // Receive Line Status
+    if (tmp == UART_IIR_INTID_RLS)
+    {
+        // Check line status
+        tmp1 = UART_GetLineStatus(_LPC_UART);
 
-		// Mask out the Receive Ready and Transmit Holding empty status
-		tmp1 &= (UART_LSR_OE | UART_LSR_PE | UART_LSR_FE \
-								| UART_LSR_BI | UART_LSR_RXFE);
+        // Mask out the Receive Ready and Transmit Holding empty status
+        tmp1 &= (UART_LSR_OE | UART_LSR_PE | UART_LSR_FE \
+                                | UART_LSR_BI | UART_LSR_RXFE);
 
-		// If any error exist
-		if (tmp1) 
-		{
-			UART_IntErr(tmp1);
-		}
-	}
+        // If any error exist
+        if (tmp1) 
+        {
+            UART_IntErr(tmp1);
+        }
+    }
 
-	// Receive Data Available or Character time-out
-	if ((tmp == UART_IIR_INTID_RDA) || (tmp == UART_IIR_INTID_CTI))
-	{
-		UART_IntReceive();
-	}
+    // Receive Data Available or Character time-out
+    if ((tmp == UART_IIR_INTID_RDA) || (tmp == UART_IIR_INTID_CTI))
+    {
+        UART_IntReceive();
+    }
 
 }
 
 
 /********************************************************************//**
- * @brief 		UART receive function (ring buffer used)
- * @param[in]	None
- * @return 		None
+ * @brief       UART receive function (ring buffer used)
+ * @param[in]   None
+ * @return      None
  *********************************************************************/
 void UART_IntReceive(void)
 {
-	uint8_t tmpc;
-	uint32_t rLen;
+    uint8_t tmpc;
+    uint32_t rLen;
 
-	while(1)
-	{
-		// Call UART read function in UART driver
-		rLen = UART_Receive(_LPC_UART, &tmpc, 1, NONE_BLOCKING);
+    while(1)
+    {
+        // Call UART read function in UART driver
+        rLen = UART_Receive(_LPC_UART, &tmpc, 1, NONE_BLOCKING);
 
-		// If data received
-		if (rLen)
-		{
-			/* Check if buffer is more space
-			* If no more space, remaining character will be trimmed out
-			*/
-			if (!__BUF_IS_FULL(rb.rx_head,rb.rx_tail))
-			{
-				rb.rx[rb.rx_head] = tmpc;
-				__BUF_INCR(rb.rx_head);
-			}
-		}
-		// no more data
-		else 
-		{
-			break;
-		}
-	}
+        // If data received
+        if (rLen)
+        {
+            /* Check if buffer is more space
+            * If no more space, remaining character will be trimmed out
+            */
+            if (!__BUF_IS_FULL(rb.rx_head,rb.rx_tail))
+            {
+                rb.rx[rb.rx_head] = tmpc;
+                __BUF_INCR(rb.rx_head);
+            }
+        }
+        // no more data
+        else 
+        {
+            break;
+        }
+    }
 }
 
 
 /*********************************************************************//**
- * @brief		UART Line Status Error
- * @param[in]	bLSErrType	UART Line Status Error Type
- * @return		None
+ * @brief       UART Line Status Error
+ * @param[in]   bLSErrType  UART Line Status Error Type
+ * @return      None
  **********************************************************************/
 void UART_IntErr(uint8_t bLSErrType)
 {
-	// To indicate an error when transceive the data through UART
-	if (bLSErrType & UART_LSR_PE)
-	{
-		//UART_Send(UART_0, p_err_menu, sizeof(p_err_menu), BLOCKING);
-	}
+    // To indicate an error when transceive the data through UART
+    if (bLSErrType & UART_LSR_PE)
+    {
+        //UART_Send(UART_0, p_err_menu, sizeof(p_err_menu), BLOCKING);
+    }
 
-	if (bLSErrType & UART_LSR_FE)
-	{
-		//UART_Send(UART_0, f_err_menu, sizeof(f_err_menu), BLOCKING);
-	}
+    if (bLSErrType & UART_LSR_FE)
+    {
+        //UART_Send(UART_0, f_err_menu, sizeof(f_err_menu), BLOCKING);
+    }
 }
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		UART read function for interrupt mode (using ring buffers)
- * @param[in]	UARTPort	Selected UART peripheral used to send data,
- * 				should be UART0
- * @param[out]	rxbuf Pointer to Received buffer
- * @param[in]	buflen Length of Received buffer
- * @return 		Number of bytes actually read from the ring buffer
+ * @brief       UART read function for interrupt mode (using ring buffers)
+ * @param[in]   UARTPort    Selected UART peripheral used to send data,
+ *              should be UART0
+ * @param[out]  rxbuf Pointer to Received buffer
+ * @param[in]   buflen Length of Received buffer
+ * @return      Number of bytes actually read from the ring buffer
  **********************************************************************/
 uint32_t UARTReceive(UART_ID_Type UartID, uint8_t *rxbuf, uint8_t buflen)
 {
-	uint8_t *data = (uint8_t *) rxbuf;
-	uint32_t bytes = 0;
+    uint8_t *data = (uint8_t *) rxbuf;
+    uint32_t bytes = 0;
 
-	/* Temporarily lock out UART receive interrupts during this
-	read so the UART receive interrupt won't cause problems
-	with the index values */
-	UART_IntConfig(UartID, UART_INTCFG_RBR, DISABLE);
+    /* Temporarily lock out UART receive interrupts during this
+    read so the UART receive interrupt won't cause problems
+    with the index values */
+    UART_IntConfig(UartID, UART_INTCFG_RBR, DISABLE);
 
-	/* Loop until receive buffer ring is empty or
-	until max_bytes expires */
-	while ((buflen > 0) && (!(__BUF_IS_EMPTY(rb.rx_head, rb.rx_tail))))
-	{
-		/* Read data from ring buffer into user buffer */
-		*data = rb.rx[rb.rx_tail];
-		data++;
+    /* Loop until receive buffer ring is empty or
+    until max_bytes expires */
+    while ((buflen > 0) && (!(__BUF_IS_EMPTY(rb.rx_head, rb.rx_tail))))
+    {
+        /* Read data from ring buffer into user buffer */
+        *data = rb.rx[rb.rx_tail];
+        data++;
 
-		/* Update tail pointer */
-		__BUF_INCR(rb.rx_tail);
+        /* Update tail pointer */
+        __BUF_INCR(rb.rx_tail);
 
-		/* Increment data count and decrement buffer size count */
-		bytes++;
-		buflen--;
-	}
+        /* Increment data count and decrement buffer size count */
+        bytes++;
+        buflen--;
+    }
 
-	/* Re-enable UART interrupts */
-	UART_IntConfig(UartID, UART_INTCFG_RBR, ENABLE);
+    /* Re-enable UART interrupts */
+    UART_IntConfig(UartID, UART_INTCFG_RBR, ENABLE);
 
-	return bytes;
+    return bytes;
 }
 
 /*********************************************************************//**
- * @brief		Print Welcome menu
- * @param[in]	none
- * @return 		None
+ * @brief       Print Welcome menu
+ * @param[in]   none
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	UART_Send(UART_0, menu1, sizeof(menu1), BLOCKING);
-	UART_Send(UART_0, menu2, sizeof(menu2), BLOCKING);
+    UART_Send(UART_0, menu1, sizeof(menu1), BLOCKING);
+    UART_Send(UART_0, menu2, sizeof(menu2), BLOCKING);
 }
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main UART-RS485 program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main UART-RS485 program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry(void)
 {
-	// UART Configuration structure variable
-	UART_CFG_Type UARTConfigStruct;
+    // UART Configuration structure variable
+    UART_CFG_Type UARTConfigStruct;
 
-	// UART FIFO configuration Struct variable
-	UART_FIFO_CFG_Type UARTFIFOConfigStruct;
+    // UART FIFO configuration Struct variable
+    UART_FIFO_CFG_Type UARTFIFOConfigStruct;
 
-	// RS485 configuration
-	UART1_RS485_CTRLCFG_Type rs485cfg;
+    // RS485 configuration
+    UART1_RS485_CTRLCFG_Type rs485cfg;
 
-	// Temp. data
-	uint32_t idx, retryCnt = 0;
-	volatile uint32_t len;
-	uint8_t buffer[10];
-	int32_t exit_flag, addr_toggle;
+    // Temp. data
+    uint32_t idx, retryCnt = 0;
+    volatile uint32_t len;
+    uint8_t buffer[10];
+    int32_t exit_flag, addr_toggle;
 
-	// UART0 section ----------------------------------------------------
-	// Initialize UART0 pin connect
-	PINSEL_ConfigPin(0, 2, 1);//TXD0
+    // UART0 section ----------------------------------------------------
+    // Initialize UART0 pin connect
+    PINSEL_ConfigPin(0, 2, 1);//TXD0
 
-	PINSEL_ConfigPin(0, 3, 1);//RXD0
+    PINSEL_ConfigPin(0, 3, 1);//RXD0
 
-	/* Initialize UART Configuration parameter structure to default state:
-	* Baudrate = 115200 bps
-	* 8 data bit
-	* 1 Stop bit
-	* None parity
-	*/
-	UART_ConfigStructInit(&UARTConfigStruct);
+    /* Initialize UART Configuration parameter structure to default state:
+    * Baudrate = 115200 bps
+    * 8 data bit
+    * 1 Stop bit
+    * None parity
+    */
+    UART_ConfigStructInit(&UARTConfigStruct);
 
-	// Initialize UART0 peripheral with given to corresponding parameter
-	UART_Init(UART_0, &UARTConfigStruct);
+    // Initialize UART0 peripheral with given to corresponding parameter
+    UART_Init(UART_0, &UARTConfigStruct);
 
-	/* Initialize FIFOConfigStruct to default state:
-	* 				- FIFO_DMAMode = DISABLE
-	* 				- FIFO_Level = UART_FIFO_TRGLEV0
-	* 				- FIFO_ResetRxBuf = ENABLE
-	* 				- FIFO_ResetTxBuf = ENABLE
-	* 				- FIFO_State = ENABLE
-	*/
-	UART_FIFOConfigStructInit(&UARTFIFOConfigStruct);
+    /* Initialize FIFOConfigStruct to default state:
+    *               - FIFO_DMAMode = DISABLE
+    *               - FIFO_Level = UART_FIFO_TRGLEV0
+    *               - FIFO_ResetRxBuf = ENABLE
+    *               - FIFO_ResetTxBuf = ENABLE
+    *               - FIFO_State = ENABLE
+    */
+    UART_FIFOConfigStructInit(&UARTFIFOConfigStruct);
 
-	// Initialize FIFO for UART0 peripheral
-	UART_FIFOConfig(UART_0, &UARTFIFOConfigStruct);
+    // Initialize FIFO for UART0 peripheral
+    UART_FIFOConfig(UART_0, &UARTFIFOConfigStruct);
 
-	// Enable UART Transmit
-	UART_TxCmd(UART_0, ENABLE);
+    // Enable UART Transmit
+    UART_TxCmd(UART_0, ENABLE);
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 #if (UART_TEST_NUM == 1)
-	// UART1 - RS485 section -------------------------------------------------
-	// Initialize UART1 pin connect
+    // UART1 - RS485 section -------------------------------------------------
+    // Initialize UART1 pin connect
 
-	//TXD2
-	PINSEL_ConfigPin(0, 15, 1);
+    //TXD2
+    PINSEL_ConfigPin(0, 15, 1);
 
-	//RXD2
-	PINSEL_ConfigPin(0, 16, 1);
+    //RXD2
+    PINSEL_ConfigPin(0, 16, 1);
 
-	//P0.20, UART OE1 Output Enable for UART1
-	PINSEL_ConfigPin(0, 20, 1);	
+    //P0.20, UART OE1 Output Enable for UART1
+    PINSEL_ConfigPin(0, 20, 1); 
 #elif (UART_TEST_NUM == 2)
-	// UART1 - RS485 section -------------------------------------------------
-	// Initialize UART1 pin connect
+    // UART1 - RS485 section -------------------------------------------------
+    // Initialize UART1 pin connect
 
-	//TXD2
-	PINSEL_ConfigPin(0, 10, 1);
+    //TXD2
+    PINSEL_ConfigPin(0, 10, 1);
 
-	//RXD2
-	PINSEL_ConfigPin(0, 11, 1);
+    //RXD2
+    PINSEL_ConfigPin(0, 11, 1);
 
-	//OE2: UART OE2 Output Enable for UART2
-	PINSEL_ConfigPin(1, 19, 6);	
+    //OE2: UART OE2 Output Enable for UART2
+    PINSEL_ConfigPin(1, 19, 6); 
 #elif (UART_TEST_NUM == 3)
     // UART3 - RS485 section -------------------------------------------------
-	// Initialize UART3 pin connect
+    // Initialize UART3 pin connect
 
-	//TXD3
-	PINSEL_ConfigPin(0, 25, 3);
+    //TXD3
+    PINSEL_ConfigPin(0, 25, 3);
 
-	//RXD3
-	PINSEL_ConfigPin(0, 26, 3);
+    //RXD3
+    PINSEL_ConfigPin(0, 26, 3);
 
-	//OE3: UART OE3 Output Enable for UART3
-	PINSEL_ConfigPin(1, 30, 5);	
+    //OE3: UART OE3 Output Enable for UART3
+    PINSEL_ConfigPin(1, 30, 5); 
 #elif (UART_TEST_NUM == 4)
     // UART4 - RS485 section -------------------------------------------------
-	// Initialize UART1 pin connect
+    // Initialize UART1 pin connect
 
-	//TXD4
-	PINSEL_ConfigPin(0, 22, 3);
+    //TXD4
+    PINSEL_ConfigPin(0, 22, 3);
 
-	//RXD4
-	PINSEL_ConfigPin(2, 9, 3);
+    //RXD4
+    PINSEL_ConfigPin(2, 9, 3);
 
-	//OE4: UART OE4 Output Enable for UART4
-	PINSEL_ConfigPin(0, 21, 3);	
+    //OE4: UART OE4 Output Enable for UART4
+    PINSEL_ConfigPin(0, 21, 3); 
 #endif
-	/* Initialize UART Configuration parameter structure to default state:
-	* Baudrate = 9600 bps
-	* 8 data bit
-	* 1 Stop bit
-	* Parity: None
-	* Note: Parity will be enabled later in UART_RS485Config() function.
-	*/
-	UART_ConfigStructInit(&UARTConfigStruct);
-	UARTConfigStruct.Baud_rate = 9600;
+    /* Initialize UART Configuration parameter structure to default state:
+    * Baudrate = 9600 bps
+    * 8 data bit
+    * 1 Stop bit
+    * Parity: None
+    * Note: Parity will be enabled later in UART_RS485Config() function.
+    */
+    UART_ConfigStructInit(&UARTConfigStruct);
+    UARTConfigStruct.Baud_rate = 9600;
 
-	// Initialize UART0 peripheral with given to corresponding parameter
-	UART_Init(_LPC_UART, &UARTConfigStruct);
+    // Initialize UART0 peripheral with given to corresponding parameter
+    UART_Init(_LPC_UART, &UARTConfigStruct);
 
-	/* Initialize FIFOConfigStruct to default state:
-	* 				- FIFO_DMAMode = DISABLE
-	* 				- FIFO_Level = UART_FIFO_TRGLEV0
-	* 				- FIFO_ResetRxBuf = ENABLE
-	* 				- FIFO_ResetTxBuf = ENABLE
-	* 				- FIFO_State = ENABLE
-	*/
-	UART_FIFOConfigStructInit(&UARTFIFOConfigStruct);
+    /* Initialize FIFOConfigStruct to default state:
+    *               - FIFO_DMAMode = DISABLE
+    *               - FIFO_Level = UART_FIFO_TRGLEV0
+    *               - FIFO_ResetRxBuf = ENABLE
+    *               - FIFO_ResetTxBuf = ENABLE
+    *               - FIFO_State = ENABLE
+    */
+    UART_FIFOConfigStructInit(&UARTFIFOConfigStruct);
 
-	// Initialize FIFO for UART0 peripheral
-	UART_FIFOConfig(_LPC_UART, &UARTFIFOConfigStruct);
+    // Initialize FIFO for UART0 peripheral
+    UART_FIFOConfig(_LPC_UART, &UARTFIFOConfigStruct);
 
-	// Configure RS485
-	/*
-	* - Auto Direction in Tx/Rx driving is enabled
-	* - Direction control pin is set to DTR1
-	* - Direction control pole is set to "1" that means direction pin
-	* will drive to high state before transmit data.
-	* - Multidrop mode is disable
-	* - Auto detect address is disabled
-	* - Receive state is enable
-	*/
-	rs485cfg.AutoDirCtrl_State = ENABLE;
-	rs485cfg.DirCtrlPin = UART_RS485_DIRCTRL_DTR;
-	rs485cfg.DirCtrlPol_Level = SET;
-	rs485cfg.DelayValue = 50;
-	rs485cfg.NormalMultiDropMode_State = DISABLE;
-	rs485cfg.AutoAddrDetect_State = DISABLE;
-	rs485cfg.MatchAddrValue = 0;
-	rs485cfg.Rx_State = ENABLE;
-	UART_RS485Config(_LPC_UART, &rs485cfg);
+    // Configure RS485
+    /*
+    * - Auto Direction in Tx/Rx driving is enabled
+    * - Direction control pin is set to DTR1
+    * - Direction control pole is set to "1" that means direction pin
+    * will drive to high state before transmit data.
+    * - Multidrop mode is disable
+    * - Auto detect address is disabled
+    * - Receive state is enable
+    */
+    rs485cfg.AutoDirCtrl_State = ENABLE;
+    rs485cfg.DirCtrlPin = UART_RS485_DIRCTRL_DTR;
+    rs485cfg.DirCtrlPol_Level = SET;
+    rs485cfg.DelayValue = 50;
+    rs485cfg.NormalMultiDropMode_State = DISABLE;
+    rs485cfg.AutoAddrDetect_State = DISABLE;
+    rs485cfg.MatchAddrValue = 0;
+    rs485cfg.Rx_State = ENABLE;
+    UART_RS485Config(_LPC_UART, &rs485cfg);
 
-	/* Enable UART Rx interrupt */
-	UART_IntConfig(_LPC_UART, UART_INTCFG_RBR, ENABLE);
+    /* Enable UART Rx interrupt */
+    UART_IntConfig(_LPC_UART, UART_INTCFG_RBR, ENABLE);
 
-	/* Enable UART line status interrupt */
-	UART_IntConfig(_LPC_UART, UART_INTCFG_RLS, ENABLE);
+    /* Enable UART line status interrupt */
+    UART_IntConfig(_LPC_UART, UART_INTCFG_RLS, ENABLE);
 
 
-	// Priorities settings for UART RS485: here we use UART2 for RS485 communication
-	// They should be changed if using another UART
-	/* preemption = 1, sub-priority = 1 */
-	NVIC_SetPriority(_UART_IRQ, ((0x01<<3)|0x01));
+    // Priorities settings for UART RS485: here we use UART2 for RS485 communication
+    // They should be changed if using another UART
+    /* preemption = 1, sub-priority = 1 */
+    NVIC_SetPriority(_UART_IRQ, ((0x01<<3)|0x01));
 
-	/* Enable Interrupt for UART0 channel */
-	NVIC_EnableIRQ(_UART_IRQ);
+    /* Enable Interrupt for UART0 channel */
+    NVIC_EnableIRQ(_UART_IRQ);
 
-	// Enable UART Transmit
-	UART_TxCmd(_LPC_UART, ENABLE);
+    // Enable UART Transmit
+    UART_TxCmd(_LPC_UART, ENABLE);
 
-	addr_toggle = 1;
-	
-	// for testing...
-	while (1)
-	{
-		// Send slave addr on RS485 bus
-		if (addr_toggle)
-		{
-			UART_Send(UART_0, send_menuA, sizeof(send_menuA), BLOCKING);
-			
-			UART_RS485SendSlvAddr(_LPC_UART, SLAVE_ADDR_A);
-		} 
-		else 
-		{
-			UART_Send(UART_0, send_menuB, sizeof(send_menuB), BLOCKING);
-			
-			UART_RS485SendSlvAddr(_LPC_UART, SLAVE_ADDR_B);
-		}
-		
-		// delay for a while
-		for (len = 0; len < 1000; len++);
+    addr_toggle = 1;
+    
+    // for testing...
+    while (1)
+    {
+        // Send slave addr on RS485 bus
+        if (addr_toggle)
+        {
+            UART_Send(UART_0, send_menuA, sizeof(send_menuA), BLOCKING);
+            
+            UART_RS485SendSlvAddr(_LPC_UART, SLAVE_ADDR_A);
+        } 
+        else 
+        {
+            UART_Send(UART_0, send_menuB, sizeof(send_menuB), BLOCKING);
+            
+            UART_RS485SendSlvAddr(_LPC_UART, SLAVE_ADDR_B);
+        }
+        
+        // delay for a while
+        for (len = 0; len < 1000; len++);
 
-		// Send data -----------------------------------------------
-		if (addr_toggle)
-		{
-			UART_RS485SendData(_LPC_UART, slaveA_msg, sizeof(slaveA_msg));
-		} 
-		else 
-		{
-			UART_RS485SendData(_LPC_UART, slaveB_msg, sizeof(slaveB_msg));
-		}
-		
-		// Send terminator
-		UART_RS485SendData(_LPC_UART, &terminator, 1);
+        // Send data -----------------------------------------------
+        if (addr_toggle)
+        {
+            UART_RS485SendData(_LPC_UART, slaveA_msg, sizeof(slaveA_msg));
+        } 
+        else 
+        {
+            UART_RS485SendData(_LPC_UART, slaveB_msg, sizeof(slaveB_msg));
+        }
+        
+        // Send terminator
+        UART_RS485SendData(_LPC_UART, &terminator, 1);
 
-		// delay for a while
-		for (len = 0; len < 1000; len++);
+        // delay for a while
+        for (len = 0; len < 1000; len++);
 
-		// Receive data from slave --------------------------------
-		UART_Send(UART_0, recv_menu, sizeof(recv_menu), BLOCKING);
+        // Receive data from slave --------------------------------
+        UART_Send(UART_0, recv_menu, sizeof(recv_menu), BLOCKING);
 
-		retryCnt = 0;
+        retryCnt = 0;
 
-		// If address 'A' required response...
-		if (addr_toggle)
-		{			
-			exit_flag = 0;
+        // If address 'A' required response...
+        if (addr_toggle)
+        {           
+            exit_flag = 0;
 
-			while (!exit_flag)
-			{				
-				len = UARTReceive(_LPC_UART, buffer, sizeof(buffer));
+            while (!exit_flag)
+            {               
+                len = UARTReceive(_LPC_UART, buffer, sizeof(buffer));
 
-				/* Got some data */
-				idx = 0;
+                /* Got some data */
+                idx = 0;
 
-				while (idx < len)
-				{					
-					if (buffer[idx] == 13)
-					{
-						exit_flag = 1;
-					} 
-					else 
-					{
-						/* Echo it back */
-						UART_Send(UART_0, &buffer[idx], 1, BLOCKING);
-					}
-					
-					idx++;
-					retryCnt = 0;
-				}
+                while (idx < len)
+                {                   
+                    if (buffer[idx] == 13)
+                    {
+                        exit_flag = 1;
+                    } 
+                    else 
+                    {
+                        /* Echo it back */
+                        UART_Send(UART_0, &buffer[idx], 1, BLOCKING);
+                    }
+                    
+                    idx++;
+                    retryCnt = 0;
+                }
 
-				retryCnt++;
+                retryCnt++;
 
-				if(retryCnt == NUM_OF_WAITING)
-				{
-					exit_flag = 1;
-				}
-			}
-		}
-		else
-		{
-			// To clarify that there's no reply from Device B
-			UART_Send(UART_0, noreply, sizeof(noreply), BLOCKING);
-		}
+                if(retryCnt == NUM_OF_WAITING)
+                {
+                    exit_flag = 1;
+                }
+            }
+        }
+        else
+        {
+            // To clarify that there's no reply from Device B
+            UART_Send(UART_0, noreply, sizeof(noreply), BLOCKING);
+        }
 
-		UART_Send(UART_0, nextline, sizeof(nextline), BLOCKING);
+        UART_Send(UART_0, nextline, sizeof(nextline), BLOCKING);
 
-		addr_toggle = (addr_toggle ? 0 : 1);
+        addr_toggle = (addr_toggle ? 0 : 1);
 
-		// long delay here
-		for (len = 0; len < 10000000; len++);
-	}
+        // long delay here
+        for (len = 0; len < 10000000; len++);
+    }
 
 }
 
@@ -543,8 +543,8 @@ void c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

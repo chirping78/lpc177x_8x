@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		Eeprom_Demo.c	2011-06-02
+* $Id$      Eeprom_Demo.c   2011-06-02
 *//**
-* @file		Eeprom_Demo.c
-* @brief	This example describes how to use I2S transfer in interrupt
-* 			mode
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Eeprom_Demo.c
+* @brief    This example describes how to use I2S transfer in interrupt
+*           mode
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -34,12 +34,12 @@
 #include "debug_frmwrk.h"
 #include "lpc177x_8x_clkpwr.h"
 
-#define PAGE_OFFSET			0x10
-#define PAGE_ADDR			0x01
+#define PAGE_OFFSET         0x10
+#define PAGE_ADDR           0x01
 
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup EEPROM_Demo	EEPROM Demo
+/** @defgroup EEPROM_Demo   EEPROM Demo
  * @ingroup EEPROM_Examples
  * @{
  */
@@ -69,20 +69,20 @@ uint8_t __attribute__ ((aligned (4))) write_buffer[EEPROM_PAGE_SIZE]="NXP Semico
 /************************** PRIVATE FUNCTIONS *************************/
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry (void) {                       /* Main Program */
-	uint32_t i, j;
-	uint8_t count;
+    uint32_t i, j;
+    uint8_t count;
     uint8_t error = 0;
 
-	debug_frmwrk_init();
-	_DBG(menu);
-	EEPROM_Init();
+    debug_frmwrk_init();
+    _DBG(menu);
+    EEPROM_Init();
 
-	count = sizeof(write_buffer);
+    count = sizeof(write_buffer);
     count &= 0xFC;
 
     _DBG_("Erase EEPROM");
@@ -91,7 +91,7 @@ void c_entry (void) {                       /* Main Program */
         EEPROM_Erase(i);
     }
     for(i=0;i<EEPROM_PAGE_NUM;i++)
-	{
+    {
         uint32_t *ptr = (uint32_t*)read_buffer;
         EEPROM_Read(0,i,(void*)read_buffer,MODE_32_BIT,EEPROM_PAGE_SIZE/4);
         for(j = 0; j < EEPROM_PAGE_SIZE/4; j++)
@@ -103,25 +103,25 @@ void c_entry (void) {                       /* Main Program */
                 break;
             }
         }
-	}
+    }
     if(error)
         while(1);
-	_DBG_("Write data to EEPROM");
-	EEPROM_Write(PAGE_OFFSET,PAGE_ADDR,(void*)write_buffer,MODE_8_BIT,count/1);
-	_DBG_("Read data from EEPROM");
-	EEPROM_Read(PAGE_OFFSET,PAGE_ADDR,(void*)read_buffer,MODE_16_BIT,count/2);
+    _DBG_("Write data to EEPROM");
+    EEPROM_Write(PAGE_OFFSET,PAGE_ADDR,(void*)write_buffer,MODE_8_BIT,count/1);
+    _DBG_("Read data from EEPROM");
+    EEPROM_Read(PAGE_OFFSET,PAGE_ADDR,(void*)read_buffer,MODE_16_BIT,count/2);
 
-	//display eeprom data
-	for(i=0;i<count;i++)
-	{
+    //display eeprom data
+    for(i=0;i<count;i++)
+    {
         if(read_buffer[i] != write_buffer[i])
         {
              _DBG("Difference at position ");_DBD(i);_DBG_("");
              error = 1;
         }
-	}
+    }
         
-	if(error)
+    if(error)
           _DBG_("ERROR!!!!");
         else
         {
@@ -130,10 +130,10 @@ void c_entry (void) {                       /* Main Program */
               _DBC(read_buffer[i]);
             }
             _DBG_("");
-	        _DBG_("Demo is terminated");
+            _DBG_("Demo is terminated");
         }
      
-	while(1);
+    while(1);
 
 }
 
@@ -144,8 +144,8 @@ void c_entry (void) {                       /* Main Program */
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

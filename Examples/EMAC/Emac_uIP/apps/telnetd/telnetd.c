@@ -165,7 +165,7 @@ senddata(void)
   bufptr = uip_appdata;
   buflen = 0;
   for(s.numsent = 0; s.numsent < TELNETD_CONF_NUMLINES &&
-	s.lines[s.numsent] != NULL ; ++s.numsent) {
+    s.lines[s.numsent] != NULL ; ++s.numsent) {
     lineptr = s.lines[s.numsent];
     linelen = strlen(lineptr);
     if(linelen > TELNETD_CONF_LINELEN) {
@@ -247,26 +247,26 @@ newdata(void)
     switch(s.state) {
     case STATE_IAC:
       if(c == TELNET_IAC) {
-	get_char(c);
-	s.state = STATE_NORMAL;
+    get_char(c);
+    s.state = STATE_NORMAL;
       } else {
-	switch(c) {
-	case TELNET_WILL:
-	  s.state = STATE_WILL;
-	  break;
-	case TELNET_WONT:
-	  s.state = STATE_WONT;
-	  break;
-	case TELNET_DO:
-	  s.state = STATE_DO;
-	  break;
-	case TELNET_DONT:
-	  s.state = STATE_DONT;
-	  break;
-	default:
-	  s.state = STATE_NORMAL;
-	  break;
-	}
+    switch(c) {
+    case TELNET_WILL:
+      s.state = STATE_WILL;
+      break;
+    case TELNET_WONT:
+      s.state = STATE_WONT;
+      break;
+    case TELNET_DO:
+      s.state = STATE_DO;
+      break;
+    case TELNET_DONT:
+      s.state = STATE_DONT;
+      break;
+    default:
+      s.state = STATE_NORMAL;
+      break;
+    }
       }
       break;
     case STATE_WILL:
@@ -292,9 +292,9 @@ newdata(void)
       break;
     case STATE_NORMAL:
       if(c == TELNET_IAC) {
-	s.state = STATE_IAC;
+    s.state = STATE_IAC;
       } else {
-	get_char(c);
+    get_char(c);
       }
       break;
     }

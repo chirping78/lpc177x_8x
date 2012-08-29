@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		sdram_mt48lc8m32lfb5.h			2011-06-02
+* $Id$      sdram_mt48lc8m32lfb5.h          2011-06-02
 *//**
-* @file		sdram_mt48lc8m32lfb5.h
-* @brief	Contains all macro definitions and function prototypes
-*			support for external SDRAM Micron MT48LC8M32LFB5
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     sdram_mt48lc8m32lfb5.h
+* @brief    Contains all macro definitions and function prototypes
+*           support for external SDRAM Micron MT48LC8M32LFB5
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -31,7 +31,7 @@
 **********************************************************************/
 
 /* Peripheral group ----------------------------------------------------------- */
-/** @defgroup  Sdram_MT48LC8M32FLB5	Sdram MT48LC8M32FLB5
+/** @defgroup  Sdram_MT48LC8M32FLB5 Sdram MT48LC8M32FLB5
  * @ingroup LPC177x_8xCMSIS_Board_Support
  * @{
  */
@@ -40,8 +40,8 @@
 #define __SDRAM_MT48LC8M32LFB5_H
 #include "bsp.h"
 
-#define SDRAM_BASE_ADDR		0xA0000000
-#define SDRAM_SIZE	        0x10000000
+#define SDRAM_BASE_ADDR     0xA0000000
+#define SDRAM_SIZE          0x10000000
 
 #if (_CURR_USING_BRD == _QVGA_BOARD)
 extern void SDRAMInit( void );

@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		Pwr_DeepSleep.c		2011-06-02
+* $Id$      Pwr_DeepSleep.c     2011-06-02
 *//**
-* @file		Pwr_DeepSleep.c
-* @brief	This example describes how to enter the system in deep sleep
-* 			mode and wake-up by using external interrupt
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Pwr_DeepSleep.c
+* @brief    This example describes how to enter the system in deep sleep
+*           mode and wake-up by using external interrupt
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -36,7 +36,7 @@
 #include "lpc177x_8x_clkpwr.h"
 #include "debug_frmwrk.h"
 
-/** @defgroup PWR_DeepSleep	Pwr Mgr Deep Sleep
+/** @defgroup PWR_DeepSleep Pwr Mgr Deep Sleep
  * @ingroup PWR_Examples
  * @{
  */
@@ -60,32 +60,32 @@ void delay (void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
- * @brief		External interrupt 0 handler sub-routine
- * @param[in]	None
- * @return 		None
+ * @brief       External interrupt 0 handler sub-routine
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void EINT0_IRQHandler(void)
 {
-	  //clear the EINT0 flag
-	  EXTI_ClearEXTIFlag(EXTI_EINT0);
+      //clear the EINT0 flag
+      EXTI_ClearEXTIFlag(EXTI_EINT0);
 
 }
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print Welcome menu
- * @param[in]	none
- * @return 		None
+ * @brief       Print Welcome menu
+ * @param[in]   none
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG(menu);
+    _DBG(menu);
 }
 
 /*********************************************************************//**
- * @brief		Delay function
- * @param[in]	None
- * @return 		None
+ * @brief       Delay function
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void delay (void) {
   unsigned int i;
@@ -96,60 +96,60 @@ void delay (void) {
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry (void)
 {
-	EXTI_InitTypeDef EXTICfg;
+    EXTI_InitTypeDef EXTICfg;
 
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 
-	/* Initialize EXT pin and registers
-	 * P2.10 as /EINT0
-	 */
-	PINSEL_ConfigPin(2,10,1);
+    /* Initialize EXT pin and registers
+     * P2.10 as /EINT0
+     */
+    PINSEL_ConfigPin(2,10,1);
 
-	EXTI_Init();
+    EXTI_Init();
 
-	EXTICfg.EXTI_Line = EXTI_EINT0;
-	/* edge sensitive */
-	EXTICfg.EXTI_Mode = EXTI_MODE_EDGE_SENSITIVE;
-	EXTICfg.EXTI_polarity = EXTI_POLARITY_LOW_ACTIVE_OR_FALLING_EDGE;
-	EXTI_ClearEXTIFlag(EXTI_EINT0);
-	EXTI_Config(&EXTICfg);
+    EXTICfg.EXTI_Line = EXTI_EINT0;
+    /* edge sensitive */
+    EXTICfg.EXTI_Mode = EXTI_MODE_EDGE_SENSITIVE;
+    EXTICfg.EXTI_polarity = EXTI_POLARITY_LOW_ACTIVE_OR_FALLING_EDGE;
+    EXTI_ClearEXTIFlag(EXTI_EINT0);
+    EXTI_Config(&EXTICfg);
 
-	NVIC_SetPriorityGrouping(4);
-	NVIC_SetPriority(EINT0_IRQn, 0);
-	NVIC_EnableIRQ(EINT0_IRQn);
+    NVIC_SetPriorityGrouping(4);
+    NVIC_SetPriority(EINT0_IRQn, 0);
+    NVIC_EnableIRQ(EINT0_IRQn);
 
-	_DBG_("Press '1' to enter system in deep sleep mode.\n\r"\
-		  "If you want to wake-up the system, press INT/WAKE-UP button.");
-	while(_DG !='1')
-	{
-		_DBG_("I'm waiting...\n\r");
-	}
+    _DBG_("Press '1' to enter system in deep sleep mode.\n\r"\
+          "If you want to wake-up the system, press INT/WAKE-UP button.");
+    while(_DG !='1')
+    {
+        _DBG_("I'm waiting...\n\r");
+    }
 
-	_DBG_("I'm sleeping...");
-	// Enter target deep sleep mode
-	CLKPWR_DeepSleep();
-	SystemInit();
-	debug_frmwrk_init();
+    _DBG_("I'm sleeping...");
+    // Enter target deep sleep mode
+    CLKPWR_DeepSleep();
+    SystemInit();
+    debug_frmwrk_init();
 
-	// MCU will be here after waking up
-	_DBG_("\n\r-------- I'm wake up! -------- ");
-	while (1);
+    // MCU will be here after waking up
+    _DBG_("\n\r-------- I'm wake up! -------- ");
+    while (1);
 }
 
 
@@ -160,8 +160,8 @@ void c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

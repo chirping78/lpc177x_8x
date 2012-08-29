@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		lpc177x_8x_crc.h			2011-06-02
+* $Id$      lpc177x_8x_crc.h            2011-06-02
 *//**
-* @file		lpc177x_8x_crc.h
-* @brief	Contains all macro definitions and function prototypes
-*			support for CRC firmware library on LPC177x_8x
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_crc.h
+* @brief    Contains all macro definitions and function prototypes
+*           support for CRC firmware library on LPC177x_8x
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -31,7 +31,7 @@
 **********************************************************************/
 
 /* Peripheral group ----------------------------------------------------------- */
-/** @defgroup CRC	CRC (Cyclic Redundancy Check)
+/** @defgroup CRC   CRC (Cyclic Redundancy Check)
  * @ingroup LPC177x_8xCMSIS_FwLib_Drivers
  * @{
  */
@@ -58,10 +58,10 @@ extern "C"
 /*********************************************************************//**
  * Macro defines for CRC mode register
  **********************************************************************/
-#define CRC_BIT_RVS_WR			(1<<2)
-#define CRC_CMPL_WR				(1<<3)
-#define CRC_BIT_RVS_SUM			(1<<4)
-#define CRC_CMPL_SUM			(1<<5)
+#define CRC_BIT_RVS_WR          (1<<2)
+#define CRC_CMPL_WR             (1<<3)
+#define CRC_BIT_RVS_SUM         (1<<4)
+#define CRC_CMPL_SUM            (1<<5)
 
 
 /**
@@ -70,16 +70,16 @@ extern "C"
 /* Private types ------------------------------------------------------------- */
 typedef enum
 {
-	CRC_POLY_CRCCCITT = 0,			/** CRC CCITT polynomial */
-	CRC_POLY_CRC16,					/** CRC-16 polynomial */
-	CRC_POLY_CRC32					/** CRC-32 polynomial */
+    CRC_POLY_CRCCCITT = 0,          /** CRC CCITT polynomial */
+    CRC_POLY_CRC16,                 /** CRC-16 polynomial */
+    CRC_POLY_CRC32                  /** CRC-32 polynomial */
 }CRC_Type;
 
 typedef enum
 {
-	CRC_WR_8BIT = 1,				/** 8-bit write: 1-cycle operation */
-	CRC_WR_16BIT = 2,					/** 16-bit write: 2-cycle operation */
-	CRC_WR_32BIT = 4,					/** 32-bit write: 4-cycle operation */
+    CRC_WR_8BIT = 1,                /** 8-bit write: 1-cycle operation */
+    CRC_WR_16BIT = 2,                   /** 16-bit write: 2-cycle operation */
+    CRC_WR_32BIT = 4,                   /** 32-bit write: 4-cycle operation */
 }CRC_WR_SIZE;
 
 /* Public Functions ----------------------------------------------------------- */

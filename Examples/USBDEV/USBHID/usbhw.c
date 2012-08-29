@@ -176,51 +176,51 @@ void USB_Init (void) {
   /* if 1, use port 1 as device, if 0, use port2 as device. */
 #if  (USB_PORT == 1)
 #if (_CURR_USING_BRD == _IAR_OLIMEX_BOARD)
-	LPC_IOCON->P0_27 = 0x2;
-	LPC_IOCON->P0_28 = 0x2;
-#endif	
+    LPC_IOCON->P0_27 = 0x2;
+    LPC_IOCON->P0_28 = 0x2;
+#endif  
   
-	LPC_IOCON->P0_29 &= ~0x07;	  /* P0.29 D1+, P0.30 D1- */
-	LPC_IOCON->P0_29 |= 0x1;
-	LPC_IOCON->P0_30 &= ~0x07;
-	LPC_IOCON->P0_30 |= 0x1;
+    LPC_IOCON->P0_29 &= ~0x07;    /* P0.29 D1+, P0.30 D1- */
+    LPC_IOCON->P0_29 |= 0x1;
+    LPC_IOCON->P0_30 &= ~0x07;
+    LPC_IOCON->P0_30 |= 0x1;
   
-	LPC_IOCON->P2_9  &= ~0x07;	  /* USB_SoftConnect */
-	LPC_IOCON->P2_9  |= 0x1;
+    LPC_IOCON->P2_9  &= ~0x07;    /* USB_SoftConnect */
+    LPC_IOCON->P2_9  |= 0x1;
   
-	LPC_IOCON->P1_30  &= ~0x07;   /* USB_VBUS */
-	LPC_IOCON->P1_30  |= 0x2;
+    LPC_IOCON->P1_30  &= ~0x07;   /* USB_VBUS */
+    LPC_IOCON->P1_30  |= 0x2;
   
-	LPC_IOCON->P1_18  &= ~0x07;   /* USB_LED */
-	LPC_IOCON->P1_18  |= 0x1;
+    LPC_IOCON->P1_18  &= ~0x07;   /* USB_LED */
+    LPC_IOCON->P1_18  |= 0x1;
   
-	LPC_SC->PCONP |= (1UL<<31); 			   /* USB PCLK -> enable USB Per.		*/
+    LPC_SC->PCONP |= (1UL<<31);                /* USB PCLK -> enable USB Per.       */
   
-	LPC_USB->USBClkCtrl =  0x12;				 /* Dev, AHB clock enable */
-	while ((LPC_USB->USBClkSt & 0x12) != 0x12);
+    LPC_USB->USBClkCtrl =  0x12;                 /* Dev, AHB clock enable */
+    while ((LPC_USB->USBClkSt & 0x12) != 0x12);
 #else
-	LPC_IOCON->P0_31 &= ~0x07;	  /* P0.31 D2+, D2- is dedicated pin.  */
-	LPC_IOCON->P0_31 |= 0x1;
+    LPC_IOCON->P0_31 &= ~0x07;    /* P0.31 D2+, D2- is dedicated pin.  */
+    LPC_IOCON->P0_31 |= 0x1;
   
-	LPC_IOCON->P0_14  &= ~0x07;    /* USB_SoftConnect */
-	LPC_IOCON->P0_14  |= 0x3;
+    LPC_IOCON->P0_14  &= ~0x07;    /* USB_SoftConnect */
+    LPC_IOCON->P0_14  |= 0x3;
   
-	LPC_IOCON->P1_30  &= ~0x07;   /* USB_VBUS */
-	LPC_IOCON->P1_30  |= 0x2;
+    LPC_IOCON->P1_30  &= ~0x07;   /* USB_VBUS */
+    LPC_IOCON->P1_30  |= 0x2;
   
-	LPC_IOCON->P0_13  &= ~0x07;   /* USB_LED */
-	LPC_IOCON->P0_13  |= 0x1;
+    LPC_IOCON->P0_13  &= ~0x07;   /* USB_LED */
+    LPC_IOCON->P0_13  |= 0x1;
   
-	 LPC_SC->PCONP |= (1UL<<31);				/* USB PCLK -> enable USB Per.		 */
+     LPC_SC->PCONP |= (1UL<<31);                /* USB PCLK -> enable USB Per.       */
   
-	LPC_USB->USBClkCtrl = 0x1A; 			   /* Dev, OTG, AHB clock enable */
-	while ((LPC_USB->USBClkSt & 0x1A) != 0x1A);
+    LPC_USB->USBClkCtrl = 0x1A;                /* Dev, OTG, AHB clock enable */
+    while ((LPC_USB->USBClkSt & 0x1A) != 0x1A);
   
-	/* Port Select register when USB device is configured. */
-	LPC_USB->StCtrl = 0x3;
+    /* Port Select register when USB device is configured. */
+    LPC_USB->StCtrl = 0x3;
   
-	LPC_USB->USBClkCtrl = 0x12; 			   /* Disable OTG clock */
-	while ((LPC_USB->USBClkSt & 0x12) != 0x12);
+    LPC_USB->USBClkCtrl = 0x12;                /* Disable OTG clock */
+    while ((LPC_USB->USBClkSt & 0x12) != 0x12);
 #endif
 
 
@@ -645,7 +645,7 @@ uint32_t USB_DMA_Status (uint32_t EPNum) {
           
   ptr = UDCA[EPAdr(EPNum)];                 /* Current Descriptor */
   if (ptr == 0) 
-	return (USB_DMA_INVALID);
+    return (USB_DMA_INVALID);
 
   val = *((uint32_t *)(ptr + 3*4));            /* Status Information */
   switch ((val >> 1) & 0x0F) {
@@ -681,7 +681,7 @@ uint32_t USB_DMA_BufAdr (uint32_t EPNum) {
   ptr = UDCA[EPAdr(EPNum)];                 /* Current Descriptor */
   if (ptr == 0)
   {
-	return ((uint32_t)(-1));                /* DMA Invalid */
+    return ((uint32_t)(-1));                /* DMA Invalid */
   }
 
   val = *((uint32_t *)(ptr + 2*4));         /* Buffer Address */
@@ -704,7 +704,7 @@ uint32_t USB_DMA_BufCnt (uint32_t EPNum) {
   ptr = UDCA[EPAdr(EPNum)];                 /* Current Descriptor */
   if (ptr == 0)
   { 
-	return ((uint32_t)(-1));                /* DMA Invalid */
+    return ((uint32_t)(-1));                /* DMA Invalid */
   }
   val = *((uint32_t *)(ptr + 3*4));         /* Status Information */
   return (val >> 16);                       /* Current Count */

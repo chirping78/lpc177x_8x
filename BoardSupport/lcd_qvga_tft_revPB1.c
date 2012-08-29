@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		lcd_qvga_tft_revPB1.c			2012-04-25
+* $Id$      lcd_qvga_tft_revPB1.c           2012-04-25
 *//**
-* @file		lcd_qvga_tft_revPB1.c
-* @brief	Contains all functions to control LCD controller using SPI
-* @version	1.0
-* @date		25. April. 2012
-* @author	NXP MCU SW Application Team
+* @file     lcd_qvga_tft_revPB1.c
+* @brief    Contains all functions to control LCD controller using SPI
+* @version  1.0
+* @date     25. April. 2012
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -69,43 +69,43 @@
 #define LSn(LedNum)     (LS0+(LedNum/4))
 #define BITn(LedNum)    ((LedNum%4)*2)
 
-#define LCD_3V3_PIN_NUM			0
-#define LCD_5V_PIN_NUM			1
-#define LCD_DSP_EN_PIN_NUM		4
-#define LCD_BL_CONSTRAST2_PIN_NUM		7
-#define LCD_BL_CONSTRAST_PIN_NUM		8
+#define LCD_3V3_PIN_NUM         0
+#define LCD_5V_PIN_NUM          1
+#define LCD_DSP_EN_PIN_NUM      4
+#define LCD_BL_CONSTRAST2_PIN_NUM       7
+#define LCD_BL_CONSTRAST_PIN_NUM        8
 
-#define LCD_OUT_HI_IMPEDANCE	(0)
-#define LCD_OUT_LED				(1)
-#define LCD_OUT_PWM0			(2)
-#define LCD_OUT_PWM1			(3)
+#define LCD_OUT_HI_IMPEDANCE    (0)
+#define LCD_OUT_LED             (1)
+#define LCD_OUT_PWM0            (2)
+#define LCD_OUT_PWM1            (3)
 
-#define PCA9532_PRESCALER_FACTOR		(152)
-#define PCA9532_PWM_FACTOR				(256)
-#define PERCENT_FACTOR			        (100)
+#define PCA9532_PRESCALER_FACTOR        (152)
+#define PCA9532_PWM_FACTOR              (256)
+#define PERCENT_FACTOR                  (100)
 
 /******************************************************************************
  * Local Functions
  *****************************************************************************/
 
 /*********************************************************************//**
- * @brief 		Initialize I2C port
- * @param[in]	i2cClockFreq	I2C clock frequency that Pca9532 operate
- * @return 		None
+ * @brief       Initialize I2C port
+ * @param[in]   i2cClockFreq    I2C clock frequency that Pca9532 operate
+ * @return      None
  **********************************************************************/
 static void init_i2c(uint32_t i2cClockFreq)
 {
-	// Config Pin for I2C_SDA and I2C_SCL of I2C0
-	// It's because the PCA9532 IC is linked to LPC177x_8x by I2C0 clearly
-	PINSEL_ConfigPin (0, 27, 1);
-	PINSEL_ConfigPin (0, 28, 1);
+    // Config Pin for I2C_SDA and I2C_SCL of I2C0
+    // It's because the PCA9532 IC is linked to LPC177x_8x by I2C0 clearly
+    PINSEL_ConfigPin (0, 27, 1);
+    PINSEL_ConfigPin (0, 28, 1);
 
-	I2C_Init(I2CDEV, i2cClockFreq);
+    I2C_Init(I2CDEV, i2cClockFreq);
 
-	/* Enable I2C1 operation */
-	I2C_Cmd(I2CDEV, I2C_MASTER_MODE, ENABLE);
+    /* Enable I2C1 operation */
+    I2C_Cmd(I2CDEV, I2C_MASTER_MODE, ENABLE);
 
-	return;
+    return;
 }
 
 /******************************************************************************
@@ -115,43 +115,43 @@ void SetPWM(uint8_t brightness)
 {
     /* Transmit setup */
     I2C_M_SETUP_Type txsetup;
-	uint8_t i2c_buf[2];
-	
+    uint8_t i2c_buf[2];
+    
     txsetup.sl_addr7bit = I2C_PCA9532_ADDR;
     txsetup.tx_data = i2c_buf;
-	txsetup.tx_length = 2;
-	txsetup.rx_data = NULL;
-	txsetup.rx_length = 0;
-	txsetup.retransmissions_max = 3;
+    txsetup.tx_length = 2;
+    txsetup.rx_data = NULL;
+    txsetup.rx_length = 0;
+    txsetup.retransmissions_max = 3;
 
-	i2c_buf[0] = PSC0;	// frequency setting
+    i2c_buf[0] = PSC0;  // frequency setting
     i2c_buf[1] = 0;       // max
-	if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
-		return;
-	}
-	
-	i2c_buf[0] = PWM0;	// duty-cycle
-	i2c_buf[1] = (100-brightness)*PCA9532_PWM_FACTOR / PERCENT_FACTOR;      // brightness setting
-	if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
-		return;
-	}
-	
-	i2c_buf[0] = LSn(LCD_BL_CONSTRAST_PIN_NUM);	//source of the BL pin 
-	i2c_buf[1] = LCD_OUT_PWM0<<(BITn(LCD_BL_CONSTRAST_PIN_NUM));   // use PWM0 output
-	if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
-		return;
-	}
+    if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
+        return;
+    }
+    
+    i2c_buf[0] = PWM0;  // duty-cycle
+    i2c_buf[1] = (100-brightness)*PCA9532_PWM_FACTOR / PERCENT_FACTOR;      // brightness setting
+    if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
+        return;
+    }
+    
+    i2c_buf[0] = LSn(LCD_BL_CONSTRAST_PIN_NUM); //source of the BL pin 
+    i2c_buf[1] = LCD_OUT_PWM0<<(BITn(LCD_BL_CONSTRAST_PIN_NUM));   // use PWM0 output
+    if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
+        return;
+    }
 }
 /*********************************************************************//**
- * @brief 		Initialize LCD Controller.
- * @param[in]	None
- * @return 	None
+ * @brief       Initialize LCD Controller.
+ * @param[in]   None
+ * @return  None
  **********************************************************************/
 
 void InitLcdController (void)
 {
     TIM_TIMERCFG_Type TIM_ConfigStruct;
-	uint8_t i2c_buf[2];
+    uint8_t i2c_buf[2];
     /* Transmit setup */
     I2C_M_SETUP_Type txsetup;
   
@@ -163,13 +163,13 @@ void InitLcdController (void)
   
     init_i2c(100000);
 
-	txsetup.sl_addr7bit = I2C_PCA9532_ADDR;
+    txsetup.sl_addr7bit = I2C_PCA9532_ADDR;
     txsetup.tx_data = i2c_buf;
-	txsetup.tx_length = 2;
-	txsetup.rx_data = NULL;
-	txsetup.rx_length = 0;
-	txsetup.retransmissions_max = 3;
-	
+    txsetup.tx_length = 2;
+    txsetup.rx_data = NULL;
+    txsetup.rx_length = 0;
+    txsetup.retransmissions_max = 3;
+    
     // "v1,cc0,c31,d50,o,d200,c51,cc100";
     //   1st letter     2nd letter        Meaning
     //      c           c                 Send command to update PWM
@@ -180,43 +180,43 @@ void InitLcdController (void)
     //      o                             open the LCD
     //      v                             Sequence version info
 
-	// PWM setting
+    // PWM setting
     SetPWM(0);
 
-	// 3V3 pin 
-	i2c_buf[0] = LSn(LCD_3V3_PIN_NUM);
-	txsetup.tx_length = 1;
-	txsetup.rx_data = &i2c_buf[1];
-	txsetup.rx_length = 1;
-  	if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
-		return;
-	} 
+    // 3V3 pin 
+    i2c_buf[0] = LSn(LCD_3V3_PIN_NUM);
+    txsetup.tx_length = 1;
+    txsetup.rx_data = &i2c_buf[1];
+    txsetup.rx_length = 1;
+    if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
+        return;
+    } 
     i2c_buf[1]&= ~0x03<<(BITn(LCD_3V3_PIN_NUM));
-	i2c_buf[1]|= LCD_OUT_LED<<(BITn(LCD_3V3_PIN_NUM));
+    i2c_buf[1]|= LCD_OUT_LED<<(BITn(LCD_3V3_PIN_NUM));
     txsetup.tx_length = 2;
-	txsetup.rx_data = NULL;
-	txsetup.rx_length = 0;
-  	if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
-		return;
-	} 
+    txsetup.rx_data = NULL;
+    txsetup.rx_length = 0;
+    if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
+        return;
+    } 
     TIM_Waitms(250);
 
     // 5V pin
-	i2c_buf[0] =  LSn(LCD_5V_PIN_NUM);	
-	txsetup.tx_length = 1;
-	txsetup.rx_data = &i2c_buf[1];
-	txsetup.rx_length = 1;
-  	if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
-		return;
-	} 
+    i2c_buf[0] =  LSn(LCD_5V_PIN_NUM);  
+    txsetup.tx_length = 1;
+    txsetup.rx_data = &i2c_buf[1];
+    txsetup.rx_length = 1;
+    if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
+        return;
+    } 
     i2c_buf[1]&= ~(0x03 << (BITn(LCD_5V_PIN_NUM)));
     i2c_buf[1]|= LCD_OUT_LED <<(BITn(LCD_5V_PIN_NUM));
     txsetup.tx_length = 2;
-	txsetup.rx_data = NULL;
-	txsetup.rx_length = 0;
-  	if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
-		return;
-	}
+    txsetup.rx_data = NULL;
+    txsetup.rx_length = 0;
+    if (I2C_MasterTransferData((en_I2C_unitId)I2CDEV, &txsetup, I2C_TRANSFER_POLLING) != SUCCESS){
+        return;
+    }
 
     // Set PWM
     SetPWM(100);

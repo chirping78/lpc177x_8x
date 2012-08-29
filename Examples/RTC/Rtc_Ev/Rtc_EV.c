@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		RTC_EV.c			2011-06-02
+* $Id$      RTC_EV.c            2011-06-02
 *//**
-* @file		RTC_EV.c
-* @brief	This example describes how to use RTC to generate interrupt
-* 			in Second Counter Increment Interrupt (1s) and generate
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     RTC_EV.c
+* @brief    This example describes how to use RTC to generate interrupt
+*           in Second Counter Increment Interrupt (1s) and generate
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -37,12 +37,12 @@
 #include "lpc177x_8x_pinsel.h"
 
 
-/** @defgroup RTC_EV	RTC Event Monitor/Recorder
+/** @defgroup RTC_EV    RTC Event Monitor/Recorder
  * @ingroup RTC_Examples
  * @{
  */
 
-#define ER_INPUT_CHANNEL_TEST_NUM		(2)
+#define ER_INPUT_CHANNEL_TEST_NUM       (2)
 
 /************************** PRIVATE VARIABLES *************************/
 uint8_t menu1[] =
@@ -68,9 +68,9 @@ void print_menu(void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
- * @brief		RTC(Real-time clock) interrupt handler
- * @param[in]	none
- * @return 		None
+ * @brief       RTC(Real-time clock) interrupt handler
+ * @param[in]   none
+ * @return      None
  **********************************************************************/
 void RTC_IRQHandler(void)
 {
@@ -78,7 +78,7 @@ void RTC_IRQHandler(void)
 
   if(RTC_GetIntPending(LPC_RTC, RTC_INT_ALARM|RTC_INT_COUNTER_INCREASE))
   {
-	RTC_ClearIntPending(LPC_RTC, RTC_INT_ALARM|RTC_INT_COUNTER_INCREASE);
+    RTC_ClearIntPending(LPC_RTC, RTC_INT_ALARM|RTC_INT_COUNTER_INCREASE);
   }
 
   // Get status
@@ -94,80 +94,80 @@ void RTC_IRQHandler(void)
 }
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print menu
- * @param[in]	None
- * @return 		None
+ * @brief       Print menu
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG(menu1);
+    _DBG(menu1);
 }
 /*********************************************************************//**
- * @brief		Set System Time
- * @param[in]	None
- * @return 		None
+ * @brief       Set System Time
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void SetSystemTime(void)
 {
     RTC_TIME_Type RTCFullTime;
 
     /* RTC Block section ------------------------------------------------------ */
-	// Init RTC module
-	RTC_Init(LPC_RTC);
+    // Init RTC module
+    RTC_Init(LPC_RTC);
 
-	/* Enable rtc (starts increase the tick counter and second counter register) */
-	RTC_ResetClockTickCounter(LPC_RTC);
-	RTC_Cmd(LPC_RTC, ENABLE);
+    /* Enable rtc (starts increase the tick counter and second counter register) */
+    RTC_ResetClockTickCounter(LPC_RTC);
+    RTC_Cmd(LPC_RTC, ENABLE);
 
-	/* Set current time for RTC */
-	// Current time is 06:45:00PM, 2012-03-01
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_SECOND, 0);
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_MINUTE, 45);
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_HOUR, 18);
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_MONTH, 1);
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_YEAR, 2012);
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_DAYOFMONTH, 1);
+    /* Set current time for RTC */
+    // Current time is 06:45:00PM, 2012-03-01
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_SECOND, 0);
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_MINUTE, 45);
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_HOUR, 18);
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_MONTH, 1);
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_YEAR, 2012);
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_DAYOFMONTH, 1);
     RTC_SetTime (LPC_RTC, RTC_TIMETYPE_DAYOFYEAR, 1);
     RTC_SetTime (LPC_RTC, RTC_TIMETYPE_DAYOFWEEK, 6);
 
-	// Get and print current time
-	RTC_GetFullTime (LPC_RTC, &RTCFullTime);
-	_DBG( "Current time set to: ");
-	_DBD((RTCFullTime.HOUR)); _DBG (":");
-	_DBD ((RTCFullTime.MIN)); _DBG (":");
-	_DBD ((RTCFullTime.SEC)); _DBG("  ");
-	_DBD ((RTCFullTime.DOM)); _DBG("/");
-	_DBD ((RTCFullTime.MONTH)); _DBG("/");
-	_DBD16 ((RTCFullTime.YEAR)); _DBG(" (DOY = ");
+    // Get and print current time
+    RTC_GetFullTime (LPC_RTC, &RTCFullTime);
+    _DBG( "Current time set to: ");
+    _DBD((RTCFullTime.HOUR)); _DBG (":");
+    _DBD ((RTCFullTime.MIN)); _DBG (":");
+    _DBD ((RTCFullTime.SEC)); _DBG("  ");
+    _DBD ((RTCFullTime.DOM)); _DBG("/");
+    _DBD ((RTCFullTime.MONTH)); _DBG("/");
+    _DBD16 ((RTCFullTime.YEAR)); _DBG(" (DOY = ");
     _DBD16 ((RTCFullTime.DOY)); _DBG(", DOW = ");
     _DBD16 ((RTCFullTime.DOW)); _DBG_(")");
 }
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main RTC program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main RTC program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry(void)
 {
-	RTC_ER_CONFIG_Type	ErInit;
-	uint8_t uart_in;
-	uint32_t tmp = 0;
-	
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    RTC_ER_CONFIG_Type  ErInit;
+    uint8_t uart_in;
+    uint32_t tmp = 0;
+    
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 
 start:
-	SetSystemTime();
+    SetSystemTime();
 
     /* Pin Configuration for Event Monitor/Recoder */
     PINSEL_ConfigPin(0,7,4);
@@ -175,68 +175,68 @@ start:
     PINSEL_ConfigPin(0,9,4);
 
     // Init RTC_ER
-	RTC_ER_InitConfigStruct(&ErInit);
+    RTC_ER_InitConfigStruct(&ErInit);
     ErInit.InputChannel[ER_INPUT_CHANNEL_TEST_NUM].EventOnPosEdge = TRUE;
-	ErInit.InputChannel[ER_INPUT_CHANNEL_TEST_NUM].IntWake= TRUE;
-	if(RTC_ER_Init(&ErInit) == SUCCESS)
-	{
+    ErInit.InputChannel[ER_INPUT_CHANNEL_TEST_NUM].IntWake= TRUE;
+    if(RTC_ER_Init(&ErInit) == SUCCESS)
+    {
         // Enable RTC_ER
-		RTC_ER_Cmd(ER_INPUT_CHANNEL_TEST_NUM,ENABLE);
+        RTC_ER_Cmd(ER_INPUT_CHANNEL_TEST_NUM,ENABLE);
 
         // Enable Interrupt
         NVIC_EnableIRQ(RTC_IRQn);
 
-		while(1)
-		{
+        while(1)
+        {
              uart_in = 0;
-			_DG_NONBLOCK(&uart_in);
-			switch(uart_in)
-			{
-				case 'S':
-				case 's':
+            _DG_NONBLOCK(&uart_in);
+            switch(uart_in)
+            {
+                case 'S':
+                case 's':
                     _DBG_("Enter to Sleep Mode");
-					CLKPWR_Sleep();
+                    CLKPWR_Sleep();
                     _DBG_("\n\rSystem wake-up!\n\r");
-					break;
-				case 'P':
-				case 'p':
+                    break;
+                case 'P':
+                case 'p':
                     _DBG_("Enter to Power Down Mode");
-					CLKPWR_PowerDown();
+                    CLKPWR_PowerDown();
                     SystemInit();
-                	debug_frmwrk_init();
-                	_DBG_("\n\rSystem wake-up!\n\r");
+                    debug_frmwrk_init();
+                    _DBG_("\n\rSystem wake-up!\n\r");
                     goto start;
-				case 'D':
-				case 'd':
+                case 'D':
+                case 'd':
                     _DBG_("Enter to Deep Power Down Mode");
-					CLKPWR_DeepPowerDown();
+                    CLKPWR_DeepPowerDown();
                     SystemInit();
-                	debug_frmwrk_init();
-                	_DBG_("\n\rSystem wake-up!\n\r");
+                    debug_frmwrk_init();
+                    _DBG_("\n\rSystem wake-up!\n\r");
                     goto start;
-				default:
-					break;
-			}
+                default:
+                    break;
+            }
            
-    		if(evt_cnt)
-			{
+            if(evt_cnt)
+            {
                 _DBG("Event Count: ");_DBD(evt_cnt);_DBG_("");
-				_DBG( "First TimeStamp: ");
-				_DBD((FirstTimeStamp.HOUR)); _DBG (":");
-				_DBD ((FirstTimeStamp.MIN)); _DBG (":");
-				_DBD ((FirstTimeStamp.SEC)); _DBG(", DOY = ");
-				_DBD ((FirstTimeStamp.DOY)); _DBG_("");
-				_DBG( "Last TimeStamp: ");
-				_DBD((LastTimeStamp.HOUR)); _DBG (":");
-				_DBD ((LastTimeStamp.MIN)); _DBG (":");
-				_DBD ((LastTimeStamp.SEC));  _DBG(", DOY = ");
-				_DBD ((LastTimeStamp.DOY)); _DBG_("");
+                _DBG( "First TimeStamp: ");
+                _DBD((FirstTimeStamp.HOUR)); _DBG (":");
+                _DBD ((FirstTimeStamp.MIN)); _DBG (":");
+                _DBD ((FirstTimeStamp.SEC)); _DBG(", DOY = ");
+                _DBD ((FirstTimeStamp.DOY)); _DBG_("");
+                _DBG( "Last TimeStamp: ");
+                _DBD((LastTimeStamp.HOUR)); _DBG (":");
+                _DBD ((LastTimeStamp.MIN)); _DBG (":");
+                _DBD ((LastTimeStamp.SEC));  _DBG(", DOY = ");
+                _DBD ((LastTimeStamp.DOY)); _DBG_("");
                 evt_cnt = 0;
-			}
-			for(tmp = 0; tmp < 100000; tmp++);
-		}
-		
-	}
+            }
+            for(tmp = 0; tmp < 100000; tmp++);
+        }
+        
+    }
     /* Loop forever */
     while(1);
 }
@@ -250,8 +250,8 @@ start:
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		lpc177x_8x_usbhost.c			2011-09-05
+* $Id$      lpc177x_8x_usbhost.c            2011-09-05
 *//**
-* @file		lpc177x_8x_usbhost.c
-* @brief		Host Controller functions.
-* @version	1.0
-* @date		05. September. 2011
-* @author	NXP MCU SW Application Team
+* @file     lpc177x_8x_usbhost.c
+* @brief        Host Controller functions.
+* @version  1.0
+* @date     05. September. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -54,9 +54,9 @@
 **************************************************************************************************************
 */
 
-#define		DEVICE_DESCRIPTOR_SIZE		18
-#define		DEVICE_CONFIGURATION_SIZE	9
-#define		DEVICE_INTERFACE_SIZE		9
+#define     DEVICE_DESCRIPTOR_SIZE      18
+#define     DEVICE_CONFIGURATION_SIZE   9
+#define     DEVICE_INTERFACE_SIZE       9
 
 /*
 **************************************************************************************************************
@@ -80,9 +80,9 @@ volatile  uint8_t  *FATBuffer;                 /* Buffer used by FAT file system
 volatile  uint8_t  *UserBuffer;                /* Buffer used by application                             */
 
 volatile uint32_t  UnrecoverableIntCount = 0;
-volatile uint8_t*		USB_DeviceDescriptor;
-volatile uint8_t*		USB_ConfigDescriptor;
-volatile uint8_t*		USB_InterfaceDescriptor;
+volatile uint8_t*       USB_DeviceDescriptor;
+volatile uint8_t*       USB_ConfigDescriptor;
+volatile uint8_t*       USB_InterfaceDescriptor;
 
 int32_t     Host_ParseConfiguration (void);
 void        Host_TDInit   (volatile  HCTD *td);
@@ -98,9 +98,9 @@ void        Host_WDHWait  (void);
 
 
 /*********************************************************************//**
- * @brief 			delay in milli seconds
- * @param[in]		delay    The delay required (in milliseconds)
- * @return 		None.
+ * @brief           delay in milli seconds
+ * @param[in]       delay    The delay required (in milliseconds)
+ * @return      None.
  **********************************************************************/
 void  Host_DelayMS (uint32_t  delay)
 {
@@ -113,9 +113,9 @@ void  Host_DelayMS (uint32_t  delay)
 }
 
 /*********************************************************************//**
- * @brief 			delay in micro seconds
- * @param[in]		delay    The delay required (in microseconds)
- * @return 		None.
+ * @brief           delay in micro seconds
+ * @param[in]       delay    The delay required (in microseconds)
+ * @return      None.
  **********************************************************************/
 void  Host_DelayUS (uint32_t  delay)
 {
@@ -128,16 +128,16 @@ void  Host_DelayUS (uint32_t  delay)
 }
 
 /*********************************************************************//**
- * @brief 			Init OTG host controller.
- * @param[in]		None.
- * @return 		None.
+ * @brief           Init OTG host controller.
+ * @param[in]       None.
+ * @return      None.
  **********************************************************************/
 void Host_CtrlInit(void)
 {
-	uint32_t HostBaseAddr;
-	
-	/* Set up host base address and TD and ED descriptors */
-	HostBaseAddr = HOST_BASE_ADDR;
+    uint32_t HostBaseAddr;
+    
+    /* Set up host base address and TD and ED descriptors */
+    HostBaseAddr = HOST_BASE_ADDR;
 
     Hcca       = (volatile  HCCA       *)(HostBaseAddr+0x000);
     TDHead     = (volatile  HCTD       *)(HostBaseAddr+0x100);
@@ -147,10 +147,10 @@ void Host_CtrlInit(void)
     EDBulkOut  = (volatile  HCED       *)(HostBaseAddr+0x140);
     TDBuffer   = (volatile  uint8_t *)(HostBaseAddr+0x150);
     FATBuffer  = (volatile  uint8_t *)(HostBaseAddr+0x1D0);
-	USB_DeviceDescriptor = (volatile  uint8_t *)(HostBaseAddr+0x1000);
-	USB_ConfigDescriptor = (volatile  uint8_t *) (USB_DeviceDescriptor + DEVICE_DESCRIPTOR_SIZE);
-	UserBuffer = (volatile  uint8_t *)(USB_ConfigDescriptor+DEVICE_CONFIGURATION_SIZE);	
-	
+    USB_DeviceDescriptor = (volatile  uint8_t *)(HostBaseAddr+0x1000);
+    USB_ConfigDescriptor = (volatile  uint8_t *) (USB_DeviceDescriptor + DEVICE_DESCRIPTOR_SIZE);
+    UserBuffer = (volatile  uint8_t *)(USB_ConfigDescriptor+DEVICE_CONFIGURATION_SIZE); 
+    
 
     /* Initialize all the TDs, EDs and HCCA to 0  */
     Host_EDInit(EDCtrl);
@@ -161,8 +161,8 @@ void Host_CtrlInit(void)
     Host_HCCAInit(Hcca);
 
     Host_DelayMS(50);                /* Wait 50 ms before apply reset              */
-	
-	LPC_USB->Control       = 0;    /* HARDWARE RESET  (HCFS = 00b)       */
+    
+    LPC_USB->Control       = 0;    /* HARDWARE RESET  (HCFS = 00b)       */
     LPC_USB->ControlHeadED = 0;    /* Initialize Control list head to Zero       */
     LPC_USB->BulkHeadED    = 0;    /* Initialize Bulk list head to Zero          */
     
@@ -184,61 +184,61 @@ void Host_CtrlInit(void)
 }
 
 /*********************************************************************//**
- * @brief 			Init host controller.
- * @param[in]		None.
- * @return 		None.
+ * @brief           Init host controller.
+ * @param[in]       None.
+ * @return      None.
  **********************************************************************/
 void  Host_Init (void)
 {
 
-    LPC_SC->PCONP   |= 0x80000000; 		/* Enable USB Interface	*/
-	
-    LPC_USB->OTGClkCtrl   = 0x00000019;  /* Enable USB host clock, OTG clock & AHB master clock  	*/
+    LPC_SC->PCONP   |= 0x80000000;      /* Enable USB Interface */
+    
+    LPC_USB->OTGClkCtrl   = 0x00000019;  /* Enable USB host clock, OTG clock & AHB master clock     */
     while ((LPC_USB->OTGClkSt & 0x00000019) != 0x19);
-	
-	LPC_USB->StCtrl = 0x1;
+    
+    LPC_USB->StCtrl = 0x1;
 
 #if _CURR_USING_BRD == _EA_PA_BOARD
 
-	// Port U1
-	PINSEL_ConfigPin(0,29,1);	/* USB_D+1	*/
-	PINSEL_ConfigPin(0,30,1);	/* USB_D-1	*/
-	
-	PINSEL_ConfigPin(2,9,1);		/* USB_CONNECT1 */
-	PINSEL_ConfigPin(1,18,1);		/* USB_UP_LED1	*/
+    // Port U1
+    PINSEL_ConfigPin(0,29,1);   /* USB_D+1  */
+    PINSEL_ConfigPin(0,30,1);   /* USB_D-1  */
+    
+    PINSEL_ConfigPin(2,9,1);        /* USB_CONNECT1 */
+    PINSEL_ConfigPin(1,18,1);       /* USB_UP_LED1  */
 
 #if 0
-	PINSEL_ConfigPin(1,19,1);	    /* USB_TX_E1*/ 
-	PINSEL_ConfigPin(1,22,1);	    /* USB_RX_E1*/ 
-    PINSEL_ConfigPin(1,20,1);		/* USB_TX_DP1 */
-    PINSEL_ConfigPin(1,21,1);		/* USB_TX_DM1 */
-    PINSEL_ConfigPin(1,23,1);		/* USB_RX_DP1 */
-    PINSEL_ConfigPin(1,24,1);		/* USB_RX_DM1 */
+    PINSEL_ConfigPin(1,19,1);       /* USB_TX_E1*/ 
+    PINSEL_ConfigPin(1,22,1);       /* USB_RX_E1*/ 
+    PINSEL_ConfigPin(1,20,1);       /* USB_TX_DP1 */
+    PINSEL_ConfigPin(1,21,1);       /* USB_TX_DM1 */
+    PINSEL_ConfigPin(1,23,1);       /* USB_RX_DP1 */
+    PINSEL_ConfigPin(1,24,1);       /* USB_RX_DM1 */
 #else
-	PINSEL_ConfigPin(1,19,2);		/* USB_PPWR1	*/
-	PINSEL_ConfigPin(1,27,1);		/* USB_OVRCR1	*/
+    PINSEL_ConfigPin(1,19,2);       /* USB_PPWR1    */
+    PINSEL_ConfigPin(1,27,1);       /* USB_OVRCR1   */
 #endif
 
-	// Port U2
-	PINSEL_ConfigPin(0,31,1);		/* USB_D+2	*/
-	PINSEL_ConfigPin(0,14,3);		/* USB_CONNECT2	*/
-	PINSEL_ConfigPin(0,13,1);		/* USB_UP_LED2	*/
+    // Port U2
+    PINSEL_ConfigPin(0,31,1);       /* USB_D+2  */
+    PINSEL_ConfigPin(0,14,3);       /* USB_CONNECT2 */
+    PINSEL_ConfigPin(0,13,1);       /* USB_UP_LED2  */
 
 #if 1 /* Use USB Power Switch */
-	PINSEL_ConfigPin(0,12,1);		/* USB_PPWR2	*/
-	PINSEL_ConfigPin(1,31,1);		/* USB_OVRCR2	*/
+    PINSEL_ConfigPin(0,12,1);       /* USB_PPWR2    */
+    PINSEL_ConfigPin(1,31,1);       /* USB_OVRCR2   */
 #else 
-	PINSEL_ConfigPin(1,30,2);		/* USB_VBUS	*/
+    PINSEL_ConfigPin(1,30,2);       /* USB_VBUS */
 #endif
 
-#else	  /* _CURR_USING_BRD == _IAR_OLIMEX_BOARD */
-	// Port U2
-	PINSEL_ConfigPin(0,31,1);		/* USB_D+2	*/
-	PINSEL_ConfigPin(0,14,3);		/* USB_CONNECT2	*/
-	PINSEL_ConfigPin(0,13,1);		/* USB_UP_LED2	*/
+#else     /* _CURR_USING_BRD == _IAR_OLIMEX_BOARD */
+    // Port U2
+    PINSEL_ConfigPin(0,31,1);       /* USB_D+2  */
+    PINSEL_ConfigPin(0,14,3);       /* USB_CONNECT2 */
+    PINSEL_ConfigPin(0,13,1);       /* USB_UP_LED2  */
 
-	PINSEL_ConfigPin(0,12,1);		/* USB_PPWR2	*/
-	PINSEL_ConfigPin(1,31,1);		/* USB_OVRCR2	*/
+    PINSEL_ConfigPin(0,12,1);       /* USB_PPWR2    */
+    PINSEL_ConfigPin(1,31,1);       /* USB_OVRCR2   */
 
 #endif /* _CURR_USING_BRD == _EA_PA_BOARD */
 
@@ -246,16 +246,16 @@ void  Host_Init (void)
 
 
     /* Enable the USB Interrupt */
-	NVIC_EnableIRQ(USB_IRQn);               /* enable USB interrupt */
-	NVIC_SetPriority (USB_IRQn, 0);			/* highest priority */
+    NVIC_EnableIRQ(USB_IRQn);               /* enable USB interrupt */
+    NVIC_SetPriority (USB_IRQn, 0);         /* highest priority */
 
 
 }
 
 /*********************************************************************//**
- * @brief 			services the interrupt caused by host controller.
- * @param[in]		None.
- * @return 		None.
+ * @brief           services the interrupt caused by host controller.
+ * @param[in]       None.
+ * @return      None.
  **********************************************************************/
 void  USB_IRQHandler (void)
 {
@@ -272,70 +272,70 @@ void  USB_IRQHandler (void)
         int_status = int_status & ie_status;
         if (int_status & OR_INTR_STATUS_RHSC) {                 /* Root hub status change interrupt     */
             if (LPC_USB->RhPortStatus1 & OR_RH_PORT_CSC) {
-				if (LPC_USB->RhStatus & OR_RH_STATUS_DRWE) {
-					/*
-					 * When DRWE is on, Connect Status Change
-					 * means a remote wakeup event.
-					*/
-					HOST_RhscIntr |= 0x01;// JUST SOMETHING FOR A BREAKPOINT
-				}
-				else {
-					/*
-					 * When DRWE is off, Connect Status Change
-					 * is NOT a remote wakeup event
-					*/
-					if (LPC_USB->RhPortStatus1 & OR_RH_PORT_CCS) {
-							HOST_TDControlStatus = 0;
-							HOST_WdhIntr = 0;
-							HOST_RhscIntr |= 0x01;
-							gUSBConnected = 1;
-					} else {
-							//LPC_USB->InterruptEnable = 0; // why do we get multiple disc. rupts???
-							HOST_RhscIntr &= ~0x01;
-							gUSBConnected = 0;
-					}
+                if (LPC_USB->RhStatus & OR_RH_STATUS_DRWE) {
+                    /*
+                     * When DRWE is on, Connect Status Change
+                     * means a remote wakeup event.
+                    */
+                    HOST_RhscIntr |= 0x01;// JUST SOMETHING FOR A BREAKPOINT
                 }
-            	LPC_USB->RhPortStatus1 = OR_RH_PORT_CSC;
+                else {
+                    /*
+                     * When DRWE is off, Connect Status Change
+                     * is NOT a remote wakeup event
+                    */
+                    if (LPC_USB->RhPortStatus1 & OR_RH_PORT_CCS) {
+                            HOST_TDControlStatus = 0;
+                            HOST_WdhIntr = 0;
+                            HOST_RhscIntr |= 0x01;
+                            gUSBConnected = 1;
+                    } else {
+                            //LPC_USB->InterruptEnable = 0; // why do we get multiple disc. rupts???
+                            HOST_RhscIntr &= ~0x01;
+                            gUSBConnected = 0;
+                    }
+                }
+                LPC_USB->RhPortStatus1 = OR_RH_PORT_CSC;
             }
-			if (LPC_USB->RhPortStatus2 & OR_RH_PORT_CSC) {
-				if (LPC_USB->RhStatus & OR_RH_STATUS_DRWE) {
-					/*
-				 	* When DRWE is on, Connect Status Change
-				 	* means a remote wakeup event.
-					*/
-					HOST_RhscIntr |= 0x02;// JUST SOMETHING FOR A BREAKPOINT
-				}
-				else {
-					/*
-				 	* When DRWE is off, Connect Status Change
-				 	* is NOT a remote wakeup event
-					*/
-					if (LPC_USB->RhPortStatus2 & OR_RH_PORT_CCS) {
-							HOST_TDControlStatus = 0;
-							HOST_WdhIntr = 0;
-							HOST_RhscIntr |= 0x02;
-							gUSBConnected = 1;
-					} else {
-							//LPC_USB->InterruptEnable = 0; // why do we get multiple disc. rupts???
-							HOST_RhscIntr &= ~0x02;
-							gUSBConnected = 0;
-					}
-				}
-				LPC_USB->RhPortStatus2 = OR_RH_PORT_CSC;
-			}
-			if (LPC_USB->RhPortStatus1 & OR_RH_PORT_PRSC) {
-				LPC_USB->RhPortStatus1 = OR_RH_PORT_PRSC;
-			}
-			if (LPC_USB->RhPortStatus2 & OR_RH_PORT_PRSC) {
-				LPC_USB->RhPortStatus2 = OR_RH_PORT_PRSC;
-			}
-		}
+            if (LPC_USB->RhPortStatus2 & OR_RH_PORT_CSC) {
+                if (LPC_USB->RhStatus & OR_RH_STATUS_DRWE) {
+                    /*
+                    * When DRWE is on, Connect Status Change
+                    * means a remote wakeup event.
+                    */
+                    HOST_RhscIntr |= 0x02;// JUST SOMETHING FOR A BREAKPOINT
+                }
+                else {
+                    /*
+                    * When DRWE is off, Connect Status Change
+                    * is NOT a remote wakeup event
+                    */
+                    if (LPC_USB->RhPortStatus2 & OR_RH_PORT_CCS) {
+                            HOST_TDControlStatus = 0;
+                            HOST_WdhIntr = 0;
+                            HOST_RhscIntr |= 0x02;
+                            gUSBConnected = 1;
+                    } else {
+                            //LPC_USB->InterruptEnable = 0; // why do we get multiple disc. rupts???
+                            HOST_RhscIntr &= ~0x02;
+                            gUSBConnected = 0;
+                    }
+                }
+                LPC_USB->RhPortStatus2 = OR_RH_PORT_CSC;
+            }
+            if (LPC_USB->RhPortStatus1 & OR_RH_PORT_PRSC) {
+                LPC_USB->RhPortStatus1 = OR_RH_PORT_PRSC;
+            }
+            if (LPC_USB->RhPortStatus2 & OR_RH_PORT_PRSC) {
+                LPC_USB->RhPortStatus2 = OR_RH_PORT_PRSC;
+            }
+        }
         if (int_status & OR_INTR_STATUS_WDH) {                  /* Writeback Done Head interrupt        */
             HOST_WdhIntr = 1;
-			HOST_TDControlStatus = (TDHead->Control >> 28) & 0xf;
+            HOST_TDControlStatus = (TDHead->Control >> 28) & 0xf;
         }
-		if (int_status & OR_INTR_STATUS_UE) {                   /* Unrecoverable Error interrupt        */
-			UnrecoverableIntCount++;
+        if (int_status & OR_INTR_STATUS_UE) {                   /* Unrecoverable Error interrupt        */
+            UnrecoverableIntCount++;
         }    
 
         LPC_USB->InterruptStatus = int_status;                         /* Clear interrupt status register      */
@@ -344,9 +344,9 @@ void  USB_IRQHandler (void)
 }
 
 /*********************************************************************//**
- * @brief 			enumerate the device connected.
- * @param[in]		None.
- * @return 		None.
+ * @brief           enumerate the device connected.
+ * @param[in]       None.
+ * @return      None.
  **********************************************************************/
 int32_t  Host_EnumDev (void)
 {
@@ -354,21 +354,21 @@ int32_t  Host_EnumDev (void)
 
     while (!gUSBConnected);
     Host_DelayMS(100);                             /* USB 2.0 spec says atleast 50ms delay beore port reset */
-	
-	if ( HOST_RhscIntr & 0x01 )
-	{
-	  LPC_USB->RhPortStatus1 = OR_RH_PORT_PRS; // Initiate port reset
-	  while (LPC_USB->RhPortStatus1 & OR_RH_PORT_PRS)
-		; // Wait for port reset to complete...
-	  LPC_USB->RhPortStatus1 = OR_RH_PORT_PRSC; // ...and clear port reset signal
-	}
-	if ( HOST_RhscIntr & 0x02 )
-	{
-	  LPC_USB->RhPortStatus2 = OR_RH_PORT_PRS; // Initiate port reset
-	  while (LPC_USB->RhPortStatus2 & OR_RH_PORT_PRS)
-		; // Wait for port reset to complete...
-	  LPC_USB->RhPortStatus2 = OR_RH_PORT_PRSC; // ...and clear port reset signal
-	}
+    
+    if ( HOST_RhscIntr & 0x01 )
+    {
+      LPC_USB->RhPortStatus1 = OR_RH_PORT_PRS; // Initiate port reset
+      while (LPC_USB->RhPortStatus1 & OR_RH_PORT_PRS)
+        ; // Wait for port reset to complete...
+      LPC_USB->RhPortStatus1 = OR_RH_PORT_PRSC; // ...and clear port reset signal
+    }
+    if ( HOST_RhscIntr & 0x02 )
+    {
+      LPC_USB->RhPortStatus2 = OR_RH_PORT_PRS; // Initiate port reset
+      while (LPC_USB->RhPortStatus2 & OR_RH_PORT_PRS)
+        ; // Wait for port reset to complete...
+      LPC_USB->RhPortStatus2 = OR_RH_PORT_PRSC; // ...and clear port reset signal
+    }
     Host_DelayMS(200);                                                 /* Wait for 100 MS after port reset  */
 
     EDCtrl->Control = DEVICE_DESCRIPTOR_SIZE << 16;                    /* Put max pkt size = 8              */
@@ -391,7 +391,7 @@ int32_t  Host_EnumDev (void)
     }
                                                                        /* Get the first configuration data  */
     rc = HOST_GET_DESCRIPTOR(USB_DESCRIPTOR_TYPE_CONFIGURATION, 0, USB_ConfigDescriptor, 
-    							ReadLE16U(&USB_ConfigDescriptor[2]));
+                                ReadLE16U(&USB_ConfigDescriptor[2]));
     if (rc != USB_HOST_FUNC_OK) {
         return (rc);
     }
@@ -407,11 +407,11 @@ int32_t  Host_EnumDev (void)
 }
 
 /*********************************************************************//**
- * @brief 			parse the configuration.
- * @param[in]		None.
- * @return 		OK		              if Success.
+ * @brief           parse the configuration.
+ * @param[in]       None.
+ * @return      OK                    if Success.
  *                         ERR_BAD_CONFIGURATION    Failed in case of bad configuration.
- *				ERR_NO_MS_INTERFACE	  Failed in case of no MS interface.
+ *              ERR_NO_MS_INTERFACE   Failed in case of no MS interface.
  **********************************************************************/
 int32_t  Host_ParseConfiguration (void)
 {
@@ -436,7 +436,7 @@ int32_t  Host_ParseConfiguration (void)
                      desc_ptr[6] == MASS_STORAGE_SUBCLASS_SCSI &&     /* check if the subclass is SCSI      */
                      desc_ptr[7] == MASS_STORAGE_PROTOCOL_BO) {       /* check if the protocol is Bulk only */
                      ms_int_found = 1;
-					 gUSBDeviceType = MASS_STORAGE_DEVICE;
+                     gUSBDeviceType = MASS_STORAGE_DEVICE;
                      desc_ptr    += desc_ptr[0];                      /* Move to next descriptor start      */
                  }
                  break;
@@ -473,22 +473,22 @@ int32_t  Host_ParseConfiguration (void)
     }
 }
 /*********************************************************************//**
- * @brief 			Get the type of the USB which is being connected.
- * @param[in]		None.
- * @return 		USB_DEVICE_TYPE value
+ * @brief           Get the type of the USB which is being connected.
+ * @param[in]       None.
+ * @return      USB_DEVICE_TYPE value
  **********************************************************************/
 USB_DEVICE_TYPE Host_GetDeviceType(void)
 {
-	return gUSBDeviceType;
+    return gUSBDeviceType;
 }
 
 /*********************************************************************//**
- * @brief 			processes the transfer descriptor.
- * @param[in]		ed            Endpoint descriptor that contains this transfer descriptor.
- * @param[in]		 token         SETUP, IN, OUT
- * @param[in]		 buffer        Current Buffer Pointer of the transfer descriptor
- * @param[in]		 buffer_len    Length of the buffer
- * @return 		USB_HOST_FUNC_OK       if TD submission is successful.
+ * @brief           processes the transfer descriptor.
+ * @param[in]       ed            Endpoint descriptor that contains this transfer descriptor.
+ * @param[in]        token         SETUP, IN, OUT
+ * @param[in]        buffer        Current Buffer Pointer of the transfer descriptor
+ * @param[in]        buffer_len    Length of the buffer
+ * @return      USB_HOST_FUNC_OK       if TD submission is successful.
  *                          ERROR    if TD submission fails
  **********************************************************************/
 int32_t  Host_ProcessTD (volatile  HCED       *ed,
@@ -538,7 +538,7 @@ int32_t  Host_ProcessTD (volatile  HCED       *ed,
     Host_WDHWait();
 
 //    if (!(TDHead->Control & 0xF0000000)) {
-	if (!HOST_TDControlStatus) {
+    if (!HOST_TDControlStatus) {
         return (USB_HOST_FUNC_OK);
     } else {      
         return (ERR_TD_FAIL);
@@ -546,14 +546,14 @@ int32_t  Host_ProcessTD (volatile  HCED       *ed,
 }
    
 /*********************************************************************//**
- * @brief 			receive the control information.
- * @param[in]		bm_request_type.
- * @param[in]		 b_request
- * @param[in]		 w_value
- * @param[in]		w_index
- * @param[in]		w_length
- * @param[in]		buffer
- * @return 		USB_HOST_FUNC_OK       if Success
+ * @brief           receive the control information.
+ * @param[in]       bm_request_type.
+ * @param[in]        b_request
+ * @param[in]        w_value
+ * @param[in]       w_index
+ * @param[in]       w_length
+ * @param[in]       buffer
+ * @return      USB_HOST_FUNC_OK       if Success
  *                          ERROR    if Failed
  **********************************************************************/
 int32_t  Host_CtrlRecv (         uint8_t   bm_request_type,
@@ -580,14 +580,14 @@ int32_t  Host_CtrlRecv (         uint8_t   bm_request_type,
 }
 
 /*********************************************************************//**
- * @brief 			send the control information.
- * @param[in]		bm_request_type.
- * @param[in]		 b_request
- * @param[in]		 w_value
- * @param[in]		w_index
- * @param[in]		w_length
- * @param[in]		buffer
- * @return 		USB_HOST_FUNC_OK       if Success
+ * @brief           send the control information.
+ * @param[in]       bm_request_type.
+ * @param[in]        b_request
+ * @param[in]        w_value
+ * @param[in]       w_index
+ * @param[in]       w_length
+ * @param[in]       buffer
+ * @return      USB_HOST_FUNC_OK       if Success
  *                          ERROR    if Failed
  **********************************************************************/
 int32_t  Host_CtrlSend (          uint8_t   bm_request_type,
@@ -614,9 +614,9 @@ int32_t  Host_CtrlSend (          uint8_t   bm_request_type,
 }
 
 /*********************************************************************//**
- * @brief 			fill the setup packet.
- * @param[in]		None.
- * @return 		USB_HOST_FUNC_OK       if Success
+ * @brief           fill the setup packet.
+ * @param[in]       None.
+ * @return      USB_HOST_FUNC_OK       if Success
  *                          ERROR    if Failed
  **********************************************************************/
 void  Host_FillSetup (uint8_t   bm_request_type,
@@ -625,10 +625,10 @@ void  Host_FillSetup (uint8_t   bm_request_type,
                       uint16_t   w_index,
                       uint16_t   w_length)
 {
-	int i;
-	for (i=0;i<w_length;i++)
-		TDBuffer[i] = 0;
-	
+    int i;
+    for (i=0;i<w_length;i++)
+        TDBuffer[i] = 0;
+    
     TDBuffer[0] = bm_request_type;
     TDBuffer[1] = b_request;
     WriteLE16U(&TDBuffer[2], w_value);
@@ -637,9 +637,9 @@ void  Host_FillSetup (uint8_t   bm_request_type,
 }
 
 /*********************************************************************//**
- * @brief 			initializes transfer descriptor.
- * @param[in]		td       Pointer to TD structure.
- * @return 		None.
+ * @brief           initializes transfer descriptor.
+ * @param[in]       td       Pointer to TD structure.
+ * @return      None.
  **********************************************************************/
 void  Host_TDInit (volatile  HCTD *td)
 {
@@ -652,9 +652,9 @@ void  Host_TDInit (volatile  HCTD *td)
 
 
 /*********************************************************************//**
- * @brief 			initializes endpoint descriptor.
- * @param[in]		td       Pointer to ED structure.
- * @return 		None.
+ * @brief           initializes endpoint descriptor.
+ * @param[in]       td       Pointer to ED structure.
+ * @return      None.
  **********************************************************************/
 void  Host_EDInit (volatile  HCED *ed)
 {
@@ -666,9 +666,9 @@ void  Host_EDInit (volatile  HCED *ed)
 }
 
 /*********************************************************************//**
- * @brief 			initializes host controller communications area.
- * @param[in]		hcca       Pointer to HCCA.
- * @return 		None.
+ * @brief           initializes host controller communications area.
+ * @param[in]       hcca       Pointer to HCCA.
+ * @return      None.
  **********************************************************************/
 void  Host_HCCAInit (volatile  HCCA  *hcca)
 {
@@ -685,9 +685,9 @@ void  Host_HCCAInit (volatile  HCCA  *hcca)
 
 
 /*********************************************************************//**
- * @brief 			infinite loop which breaks when ever a WDH interrupt rises.
- * @param[in]		None.
- * @return 		None.
+ * @brief           infinite loop which breaks when ever a WDH interrupt rises.
+ * @param[in]       None.
+ * @return      None.
  **********************************************************************/
 void  Host_WDHWait (void)
 {
@@ -699,10 +699,10 @@ void  Host_WDHWait (void)
 
 
 /*********************************************************************//**
- * @brief 			read an unsigned integer from a charecter buffer in the platform
+ * @brief           read an unsigned integer from a charecter buffer in the platform
  *              containing little endian processor.
- * @param[in]		pmem    Pointer to the charecter buffer.
- * @return 		val     Unsigned integer.
+ * @param[in]       pmem    Pointer to the charecter buffer.
+ * @return      val     Unsigned integer.
  **********************************************************************/
 uint32_t  ReadLE32U (volatile  uint8_t  *pmem)
 {
@@ -717,11 +717,11 @@ uint32_t  ReadLE32U (volatile  uint8_t  *pmem)
 
 
 /*********************************************************************//**
- * @brief 			write an unsigned integer into a charecter buffer in the platform 
+ * @brief           write an unsigned integer into a charecter buffer in the platform 
  *              containing little endian processor.
- * @param[in]		pmem    Pointer to the charecter buffer.
- * @param[in]		val     Integer value to be placed in the charecter buffer
- * @return 		None.
+ * @param[in]       pmem    Pointer to the charecter buffer.
+ * @param[in]       val     Integer value to be placed in the charecter buffer
+ * @return      None.
  **********************************************************************/
  void  WriteLE32U (volatile  uint8_t  *pmem,
                             uint32_t   val)
@@ -734,10 +734,10 @@ uint32_t  ReadLE32U (volatile  uint8_t  *pmem)
 
 
 /*********************************************************************//**
- * @brief 			read an unsigned short integer from a charecter buffer in the platform
+ * @brief           read an unsigned short integer from a charecter buffer in the platform
 *              containing little endian processor.
- * @param[in]		pmem    Pointer to the charecter buffer.
- * @return 		val     Unsigned short integer.
+ * @param[in]       pmem    Pointer to the charecter buffer.
+ * @return      val     Unsigned short integer.
  **********************************************************************/
 uint16_t  ReadLE16U (volatile  uint8_t  *pmem)
 {
@@ -749,11 +749,11 @@ uint16_t  ReadLE16U (volatile  uint8_t  *pmem)
 }
 
 /*********************************************************************//**
- * @brief 			write an unsigned short integer into a charecter buffer in the
+ * @brief           write an unsigned short integer into a charecter buffer in the
  *              platform containing little endian processor.
- * @param[in]		pmem    Pointer to the charecter buffer.
- * @param[in]	       val     Value to be placed in the charecter buffer
- * @return 		None.
+ * @param[in]       pmem    Pointer to the charecter buffer.
+ * @param[in]          val     Value to be placed in the charecter buffer
+ * @return      None.
  **********************************************************************/
 void  WriteLE16U (volatile  uint8_t  *pmem,
                             uint16_t   val)
@@ -777,10 +777,10 @@ void  WriteLE16U (volatile  uint8_t  *pmem,
 */
 
 /*********************************************************************//**
- * @brief 			read an unsigned integer from a charecter buffer in the platform
+ * @brief           read an unsigned integer from a charecter buffer in the platform
  *              containing big endian processor.
- * @param[in]		pmem    Pointer to the charecter buffer.
- * @return 		val     Unsigned integer.
+ * @param[in]       pmem    Pointer to the charecter buffer.
+ * @return      val     Unsigned integer.
  **********************************************************************/
 uint32_t  ReadBE32U (volatile  uint8_t  *pmem)
 {
@@ -794,11 +794,11 @@ uint32_t  ReadBE32U (volatile  uint8_t  *pmem)
 }
 
 /*********************************************************************//**
- * @brief 			write an unsigned integer into a charecter buffer in the platform
+ * @brief           write an unsigned integer into a charecter buffer in the platform
  *              containing big endian processor
- * @param[in]		pmem    Pointer to the charecter buffer.
- * @param[in]	       val     Value to be placed in the charecter buffer	
- * @return 		None.
+ * @param[in]       pmem    Pointer to the charecter buffer.
+ * @param[in]          val     Value to be placed in the charecter buffer   
+ * @return      None.
  **********************************************************************/
 void  WriteBE32U (volatile  uint8_t  *pmem,
                             uint32_t   val)
@@ -810,10 +810,10 @@ void  WriteBE32U (volatile  uint8_t  *pmem,
 }
 
 /*********************************************************************//**
- * @brief 			read an unsigned short integer from a charecter buffer in the platform
+ * @brief           read an unsigned short integer from a charecter buffer in the platform
 *              containing big endian processor
- * @param[in]		pmem    Pointer to the charecter buffer.
- * @return 		val     Unsigned short integer.
+ * @param[in]       pmem    Pointer to the charecter buffer.
+ * @return      val     Unsigned short integer.
  **********************************************************************/
  uint16_t  ReadBE16U (volatile  uint8_t  *pmem)
 {
@@ -825,11 +825,11 @@ void  WriteBE32U (volatile  uint8_t  *pmem,
 }
 
 /*********************************************************************//**
- * @brief 			write an unsigned short integer into the charecter buffer in the
+ * @brief           write an unsigned short integer into the charecter buffer in the
  *              platform containing big endian processor.
- * @param[in]		pmem    Pointer to the charecter buffer.
- * @param[in]		 val     Value to be placed in the charecter buffer
- * @return 		None.
+ * @param[in]       pmem    Pointer to the charecter buffer.
+ * @param[in]        val     Value to be placed in the charecter buffer
+ * @return      None.
  **********************************************************************/
  void  WriteBE16U (volatile  uint8_t  *pmem,
                             uint16_t   val)

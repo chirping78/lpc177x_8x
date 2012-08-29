@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		lcd.c			2012-03-13
+* $Id$      lcd.c           2012-03-13
 *//**
-* @file		lcd.c
-* @brief	Contains all functions to control LCD controller using SPI
-* @version	1.0
-* @date		13. March. 2012
-* @author	NXP MCU SW Application Team
+* @file     lcd.c
+* @brief    Contains all functions to control LCD controller using SPI
+* @version  1.0
+* @date     13. March. 2012
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -61,9 +61,9 @@
  *****************************************************************************/
 
 /*********************************************************************//**
- * @brief 		Pin configuration to communicate with LCD Controller.
- * @param[in]	None
- * @return 		None
+ * @brief       Pin configuration to communicate with LCD Controller.
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 static void pinConfig(void)
 {
@@ -81,10 +81,10 @@ static void pinConfig(void)
 }
 
 /*********************************************************************//**
- * @brief 		Write to a LCD register using SPI.
- * @param[in]	address   Register address
- * @param[in]	data      Data which will be written to the given register
- * @return 		None
+ * @brief       Write to a LCD register using SPI.
+ * @param[in]   address   Register address
+ * @param[in]   data      Data which will be written to the given register
+ * @return      None
  **********************************************************************/
 
 static void
@@ -116,9 +116,9 @@ writeToReg(uint16_t addr, uint16_t data)
   SSP_ReadWrite (SSP_PORT, &sspCfg, SSP_TRANSFER_POLLING);
 }
 /*********************************************************************//**
- * @brief 		Initialize SSD1289 LCD Controller.
- * @param[in]	None
- * @return 	None
+ * @brief       Initialize SSD1289 LCD Controller.
+ * @param[in]   None
+ * @return  None
  **********************************************************************/
 static void ssd1289_init(void)
 {
@@ -181,9 +181,9 @@ static void ssd1289_init(void)
  *****************************************************************************/
 
 /*********************************************************************//**
- * @brief 		Initialize LCD Controller.
- * @param[in]	None
- * @return 	None
+ * @brief       Initialize LCD Controller.
+ * @param[in]   None
+ * @return  None
  **********************************************************************/
 
 void InitLcdController (void)

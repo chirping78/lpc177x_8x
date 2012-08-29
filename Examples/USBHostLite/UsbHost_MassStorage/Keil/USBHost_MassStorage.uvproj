@@ -464,7 +464,7 @@
             <File>
               <FileName>lpc177x_8x_usbhost.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\Drivers\source\lpc177x_8x_usbhost.c</FilePath>
+              <FilePath>..\lpc177x_8x_usbhost.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -938,7 +938,7 @@
             <File>
               <FileName>lpc177x_8x_usbhost.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\Drivers\source\lpc177x_8x_usbhost.c</FilePath>
+              <FilePath>..\lpc177x_8x_usbhost.c</FilePath>
             </File>
           </Files>
         </Group>

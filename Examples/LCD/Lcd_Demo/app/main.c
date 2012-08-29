@@ -51,7 +51,7 @@
 #include "sdram_is42s32800d.h"
 #endif
 
-/** @defgroup LCD_Demo	LCD Demo
+/** @defgroup LCD_Demo  LCD Demo
  * @ingroup LCD_Examples
  * @{
  */
@@ -80,10 +80,10 @@ Bmp_t LogoPic =
 
 void DelayMS(uint32_t dly)
 {
-	volatile uint32_t i = 0;
+    volatile uint32_t i = 0;
 
-	for ( ; dly > 0; dly--)
-		for (i = 0; i < 16000; i++);
+    for ( ; dly > 0; dly--)
+        for (i = 0; i < 16000; i++);
 }
 /*************************************************************************
  * Function Name: SetBackLight
@@ -273,8 +273,8 @@ void lcd_colorbars(void)
   /** Initialize ADC */
   /***************/
   PINSEL_ConfigPin (BRD_ADC_PREPARED_CH_PORT,
-  					BRD_ADC_PREPARED_CH_PIN,
-  					BRD_ADC_PREPARED_CH_FUNC_NO);
+                    BRD_ADC_PREPARED_CH_PIN,
+                    BRD_ADC_PREPARED_CH_FUNC_NO);
   PINSEL_SetAnalogPinMode(BRD_ADC_PREPARED_CH_PORT,BRD_ADC_PREPARED_CH_PIN,ENABLE);
 
   ADC_Init(LPC_ADC, 400000);
@@ -286,7 +286,7 @@ void lcd_colorbars(void)
   /***************/
   LCD_Enable (FALSE);
     
-  // SDRAM Init	= check right board to avoid linking error
+  // SDRAM Init = check right board to avoid linking error
   SDRAMInit();
   
   lcd_config.big_endian_byte = 0;
@@ -447,7 +447,7 @@ void lcd_colorbars(void)
   while(1)
   {
     
- 	backlight = GetBacklightVal();
+    backlight = GetBacklightVal();
     SetBackLight(backlight);
 
 #if TCS_USED || ACCEL_SENSOR_USED
@@ -456,7 +456,7 @@ void lcd_colorbars(void)
     {
         int16_t tmp_x = -1, tmp_y = -1;
         for(i = 0; i < 0x10000;  i++);
-  	    GetTouchCoord((int16_t*)&tmp_x, (int16_t*)&tmp_y);
+        GetTouchCoord((int16_t*)&tmp_x, (int16_t*)&tmp_y);
         if((tmp_x >= 0) && (tmp_y >0))
         {    
           cursor_x = tmp_x;

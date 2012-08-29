@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		usbhost_uart.c			2011-09-05
+* $Id$      usbhost_uart.c          2011-09-05
 *//**
-* @file		usbhost_uart.c
-* @brief		Provide APIs for Printing debug information.
-* @version	1.0
-* @date		05. September. 2011
-* @author	NXP MCU SW Application Team
+* @file     usbhost_uart.c
+* @brief        Provide APIs for Printing debug information.
+* @version  1.0
+* @date     05. September. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -48,9 +48,9 @@
 
 
 /*********************************************************************//**
- * @brief 			print a single charecter through UART
- * @param[in]		ch    charecter to be printed
- * @return 		None.
+ * @brief           print a single charecter through UART
+ * @param[in]       ch    charecter to be printed
+ * @return      None.
  **********************************************************************/
 void  UART_PrintChar (uint8_t ch)
 {
@@ -59,9 +59,9 @@ void  UART_PrintChar (uint8_t ch)
 
 
 /*********************************************************************//**
- * @brief 			print a string
- * @param[in]		 str    Pointer to the string
- * @return 		None.
+ * @brief           print a string
+ * @param[in]        str    Pointer to the string
+ * @return      None.
  **********************************************************************/
 void  UART_PrintStr (const uint8_t * str)
 {
@@ -77,9 +77,9 @@ void  UART_PrintStr (const uint8_t * str)
 }
 
 /*********************************************************************//**
- * @brief 			print formatted string. This function takes variable length arguments
- * @param[in]		variable length arguments
- * @return 		None.
+ * @brief           print formatted string. This function takes variable length arguments
+ * @param[in]       variable length arguments
+ * @return      None.
  **********************************************************************/
 void  UART_Printf (const  void *format, ...)
 {

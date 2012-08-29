@@ -33,12 +33,12 @@
 #include "vcomdemo.h"
 
 
-/** @defgroup USBDEV_VirtualCom	USB Virtual COM Port Device
+/** @defgroup USBDEV_VirtualCom USB Virtual COM Port Device
  * @ingroup USBDEV_Examples
  * @{
  */
 
-/** @defgroup USBDEV_UsbHw	USB-VirtualCOM USB Hardware
+/** @defgroup USBDEV_UsbHw  USB-VirtualCOM USB Hardware
  * @ingroup USBDEV_VirtualCom
  * @{
  */
@@ -48,7 +48,7 @@
  */
 
 
-/** @defgroup USBDEV_SerialFunc	USB-VirtualCOM Serial Function
+/** @defgroup USBDEV_SerialFunc USB-VirtualCOM Serial Function
  * @ingroup USBDEV_VirtualCom
  * @{
  */
@@ -57,7 +57,7 @@
  * @}
  */
 
-/** @defgroup USBDEV_UsbCore	USB-VirtualCOM USB Core
+/** @defgroup USBDEV_UsbCore    USB-VirtualCOM USB Core
  * @ingroup USBDEV_VirtualCom
  * @{
  */
@@ -66,17 +66,7 @@
  * @}
  */
 
-/** @defgroup USBDEV_UsbDesc	USB-VirtualCOM USB Descriptors
- * @ingroup USBDEV_VirtualCom
- * @{
- */
-
-/**
- * @}
- */
-
-
-/** @defgroup USBDEV_UsbReg	USB-VirtualCOM USB Register
+/** @defgroup USBDEV_UsbDesc    USB-VirtualCOM USB Descriptors
  * @ingroup USBDEV_VirtualCom
  * @{
  */
@@ -86,7 +76,7 @@
  */
 
 
-/** @defgroup USBDEV_UsbUser	USB-VirtualCOM USB User
+/** @defgroup USBDEV_UsbReg USB-VirtualCOM USB Register
  * @ingroup USBDEV_VirtualCom
  * @{
  */
@@ -96,7 +86,7 @@
  */
 
 
-/** @defgroup USBDEV_UsbCfg	USB-VirtualCOM USB Configuration
+/** @defgroup USBDEV_UsbUser    USB-VirtualCOM USB User
  * @ingroup USBDEV_VirtualCom
  * @{
  */
@@ -105,7 +95,17 @@
  * @}
  */
 
-/** @defgroup USBDEV_Cdc	USB-VirtualCOM CDC
+
+/** @defgroup USBDEV_UsbCfg USB-VirtualCOM USB Configuration
+ * @ingroup USBDEV_VirtualCom
+ * @{
+ */
+
+/**
+ * @}
+ */
+
+/** @defgroup USBDEV_Cdc    USB-VirtualCOM CDC
  * @ingroup USBDEV_VirtualCom
  * @{
  */
@@ -115,7 +115,7 @@
  */
  
 
-/** @defgroup USBDEV_CdcUser	USB-VirtualCOM CDC User
+/** @defgroup USBDEV_CdcUser    USB-VirtualCOM CDC User
  * @ingroup USBDEV_VirtualCom
  * @{
  */
@@ -133,9 +133,9 @@
 void VCOM_Init(void) 
 {
 #if PORT_NUM
-	CDC_Init (1);
+    CDC_Init (1);
 #else
-	CDC_Init (0);
+    CDC_Init (0);
 #endif
 }
 
@@ -145,21 +145,21 @@ void VCOM_Init(void)
  *---------------------------------------------------------------------------*/
 void VCOM_Serial2Usb(void) 
 {
-	static char serBuf [USB_CDC_BUFSIZE];
-	int  numBytesRead, numAvailByte;
+    static char serBuf [USB_CDC_BUFSIZE];
+    int  numBytesRead, numAvailByte;
 
-	ser_AvailChar (&numAvailByte);
-	
-	if (numAvailByte > 0) 
-	{
-		if (CDC_DepInEmpty) 
-		{
-			numBytesRead = ser_Read (&serBuf[0], &numAvailByte);
+    ser_AvailChar (&numAvailByte);
+    
+    if (numAvailByte > 0) 
+    {
+        if (CDC_DepInEmpty) 
+        {
+            numBytesRead = ser_Read (&serBuf[0], &numAvailByte);
 
-			CDC_DepInEmpty = 0;
-			USB_WriteEP (CDC_DEP_IN, (unsigned char *)&serBuf[0], numBytesRead);
-		}
-	}
+            CDC_DepInEmpty = 0;
+            USB_WriteEP (CDC_DEP_IN, (unsigned char *)&serBuf[0], numBytesRead);
+        }
+    }
 
 }
 
@@ -194,15 +194,15 @@ void VCOM_Usb2Serial(void)
  *---------------------------------------------------------------------------*/
 void VCOM_CheckSerialState (void) 
 {
-	unsigned short temp;
-	static unsigned short serialState;
+    unsigned short temp;
+    static unsigned short serialState;
 
-	temp = CDC_GetSerialState();
-	if (serialState != temp) 
-	{
-		serialState = temp;
-		CDC_NotificationIn();                  // send SERIAL_STATE notification
-	}
+    temp = CDC_GetSerialState();
+    if (serialState != temp) 
+    {
+        serialState = temp;
+        CDC_NotificationIn();                  // send SERIAL_STATE notification
+    }
 }
 
 /*----------------------------------------------------------------------------
@@ -210,19 +210,19 @@ void VCOM_CheckSerialState (void)
  *---------------------------------------------------------------------------*/
 int main (void) 
 {
-	VCOM_Init();                              // VCOM Initialization
+    VCOM_Init();                              // VCOM Initialization
 
-	USB_Init();                               // USB Initialization
-	USB_Connect(TRUE);                        // USB Connect
+    USB_Init();                               // USB Initialization
+    USB_Connect(TRUE);                        // USB Connect
 
-	while (!USB_Configuration) ;              // wait until USB is configured
+    while (!USB_Configuration) ;              // wait until USB is configured
 
-	while (1) 
-	{                               // Loop forever
-		VCOM_Serial2Usb();                      // read serial port and initiate USB event
-		VCOM_CheckSerialState();
-		VCOM_Usb2Serial();
-	} // end while
+    while (1) 
+    {                               // Loop forever
+        VCOM_Serial2Usb();                      // read serial port and initiate USB event
+        VCOM_CheckSerialState();
+        VCOM_Usb2Serial();
+    } // end while
 } // end main ()
 
 /**

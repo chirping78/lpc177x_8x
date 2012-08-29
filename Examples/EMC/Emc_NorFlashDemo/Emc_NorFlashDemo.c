@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		Emc_NorFlashDemo.c		2011-06-02
+* $Id$      Emc_NorFlashDemo.c      2011-06-02
 *//**
-* @file		Emc_NorFlashDemo.c
-* @brief	This example describes how to use EMC interface on LPC177x_8x
- 			to connect with Nor Flash SST39VF3201 on EA board
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Emc_NorFlashDemo.c
+* @brief    This example describes how to use EMC interface on LPC177x_8x
+            to connect with Nor Flash SST39VF3201 on EA board
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -36,13 +36,13 @@
 #include "debug_frmwrk.h"
 
 
-/** @defgroup EMC_NorFlashDemo	EMC NorFlash Demo
+/** @defgroup EMC_NorFlashDemo  EMC NorFlash Demo
  * @ingroup EMC_Examples
  * @{
  */
 
 /************************** PRIVATE DEFINITIONS *************************/
-#define NORFLASH_RW_PAGE_SIZE	0x800
+#define NORFLASH_RW_PAGE_SIZE   0x800
 
 /************************** PRIVATE VARIABLES *************************/
 const unsigned char menu[] =
@@ -60,20 +60,20 @@ void print_menu(void);
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print menu
- * @param[in]	None
- * @return 		None
+ * @brief       Print menu
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG_(menu);
+    _DBG_(menu);
 }
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main ADC program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main ADC program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry(void)
 {
@@ -81,30 +81,30 @@ void c_entry(void)
     volatile uint16_t *ip;
     uint32_t NorFlashAdr;
 
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 
-	_DBG_("Init NOR Flash...");
+    _DBG_("Init NOR Flash...");
     NORFLASHInit();
 
     _DBG_("Read NOR Flash ID...");
     if ( NORFLASHCheckID() == FALSE )
     {
-    	_DBG_("Error in reading NOR Flash ID, testing terminated!");
-    	while ( 1 );		/* Fatal error */
+        _DBG_("Error in reading NOR Flash ID, testing terminated!");
+        while ( 1 );        /* Fatal error */
     }
 
     _DBG_("Erase entire NOR Flash...");
-    NORFLASHErase();		/* Chip erase */
+    NORFLASHErase();        /* Chip erase */
 
     /* Write to flash with pattern 0xAA55 and 0xA55A */
     NorFlashAdr = NOR_FLASH_BASE;
@@ -112,10 +112,10 @@ void c_entry(void)
     _DBG_("Write a block of 2K data to NOR Flash...");
     for ( i = 0; i < NORFLASH_RW_PAGE_SIZE/2; i++ )
     {
-	  	NORFLASHWriteWord( NorFlashAdr, 0xAA55 );
-	  	NorFlashAdr++;
-	  	NORFLASHWriteWord( NorFlashAdr, 0xA55A );
-	  	NorFlashAdr++;
+        NORFLASHWriteWord( NorFlashAdr, 0xAA55 );
+        NorFlashAdr++;
+        NORFLASHWriteWord( NorFlashAdr, 0xA55A );
+        NorFlashAdr++;
     }
 
     /* Verify */
@@ -123,19 +123,19 @@ void c_entry(void)
     NorFlashAdr = NOR_FLASH_BASE;
     for ( i = 0; i < NORFLASH_RW_PAGE_SIZE/2; i+=2 )
     {
-	  	ip  = GET_ADDR(i);
-	  	if ( (*ip & 0xFFFF) != 0xAA55 )
-	  	{
-	  		_DBG_("Verifying fail, testing terminated!");
-	  		while ( 1 );	/* Fatal error */
-	  	}
+        ip  = GET_ADDR(i);
+        if ( (*ip & 0xFFFF) != 0xAA55 )
+        {
+            _DBG_("Verifying fail, testing terminated!");
+            while ( 1 );    /* Fatal error */
+        }
 
-	  	ip  = GET_ADDR(i+1);
-	  	if ( (*ip & 0xFFFF) != 0xA55A )
-	  	{
-	  		_DBG_("Verifying fail, testing terminated!");
-	  		while ( 1 );	/* Fatal error */
-	  	}
+        ip  = GET_ADDR(i+1);
+        if ( (*ip & 0xFFFF) != 0xA55A )
+        {
+            _DBG_("Verifying fail, testing terminated!");
+            while ( 1 );    /* Fatal error */
+        }
     }
 
     // terminated
@@ -151,8 +151,8 @@ void c_entry(void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 

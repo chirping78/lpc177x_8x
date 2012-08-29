@@ -498,7 +498,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\..\Drivers\source\lpc177x_8x_usbhost.c</PathWithFileName>
+      <PathWithFileName>..\lpc177x_8x_usbhost.c</PathWithFileName>
       <FilenameWithoutPath>lpc177x_8x_usbhost.c</FilenameWithoutPath>
     </File>
   </Group>

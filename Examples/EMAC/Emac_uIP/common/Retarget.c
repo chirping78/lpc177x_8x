@@ -33,7 +33,7 @@ int fputc(int ch, FILE *f) {
 #if 1
 int fgetc(FILE * fp)
 {
-// redirect STDIN	
+// redirect STDIN   
  return(getkey());
 }
 #else  // echo a char

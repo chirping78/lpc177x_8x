@@ -34,12 +34,12 @@
 //#include "lpc177x_8x_nvic.h"
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup USBDEV_USBMassStorage	USB Mass Storage Device
+/** @defgroup USBDEV_USBMassStorage USB Mass Storage Device
  * @ingroup USBDEV_Examples
  * @{
  */
 
-/** @defgroup USBDEV_MscUsbHw	USB-MSD USB Hardware
+/** @defgroup USBDEV_MscUsbHw   USB-MSD USB Hardware
  * @ingroup USBDEV_USBMassStorage
  * @{
  */
@@ -68,7 +68,7 @@
  */
 
 
-/** @defgroup USBDEV_MscUsbReg	USB-MSD USB Register
+/** @defgroup USBDEV_MscUsbReg  USB-MSD USB Register
  * @ingroup USBDEV_USBMassStorage
  * @{
  */
@@ -88,7 +88,7 @@
  */
 
 
-/** @defgroup USBDEV_MscUsbCfg	USB-MSD USB Configuration
+/** @defgroup USBDEV_MscUsbCfg  USB-MSD USB Configuration
  * @ingroup USBDEV_USBMassStorage
  * @{
  */
@@ -98,7 +98,7 @@
  */
 
 
-/** @defgroup USBDEV_MscConf	USB-MSD MSC Configuration
+/** @defgroup USBDEV_MscConf    USB-MSD MSC Configuration
  * @ingroup USBDEV_USBMassStorage
  * @{
  */
@@ -115,16 +115,16 @@ extern uint8_t Memory[MSC_MemorySize];         /* MSC Memory in RAM */
 /* Main Program */
 
 int main (void) {
-	uint32_t n;
+    uint32_t n;
 
-	for (n = 0; n < MSC_ImageSize; n++) {     /* Copy Initial Disk Image */
-		Memory[n] = DiskImage[n];               /*   from Flash to RAM     */
-	}
+    for (n = 0; n < MSC_ImageSize; n++) {     /* Copy Initial Disk Image */
+        Memory[n] = DiskImage[n];               /*   from Flash to RAM     */
+    }
 
-	USB_Init();                               /* USB Initialization */
-	USB_Connect(TRUE);                        /* USB Connect */
+    USB_Init();                               /* USB Initialization */
+    USB_Connect(TRUE);                        /* USB Connect */
 
-	while (1);                                /* Loop forever */
+    while (1);                                /* Loop forever */
 }
 
 

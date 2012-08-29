@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		sdram_is42s32800d.c			2011-08-22
+* $Id$      sdram_is42s32800d.c         2011-08-22
 *//**
-* @file		sdram_is42s32800d.c
-* @brief	Contains all functions support for ISSI IS42S32800D
-* @version	1.0
-* @date		22. August. 2011
-* @author	NXP MCU SW Application Team
+* @file     sdram_is42s32800d.c
+* @brief    Contains all functions support for ISSI IS42S32800D
+* @version  1.0
+* @date     22. August. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -50,10 +50,10 @@
  */
 
 /*********************************************************************//**
- * @brief 		Initialize external SDRAM memory ISSI IS42S32800D
- *				256Mbit(8M x 32)
- * @param[in]	None
- * @return 		None
+ * @brief       Initialize external SDRAM memory ISSI IS42S32800D
+ *              256Mbit(8M x 32)
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void SDRAMInit( void )
 {
@@ -61,13 +61,13 @@ void SDRAMInit( void )
     volatile uint32_t dwtemp;
     EMC_DYN_MEM_Config_Type config;
     TIM_TIMERCFG_Type TIM_ConfigStruct;
-	  
+      
     TIM_ConfigStruct.PrescaleOption = TIM_PRESCALE_USVAL;
     TIM_ConfigStruct.PrescaleValue  = 1;
-	  
+      
     // Set configuration for Tim_config and Tim_MatchConfig
     TIM_Init(LPC_TIM0, TIM_TIMER_MODE,&TIM_ConfigStruct);
-	  
+      
     config.ChipSize = 256;
     config.AddrBusWidth = 32;
     config.AddrMap = EMC_ADD_MAP_ROW_BANK_COL;
@@ -91,15 +91,15 @@ void SDRAMInit( void )
     config.Active2PreChargeTime = 7;
     config.SeftRefreshExitTime = EMC_NS2CLK( 70);
     DynMem_Init(&config);
-	 
+     
     EMC_DynCtrlSDRAMInit(EMC_DYNAMIC_CTRL_SDRAM_NOP); /* Issue NOP command */
 
-    TIM_Waitms(100);						   /* wait 200ms */
+    TIM_Waitms(100);                           /* wait 200ms */
     EMC_DynCtrlSDRAMInit(EMC_DYNAMIC_CTRL_SDRAM_PALL); /* Issue Pre-charge command */
 
-    for(i = 0; i < 0x80; i++);	        /* wait 128 AHB clock cycles */
-	
-    TIM_Waitms(100);	
+    for(i = 0; i < 0x80; i++);          /* wait 128 AHB clock cycles */
+    
+    TIM_Waitms(100);    
     EMC_DynCtrlSDRAMInit(EMC_DYNAMIC_CTRL_SDRAM_MODE); /* Issue MODE command */
 
     dwtemp = *((volatile uint32_t *)(SDRAM_BASE_ADDR | (0x22<<(2+2+9)))); /* Mode Register Setting: 4 burst, 2 CAS latency */

@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		usbhost_main.c			2011-09-05
+* $Id$      usbhost_main.c          2011-09-05
 *//**
-* @file		usbhost_main.c
-* @brief	Demo for USB Host Controller.
-* @version	1.0
-* @date		05. September. 2011
-* @author	NXP MCU SW Application Team
+* @file     usbhost_main.c
+* @brief    Demo for USB Host Controller.
+* @version  1.0
+* @date     05. September. 2011
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -37,12 +37,12 @@
 #include "debug_frmwrk.h"
 #include  "usbhost_main.h"
 
-/** @defgroup USBHost_MassStorage	USB Host Controller for Mass Storage Device
+/** @defgroup USBHost_MassStorage   USB Host Controller for Mass Storage Device
  * @ingroup USBHostLite_Examples 
  * @{
  */
 
-/** @defgroup USBHost_Fat	 Fat File System
+/** @defgroup USBHost_Fat    Fat File System
  * @ingroup USBHost_MassStorage
  * @{
  */
@@ -83,43 +83,43 @@ static uint8_t file_w[80];
 static uint8_t* file_r;
 
 /*********************************************************************//**
- * @brief		Print menu
- * @param[in]	None
- * @return 		None
+ * @brief       Print menu
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG_(menu);
+    _DBG_(menu);
 }
 /*********************************************************************//**
- * @brief 			This function is the main function where the execution begins
- * @param[in]		None
- * @return 		    None
+ * @brief           This function is the main function where the execution begins
+ * @param[in]       None
+ * @return          None
  **********************************************************************/
 int main()
 {
     int32_t  rc;
-    uint32_t  numBlks, blkSize;					\
+    uint32_t  numBlks, blkSize;                 \
     uint8_t  inquiryResult[INQUIRY_LENGTH];
 
     //SystemInit();
 
     debug_frmwrk_init();
-		
-	print_menu();
-		
+        
+    print_menu();
+        
     Host_Init();               /* Initialize the lpc17xx host controller                                    */
 
     PRINT_Log("Host Initialized\n");
     PRINT_Log("Connect a Mass Storage device\n");
-	
+    
     rc = Host_EnumDev();       /* Enumerate the device connected                                            */
     if ((rc == USB_HOST_FUNC_OK) && 
-	(Host_GetDeviceType() == MASS_STORAGE_DEVICE)) {
-		
-	PRINT_Log("Mass Storage device connected\n");
+    (Host_GetDeviceType() == MASS_STORAGE_DEVICE)) {
+        
+    PRINT_Log("Mass Storage device connected\n");
 
-	/* Initialize the mass storage and scsi interfaces */
+    /* Initialize the mass storage and scsi interfaces */
         rc = MS_Init( &blkSize, &numBlks, inquiryResult );
         if (rc == MS_FUNC_OK) {
             rc = FAT_Init();   /* Initialize the FAT16 file system                                          */
@@ -132,7 +132,7 @@ int main()
             return (0);
         }
     } else {
-	    PRINT_Log("Not a Mass Storage device\n");							
+        PRINT_Log("Not a Mass Storage device\n");                           
         return (0);
     }
 
@@ -141,26 +141,26 @@ int main()
 }
 
 /*********************************************************************//**
- * @brief 			Read directory 
- * @param[in]		None
- * @return 		    None
+ * @brief           Read directory 
+ * @param[in]       None
+ * @return          None
  **********************************************************************/
 void Main_ReadDir(uint8_t* pName)
 {
-	int32_t  rc, i = 0, cnt = 0;
+    int32_t  rc, i = 0, cnt = 0;
     DIR_ENTRY *pEntry;
 
-    rc = DIR_Open(pName);	
+    rc = DIR_Open(pName);   
     PRINT_Log("Files/Folders in the directory \"%s\":\n",pName);
     PRINT_Log("%3s\t%10s\t%6s\t%s\n","No.","Size","DIR","Name");
-	if(rc == 0)
-	{
-		while(1)
-		{
+    if(rc == 0)
+    {
+        while(1)
+        {
             
-			pEntry = DIR_ReadEntry(i);
-			if(pEntry == NULL)
-				return;	
+            pEntry = DIR_ReadEntry(i);
+            if(pEntry == NULL)
+                return; 
             if(pEntry->info.FileAttr & ATTR_DIRECTORY)
             {
                  cnt++;
@@ -174,14 +174,14 @@ void Main_ReadDir(uint8_t* pName)
                     PRINT_Log("%3d\t%10d\t%6s\t%s\n",cnt,pEntry->info.FileSize," ", pEntry->name);
                 }
             }
-			i++;
-		}
-	}
+            i++;
+        }
+    }
 }
 /*********************************************************************//**
- * @brief 			Get the name of files which are objects of copying
- * @param[in]		None
- * @return 		    TRUE/FALSE
+ * @brief           Get the name of files which are objects of copying
+ * @param[in]       None
+ * @return          TRUE/FALSE
  **********************************************************************/
 static Bool get_objects(void)
 {
@@ -194,9 +194,9 @@ static Bool get_objects(void)
     while(1)
     {
         pEntry = DIR_ReadEntry(i++);
-		if(pEntry == NULL)
+        if(pEntry == NULL)
         {
-			return FALSE;	
+            return FALSE;   
         }
        if(((pEntry->info.FileAttr & ATTR_DIRECTORY) == 0) &&
             (pEntry->info.FileSize > 0))
@@ -206,7 +206,7 @@ static Bool get_objects(void)
         }
     }
 
-	// Get the name of output file
+    // Get the name of output file
     i = 0;
     while(1)
     {
@@ -222,11 +222,11 @@ static Bool get_objects(void)
         file_w[i] = file_r[i]; 
         i++;
     }
-	file_w[i++] = '_';
-	j = 1;
-	while(1)
-	{
-		file_w[i] = '0'+j;
+    file_w[i++] = '_';
+    j = 1;
+    while(1)
+    {
+        file_w[i] = '0'+j;
         if(exts_idx >= 0)
         {
             for(k = 0; k <= 4; k++)
@@ -234,28 +234,28 @@ static Bool get_objects(void)
         }
         file_w[i+k+1] = 0;
 
-		fdw = FILE_Open(file_w, RDONLY);
-		if(fdw > 0)
-		{
-			FILE_Close(fdw);
-			j++;
-			if(j >= 10)
-			{
-				i++;
-				j = 1;
-			}
-		}
-		else
-		{
-			break;
-		}
-	}
+        fdw = FILE_Open(file_w, RDONLY);
+        if(fdw > 0)
+        {
+            FILE_Close(fdw);
+            j++;
+            if(j >= 10)
+            {
+                i++;
+                j = 1;
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
     return TRUE;
 }
 /*********************************************************************//**
- * @brief 			This function is used by the user to copy a file 
- * @param[in]		None
- * @return 		    None
+ * @brief           This function is used by the user to copy a file 
+ * @param[in]       None
+ * @return          None
  **********************************************************************/
 
 void  Main_Copy (void)
@@ -269,8 +269,8 @@ void  Main_Copy (void)
         PRINT_Log("No file to copy\n");
         return;
     }
-	
-	// Copy file
+    
+    // Copy file
     fdr = FILE_Open(file_r, RDONLY);
     if (fdr > 0) {
         fdw = FILE_Open(file_w, RDWR);

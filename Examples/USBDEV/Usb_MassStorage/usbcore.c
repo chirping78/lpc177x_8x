@@ -359,8 +359,8 @@ inline uint32_t USB_SetConfiguration (void) {
 __inline uint32_t USB_SetConfiguration (void) {
 #endif
   USB_COMMON_DESCRIPTOR *pD;
-	uint32_t  alt, n, m;
-	uint32_t tmp;
+    uint32_t  alt, n, m;
+    uint32_t tmp;
 
   if (SetupPacket.wValue.WB.L) {
     pD = (USB_COMMON_DESCRIPTOR *)USB_ConfigDescriptor;
@@ -465,9 +465,9 @@ __inline uint32_t USB_SetInterface (void) {
       case USB_CONFIGURATION_DESCRIPTOR_TYPE:
         if (((USB_CONFIGURATION_DESCRIPTOR *)pD)->bConfigurationValue != USB_Configuration) {
           //(uint8_t *)pD += ((USB_CONFIGURATION_DESCRIPTOR *)pD)->wTotalLength;
-        	tmp = (uint32_t)pD;
-        	tmp += ((USB_CONFIGURATION_DESCRIPTOR *)pD)->wTotalLength;
-        	pD = (USB_COMMON_DESCRIPTOR *)tmp;
+            tmp = (uint32_t)pD;
+            tmp += ((USB_CONFIGURATION_DESCRIPTOR *)pD)->wTotalLength;
+            pD = (USB_COMMON_DESCRIPTOR *)tmp;
           continue;
         }
         break;

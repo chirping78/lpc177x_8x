@@ -1,11 +1,11 @@
 /**********************************************************************
-* $Id$		slave.c 			   2011-01-09
+* $Id$      slave.c                2011-01-09
 *//**
-* @file		I2C\I2C_Slave\slave.c 
-* @brief		I2C Slave example
-* @version	1.0
-* @date		09.Jan.2011
-* @author	NXP MCU SW Application Team
+* @file     I2C\I2C_Slave\slave.c 
+* @brief        I2C Slave example
+* @version  1.0
+* @date     09.Jan.2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -38,22 +38,22 @@
 #include "debug_frmwrk.h"
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup I2C_slave	I2C_Slave
+/** @defgroup I2C_slave I2C_Slave
  * @ingroup I2C_Examples
  * @{
  */
 
 /************************** PRIVATE DEFINITIONS *************************/
 /** Used I2C device as slave definition */
-#define I2CDEV_S		(0)
+#define I2CDEV_S        (0)
 /** Own Slave address in Slave I2C device */
-#define I2CDEV_S_OWN_ADDR	(0x90>>1)
+#define I2CDEV_S_OWN_ADDR   (0x90>>1)
 
 /** Transfer Mode */
 #define I2CDEV_TRANSFER_POLLING        1  /*0: interrupt mode, 1: polling mode */
 
 /** Max buffer length */
-#define BUFFER_SIZE			0x10
+#define BUFFER_SIZE         0x10
 
 
 /************************** PRIVATE VARIABLES *************************/
@@ -78,71 +78,71 @@ void Buffer_Init(uint8_t type);
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print Welcome menu
- * @param[in]	none
- * @return 		None
+ * @brief       Print Welcome menu
+ * @param[in]   none
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG_(menu1);
+    _DBG_(menu1);
 }
 
 /*********************************************************************//**
- * @brief		Initialize buffer
- * @param[in]	type:
- * 				- 0: Initialize Master_Buf with increment value from 0
- * 					Fill all member in Slave_Buf with 0
- * 				- 1: Initialize Slave_Buf with increment value from 0
- * 					Fill all member in Master_Buf with 0
+ * @brief       Initialize buffer
+ * @param[in]   type:
+ *              - 0: Initialize Master_Buf with increment value from 0
+ *                  Fill all member in Slave_Buf with 0
+ *              - 1: Initialize Slave_Buf with increment value from 0
+ *                  Fill all member in Master_Buf with 0
  *
- * @return 		None
+ * @return      None
  **********************************************************************/
 void Buffer_Init(uint8_t type)
 {
-	uint32_t i;
+    uint32_t i;
 
-	if (type)
-	{
-		for (i = 0; i < BUFFER_SIZE; i++) {
-			Slave_Buf[i] = i;
-		}
-	}
-	else
-	{
-		for (i = 0; i < BUFFER_SIZE; i++) {
-			Slave_Buf[i] = 0;
-		}
-	}
+    if (type)
+    {
+        for (i = 0; i < BUFFER_SIZE; i++) {
+            Slave_Buf[i] = i;
+        }
+    }
+    else
+    {
+        for (i = 0; i < BUFFER_SIZE; i++) {
+            Slave_Buf[i] = 0;
+        }
+    }
 }
 /*********************************************************************//**
- * @brief		Print buffer data
- * @param[in]	buff        Buffer address
+ * @brief       Print buffer data
+ * @param[in]   buff        Buffer address
  *                         size        Buffer size
  *
- * @return 		None
+ * @return      None
  **********************************************************************/
 void Buffer_Print(uint8_t* buff, uint32_t size)
 {
    uint32_t i = 0;
-   	for (i = 0; i < size; i++) {
+    for (i = 0; i < size; i++) {
         if (i%10 == 0){
             _DBG_("");_DBG("    ");
         }
         else
             _DBG(", ");
-		_DBH(buff[i]);
+        _DBH(buff[i]);
         if( i ==  size - 1)
             _DBG_("");
-	}
+    }
     _DBG_("");
 }
 
 #if (I2CDEV_TRANSFER_POLLING == 0)
 /*********************************************************************//**
- * @brief		I2C Interrupt Handler
- * @param[in]	None
+ * @brief       I2C Interrupt Handler
+ * @param[in]   None
  *
- * @return 		None
+ * @return      None
  **********************************************************************/
  #if ((I2CDEV_S == 0))
 void I2C0_IRQHandler(void)
@@ -154,156 +154,156 @@ void I2C2_IRQHandler(void)
 void I2C_IRQHandler(void)
 #endif
 {
-	 I2C_SlaveHandler((en_I2C_unitId)I2CDEV_S);
-	if (I2C_SlaveTransferComplete((en_I2C_unitId)I2CDEV_S)){
-		  complete = TRUE;
-	}   
+     I2C_SlaveHandler((en_I2C_unitId)I2CDEV_S);
+    if (I2C_SlaveTransferComplete((en_I2C_unitId)I2CDEV_S)){
+          complete = TRUE;
+    }   
 }
 #endif
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main program body
- * @param[in]	None
- * @return 		int
+ * @brief       c_entry: Main program body
+ * @param[in]   None
+ * @return      int
  **********************************************************************/
 int c_entry(void)
 {
-	I2C_OWNSLAVEADDR_CFG_Type OwnSlavAdr;
-	I2C_S_SETUP_Type transferSCfg;
-	uint32_t tempp;
-	uint8_t *pdat;
-	
+    I2C_OWNSLAVEADDR_CFG_Type OwnSlavAdr;
+    I2C_S_SETUP_Type transferSCfg;
+    uint32_t tempp;
+    uint8_t *pdat;
+    
 
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	print_menu();
+    print_menu();
 
-	/* I2C block ------------------------------------------------------------------- */
+    /* I2C block ------------------------------------------------------------------- */
 
-	/*
-	 * Init I2C pin connect
-	 */
+    /*
+     * Init I2C pin connect
+     */
 #if ((I2CDEV_S == 0))
-	//PINSEL_ConfigPin (0, 27, 1);
-	//PINSEL_ConfigPin (0, 28, 1);
-	PINSEL_ConfigPin (5, 2, 5);
-	PINSEL_ConfigPin (5, 3, 5);
+    //PINSEL_ConfigPin (0, 27, 1);
+    //PINSEL_ConfigPin (0, 28, 1);
+    PINSEL_ConfigPin (5, 2, 5);
+    PINSEL_ConfigPin (5, 3, 5);
 #elif ((I2CDEV_S == 1))
-	PINSEL_ConfigPin (0, 19, 3);
-	PINSEL_ConfigPin (0, 20, 3);
-	PINSEL_SetOpenDrainMode(0, 19, ENABLE);
-	PINSEL_SetOpenDrainMode(0, 20, ENABLE);
-	PINSEL_SetPinMode(0, 19, PINSEL_BASICMODE_PLAINOUT);
-	PINSEL_SetPinMode(0, 20, PINSEL_BASICMODE_PLAINOUT);
+    PINSEL_ConfigPin (0, 19, 3);
+    PINSEL_ConfigPin (0, 20, 3);
+    PINSEL_SetOpenDrainMode(0, 19, ENABLE);
+    PINSEL_SetOpenDrainMode(0, 20, ENABLE);
+    PINSEL_SetPinMode(0, 19, PINSEL_BASICMODE_PLAINOUT);
+    PINSEL_SetPinMode(0, 20, PINSEL_BASICMODE_PLAINOUT);
 #elif ((I2CDEV_S == 2))
-	PINSEL_ConfigPin (0, 10, 2);
-	PINSEL_ConfigPin (0, 11, 2);
-	PINSEL_SetOpenDrainMode(0, 10, ENABLE);
-	PINSEL_SetOpenDrainMode(0, 11, ENABLE);
-	PINSEL_SetPinMode(0, 10, PINSEL_BASICMODE_PLAINOUT);
-	PINSEL_SetPinMode(0, 11, PINSEL_BASICMODE_PLAINOUT);
+    PINSEL_ConfigPin (0, 10, 2);
+    PINSEL_ConfigPin (0, 11, 2);
+    PINSEL_SetOpenDrainMode(0, 10, ENABLE);
+    PINSEL_SetOpenDrainMode(0, 11, ENABLE);
+    PINSEL_SetPinMode(0, 10, PINSEL_BASICMODE_PLAINOUT);
+    PINSEL_SetPinMode(0, 11, PINSEL_BASICMODE_PLAINOUT);
 #else
-	while(1);
+    while(1);
 #endif
 
-	// Initialize Slave I2C peripheral
-	I2C_Init((en_I2C_unitId)I2CDEV_S, 100000);
+    // Initialize Slave I2C peripheral
+    I2C_Init((en_I2C_unitId)I2CDEV_S, 100000);
 
-	/* Set  Own slave address for I2C device */
-	OwnSlavAdr.GeneralCallState = ENABLE;
-	OwnSlavAdr.SlaveAddrChannel= 0;
-	OwnSlavAdr.SlaveAddrMaskValue = 0xFF;
-	OwnSlavAdr.SlaveAddr_7bit = I2CDEV_S_OWN_ADDR;
-	I2C_SetOwnSlaveAddr((en_I2C_unitId)I2CDEV_S, &OwnSlavAdr);
-	
-	/* Enable Slave I2C operation */
-	I2C_Cmd((en_I2C_unitId)I2CDEV_S, I2C_SLAVE_MODE, ENABLE);
+    /* Set  Own slave address for I2C device */
+    OwnSlavAdr.GeneralCallState = ENABLE;
+    OwnSlavAdr.SlaveAddrChannel= 0;
+    OwnSlavAdr.SlaveAddrMaskValue = 0xFF;
+    OwnSlavAdr.SlaveAddr_7bit = I2CDEV_S_OWN_ADDR;
+    I2C_SetOwnSlaveAddr((en_I2C_unitId)I2CDEV_S, &OwnSlavAdr);
+    
+    /* Enable Slave I2C operation */
+    I2C_Cmd((en_I2C_unitId)I2CDEV_S, I2C_SLAVE_MODE, ENABLE);
 
-	/* Reading -------------------------------------------------------- */
-	_DBG_("Start Reading...");
+    /* Reading -------------------------------------------------------- */
+    _DBG_("Start Reading...");
 
-	/* Initialize buffer */
-	Buffer_Init(0);
+    /* Initialize buffer */
+    Buffer_Init(0);
 
-	/* Start I2C slave device first */
-	transferSCfg.tx_data = NULL;
-	transferSCfg.tx_length = 0;
-	transferSCfg.rx_data = Slave_Buf;
-	transferSCfg.rx_length = sizeof(Slave_Buf);
-	#if (I2CDEV_TRANSFER_POLLING == 0)
-	complete = FALSE;
-	I2C_SlaveTransferData((en_I2C_unitId)I2CDEV_S, &transferSCfg, I2C_TRANSFER_INTERRUPT);
-	 while(!complete) ;
-	 #else
-	I2C_SlaveTransferData((en_I2C_unitId)I2CDEV_S, &transferSCfg, I2C_TRANSFER_POLLING);
-	#endif
-	 _DBG_("Receive Data: ");
-	Buffer_Print((uint8_t*)Slave_Buf, sizeof(Slave_Buf));
-	pdat = (uint8_t*)Slave_Buf;
-	// Verify
-	for (tempp = 0; tempp < sizeof(Slave_Buf); tempp++){
-		if (*pdat++ != tempp){
-			_DBG_("Verify error");
-			break;
-		}
-	}
-	if (tempp == sizeof(Slave_Buf)){
-		_DBG_("Verify successfully");
-	}
-
-	/* Transmit -------------------------------------------------------- */
-
-	/* Initialize buffer */
-	Buffer_Init(1);
-    _DBG_("Transmit Data: ");
-	Buffer_Print((uint8_t*)Slave_Buf, sizeof(Slave_Buf));
-	/* Start I2C slave device first */
-	transferSCfg.tx_data = Slave_Buf;
-	transferSCfg.tx_length = sizeof(Slave_Buf);
-	transferSCfg.rx_data = NULL;
-	transferSCfg.rx_length = 0;
-	#if (I2CDEV_TRANSFER_POLLING == 0)
-    complete = FALSE;
-	I2C_SlaveTransferData((en_I2C_unitId)I2CDEV_S, &transferSCfg, I2C_TRANSFER_INTERRUPT);
-    while(!complete) ;
-    #else
-    I2C_SlaveTransferData((en_I2C_unitId)I2CDEV_S, &transferSCfg, I2C_TRANSFER_POLLING);
-    #endif
-
-	_DBG_("Complete!");
-
-	/* Receive and transmit -------------------------------------------------------- */
-	_DBG_("Start Receive, wait for repeat start and transmit...");
-
-	/* Initialize buffer */
-	Buffer_Init(1);
-	slave_test[0] = 0x00;
-	slave_test[1] = 0x00;
-
-	/* Start I2C slave device first */
-	transferSCfg.tx_data = Slave_Buf;
-	transferSCfg.tx_length = sizeof(Slave_Buf);
-	transferSCfg.rx_data = slave_test;
-	transferSCfg.rx_length = sizeof(slave_test);
+    /* Start I2C slave device first */
+    transferSCfg.tx_data = NULL;
+    transferSCfg.tx_length = 0;
+    transferSCfg.rx_data = Slave_Buf;
+    transferSCfg.rx_length = sizeof(Slave_Buf);
     #if (I2CDEV_TRANSFER_POLLING == 0)
     complete = FALSE;
-	I2C_SlaveTransferData((en_I2C_unitId)I2CDEV_S, &transferSCfg, I2C_TRANSFER_INTERRUPT);
+    I2C_SlaveTransferData((en_I2C_unitId)I2CDEV_S, &transferSCfg, I2C_TRANSFER_INTERRUPT);
+     while(!complete) ;
+     #else
+    I2C_SlaveTransferData((en_I2C_unitId)I2CDEV_S, &transferSCfg, I2C_TRANSFER_POLLING);
+    #endif
+     _DBG_("Receive Data: ");
+    Buffer_Print((uint8_t*)Slave_Buf, sizeof(Slave_Buf));
+    pdat = (uint8_t*)Slave_Buf;
+    // Verify
+    for (tempp = 0; tempp < sizeof(Slave_Buf); tempp++){
+        if (*pdat++ != tempp){
+            _DBG_("Verify error");
+            break;
+        }
+    }
+    if (tempp == sizeof(Slave_Buf)){
+        _DBG_("Verify successfully");
+    }
+
+    /* Transmit -------------------------------------------------------- */
+
+    /* Initialize buffer */
+    Buffer_Init(1);
+    _DBG_("Transmit Data: ");
+    Buffer_Print((uint8_t*)Slave_Buf, sizeof(Slave_Buf));
+    /* Start I2C slave device first */
+    transferSCfg.tx_data = Slave_Buf;
+    transferSCfg.tx_length = sizeof(Slave_Buf);
+    transferSCfg.rx_data = NULL;
+    transferSCfg.rx_length = 0;
+    #if (I2CDEV_TRANSFER_POLLING == 0)
+    complete = FALSE;
+    I2C_SlaveTransferData((en_I2C_unitId)I2CDEV_S, &transferSCfg, I2C_TRANSFER_INTERRUPT);
     while(!complete) ;
     #else
     I2C_SlaveTransferData((en_I2C_unitId)I2CDEV_S, &transferSCfg, I2C_TRANSFER_POLLING);
     #endif
-	 _DBG_("Receive Data: ");
-	Buffer_Print((uint8_t*)slave_test, sizeof(slave_test));
-	_DBG_("Transmit Data: ");
-	Buffer_Print((uint8_t*)Slave_Buf, sizeof(Slave_Buf));
-	_DBG_("Complete!");
+
+    _DBG_("Complete!");
+
+    /* Receive and transmit -------------------------------------------------------- */
+    _DBG_("Start Receive, wait for repeat start and transmit...");
+
+    /* Initialize buffer */
+    Buffer_Init(1);
+    slave_test[0] = 0x00;
+    slave_test[1] = 0x00;
+
+    /* Start I2C slave device first */
+    transferSCfg.tx_data = Slave_Buf;
+    transferSCfg.tx_length = sizeof(Slave_Buf);
+    transferSCfg.rx_data = slave_test;
+    transferSCfg.rx_length = sizeof(slave_test);
+    #if (I2CDEV_TRANSFER_POLLING == 0)
+    complete = FALSE;
+    I2C_SlaveTransferData((en_I2C_unitId)I2CDEV_S, &transferSCfg, I2C_TRANSFER_INTERRUPT);
+    while(!complete) ;
+    #else
+    I2C_SlaveTransferData((en_I2C_unitId)I2CDEV_S, &transferSCfg, I2C_TRANSFER_POLLING);
+    #endif
+     _DBG_("Receive Data: ");
+    Buffer_Print((uint8_t*)slave_test, sizeof(slave_test));
+    _DBG_("Transmit Data: ");
+    Buffer_Print((uint8_t*)Slave_Buf, sizeof(Slave_Buf));
+    _DBG_("Complete!");
 
 
     /* Loop forever */

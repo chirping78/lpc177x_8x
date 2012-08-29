@@ -1,12 +1,12 @@
 /**********************************************************************
-* $Id$		Rtc_DeepPowerDown.c			2011-06-02
+* $Id$      Rtc_DeepPowerDown.c         2011-06-02
 *//**
-* @file		Rtc_DeepPowerDown.c
-* @brief	This example describes how to enter the system in Deep
-* 			PowerDown and wake-up by using RTC Interrupt
-* @version	1.0
-* @date		02. June. 2011
-* @author	NXP MCU SW Application Team
+* @file     Rtc_DeepPowerDown.c
+* @brief    This example describes how to enter the system in Deep
+*           PowerDown and wake-up by using RTC Interrupt
+* @version  1.0
+* @date     02. June. 2011
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -35,7 +35,7 @@
 #include "lpc177x_8x_rtc.h"
 
 /* Example group ----------------------------------------------------------- */
-/** @defgroup PWR_DeepPowerDown	Pwr Mgr Deep Power Down
+/** @defgroup PWR_DeepPowerDown Pwr Mgr Deep Power Down
  * @ingroup PWR_Examples
  * @{
  */
@@ -58,83 +58,83 @@ void RTC_IRQHandler(void);
 
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 /*********************************************************************//**
- * @brief		RTC(Real-time clock) interrupt handler
- * @param[in]	none
- * @return 		None
+ * @brief       RTC(Real-time clock) interrupt handler
+ * @param[in]   none
+ * @return      None
  **********************************************************************/
 void RTC_IRQHandler(void)
 {
-	if(RTC_GetIntPending(LPC_RTC, RTC_INT_ALARM))
-	{
-		RTC_ClearIntPending(LPC_RTC, RTC_INT_ALARM);
-		RTC_Cmd(LPC_RTC, DISABLE);
-		NVIC_DisableIRQ(RTC_IRQn);
-	}
+    if(RTC_GetIntPending(LPC_RTC, RTC_INT_ALARM))
+    {
+        RTC_ClearIntPending(LPC_RTC, RTC_INT_ALARM);
+        RTC_Cmd(LPC_RTC, DISABLE);
+        NVIC_DisableIRQ(RTC_IRQn);
+    }
 }
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**
- * @brief		Print Welcome menu
- * @param[in]	none
- * @return 		None
+ * @brief       Print Welcome menu
+ * @param[in]   none
+ * @return      None
  **********************************************************************/
 void print_menu(void)
 {
-	_DBG(menu);
+    _DBG(menu);
 }
 
 /*-------------------------MAIN FUNCTION------------------------------*/
 /*********************************************************************//**
- * @brief		c_entry: Main program body
- * @param[in]	None
- * @return 		None
+ * @brief       c_entry: Main program body
+ * @param[in]   None
+ * @return      None
  **********************************************************************/
 void c_entry (void)
 {
 
-	/* Initialize debug via UART0
-	 * – 115200bps
-	 * – 8 data bit
-	 * – No parity
-	 * – 1 stop bit
-	 * – No flow control
-	 */
-	debug_frmwrk_init();
+    /* Initialize debug via UART0
+     * – 115200bps
+     * – 8 data bit
+     * – No parity
+     * – 1 stop bit
+     * – No flow control
+     */
+    debug_frmwrk_init();
 
-	// print welcome screen
-	print_menu();
+    // print welcome screen
+    print_menu();
 
-	/* Initialize and configure RTC */
-	RTC_Init(LPC_RTC);
+    /* Initialize and configure RTC */
+    RTC_Init(LPC_RTC);
 
-	RTC_ResetClockTickCounter(LPC_RTC);
-	RTC_SetTime (LPC_RTC, RTC_TIMETYPE_SECOND, 0);
+    RTC_ResetClockTickCounter(LPC_RTC);
+    RTC_SetTime (LPC_RTC, RTC_TIMETYPE_SECOND, 0);
 
-	/* Set alarm time = 5s.
-	 * So, after each 5s, RTC will generate and wake-up system
-	 * out of Deep PowerDown mode.
-	 */
-	RTC_SetAlarmTime (LPC_RTC, RTC_TIMETYPE_SECOND, 5);
+    /* Set alarm time = 5s.
+     * So, after each 5s, RTC will generate and wake-up system
+     * out of Deep PowerDown mode.
+     */
+    RTC_SetAlarmTime (LPC_RTC, RTC_TIMETYPE_SECOND, 5);
 
-	RTC_CntIncrIntConfig (LPC_RTC, RTC_TIMETYPE_SECOND, DISABLE);
-	/* Set the AMR for 5s match alarm interrupt */
-	RTC_AlarmIntConfig (LPC_RTC, RTC_TIMETYPE_SECOND, ENABLE);
-	RTC_ClearIntPending(LPC_RTC, RTC_INT_ALARM);
+    RTC_CntIncrIntConfig (LPC_RTC, RTC_TIMETYPE_SECOND, DISABLE);
+    /* Set the AMR for 5s match alarm interrupt */
+    RTC_AlarmIntConfig (LPC_RTC, RTC_TIMETYPE_SECOND, ENABLE);
+    RTC_ClearIntPending(LPC_RTC, RTC_INT_ALARM);
 
-	_DBG_("Press '1' to enter system in Deep PowerDown mode");
-	while(_DG !='1');
+    _DBG_("Press '1' to enter system in Deep PowerDown mode");
+    while(_DG !='1');
 
-	RTC_Cmd(LPC_RTC, ENABLE);
-	NVIC_EnableIRQ(RTC_IRQn);
+    RTC_Cmd(LPC_RTC, ENABLE);
+    NVIC_EnableIRQ(RTC_IRQn);
 
-	_DBG_("Enter Deep PowerDown mode...");
-	_DBG_("Wait 5s, RTC will wake-up system...\n\r");
+    _DBG_("Enter Deep PowerDown mode...");
+    _DBG_("Wait 5s, RTC will wake-up system...\n\r");
 
-	// Enter target power down mode
-	CLKPWR_DeepPowerDown();
-	_DBG_("\n\r-------- I'm wake up! -------- ");
+    // Enter target power down mode
+    CLKPWR_DeepPowerDown();
+    _DBG_("\n\r-------- I'm wake up! -------- ");
 
-	while(1);
+    while(1);
 }
 
 
@@ -145,8 +145,8 @@ void c_entry (void)
    file, and that startup code will setup stacks and data */
 int main(void)
 {
-	c_entry();
-	return 0;
+    c_entry();
+    return 0;
 }
 
 
