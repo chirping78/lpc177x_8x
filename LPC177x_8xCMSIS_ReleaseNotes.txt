@@ -1,3 +1,17 @@
+RELEASE LPC177x_8xCMSIS_120831
+
+***** Implementations and Improvements ****
+1. Update I2C Driver: Don't check Repeat Start or Stop was received in case all neccessary data was sent/received.
+2. Fix issue:  Can't send file from the virtual COM port to the real COM port.
+3. Replace TABs with Spaces for all source files.
+
+***** Known Issues: In this package contains some examples that can not verify now ****
+
+1./ ADC > Adc_Burst
+2./ CAN > Can_SelfTest
+Maybe they will be removed when release for customers.
+==========================================================================================================
+========================================================================================================== 
 RELEASE LPC177x_8xCMSIS_120731
 
 ***** Implementations and Improvements ****
