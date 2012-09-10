@@ -123,6 +123,9 @@ typedef enum IRQn
 
 #if defined ( __CC_ARM   )
 #pragma anon_unions
+#elif defined ( __ICCARM__ )
+#pragma language=save
+#pragma language=extended
 #endif
 
 /*------------- System Control (SC) ------------------------------------------*/
@@ -1340,6 +1343,8 @@ typedef struct
 
 #if defined ( __CC_ARM   )
 #pragma no_anon_unions
+#elif defined ( __ICCARM__ )
+#pragma language=restore
 #endif
 
 /******************************************************************************/

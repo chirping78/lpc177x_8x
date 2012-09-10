@@ -66,7 +66,10 @@ extern MSC_CSW CSW;
  * @{
  */
 
-
+#if defined   (  __IAR_SYSTEMS_ICC__  )
+#pragma language=save
+#pragma language=extended
+#endif
 
 uint16_t  USB_DeviceStatus;
 uint8_t  USB_DeviceAddress;
@@ -829,6 +832,9 @@ stall_i:  USB_SetStallEP(0x80);
   }
 }
 
+#if defined   (  __IAR_SYSTEMS_ICC__  )
+#pragma language=restore
+#endif
 
 /**
  * @}

@@ -26,6 +26,9 @@
 
 #if defined   (  __GNUC__  )
 #define __packed __attribute__((__packed__))
+#elif defined   (  __IAR_SYSTEMS_ICC__  )
+#pragma language=save
+#pragma language=extended
 #endif
 
 
@@ -279,6 +282,9 @@ typedef __packed struct _CDC_LINE_CODING {
 typedef USB_SETUP_PACKET CDC_NOTIFICATION_HEADER;
 
 
+#if defined   (  __IAR_SYSTEMS_ICC__  )
+#pragma language=restore
+#endif
 /**
  * @}
  */

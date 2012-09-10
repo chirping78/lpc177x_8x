@@ -41,7 +41,10 @@
  * @{
  */
  
-
+#if defined   (  __IAR_SYSTEMS_ICC__  )
+#pragma language=save
+#pragma language=extended
+#endif
 
 #define EP_MSK_CTRL 0x0001      /* Control Endpoint Logical Address Mask */
 #define EP_MSK_BULK 0xC924      /* Bulk Endpoint Logical Address Mask */
@@ -894,7 +897,9 @@ isr_end:
   return;
 }
 
-
+#if defined   (  __IAR_SYSTEMS_ICC__  )
+#pragma language=restore
+#endif
 /**
  * @}
  */

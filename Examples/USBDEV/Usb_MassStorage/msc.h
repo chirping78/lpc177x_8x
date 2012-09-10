@@ -28,7 +28,10 @@
 /** @addtogroup USBDEV_MscConf
  * @{
  */
-
+#if defined   (  __IAR_SYSTEMS_ICC__  )
+#pragma language=save
+#pragma language=extended
+#endif
 
 /* MSC Subclass Codes */
 #define MSC_SUBCLASS_RBC                0x01
@@ -117,6 +120,9 @@ typedef __packed struct _MSC_CSW {
 #define SCSI_MODE_SELECT10              0x55
 #define SCSI_MODE_SENSE10               0x5A
 
+#if defined   (  __IAR_SYSTEMS_ICC__  )
+#pragma language=restore
+#endif
 
 /**
  * @}

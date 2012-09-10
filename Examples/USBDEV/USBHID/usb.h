@@ -30,6 +30,8 @@ typedef __packed union {
 #elif defined   (  __GNUC__  )
 typedef union __packed {
 #elif defined   (  __IAR_SYSTEMS_ICC__  )
+#pragma language=save
+#pragma language=extended
 typedef __packed union {
 #endif
   uint16_t W;
@@ -301,5 +303,8 @@ typedef __packed struct _USB_COMMON_DESCRIPTOR {
   uint8_t  bDescriptorType;
 } USB_COMMON_DESCRIPTOR;
 
+#if defined   (  __IAR_SYSTEMS_ICC__  )
+#pragma language=restore
+#endif
 
 #endif  /* __USB_H__ */

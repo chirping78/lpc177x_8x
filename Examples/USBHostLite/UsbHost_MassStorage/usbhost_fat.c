@@ -1522,7 +1522,7 @@ int32_t  DIR_Open (uint8_t  *ent_name_given)
     // Find the entry for the given folder
     if(entry->FileStatus == 0 )
     {
-        if(FAT_StrCaseCmp(ent_name_given,".") == 0)
+        if(FAT_StrCaseCmp(ent_name_given,(uint8_t*)".") == 0)
         {
             if(FAT_BootSec.FATType == FAT_32) {
                 entry->CurrClus=  FAT_BootSec.RootClus;

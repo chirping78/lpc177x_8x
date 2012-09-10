@@ -124,7 +124,7 @@ int main()
         if (rc == MS_FUNC_OK) {
             rc = FAT_Init();   /* Initialize the FAT16 file system                                          */
             if (rc == FAT_FUNC_OK) {
-                Main_ReadDir(".");
+                Main_ReadDir((uint8_t*)".");
             } else {
                 return (0);
             }
