@@ -21,6 +21,6 @@ TOOLS_PATH 			=$(PROJ_ROOT)/makesection/tools/
 
 GNU_INSTALL_ROOT	=C:\Program Files (x86)\CodeSourcery\Sourcery_CodeBench_Lite_for_ARM_EABI
 GNU_VERSION			=4.6.3
-IAR_INSTALL_ROOT	=C:/Program Files (x86)/IAR Systems/Embedded Workbench 6.0 Kickstart
+IAR_INSTALL_ROOT	=C:\Program Files (x86)\IAR Systems\Embedded Workbench 6.4
 KEIL_INSTALL_ROOT	=C:/Keil
 
