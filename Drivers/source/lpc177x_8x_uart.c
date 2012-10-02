@@ -374,13 +374,13 @@ void UART_Init(UART_ID_Type UartID, UART_CFG_Type *UART_ConfigStruct)
                 tmp = LPC_UART4->RBR;
             }
 
-            LPC_UART4->TER = UART4_TER_TXEN;
+            //LPC_UART4->TER = UART4_TER_TXEN;
 
             // Wait for current transmit complete
             while (!(LPC_UART4->LSR & UART_LSR_THRE));
 
             // Disable Tx
-            LPC_UART4->TER = 0;
+           // LPC_UART4->TER = 0;
 
             // Disable interrupt
             LPC_UART4->IER = 0;
@@ -1342,7 +1342,7 @@ void UART_TxCmd(UART_ID_Type UartID, FunctionalState NewState)
         }
         else if (UartID == UART_4)
         {
-            LPC_UART4->TER |= UART4_TER_TXEN;
+           // LPC_UART4->TER |= UART4_TER_TXEN;
         }
         else
         {
@@ -1358,7 +1358,7 @@ void UART_TxCmd(UART_ID_Type UartID, FunctionalState NewState)
         }
         else if (UartID == UART_4)
         {
-            LPC_UART4->TER &= (~UART4_TER_TXEN) & UART4_TER_BITMASK;
+            //LPC_UART4->TER &= (~UART4_TER_TXEN) & UART4_TER_BITMASK;
         }
         else
         {
