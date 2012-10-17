@@ -32,6 +32,7 @@
  *
  * $Id: smtp-strings.h,v 1.3 2006/06/11 21:46:37 adam Exp $
  */
+#include "smtp.h"
 extern const char smtp_220[4];
 extern const char smtp_helo[6];
 extern const char smtp_mail_from[12];
@@ -44,3 +45,7 @@ extern const char smtp_subject[10];
 extern const char smtp_quit[7];
 extern const char smtp_crnl[3];
 extern const char smtp_crnlperiodcrnl[6];
+#if ESMTP_ENABLE
+extern const char esmtp_ehlo[];
+extern const char esmtp_auth[];
+#endif /*ESMTP_ENABLE*/

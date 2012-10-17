@@ -76,7 +76,7 @@ void Init_EMAC(void)
     // Delay for a while then continue initializing LPC_EMAC module
         for (delay = 0x100000; delay; delay--);
     }
-
+	NVIC_EnableIRQ(ENET_IRQn);
 }
 // save the pointer to received frame buffer,
 /*********************************************************************//**

@@ -32,15 +32,56 @@
 		microcontrollers. The code size and RAM requirements of uIP is an order of 
 		magnitude smaller than other generic TCP/IP stacks today. 
 		
-		The uip_webserver implements WEB server.
-		The default IP address is:
-			192.168.0.100
-		The default router's IP address is:
-			192.168.0.1
-		The subnet mask is:
-			255.255.255.0
-		IP address on your PC should not be one of these IP addresses above
-			
+        IP Adddress configuration
+            If fixed IP is used, update below macros in uipopt.h file:
+                #define UIP_IPADDR0      192
+                #define UIP_IPADDR1      168
+                #define UIP_IPADDR2      1
+                #define UIP_IPADDR3      99
+                #define UIP_DRIPADDR0    192
+                #define UIP_DRIPADDR1    168
+                #define UIP_DRIPADDR2    1
+                #define UIP_DRIPADDR3    1
+                #define UIP_NETMASK0     255
+                #define UIP_NETMASK1     255
+                #define UIP_NETMASK2     255
+                #define UIP_NETMASK3     0
+                #define UIP_FIXEDADDR    1
+                The default IP address is:
+                    192.168.1.99
+                The default router's IP address is:
+                    192.168.1.1
+                The subnet mask is:
+                    255.255.255.0
+            If DHCP is used, add definition of DHCP_ENABLE.
+            
+        For web server application:
+            The Flash_WebServer target implements WEB server.
+            To connect this web server, IP address on your PC should be in the same network 
+            to the web server.
+            
+        For web client application:
+            When start up, the Web Client will connect to the web server using dns server.
+            Web server address is (defined in Emac_uIP.c):
+                www.sics.se/~adam/uip.
+            DNS server is (defined in Emac_uIP.c):
+                8.8.8.8
+            The content of the web page will be printed on terminal.
+            
+        For SMTP client application:  
+            Enable ESMTP by ESMTP_ENABLE macro in smtp.h file.
+            Update below information before compiling example (Emac_uIP.c file).
+                SMTP Server: address, name, username and password. Username & password are only
+                            used in case ESMTP_ENABLE is enabled.
+                Email information.
+        
+        For Telnet application:
+            This is a simple demo for telnet application. It receives commands from client and
+            sends back response data. 
+            If the received command is quit command, do disconnect.
+            If the received command is valid, sends help string to client.
+            If the received command is invalid, sends error message to client.
+                
 @Directory contents:
 	\EWARM: includes EWARM (IAR) project and configuration files
 	\Keil:	includes RVMDK (Keil)project and configuration files	
@@ -118,12 +159,22 @@
 		- Step 3: Use normal (straight) cable to connect from your PC to ETH port on eval board
 		- Step 4: Connect UART0 on this board to COM port on your computer
 		- Step 5: Configure hardware and serial display as above instruction 
-		- Step 6: Re-config IP address on PC:
-					+ IP address: 192.168.0.x (x != 1, 100)
-					+ Subnet mask: 255.255.255.0
+		- Step 6: Re-config IP address on PC so that it is in the same domain with the target board.
 		- Step 7: Reset board, monitor the status via serial display until EMAC initialized
+        For Web Server application
 		- Step 8: Open command prompt window, execute 'ping 192.168.0.100' command
 		- Step 9: Open web browser, access to address "http://192.168.0.100" to display the content
-		           of the webpage.	
-	
-			
+		           of the webpage.
+        For Web Client application
+        - Step 8: Observe the serial output for the web page content.
+        
+        For SMTP application
+        - Step 8: Check if the email is sent.        
+        
+        For Telnet application
+        - Step 8: Turn on telnet client on your PC.
+        - Step 9: Open command prompt window, type in below command to connect to the board.
+                telnet <Server IP Address>
+        - Step 10: Type ? to know the avaiable commands.
+        - Step 11: Type telnet command and check results.
+                

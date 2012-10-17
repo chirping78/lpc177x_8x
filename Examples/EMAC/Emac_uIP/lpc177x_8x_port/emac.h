@@ -13,16 +13,6 @@
 #define PHY_TO               	200000  // ~10sec
 #define RMII					1		// If zero, it's a MII interface
 
-/* This is the MAC address of LPC17xx */
-/* 0C 1D 12 E0 1F 10*/
-#define EMAC_ADDR0		0x10
-#define EMAC_ADDR1		0x1F
-#define EMAC_ADDR2		0xE0
-#define EMAC_ADDR3		0x12
-#define EMAC_ADDR4		0x1D
-#define EMAC_ADDR5		0x0C
-
-
 /* Configurable macro ---------------------- */
 #define SPEED_100               1
 #define SPEED_10                0
@@ -33,7 +23,7 @@
 #define FIX_DUPLEX              FULL_DUPLEX
 
 
-BOOL_8 tapdev_init(void);
+BOOL_8 tapdev_init(uint8_t* EMACAddr);
 UNS_32 tapdev_read(void * pPacket);
 BOOL_8 tapdev_send (void *pPacket, UNS_32 size);
 void   tapdev_frame_receive_cb(uint16_t* pData, uint32_t size);

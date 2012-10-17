@@ -32,6 +32,8 @@
  *
  * $Id: smtp-strings.c,v 1.3 2006/06/11 21:46:37 adam Exp $
  */
+#include "smtp.h"
+
 const char smtp_220[4] =
 /* "220" */
 {0x32, 0x32, 0x30, };
@@ -68,3 +70,7 @@ const char smtp_crnl[3] =
 const char smtp_crnlperiodcrnl[6] =
 /* "\r\n.\r\n" */
 {0xd, 0xa, 0x2e, 0xd, 0xa, };
+#if ESMTP_ENABLE
+const char esmtp_ehlo[] = "EHLO ";
+const char esmtp_auth[] = "AUTH LOGIN ";
+#endif

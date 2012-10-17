@@ -174,7 +174,7 @@ static unsigned char *
 copy_string(unsigned char *dest,
         const unsigned char *src, unsigned char len)
 {
-  strncpy(dest, src, len);
+  strncpy((char*)dest, (char*)src, len);
   return dest + len;
 }
 /*-----------------------------------------------------------------------------------*/
@@ -188,19 +188,19 @@ senddata(void)
   if(s.getrequestleft > 0) {
     cptr = getrequest = (char *)uip_appdata;
 
-    cptr = copy_string(cptr, http_get, sizeof(http_get) - 1);
-    cptr = copy_string(cptr, s.file, strlen(s.file));
+    cptr = (char*) copy_string((unsigned char*)cptr, (unsigned char*)http_get, sizeof(http_get) - 1);
+    cptr = (char*) copy_string((unsigned char*)cptr, (unsigned char*)s.file, strlen(s.file));
     *cptr++ = ISO_space;
-    cptr = copy_string(cptr, http_10, sizeof(http_10) - 1);
+    cptr = (char*) copy_string((unsigned char*)cptr, (unsigned char*)http_10, sizeof(http_10) - 1);
 
-    cptr = copy_string(cptr, http_crnl, sizeof(http_crnl) - 1);
+    cptr = (char*) copy_string((unsigned char*)cptr, (unsigned char*)http_crnl, sizeof(http_crnl) - 1);
 
-    cptr = copy_string(cptr, http_host, sizeof(http_host) - 1);
-    cptr = copy_string(cptr, s.host, strlen(s.host));
-    cptr = copy_string(cptr, http_crnl, sizeof(http_crnl) - 1);
+    cptr = (char*)copy_string((unsigned char*)cptr, (unsigned char*)http_host, sizeof(http_host) - 1);
+    cptr = (char*)copy_string((unsigned char*)cptr, (unsigned char*)s.host, strlen(s.host));
+    cptr = (char*)copy_string((unsigned char*)cptr, (unsigned char*)http_crnl, sizeof(http_crnl) - 1);
 
-    cptr = copy_string(cptr, http_user_agent_fields,
-               strlen(http_user_agent_fields));
+    cptr = (char*)copy_string((unsigned char*)cptr, (unsigned char*)http_user_agent_fields,
+		       strlen(http_user_agent_fields));
 
     len = s.getrequestleft > uip_mss()?
       uip_mss():
@@ -230,7 +230,7 @@ parse_statusline(u16_t len)
 
   while(len > 0 && s.httpheaderlineptr < sizeof(s.httpheaderline)) {
     s.httpheaderline[s.httpheaderlineptr] = *(char *)uip_appdata;
-    ++((char *)uip_appdata);
+    uip_appdata = (char *)uip_appdata + 1;
     --len;
     if(s.httpheaderline[s.httpheaderlineptr] == ISO_nl) {
 
@@ -298,7 +298,7 @@ parse_headers(u16_t len)
 
   while(len > 0 && s.httpheaderlineptr < sizeof(s.httpheaderline)) {
     s.httpheaderline[s.httpheaderlineptr] = *(char *)uip_appdata;
-    ++((char *)uip_appdata);
+    uip_appdata = ((char *)uip_appdata) + 1;
     --len;
     if(s.httpheaderline[s.httpheaderlineptr] == ISO_nl) {
       /* We have an entire HTTP header line in s.httpheaderline, so
@@ -429,10 +429,7 @@ webclient_appcall(void)
       /* Send NULL data to signal EOF. */
       webclient_datahandler(NULL, 0);
     } else {
-      if(resolv_lookup(s.host) == NULL) {
-    resolv_query(s.host);
-      }
-      webclient_get(s.host, s.port, s.file);
+      webclient_move(s.host, s.port, s.file);
     }
   }
 }

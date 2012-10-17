@@ -24,7 +24,12 @@
 # use without further testing or modification. 
 ########################################################################
 PROJ_ROOT			= $(CURDIR)/../../..
-EXECNAME    =emac_uIP_test
+EXECNAME    		=emac_uIP_test
+
+APP_NAME			= WEB_SERVER
+//APP_NAME			= WEB_CLIENT
+//APP_NAME			= SMTP_APP
+//APP_NAME			= TELNET_APP
 
 ########################################################################
 #
@@ -36,22 +41,18 @@ include ../../../makesection/makeconfig
 EXDIRINC	=$(CURDIR)
 
 # Include directory
-TMPPATH 		+= -I$(EXDIRINC)/apps/webserver \
-				-I$(EXDIRINC)/common \
+TMPPATH 		+= -I$(EXDIRINC)/common \
+				-I$(EXDIRINC)/lib \
 				-I$(EXDIRINC)/lpc177x_8x_port \
 				-I$(EXDIRINC)/uip 
-				
+	
 # Create a list of aditional files will be compiled
 # Retarget object files
 ADDOBJS		+=  $(EXDIRINC)/common/Serial.o \
 				$(EXDIRINC)/common/printf-stdarg.o \
 				$(EXDIRINC)/common/syscalls.o 
-# uIP 'apps' files
-ADDOBJS		+=  $(EXDIRINC)/apps/webserver/httpd.o \
-				$(EXDIRINC)/apps/webserver/httpd-cgi.o \
-				$(EXDIRINC)/apps/webserver/httpd-fs.o \
-				$(EXDIRINC)/apps/webserver/http-strings.o 
-# uIP 'uip' files
+
+				# uIP 'uip' files
 ADDOBJS		+=  $(EXDIRINC)/uip/psock.o \
 				$(EXDIRINC)/uip/timer.o \
 				$(EXDIRINC)/uip/uip.o \
@@ -61,5 +62,53 @@ ADDOBJS		+=  $(EXDIRINC)/lpc177x_8x_port/emac.o \
 				$(EXDIRINC)/lpc177x_8x_port/clock-arch.o \
 				$(EXDIRINC)/lpc177x_8x_port/Emac_uIP.o 
 				
-				
+ifeq ($(APP_NAME), WEB_SERVER)	
+CTMPFLAGS += -DWEB_SERVER
+TMPPATH 		+= -I$(EXDIRINC)/apps/webserver
+
+# uIP 'apps' files
+ADDOBJS		+=  $(EXDIRINC)/apps/webserver/httpd.o \
+				$(EXDIRINC)/apps/webserver/httpd-cgi.o \
+				$(EXDIRINC)/apps/webserver/httpd-fs.o \
+				$(EXDIRINC)/apps/webserver/http-strings.o 
+endif	
+
+ifeq ($(APP_NAME), WEB_CLIENT)	
+CTMPFLAGS += -DWEB_CLIENT -DWEB_BROWSER -DDNS_USED -DDHCP_ENABLE
+TMPPATH 		+= -I$(EXDIRINC)/apps/webclient \
+				-I$(EXDIRINC)/apps/webbrowser \
+				-I$(EXDIRINC)/apps/dhcpc \
+				-I$(EXDIRINC)/apps/resolv		
+
+# uIP 'apps' files
+ADDOBJS		+=  $(EXDIRINC)/apps/webclient/webclient.o \
+				$(EXDIRINC)/apps/webclient/webclient-strings.o \
+				$(EXDIRINC)/apps/webbrowser/htmlparser.o \
+				$(EXDIRINC)/apps/webbrowser/html-strings.o \
+				$(EXDIRINC)/apps/dhcpc/dhcpc.o \
+				$(EXDIRINC)/apps/resolv/resolv.o \
+				$(EXDIRINC)/uip/uiplib.o
+endif
+	
+ifeq ($(APP_NAME), SMTP_APP)
+CTMPFLAGS += -DSMTP_APP -DDNS_USED -DDHCP_ENABLE	
+TMPPATH 		+= -I$(EXDIRINC)/apps/smtp \
+				-I$(EXDIRINC)/apps/dhcpc \
+				-I$(EXDIRINC)/apps/resolv	
+# uIP 'apps' files
+ADDOBJS		+=  $(EXDIRINC)/apps/smtp/smtp.o \
+				$(EXDIRINC)/apps/smtp/smtp-strings.o \
+				$(EXDIRINC)/lib/base64.o \
+				$(EXDIRINC)/apps/dhcpc/dhcpc.o \
+				$(EXDIRINC)/apps/resolv/resolv.o 	
+endif
+	
+ifeq ($(APP_NAME), TELNET_APP)
+CTMPFLAGS += -DTELNET_APP	
+TMPPATH 		+= -I$(EXDIRINC)/apps/telnetd
+# uIP 'apps' files
+ADDOBJS		+=  $(EXDIRINC)/apps/telnetd/telnetd.o \
+				$(EXDIRINC)/apps/telnetd/shell.o \
+				$(EXDIRINC)/lib/memb.o 
+endif				
 include $(PROJ_ROOT)/makesection/makerule/example/makefile.ex

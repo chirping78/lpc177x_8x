@@ -48,11 +48,17 @@
 #define __SMTP_H__
 
 #include "uipopt.h"
+#include "psock.h"
 
 /**
  * Error number that signifies a non-error condition.
  */
 #define SMTP_ERR_OK 0
+
+/**
+ * ESMTP Enable
+ */
+#define ESMTP_ENABLE        1
 
 /**
  * Callback function that is called when an e-mail transmission is
@@ -70,27 +76,30 @@ void smtp_init(void);
 
 /* Functions. */
 void smtp_configure(char *localhostname, u16_t *smtpserver);
-unsigned char smtp_send(char *to, char *from,
-			char *subject, char *msg,
-			u16_t msglen);
+#if ESMTP_ENABLE
+void esmtp_configure(char *localhostname, u16_t *smtpserver, char* username, char* password);
+#endif
+unsigned char smtp_send(char *to, char *cc, char *from,
+                        char *subject, char *msg, u16_t msglen);
 #define SMTP_SEND(to, cc, from, subject, msg) \
         smtp_send(to, cc, from, subject, msg, strlen(msg))
 
 void smtp_appcall(void);
 
 struct smtp_state {
-  u8_t state;
+
+  char connected;
+  
+  struct psock psock;
+
+  char inputbuffer[4];
   char *to;
-  char *from;
+  char *cc;
+  char *from;    
   char *subject;
   char *msg;
   u16_t msglen;
-  
-  u16_t sentlen, textlen;
-  u16_t sendptr;
-
 };
-
 
 #ifndef UIP_APPCALL
 #define UIP_APPCALL     smtp_appcall

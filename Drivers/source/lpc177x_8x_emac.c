@@ -54,7 +54,7 @@ const uint8_t EMAC_clkdiv[] = { 4, 6, 8, 10, 14, 20, 28, 36, 40, 44, 48, 52, 56,
 /* EMAC Config data */
 static EMAC_CFG_Type EMAC_Configs;
 
-
+#if EMAC_INT_ENABLE
 /* EMAC local DMA Descriptors */
 
 
@@ -69,12 +69,8 @@ static uint16_t __attribute__ ((aligned (4))) saFrameBuffers[EMAC_MAX_FRAME_NUM]
 static uint32_t sulCurrFrameSz = 0;
 static uint8_t  sbCurrFrameID = 0;
 
-/***************************** PRIVATE FUNCTION *****************************/
-static void EMAC_UpdateRxConsumeIndex(void);
-static void EMAC_UpdateTxProduceIndex(void);
-static uint32_t EMAC_AllocTxBuff(uint16_t nFrameSize, uint8_t bLastFrame);
-static uint32_t EMAC_GetRxFrameSize(void);
 
+#endif /*EMAC_INT_ENABLE*/
 
 /*********************************************************************//**
  * @brief
@@ -209,8 +205,8 @@ void EMAC_SetFullDuplexMode(uint8_t full_duplex)
   if(full_duplex)
   {
         LPC_EMAC->MAC2    |= EMAC_MAC2_FULL_DUP;
-    LPC_EMAC->Command |= EMAC_CR_FULL_DUP;
-    LPC_EMAC->IPGT     = EMAC_IPGT_FULL_DUP;
+        LPC_EMAC->Command |= EMAC_CR_FULL_DUP;
+        LPC_EMAC->IPGT     = EMAC_IPGT_FULL_DUP;
   }
   else
   {
@@ -289,7 +285,7 @@ int32_t EMAC_Init(EMAC_CFG_Type *EMAC_ConfigStruct)
             break;
     }
 
-        if(tout >= sizeof (EMAC_clkdiv))
+    if(tout >= sizeof (EMAC_clkdiv))
         return ERROR;
     tout++;
 
@@ -338,8 +334,6 @@ int32_t EMAC_Init(EMAC_CFG_Type *EMAC_ConfigStruct)
     /* Enable receive and transmit mode of MAC Ethernet core */
     EMAC_TxEnable();
     EMAC_RxEnable();
-
-    NVIC_EnableIRQ(ENET_IRQn);
 
     return SUCCESS;
 }
@@ -414,8 +408,8 @@ void EMAC_RxDisable( void )
 
 /*********************************************************************//**
  * @brief       Get the status of  given buffer.
- * @param[in]    idx   Buffer index
- * @return   EMAC_BUFF_AVAILABLE/EMAC_BUFF_FULL/EMAC_BUFF_PARTIAL_FULL
+ * @param[in]   idx   Buffer index
+ * @return      EMAC_BUFF_AVAILABLE/EMAC_BUFF_FULL/EMAC_BUFF_PARTIAL_FULL
  *
  **********************************************************************/
 EMAC_BUFF_STATUS EMAC_GetBufferSts(EMAC_BUFF_IDX idx)
@@ -526,6 +520,9 @@ void EMAC_WritePacketBuffer(EMAC_PACKETBUF_Type *pDataStruct)
    uint32_t tmp;
    uint32_t max_frame_size = LPC_EMAC->MAXF;
    
+   if(EMAC_GetBufferSts(EMAC_TX_BUFF) == EMAC_BUFF_FULL)
+       return;
+   
    size = (size + 1) & 0xFFFE;    // round Size up to next even number
    frame_num = size/max_frame_size;
 
@@ -624,6 +621,7 @@ void EMAC_UpdateRxConsumeIndex(void)
     LPC_EMAC->RxConsumeIndex = idx;
 }
 
+#if EMAC_INT_ENABLE
 /*********************************************************************//**
  * @brief       Standard EMAC IRQ Handler. This sub-routine will check
  *              these following interrupt and call the call-back function
@@ -712,7 +710,7 @@ void ENET_IRQHandler(void)
          if(RxLen > 0)
          {
             // trip out 4-bytes CRC field, note that length in (-1) style format
-            RxLen -= 3;
+            RxLen -= 4;
               
             if((EMAC_GetRxFrameStatus() & EMAC_RINFO_ERR_MASK )== 0)
                     {
@@ -772,7 +770,7 @@ void ENET_IRQHandler(void)
      
     }
 }
-
+#endif /*EMAC_INT_ENABLE*/
 
 /*********************************************************************//**
  * @brief       Enable/Disable hash filter functionality for specified destination

@@ -58,7 +58,7 @@ ADDOBJS     += $(PROJ_ROOT)/Core/Device/$(MANUFACTURE)/$(DEVICE)/Source/Template
 CFLAGS += -I$(EXDIRINC) $(TMPPATH) 
 
 # Define __BUILD_WITH_EXAMPLE__ symbol in this case (build example mode)
-CFLAGS += -D__BUILD_WITH_EXAMPLE__=1 
+CFLAGS += -D__BUILD_WITH_EXAMPLE__=1 $(CTMPFLAGS)
 
 
 ########################################################################

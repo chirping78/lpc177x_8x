@@ -85,6 +85,9 @@ typedef uint16_t u16_t;
  */
 typedef unsigned short uip_stats_t;
 
+typedef void (*UIP_UDP_APP_CALL_PFN)(void);
+
+typedef int uip_udp_appstate_t;
 /**
  * Maximum number of TCP connections.
  *
@@ -125,7 +128,11 @@ typedef unsigned short uip_stats_t;
  *
  * \hideinitializer
  */
+#if defined(DNS_USED)
+#define UIP_CONF_UDP             1	
+#else
 #define UIP_CONF_UDP             0	
+#endif
 
 /**
  * UDP checksums on or off
@@ -143,15 +150,33 @@ typedef unsigned short uip_stats_t;
 
 /* Here we include the header file for the application(s) we use in
    our project. */
-/*#include "smtp.h"*/
+#if SMTP_APP   
+#include "smtp.h"
+#endif
 //#include "hello-world.h"
-/*#include "telnetd.h"*/
+#if TELNET_APP
+#include "telnetd.h"
+#endif
+#if defined (WEB_SERVER)
 #include "webserver.h"
-/*#include "dhcpc.h"*/
-/*#include "resolv.h"*/
-/*#include "webclient.h"*/
-
+#endif
+#if defined (DHCP_ENABLE)
+#include "dhcpc.h"
+#endif
+#if UIP_CONF_UDP
+#include "resolv.h"
+#endif
+#if defined (WEB_CLIENT)
+#include "webclient.h"
+#endif
+#if WEB_BROWSER
+#include "htmlparser.h"
+#endif
 #endif /* __UIP_CONF_H__ */
+
+#if UIP_CONF_UDP
+extern UIP_UDP_APP_CALL_PFN UIP_UDP_APPCALL;
+#endif
 
 /** @} */
 /** @} */

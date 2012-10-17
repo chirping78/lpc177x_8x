@@ -33,7 +33,7 @@
 
 #include <stdio.h>
 #include <string.h>
-
+#if defined (DHCP_ENABLE)
 #include "uip.h"
 #include "dhcpc.h"
 #include "timer.h"
@@ -256,7 +256,7 @@ PT_THREAD(handle_dhcp(void))
   do {
     send_discover();
     timer_set(&s.timer, s.ticks);
-    PT_WAIT_UNTIL(&s.pt, uip_newdata() || timer_expired(&s.timer));
+    PT_YIELD_UNTIL(&s.pt, uip_newdata() || timer_expired(&s.timer));
 
     if(uip_newdata() && parse_msg() == DHCPOFFER) {
       s.state = STATE_OFFER_RECEIVED;
@@ -273,7 +273,7 @@ PT_THREAD(handle_dhcp(void))
   do {
     send_request();
     timer_set(&s.timer, s.ticks);
-    PT_WAIT_UNTIL(&s.pt, uip_newdata() || timer_expired(&s.timer));
+    PT_YIELD_UNTIL(&s.pt, uip_newdata() || timer_expired(&s.timer));
 
     if(uip_newdata() && parse_msg() == DHCPACK) {
       s.state = STATE_CONFIG_RECEIVED;
@@ -324,6 +324,7 @@ dhcpc_init(const void *mac_addr, int mac_len)
 {
   uip_ipaddr_t addr;
   
+  UIP_UDP_APPCALL = dhcpc_appcall;
   s.mac_addr = mac_addr;
   s.mac_len  = mac_len;
 
@@ -353,4 +354,5 @@ dhcpc_request(void)
     /*    handle_dhcp(PROCESS_EVENT_NONE, NULL);*/
   }
 }
+#endif /*DHCP_ENABLE*/
 /*---------------------------------------------------------------------------*/

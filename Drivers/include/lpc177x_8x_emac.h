@@ -51,6 +51,8 @@ extern "C"
 /** @defgroup EMAC_Private_Macros EMAC Private Macros
  * @{
  */
+/* Interrupt Mode Enable */
+#define EMAC_INT_ENABLE         1    
 
 /* Ethernet MAC register definitions --------------------------------------------------------------------- */
 /* MAC Configuration Register 1 */
@@ -583,6 +585,12 @@ void EMAC_RxEnable( void );
 void EMAC_SetHashFilter(uint8_t dstMAC_addr[], FunctionalState NewState);
 int32_t EMAC_CRCCalc(uint8_t frame_no_fcs[], int32_t frame_len);
 void EMAC_WritePacketBuffer(EMAC_PACKETBUF_Type *pDataStruct);
+void EMAC_UpdateRxConsumeIndex(void);
+void EMAC_UpdateTxProduceIndex(void);
+uint32_t EMAC_AllocTxBuff(uint16_t nFrameSize, uint8_t bLastFrame);
+uint32_t EMAC_GetRxBuffer(void);
+uint32_t EMAC_GetRxFrameSize(void);
+uint32_t EMAC_GetRxFrameStatus(void);
 
 /** PHY Setup */
 void EMAC_Write_PHY (uint8_t PhyReg, uint16_t Value);

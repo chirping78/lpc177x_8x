@@ -88,6 +88,7 @@
 
 #include "uip.h"
 #include "uipopt.h"
+#include "uip-conf.h"
 #include "uip_arch.h"
 
 #if UIP_CONF_IPV6
@@ -98,7 +99,11 @@
 
 /*---------------------------------------------------------------------------*/
 /* Variable definitions. */
-
+#if defined (DHCP_ENABLE )
+UIP_UDP_APP_CALL_PFN UIP_UDP_APPCALL = dhcpc_appcall;
+#elif UIP_CONF_UDP
+UIP_UDP_APP_CALL_PFN UIP_UDP_APPCALL = resolv_appcall;
+#endif
 
 /* The IP address of this host. If it is defined to be fixed (by
    setting UIP_FIXEDADDR to 1 in uipopt.h), the address is set
@@ -116,13 +121,14 @@ const uip_ipaddr_t uip_netmask =
 #else
 uip_ipaddr_t uip_hostaddr, uip_draddr, uip_netmask;
 #endif /* UIP_FIXEDADDR */
-
-//static const uip_ipaddr_t all_ones_addr =
-//#if UIP_CONF_IPV6
-//  {0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff};
-//#else /* UIP_CONF_IPV6 */
-//  {0xffff,0xffff};
-//#endif /* UIP_CONF_IPV6 */
+#if UIP_UDP
+static const uip_ipaddr_t all_ones_addr =
+#if UIP_CONF_IPV6
+  {0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff};
+#else /* UIP_CONF_IPV6 */
+  {0xffff,0xffff};
+#endif /* UIP_CONF_IPV6 */
+#endif /*UIP_UDP*/
 static const uip_ipaddr_t all_zeroes_addr =
 #if UIP_CONF_IPV6
   {0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000};

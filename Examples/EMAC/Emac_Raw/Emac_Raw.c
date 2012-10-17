@@ -475,6 +475,7 @@ void Usr_Init_Emac(void)
         _DBG_("Error during initializing EMAC, restart after a while");
         for (i = 0x100000; i; i--);
     }
+	NVIC_EnableIRQ(ENET_IRQn);
     _DBG_("Initialize EMAC complete");
 }
 

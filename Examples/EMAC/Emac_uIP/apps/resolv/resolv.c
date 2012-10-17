@@ -63,7 +63,8 @@
  * $Id: resolv.c,v 1.5 2006/06/11 21:46:37 adam Exp $
  *
  */
-
+#include "uip-conf.h"
+#if UIP_CONF_UDP
 #include "resolv.h"
 #include "uip.h"
 
@@ -241,7 +242,8 @@ newdata(void)
   char *nameptr;
   struct dns_answer *ans;
   struct dns_hdr *hdr;
-  static u8_t nquestions, nanswers;
+  //static u8_t nquestions;
+  static u8_t nanswers;
   static u8_t i;
   register struct namemap *namemapptr;
 
@@ -276,13 +278,13 @@ newdata(void)
 
     /* We only care about the question(s) and the answers. The authrr
        and the extrarr are simply discarded. */
-    nquestions = htons(hdr->numquestions);
+    //nquestions = htons(hdr->numquestions);
     nanswers = htons(hdr->numanswers);
 
     /* Skip the name in the question. XXX: This should really be
        checked agains the name in the question, to be sure that they
        match. */
-    nameptr = parse_name((char *)uip_appdata + 12) + 4;
+    nameptr = (char *) parse_name((unsigned char *)uip_appdata + 12) + 4;
 
     while(nanswers > 0) {
       /* The first byte in the answer resource record determines if it
@@ -293,7 +295,7 @@ newdata(void)
     /*  printf("Compressed anwser\n");*/
       } else {
     /* Not compressed name. */
-    nameptr = parse_name((char *)nameptr);
+	nameptr = (char *)parse_name((unsigned char *)nameptr);
       }
 
       ans = (struct dns_answer *)nameptr;
@@ -357,6 +359,8 @@ resolv_query(char *name)
   static u8_t lseq, lseqi;
   register struct namemap *nameptr;
 
+  UIP_UDP_APPCALL = resolv_appcall;
+    
   lseq = lseqi = 0;
 
   for(i = 0; i < RESOLV_ENTRIES; ++i) {
@@ -445,7 +449,7 @@ resolv_conf(u16_t *dnsserver)
     uip_udp_remove(resolv_conn);
   }
 
-  resolv_conn = uip_udp_new(dnsserver, HTONS(53));
+  resolv_conn = uip_udp_new((uip_ipaddr_t*)dnsserver, HTONS(53));
 }
 /*---------------------------------------------------------------------------*/
 /**
@@ -463,7 +467,8 @@ resolv_init(void)
 
 }
 /*---------------------------------------------------------------------------*/
+#endif /*UIP_CONF_UDP*/
+/** @} */
+/** @} */
+/** @} */
 
-/** @} */
-/** @} */
-/** @} */

@@ -36,6 +36,7 @@
 #include "timer.h"
 #include "pt.h"
 
+#if defined (DHCP_ENABLE)
 struct dhcpc_state {
   struct pt pt;
   char state;
@@ -61,8 +62,8 @@ void dhcpc_appcall(void);
 
 void dhcpc_configured(const struct dhcpc_state *s);
 
-typedef struct dhcpc_state uip_udp_appstate_t;
-#define UIP_UDP_APPCALL dhcpc_appcall
-
+//typedef struct dhcpc_state uip_udp_appstate_t;
+//#define UIP_UDP_APPCALL dhcpc_appcall
+#endif
 
 #endif /* __DHCPC_H__ */

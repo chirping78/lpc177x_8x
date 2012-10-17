@@ -126,7 +126,14 @@ void webclient_aborted(void);
  */
 void webclient_closed(void);
 
-
+/**
+ * Callback function that is called from the webclient code when it
+ * move to another web server.
+ *
+ * This function must be implemented by the module that uses the
+ * webclient code.
+ */
+void webclient_move(char *host, u16_t port, char *file);
 
 /**
  * Initialize the webclient module.
@@ -170,7 +177,6 @@ void webclient_init(void);
  * \retval 1 if the connection was initiated.
  */
 unsigned char webclient_get(char *host, u16_t port, char *file);
-
 /**
  * Close the currently open HTTP connection.
  */
