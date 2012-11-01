@@ -395,6 +395,7 @@ typedef struct {
 
 void GPDMA_Init(void);
 Status GPDMA_Setup(GPDMA_Channel_CFG_Type *GPDMAChannelConfig);
+Status GPDMA_SetupTransfer(GPDMA_Channel_CFG_Type *GPDMAChannelConfig);
 IntStatus GPDMA_IntGetStatus(GPDMA_Status_Type type, uint8_t channel);
 void GPDMA_ClearIntPending(GPDMA_StateClear_Type type, uint8_t channel);
 void GPDMA_ChannelCmd(uint8_t channelNum, FunctionalState NewState);

@@ -246,6 +246,65 @@ Status GPDMA_Setup(GPDMA_Channel_CFG_Type *GPDMAChannelConfig)
     pDMAch->CLLI = GPDMAChannelConfig->DMALLI;
 
     /* Set value to Channel Control Registers */
+    GPDMA_SetupTransfer(GPDMAChannelConfig);
+
+    /* Re-Configure DMA Request Select for source peripheral */
+    if((GPDMAChannelConfig->SrcConn != 8)&&(GPDMAChannelConfig->SrcConn != 9))
+    {
+        if (GPDMAChannelConfig->SrcConn > 15)
+        {
+            LPC_SC->DMAREQSEL |= (1<<(GPDMAChannelConfig->SrcConn - 16));
+        } else {
+            LPC_SC->DMAREQSEL &= ~(1<<(GPDMAChannelConfig->SrcConn));
+        }
+    }
+
+    /* Re-Configure DMA Request Select for Destination peripheral */
+    if((GPDMAChannelConfig->DstConn != 8)&&(GPDMAChannelConfig->DstConn != 9))
+    {
+        if (GPDMAChannelConfig->DstConn > 15)
+        {
+            LPC_SC->DMAREQSEL |= (1<<(GPDMAChannelConfig->DstConn - 16));
+        } else {
+            LPC_SC->DMAREQSEL &= ~(1<<(GPDMAChannelConfig->DstConn));
+        }
+    }
+
+    /* Enable DMA channels, little endian */
+    LPC_GPDMA->Config = GPDMA_DMACConfig_E;
+    while (!(LPC_GPDMA->Config & GPDMA_DMACConfig_E));
+
+    // Calculate absolute value for Connection number
+    tmp1 = GPDMAChannelConfig->SrcConn;
+    tmp1 = ((tmp1 > 15) ? (tmp1 - 16) : tmp1);
+    tmp2 = GPDMAChannelConfig->DstConn;
+    tmp2 = ((tmp2 > 15) ? (tmp2 - 16) : tmp2);
+
+    // Configure DMA Channel, enable Error Counter and Terminate counter
+    pDMAch->CConfig = GPDMA_DMACCxConfig_IE | GPDMA_DMACCxConfig_ITC /*| GPDMA_DMACCxConfig_E*/ \
+        | GPDMA_DMACCxConfig_TransferType((uint32_t)GPDMAChannelConfig->TransferType) \
+        | GPDMA_DMACCxConfig_SrcPeripheral(tmp1) \
+        | GPDMA_DMACCxConfig_DestPeripheral(tmp2);
+
+    return SUCCESS;
+}
+/********************************************************************//**
+ * @brief        Setup a GPDMA transfer according to the specified
+ *               parameters in the GPDMAChannelConfig.
+ * @param[in]    GPDMAChannelConfig Pointer to a GPDMA_CH_CFG_Type
+ *                                     structure that contains the configuration
+ *                                     information for the specified GPDMA channel peripheral.
+ * @return       ERROR if selected channel is enabled before
+ *               or SUCCESS if channel is configured successfully
+ *********************************************************************/
+Status GPDMA_SetupTransfer(GPDMA_Channel_CFG_Type *GPDMAChannelConfig)
+{
+    LPC_GPDMACH_TypeDef *pDMAch;
+
+    // Get Channel pointer
+    pDMAch = (LPC_GPDMACH_TypeDef *) pGPDMACh[GPDMAChannelConfig->ChannelNum];
+
+    /* Set value to Channel Control Registers */
     switch (GPDMAChannelConfig->TransferType)
     {
     // Memory to memory
@@ -313,43 +372,6 @@ Status GPDMA_Setup(GPDMA_Channel_CFG_Type *GPDMAChannelConfig)
         return ERROR;
     }
 
-    /* Re-Configure DMA Request Select for source peripheral */
-    if((GPDMAChannelConfig->SrcConn != 8)&&(GPDMAChannelConfig->SrcConn != 9))
-    {
-        if (GPDMAChannelConfig->SrcConn > 15)
-        {
-            LPC_SC->DMAREQSEL |= (1<<(GPDMAChannelConfig->SrcConn - 16));
-        } else {
-            LPC_SC->DMAREQSEL &= ~(1<<(GPDMAChannelConfig->SrcConn));
-        }
-    }
-
-    /* Re-Configure DMA Request Select for Destination peripheral */
-    if((GPDMAChannelConfig->DstConn != 8)&&(GPDMAChannelConfig->DstConn != 9))
-    {
-        if (GPDMAChannelConfig->DstConn > 15)
-        {
-            LPC_SC->DMAREQSEL |= (1<<(GPDMAChannelConfig->DstConn - 16));
-        } else {
-            LPC_SC->DMAREQSEL &= ~(1<<(GPDMAChannelConfig->DstConn));
-        }
-    }
-
-    /* Enable DMA channels, little endian */
-    LPC_GPDMA->Config = GPDMA_DMACConfig_E;
-    while (!(LPC_GPDMA->Config & GPDMA_DMACConfig_E));
-
-    // Calculate absolute value for Connection number
-    tmp1 = GPDMAChannelConfig->SrcConn;
-    tmp1 = ((tmp1 > 15) ? (tmp1 - 16) : tmp1);
-    tmp2 = GPDMAChannelConfig->DstConn;
-    tmp2 = ((tmp2 > 15) ? (tmp2 - 16) : tmp2);
-
-    // Configure DMA Channel, enable Error Counter and Terminate counter
-    pDMAch->CConfig = GPDMA_DMACCxConfig_IE | GPDMA_DMACCxConfig_ITC /*| GPDMA_DMACCxConfig_E*/ \
-        | GPDMA_DMACCxConfig_TransferType((uint32_t)GPDMAChannelConfig->TransferType) \
-        | GPDMA_DMACCxConfig_SrcPeripheral(tmp1) \
-        | GPDMA_DMACCxConfig_DestPeripheral(tmp2);
 
     return SUCCESS;
 }
