@@ -1,5 +1,5 @@
 /**********************************************************************
-* $Id$      decoder.c     2012-11-01	
+* $Id$      decoder.c     2012-11-01    
 *//**
 * @file     decoder.c
 * @brief    This example implements an Interface Radio Device.
@@ -56,10 +56,10 @@
 /************************** PRIVATE DEFINITIONS *************************/
 #define DMA_USED                1
 #define TRACE_LOG               0
-#define ERROR_LOG               1
-#define DEBUG_DATA_READ         1
+#define ERROR_LOG               0
+#define DEBUG_DATA_READ         0
 #define DEBUG_DECODE_TIME       0
-#define DEBUG_DATA_WRITE        1
+#define DEBUG_DATA_WRITE        0
 
 /** Max buffer length */
 #define IN_FRAME_MIN_SIZE               (MAINBUF_SIZE)
@@ -67,13 +67,13 @@
 #if DMA_USED
 #define DMA_FRAME_SIZE                  (audio_frame_size)
 #endif
-#define DECODER_IN_BUFF_SIZE            (0x3000)
+#define DECODER_IN_BUFF_SIZE            (MAINBUF_SIZE*20)
 #define DECODER_IN_BUFF_START_ADDR      (SDRAM_BASE_ADDR)
 #define AUDIO_BUFF_START_ADDR           (DECODER_IN_BUFF_START_ADDR + DECODER_IN_BUFF_SIZE)
-#define AUDIO_BUFF_FRAME_NUM            (100) // it should be large enough for two decode loop.
+#define AUDIO_BUFF_FRAME_NUM            (500) 
 #define AUDIO_BUFF_SIZE                 (OUT_FRAME_MAX_SIZE*AUDIO_BUFF_FRAME_NUM)
 #define PLAY_BUFF_START_ADDR            (AUDIO_BUFF_START_ADDR + AUDIO_BUFF_SIZE)
-#define PLAY_BUFF_MIN_SIZE              (AUDIO_BUFF_SIZE/3)
+#define PLAY_BUFF_MIN_SIZE              (AUDIO_BUFF_SIZE/4)
 
 
 /* Check buff is full or not */
@@ -102,7 +102,7 @@ typedef struct
 } RING_BUFFER;
 
 typedef RING_BUFFER       AUDIO_BUFFER;
-AUDIO_BUFFER     audio_buffer;
+AUDIO_BUFFER              audio_buffer;
 
 __IO uint8_t    play_setup_stat = 0;
 #if DMA_USED
@@ -145,6 +145,7 @@ void     AudioBuf_IncWritePtr(AUDIO_BUFFER *buff, uint32_t size);
 uint32_t AudioBuf_Read(AUDIO_BUFFER *buff, uint8_t* data, uint32_t size);
 Status   Play_Setup(void);
 void     Play_Control(uint8_t start);
+int      Decoder_Decode(void);
 
 /*********************************************************************//**
  * @brief       Initialize audio buffer
@@ -306,44 +307,44 @@ Status Play_Setup(void)
     _DBG_("[DEBUG]I2S configured.");
  
 #if DMA_USED
-    GPDMA_Init();
-	/*
-	 * Configure GPDMA channel 0 -------------------------------------------------------------
-	 * Used for I2S Transmit
-	 */
-	// Setup GPDMA channel --------------------------------
-	// channel 0
-	GPDMACfg.ChannelNum = 0;
-	// Source memory
-	GPDMACfg.SrcMemAddr = 0;
-	// Destination memory
-	GPDMACfg.DstMemAddr = 0;
-	// Transfer size
-	GPDMACfg.TransferSize = 0;
-	// Transfer width - unused
-	GPDMACfg.TransferWidth = 0;
-	// Transfer type
-	GPDMACfg.TransferType = GPDMA_TRANSFERTYPE_M2P;
-	// Source connection
-	GPDMACfg.SrcConn = 0;
-	// Destination connection - unused
-	GPDMACfg.DstConn = GPDMA_CONN_I2S_Channel_0;
-	// Linker List Item - unused
-	GPDMACfg.DMALLI = 0;
-	GPDMA_Setup(&GPDMACfg);
-    
+      GPDMA_Init();
+    /*
+     * Configure GPDMA channel 0 -------------------------------------------------------------
+     * Used for I2S Transmit
+     */
+    // Setup GPDMA channel --------------------------------
+    // channel 0
+    GPDMACfg.ChannelNum = 0;
+    // Source memory
+    GPDMACfg.SrcMemAddr = 0;
+    // Destination memory
+    GPDMACfg.DstMemAddr = 0;
+    // Transfer size
+    GPDMACfg.TransferSize = 0;
+    // Transfer width - unused
+    GPDMACfg.TransferWidth = 0;
+    // Transfer type
+    GPDMACfg.TransferType = GPDMA_TRANSFERTYPE_M2P;
+    // Source connection
+    GPDMACfg.SrcConn = 0;
+    // Destination connection - unused
+    GPDMACfg.DstConn = GPDMA_CONN_I2S_Channel_0;
+    // Linker List Item - unused
+    GPDMACfg.DMALLI = 0;
+    GPDMA_Setup(&GPDMACfg);
+      
     I2S_DMAStruct.DMAIndex = I2S_DMA_1;
-	I2S_DMAStruct.depth = 1;
-	I2S_DMAConfig(LPC_I2S, &I2S_DMAStruct, I2S_TX_MODE);
-	I2S_DMACmd(LPC_I2S, I2S_DMA_1, I2S_TX_MODE, ENABLE);
-    
-	/* Setting GPDMA interrupt */
+    I2S_DMAStruct.depth = 1;
+    I2S_DMAConfig(LPC_I2S, &I2S_DMAStruct, I2S_TX_MODE);
+    I2S_DMACmd(LPC_I2S, I2S_DMA_1, I2S_TX_MODE, ENABLE);
+      
+    /* Setting GPDMA interrupt */
     // Disable interrupt for DMA
     NVIC_DisableIRQ (DMA_IRQn);
     /* preemption = 1, sub-priority = 1 */
     NVIC_SetPriority(DMA_IRQn, 0x01);
     /* Enable interrupt for DMA */
-	NVIC_EnableIRQ (DMA_IRQn);
+    NVIC_EnableIRQ (DMA_IRQn);
 #endif    
     I2S_Start(LPC_I2S);
     play_setup_stat = 1;
@@ -409,18 +410,18 @@ void Play_Control(uint8_t start)
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
 #if DMA_USED
 /*********************************************************************//**
- * @brief		GPDMA interrupt handler sub-routine
- * @param[in]	None
- * @return 		None
+ * @brief        GPDMA interrupt handler sub-routine
+ * @param[in]    None
+ * @return       None
  **********************************************************************/
 void DMA_IRQHandler (void)
 {
-	// check GPDMA interrupt on channel 0
-	if (GPDMA_IntGetStatus(GPDMA_STAT_INT, 0)){ //check interrupt status on channel 0
-		// Check counter terminal status
-		if(GPDMA_IntGetStatus(GPDMA_STAT_INTTC, 0)){
-			// Clear terminate counter Interrupt pending
-			GPDMA_ClearIntPending (GPDMA_STATCLR_INTTC, 0); 
+    // check GPDMA interrupt on channel 0
+    if (GPDMA_IntGetStatus(GPDMA_STAT_INT, 0)){ //check interrupt status on channel 0
+        // Check counter terminal status
+        if(GPDMA_IntGetStatus(GPDMA_STAT_INTTC, 0)){
+            // Clear terminate counter Interrupt pending
+            GPDMA_ClearIntPending (GPDMA_STATCLR_INTTC, 0); 
 #if DEBUG_DATA_READ   
             {
                 clock_time_t cur_ticks = clock_time();
@@ -436,25 +437,25 @@ void DMA_IRQHandler (void)
 #endif           
             play_dma_size = 0;  
             DMA_Send();
-		}
-		// Check error terminal status
-		if (GPDMA_IntGetStatus(GPDMA_STAT_INTERR, 0)){
-			// Clear error counter Interrupt pending
-			GPDMA_ClearIntPending (GPDMA_STATCLR_INTERR, 0);
-            __BUF_INCR_NUM(audio_buffer.head,play_dma_size*4,audio_buffer.buffer_size) ;
-            play_dma_size = 0;
+        }
+        // Check error terminal status
+        if (GPDMA_IntGetStatus(GPDMA_STAT_INTERR, 0)){
+            // Clear error counter Interrupt pending
+            GPDMA_ClearIntPending (GPDMA_STATCLR_INTERR, 0);
+      __BUF_INCR_NUM(audio_buffer.head,play_dma_size*4,audio_buffer.buffer_size) ;
+      play_dma_size = 0;
 #if ERROR_LOG
-            _DBG_("DMA Error!!!");
+      _DBG_("DMA Error!!!");
 #endif            
-            DMA_Send();
-		}
-	}
-	
+      DMA_Send();
+        }
+    }
+    
 }
 /*********************************************************************//**
- * @brief		Send data to I2S through DMA
- * @param[in]	None
- * @return 		None
+ * @brief        Send data to I2S through DMA
+ * @param[in]    None
+ * @return       None
  **********************************************************************/
 void DMA_Send(void)
 {
@@ -475,6 +476,9 @@ void DMA_Send(void)
         data_num =  __AUDIO_BUFF_NUM(&audio_buffer);
         if(data_num < DMA_FRAME_SIZE)
         {
+#if TRACE_LOG  
+           _DBG_("Audio buffer underflow!");
+#endif          
             Play_Control(0);
             break;
         }
@@ -526,7 +530,7 @@ void DMA_Send(void)
 void I2S_IRQHandler()
 {
     uint32_t txlevel,i;
-    uint32_t n_rbytes = 0;
+    //uint32_t n_rbytes = 0;
     txlevel = I2S_GetLevel(LPC_I2S,I2S_TX_MODE);
     
     if(play_cur_ofs >= play_end_ofs)
@@ -548,7 +552,7 @@ void I2S_IRQHandler()
     {
         LPC_I2S->TXFIFO = *((uint32_t*)(PLAY_BUFF_START_ADDR + play_cur_ofs));
         play_cur_ofs+= 4;
-        n_rbytes += 4;
+        //n_rbytes += 4;
     }
     //_DBG("Play ");_DBD16(n_rbytes);_DBG_(" bytes.");
 }
@@ -621,7 +625,7 @@ void Decoder_FillInputBuffer(uint8_t* data, uint32_t size)
                      (char*)read_ptr,
                      input_frame_size);
         }
-	    read_ptr = DECODER_IN_BUFF_START_ADDR; 
+        read_ptr = DECODER_IN_BUFF_START_ADDR; 
     }
     
     if(size == 0)
@@ -631,26 +635,26 @@ void Decoder_FillInputBuffer(uint8_t* data, uint32_t size)
     if((input_frame_size + size) >= DECODER_IN_BUFF_SIZE)
     {
 #if ERROR_LOG        
-        _DBG_("Input Buffer Overflow!!!");
+        _DBG_("Input Buffer Overflow!");
 #endif       
-        input_frame_size = DECODER_IN_BUFF_SIZE - size;
-        memmove((char*)(DECODER_IN_BUFF_START_ADDR),
-                (char*)(DECODER_IN_BUFF_START_ADDR + size),
-                input_frame_size);
+        Decoder_Decode();
+        return;
     }
-#if TRACE_LOG    
-    if(size) {
-    _DBG("Add ");_DBD32(size);
-    _DBG(" bytes to buffer, frame size: ");_DBD32(input_frame_size);_DBG_("");
-    }
-#endif  
+  
     if(size)
     {
         memcpy((char*)(DECODER_IN_BUFF_START_ADDR + input_frame_size),
                 data,
                 size);
         input_frame_size += size;
-    }  
+    } 
+#if TRACE_LOG    
+    if(size) {
+    _DBG("Add ");_DBD32(size);
+    _DBG(" bytes to buffer, current buffer size: ");_DBD32(input_frame_size);_DBG_("");
+    }
+#endif    
+    Decoder_Decode();
 }
 /*********************************************************************//**
  * @brief       Decoder data
@@ -663,7 +667,10 @@ int Decoder_Decode(void)
     int samples = 0;
     int sync_word = 0;
     unsigned char* decode_out_buf = 0;   
-    
+    unsigned char exit_flg = 0;
+#if TRACE_LOG   
+    int32_t in_frame_size_bef = 0;
+#endif    
 #if DEBUG_DECODE_TIME
     clock_time_t dstart_ticks = clock_time();
     clock_time_t dend_ticks;
@@ -675,8 +682,11 @@ int Decoder_Decode(void)
     }
 
 #endif        
-       
-    if(input_frame_size >= IN_FRAME_MIN_SIZE) { 
+#if TRACE_LOG        
+    in_frame_size_bef = input_frame_size;
+#endif    
+    while((input_frame_size >= IN_FRAME_MIN_SIZE) &&
+          (exit_flg == 0)){ 
         // Find the start of actual MP3 data
         sync_word = MP3FindSyncWord((unsigned char*)read_ptr, input_frame_size);
         
@@ -697,10 +707,16 @@ int Decoder_Decode(void)
 #endif    
         decode_out_buf = (unsigned char*)AudioBuf_GetWritePtr(&audio_buffer, audio_frame_size); 
         if(decode_out_buf == 0)
-            return 0;
-        
+        {
+#if TRACE_LOG  
+          _DBG_("Audio Buffer overflow!");
+#endif           
+          return 0;
+        }
+       
         err = MP3Decode(mp3_decoder, (unsigned char**)&read_ptr, 
                         (int*)&input_frame_size, (short *)decode_out_buf, 0);      
+       
         if(err)
         {
             switch(err)
@@ -711,6 +727,7 @@ int Decoder_Decode(void)
 #endif                
                     input_frame_size = 0;
                     read_ptr = DECODER_IN_BUFF_START_ADDR;
+                    exit_flg = 1;
                     break;
                 case ERR_MP3_MAINDATA_UNDERFLOW:
 #if TRACE_LOG                    
@@ -718,14 +735,14 @@ int Decoder_Decode(void)
 #endif                
                     break;
                 case ERR_MP3_INVALID_FRAMEHEADER:
-#if ERROR_LOG                    
-                    _DBG_("Invalid MP3 data (Invalid Frame header).");
+#if TRACE_LOG                    
+                    _DBG_("Invalid MP3 data (Invalid Frame header)!");
 #endif                
                     input_frame_size--;
                     read_ptr++;
                     break;
                 default:   
-#if ERROR_LOG                    
+#if TRACE_LOG                    
                     _DBG("Decode failed! (Error code: ");_DBH(err);_DBG_(").");
 #endif                
                     break;
@@ -734,13 +751,20 @@ int Decoder_Decode(void)
         else
         {  
             // Get frame info
-            MP3GetLastFrameInfo(mp3_decoder, &mp3_frame_info);	
+            MP3GetLastFrameInfo(mp3_decoder, &mp3_frame_info);    
             audio_frame_size = (mp3_frame_info.bitsPerSample / 8) * mp3_frame_info.outputSamps;                       
             AudioBuf_IncWritePtr(&audio_buffer, audio_frame_size); 
             samples += mp3_frame_info.outputSamps/mp3_frame_info.nChans;
             Play_Control(1);
+            exit_flg = 1;
         }
-   }    
+   }  
+#if TRACE_LOG    
+    if(in_frame_size_bef > input_frame_size) {
+    _DBG("Remove ");_DBD32(in_frame_size_bef - input_frame_size);
+    _DBG(" bytes from buffer, remain buffer size = ");_DBD32(input_frame_size);_DBG_(" bytes");
+    }
+#endif
 #if DEBUG_DECODE_TIME 
    {
        dend_ticks = clock_time();

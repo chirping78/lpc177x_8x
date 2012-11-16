@@ -47,7 +47,7 @@
 /************************** PRIVATE DEFINITIONS ***********************/
 static  struct uip_eth_hdr *BUF = ((struct uip_eth_hdr *)&uip_buf[0]);
 
-const char EMAC_ADDR[]  = {0x00, 0x21, 0x70, 0xD7, 0x74, 0x93};
+const char EMAC_ADDR[]  = {0x0C, 0x1D, 0x12, 0xE0, 0x1F, 0x10};
 uint16_t     my_ipaddr[2]               = {0,0};
 uint8_t      my_ip_assigned             = 0;
 
@@ -268,7 +268,6 @@ void c_entry(void)
 
     _DBG_("\r\n*********************************************");
     _DBG_("Hello NXP Semiconductors");
-    _DBG_("uIP porting on LPC17xx");
     _DBG_("Web Radio application");
     _DBG_("*********************************************");
 

@@ -93,11 +93,14 @@ MEXT        =.map
 MAPFILE     =$(EXECNAME)
 #CFLAGS      +=-gdwarf-2
 AFLAGS 		+=-gdwarf-2
+ifneq ($(CUSTOM_STARTUP), 1)
 ADDOBJSS    += $(PROJ_ROOT)/Core/Device/$(MANUFACTURE)/$(DEVICE)/Source/Templates/GCC/startup_$(DEVICE).o
-
+endif
 
 # Define Required Linker script file in each build mode
+ifneq ($(CUSTOM_LINKER_SCRIPT), 1)
 LDSCRIPTIROM = $(PROJ_ROOT)/makesection/makerule/linker/ldscript_rom_$(TOOL).ld
+endif
 LDSCRIPTIRAM = $(PROJ_ROOT)/makesection/makerule/linker/ldscript_ram_$(TOOL).ld
 
 endif

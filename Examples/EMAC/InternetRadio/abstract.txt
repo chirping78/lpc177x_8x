@@ -31,7 +31,7 @@
 		protocol suite intended for embedded systems running low-end 8 or 16-bit 
 		microcontrollers. The code size and RAM requirements of uIP is an order of 
 		magnitude smaller than other generic TCP/IP stacks today. This example use
-        this stack to connecting to radio stations.
+        this stack to connect to radio stations.
         
         The MP3 stream data got from the radio station will be decoded by Helix decoder.
         The Helix MP3 decoder provides MPEG-compliant decoding of MP3 content. Both 
