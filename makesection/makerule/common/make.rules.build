@@ -64,26 +64,26 @@ endif
 	$(AS) $(AFLAGS) $< -o $*.o
 
 clean:
-	@$(RM) "*.o"
-	@$(RM) "*.elf"
-	@$(RM) "*.exe"
-	@$(RM) "*~"
-	@$(RM) "*.map"
-	@$(RM) "*.lst"
-	@$(RM) "*.axf"
-	@$(RM) "*.bin"
-	@$(RM) "*.dbo"
-	@$(RM) "*.dla"
-	@$(RM) "*.dnm"
-	@$(RM) "*.srec"
-	@$(RM) "*.wrn"
-	@$(RM) "*.c.orig"
-	@$(RM) "*.h.orig"
+	@$(RM) *.o
+	@$(RM) *.elf
+	@$(RM) *.exe
+	@$(RM) *~
+	@$(RM) *.map
+	@$(RM) *.lst
+	@$(RM) *.axf
+	@$(RM) *.bin
+	@$(RM) *.dbo
+	@$(RM) *.dla
+	@$(RM) *.dnm
+	@$(RM) *.srec
+	@$(RM) *.wrn
+	@$(RM) *.c.orig
+	@$(RM) *.h.orig
 	@$(RM) .viafile
 	@$(RM) .vias
-	@$(RM) "*.hex"
+	@$(RM) *.hex
 realclean: clean
-	@$(RM) "*.depend"
+	@$(RM) *.depend
 	
 #########################################################################
 # Default target library rules
