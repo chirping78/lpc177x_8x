@@ -263,11 +263,14 @@ CAN_ERROR CAN_SetupAFLUT(AF_SectionDef* AFSection)
     uint32_t EID, entry, buf;
     uint16_t lowerSID, upperSID;
     uint32_t lowerEID, upperEID;
+    AF_SectionDef afSecDef;
 
+
+    afSecDef = *AFSection;
     LPC_CANAF->AFMR = 0x01;
 
     /***** setup FullCAN Table *****/
-    if(AFSection->FullCAN_Sec == NULL)
+    if(afSecDef.FullCAN_Sec == NULL)
     {
         FULLCAN_ENABLE = DISABLE;
     }
@@ -275,18 +278,18 @@ CAN_ERROR CAN_SetupAFLUT(AF_SectionDef* AFSection)
     {
         FULLCAN_ENABLE = ENABLE;
 
-        for(i = 0; i < (AFSection->FC_NumEntry); i++)
+        for(i = 0; i < (afSecDef.FC_NumEntry); i++)
         {
             if(count + 1 > 64)
             {
                 return CAN_OBJECTS_FULL_ERROR;
             }
 
-            ctrl1 = AFSection->FullCAN_Sec->controller;
+            ctrl1 = afSecDef.FullCAN_Sec->controller;
 
-            SID = AFSection->FullCAN_Sec->id_11;
+            SID = afSecDef.FullCAN_Sec->id_11;
 
-            dis1 = AFSection->FullCAN_Sec->disable;
+            dis1 = afSecDef.FullCAN_Sec->disable;
 
             entry = 0x00; //reset entry value
 
@@ -309,7 +312,7 @@ CAN_ERROR CAN_SetupAFLUT(AF_SectionDef* AFSection)
                 LPC_CANAF_RAM->mask[count] |= entry;
 
                 CANAF_FullCAN_cnt++;
-                if(CANAF_FullCAN_cnt == AFSection->FC_NumEntry) //this is the lastest FullCAN entry
+                if(CANAF_FullCAN_cnt == afSecDef.FC_NumEntry) //this is the lastest FullCAN entry
                     count++;
             }
             else
@@ -332,25 +335,25 @@ CAN_ERROR CAN_SetupAFLUT(AF_SectionDef* AFSection)
                 CANAF_FullCAN_cnt++;
             }
 
-            AFSection->FullCAN_Sec = (FullCAN_Entry *)((uint32_t)(AFSection->FullCAN_Sec)+ sizeof(FullCAN_Entry));
+            afSecDef.FullCAN_Sec = (FullCAN_Entry *)((uint32_t)(afSecDef.FullCAN_Sec)+ sizeof(FullCAN_Entry));
         }
     }
 
     /***** Setup Explicit Standard Frame Format Section *****/
-    if(AFSection->SFF_Sec != NULL)
+    if(afSecDef.SFF_Sec != NULL)
     {
-        for(i=0;i<(AFSection->SFF_NumEntry);i++)
+        for(i=0;i<(afSecDef.SFF_NumEntry);i++)
         {
             if(count + 1 > 512)
             {
                 return CAN_OBJECTS_FULL_ERROR;
             }
 
-            ctrl1 = AFSection->SFF_Sec->controller;
+            ctrl1 = afSecDef.SFF_Sec->controller;
 
-            SID = AFSection->SFF_Sec->id_11;
+            SID = afSecDef.SFF_Sec->id_11;
 
-            dis1 = AFSection->SFF_Sec->disable;
+            dis1 = afSecDef.SFF_Sec->disable;
 
             entry = 0x00; //reset entry value
 
@@ -373,7 +376,7 @@ CAN_ERROR CAN_SetupAFLUT(AF_SectionDef* AFSection)
                 LPC_CANAF_RAM->mask[count] |= entry;
 
                 CANAF_std_cnt++;
-                if(CANAF_std_cnt == AFSection->SFF_NumEntry)//if this is the last SFF entry
+                if(CANAF_std_cnt == afSecDef.SFF_NumEntry)//if this is the last SFF entry
                     count++;
             }
             else
@@ -396,31 +399,31 @@ CAN_ERROR CAN_SetupAFLUT(AF_SectionDef* AFSection)
                 CANAF_std_cnt++;
             }
 
-            AFSection->SFF_Sec = (SFF_Entry *)((uint32_t)(AFSection->SFF_Sec)+ sizeof(SFF_Entry));
+            afSecDef.SFF_Sec = (SFF_Entry *)((uint32_t)(afSecDef.SFF_Sec)+ sizeof(SFF_Entry));
         }
     }
 
     /***** Setup Group of Standard Frame Format Identifier Section *****/
-    if(AFSection->SFF_GPR_Sec != NULL)
+    if(afSecDef.SFF_GPR_Sec != NULL)
     {
-        for(i=0;i<(AFSection->SFF_GPR_NumEntry);i++)
+        for(i=0;i<(afSecDef.SFF_GPR_NumEntry);i++)
         {
             if(count + 1 > 512)
             {
                 return CAN_OBJECTS_FULL_ERROR;
             }
 
-            ctrl1 = AFSection->SFF_GPR_Sec->controller1;
+            ctrl1 = afSecDef.SFF_GPR_Sec->controller1;
 
-            ctrl2 = AFSection->SFF_GPR_Sec->controller2;
+            ctrl2 = afSecDef.SFF_GPR_Sec->controller2;
 
-            dis1 = AFSection->SFF_GPR_Sec->disable1;
+            dis1 = afSecDef.SFF_GPR_Sec->disable1;
 
-            dis2 = AFSection->SFF_GPR_Sec->disable2;
+            dis2 = afSecDef.SFF_GPR_Sec->disable2;
 
-            lowerSID = AFSection->SFF_GPR_Sec->lowerID;
+            lowerSID = afSecDef.SFF_GPR_Sec->lowerID;
 
-            upperSID = AFSection->SFF_GPR_Sec->upperID;
+            upperSID = afSecDef.SFF_GPR_Sec->upperID;
 
             entry = 0x00;
 
@@ -441,23 +444,23 @@ CAN_ERROR CAN_SetupAFLUT(AF_SectionDef* AFSection)
 
             count++;
 
-            AFSection->SFF_GPR_Sec = (SFF_GPR_Entry *)((uint32_t)(AFSection->SFF_GPR_Sec)+ sizeof(SFF_GPR_Entry));
+            afSecDef.SFF_GPR_Sec = (SFF_GPR_Entry *)((uint32_t)(afSecDef.SFF_GPR_Sec)+ sizeof(SFF_GPR_Entry));
         }
     }
 
     /***** Setup Explicit Extend Frame Format Identifier Section *****/
-    if(AFSection->EFF_Sec != NULL)
+    if(afSecDef.EFF_Sec != NULL)
     {
-        for(i=0;i<(AFSection->EFF_NumEntry);i++)
+        for(i=0;i<(afSecDef.EFF_NumEntry);i++)
         {
             if(count + 1 > 512)
             {
                 return CAN_OBJECTS_FULL_ERROR;
             }
 
-            EID = AFSection->EFF_Sec->ID_29;
+            EID = afSecDef.EFF_Sec->ID_29;
 
-            ctrl1 = AFSection->EFF_Sec->controller;
+            ctrl1 = afSecDef.EFF_Sec->controller;
 
             entry = 0x00; //reset entry value
 
@@ -477,27 +480,27 @@ CAN_ERROR CAN_SetupAFLUT(AF_SectionDef* AFSection)
 
             count++;
 
-            AFSection->EFF_Sec = (EFF_Entry *)((uint32_t)(AFSection->EFF_Sec)+ sizeof(EFF_Entry));
+            afSecDef.EFF_Sec = (EFF_Entry *)((uint32_t)(afSecDef.EFF_Sec)+ sizeof(EFF_Entry));
         }
     }
 
     /***** Setup Group of Extended Frame Format Identifier Section *****/
-    if(AFSection->EFF_GPR_Sec != NULL)
+    if(afSecDef.EFF_GPR_Sec != NULL)
     {
-        for(i=0;i<(AFSection->EFF_GPR_NumEntry);i++)
+        for(i=0;i<(afSecDef.EFF_GPR_NumEntry);i++)
         {
             if(count + 2 > 512)
             {
                 return CAN_OBJECTS_FULL_ERROR;
             }
 
-            ctrl1 = AFSection->EFF_GPR_Sec->controller1;
+            ctrl1 = afSecDef.EFF_GPR_Sec->controller1;
 
-            ctrl2 = AFSection->EFF_GPR_Sec->controller2;
+            ctrl2 = afSecDef.EFF_GPR_Sec->controller2;
 
-            lowerEID = AFSection->EFF_GPR_Sec->lowerEID;
+            lowerEID = afSecDef.EFF_GPR_Sec->lowerEID;
 
-            upperEID = AFSection->EFF_GPR_Sec->upperEID;
+            upperEID = afSecDef.EFF_GPR_Sec->upperEID;
 
             entry = 0x00;
 
@@ -521,7 +524,7 @@ CAN_ERROR CAN_SetupAFLUT(AF_SectionDef* AFSection)
 
             CANAF_gext_cnt++;
 
-            AFSection->EFF_GPR_Sec = (EFF_GPR_Entry *)((uint32_t)(AFSection->EFF_GPR_Sec)+ sizeof(EFF_GPR_Entry));
+            afSecDef.EFF_GPR_Sec = (EFF_GPR_Entry *)((uint32_t)(afSecDef.EFF_GPR_Sec)+ sizeof(EFF_GPR_Entry));
         }
     }
 
