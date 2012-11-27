@@ -51,6 +51,7 @@
 #define TIM_MAT_LINKED_PIN      (10)
 
 #define _MEASURE_TIM            (LPC_TIM2)
+#define _MEASURE_TIM_IRQHandler TIMER2_IRQHandler
 #define _MEASURE_TIM_INTR       (TIMER2_IRQn)
 
 #define TIM_CAP_LINKED_PORT     (0)
@@ -65,6 +66,7 @@
 #define TIM_MAT_LINKED_PIN      (6)
 
 #define _MEASURE_TIM            (LPC_TIM0)
+#define _MEASURE_TIM_IRQHandler TIMER0_IRQHandler
 #define _MEASURE_TIM_INTR       (TIMER0_IRQn)
 
 //@ J5.35
@@ -97,7 +99,7 @@ __IO uint32_t capture;
 __IO uint8_t count=0;
 /************************** PRIVATE FUNCTIONS *************************/
 /* Interrupt service routines */
-void TIMER0_IRQHandler(void);
+void _MEASURE_TIM_IRQHandler(void);
 
 void print_menu(void);
 /*----------------- INTERRUPT SERVICE ROUTINES --------------------------*/
@@ -106,11 +108,11 @@ void print_menu(void);
  * @param[in]   None
  * @return      None
  **********************************************************************/
-void TIMER0_IRQHandler(void)
+void _MEASURE_TIM_IRQHandler(void)
 {
-    if (TIM_GetIntCaptureStatus(_MEASURE_TIM, TIM_MR0_INT))
+    if (TIM_GetIntStatus(_MEASURE_TIM, TIM_CR0_INT))
     {
-        TIM_ClearIntCapturePending(_MEASURE_TIM, TIM_MR0_INT);
+        TIM_ClearIntPending(_MEASURE_TIM, TIM_CR0_INT);
 
         if(first_capture == TRUE)
         {
@@ -135,43 +137,6 @@ void TIMER0_IRQHandler(void)
         }
     }
 }
-
-
-/*********************************************************************//**
- * @brief       TIMER0 interrupt handler sub-routine
- * @param[in]   None
- * @return      None
- **********************************************************************/
-void TIMER2_IRQHandler(void)
-{
-    if (TIM_GetIntCaptureStatus(_MEASURE_TIM, TIM_MR0_INT))
-    {
-        TIM_ClearIntCapturePending(_MEASURE_TIM, TIM_MR0_INT);
-
-        if(first_capture == TRUE)
-        {
-            TIM_Cmd(_MEASURE_TIM, DISABLE);
-
-            TIM_ResetCounter(_MEASURE_TIM);
-
-            TIM_Cmd(_MEASURE_TIM, ENABLE);
-
-            count++;
-
-            if(count == NO_MEASURING_SAMPLE)
-                first_capture = FALSE; //stable
-        }
-        else
-        {
-            count = 0; //reset count for next use
-
-            done = TRUE;
-
-            capture = TIM_GetCaptureValue(_MEASURE_TIM, TIM_COUNTER_INCAP0);
-        }
-    }
-}
-
 
 /*-------------------------PRIVATE FUNCTIONS------------------------------*/
 /*********************************************************************//**

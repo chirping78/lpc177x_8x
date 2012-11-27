@@ -59,6 +59,7 @@
 	Hardware configuration:		
 		This example was tested on:
 			1. LPC1788 OEM Board rev A and OEM Base Board rev A
+				JP24: OFF
 				Wired P0.6 (@ J3.18) to P1.26 (@ J5.35) for input to Timer 0 CAP0
 			2. LPC1788 IAR Start Kit Rev.B
 				- 3.3VA_E	:ON

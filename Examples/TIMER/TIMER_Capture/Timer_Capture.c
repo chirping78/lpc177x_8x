@@ -79,9 +79,9 @@ void print_menu(void);
  **********************************************************************/
 void TIMER0_IRQHandler(void)
 {
-    if (TIM_GetIntCaptureStatus(BRD_TIMER_USED, TIM_MR0_INT))
+    if (TIM_GetIntStatus(BRD_TIMER_USED, TIM_CR0_INT))
     {
-        TIM_ClearIntCapturePending(BRD_TIMER_USED, TIM_MR0_INT);
+        TIM_ClearIntPending(BRD_TIMER_USED, TIM_CR0_INT);
         
         _DBG("Time capture: ");
 
@@ -96,9 +96,9 @@ void TIMER0_IRQHandler(void)
  **********************************************************************/
 void TIMER2_IRQHandler(void)
 {
-    if (TIM_GetIntCaptureStatus(BRD_TIMER_USED, TIM_MR0_INT))
+    if (TIM_GetIntStatus(BRD_TIMER_USED, TIM_CR0_INT))
     {
-        TIM_ClearIntCapturePending(BRD_TIMER_USED, TIM_MR0_INT);
+        TIM_ClearIntPending(BRD_TIMER_USED, TIM_CR0_INT);
         
         _DBG("Time capture: ");
 

@@ -153,32 +153,7 @@ FlagStatus TIM_GetIntStatus(LPC_TIM_TypeDef *TIMx, TIM_INT_TYPE IntFlag)
     return RESET;
 
 }
-/*********************************************************************//**
- * @brief       Get Capture Interrupt Status
- * @param[in]   TIMx Timer selection, should be:
- *              - LPC_TIM0: TIMER0 peripheral
- *              - LPC_TIM1: TIMER1 peripheral
- *              - LPC_TIM2: TIMER2 peripheral
- *              - LPC_TIM3: TIMER3 peripheral
- * @param[in]   IntFlag: interrupt type, should be:
- *              - TIM_MR0_INT: Interrupt for Match channel 0
- *              - TIM_MR1_INT: Interrupt for Match channel 1
- *              - TIM_MR2_INT: Interrupt for Match channel 2
- *              - TIM_MR3_INT: Interrupt for Match channel 3
- *              - TIM_CR0_INT: Interrupt for Capture channel 0
- *              - TIM_CR1_INT: Interrupt for Capture channel 1
- * @return      FlagStatus
- *              - SET : interrupt
- *              - RESET : no interrupt
- **********************************************************************/
-FlagStatus TIM_GetIntCaptureStatus(LPC_TIM_TypeDef *TIMx, TIM_INT_TYPE IntFlag)
-{
-    uint8_t temp;
-    temp = (TIMx->IR) & (1<<(4+IntFlag));
-    if(temp)
-        return SET;
-    return RESET;
-}
+
 /*********************************************************************//**
  * @brief       Clear Interrupt pending
  * @param[in]   TIMx Timer selection, should be:
@@ -200,26 +175,6 @@ void TIM_ClearIntPending(LPC_TIM_TypeDef *TIMx, TIM_INT_TYPE IntFlag)
     TIMx->IR = TIM_IR_CLR(IntFlag);
 }
 
-/*********************************************************************//**
- * @brief       Clear Capture Interrupt pending
- * @param[in]   TIMx Timer selection, should be
- *              - LPC_TIM0: TIMER0 peripheral
- *              - LPC_TIM1: TIMER1 peripheral
- *              - LPC_TIM2: TIMER2 peripheral
- *              - LPC_TIM3: TIMER3 peripheral
- * @param[in]   IntFlag interrupt type, should be:
- *              - TIM_MR0_INT: Interrupt for Match channel 0
- *              - TIM_MR1_INT: Interrupt for Match channel 1
- *              - TIM_MR2_INT: Interrupt for Match channel 2
- *              - TIM_MR3_INT: Interrupt for Match channel 3
- *              - TIM_CR0_INT: Interrupt for Capture channel 0
- *              - TIM_CR1_INT: Interrupt for Capture channel 1
- * @return      None
- **********************************************************************/
-void TIM_ClearIntCapturePending(LPC_TIM_TypeDef *TIMx, TIM_INT_TYPE IntFlag)
-{
-    TIMx->IR = (1<<(4+IntFlag));
-}
 
 /*********************************************************************//**
  * @brief       Configuration for Timer at initial time
