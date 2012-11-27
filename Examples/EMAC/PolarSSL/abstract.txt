@@ -1,10 +1,10 @@
  /***********************************************************************
-* $Id$		abstract.txt		2012-11-01		
-* @file		EMAC\Emac_PolarSSL\abstract.txt 
-* @brief	Description of the EMAC Internet Radio example.
-* @version	1.0
-* @date		01. November. 2012
-* @author	NXP MCU SW Application Team
+* $Id$      abstract.txt        2012-11-01      
+* @file     EMAC\Emac_PolarSSL\abstract.txt 
+* @brief    Description of the EMAC Internet Radio example.
+* @version  1.0
+* @date     01. November. 2012
+* @author   NXP MCU SW Application Team
 * 
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
@@ -36,17 +36,16 @@
         to include cryptographic and SSL/TLS capabilities in their (embedded) products with 
         as little hassle as possible. It is designed to be readable, documented, tested, 
         loosely coupled and portable. Go to http://polarssl.org/ to get more information.
-		
+        
         Changes in PolarSSL to work on uIP:
         - Update config.h file in \polarssl\include file to disable/enable PolarSSL features.
         - Don't use net.c file. Functions in this file will be re-implemented.
-        - Change the prototype of ssl_init functions: add parameters for SSL input buffer and 
         - Rewrite functions in debug.c file: use a global string buffer.
         SSL output buffer.
         - Update ssl_cli file:
           + Update ssl_handshake_client so that it just read data from uIP receive buffer, not wait for 
           data from server.
-		  
+          
         To use PolarSSL:
         - Implement following functions to pass to PolarSSL library:
           + net_send and net_recv function

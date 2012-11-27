@@ -56,7 +56,7 @@
 /************************** PRIVATE DEFINITIONS *************************/
 #define DMA_USED                1
 #define TRACE_LOG               0
-#define ERROR_LOG               0
+#define ERROR_LOG               1
 #define DEBUG_DATA_READ         0
 #define DEBUG_DECODE_TIME       0
 #define DEBUG_DATA_WRITE        0
@@ -292,7 +292,7 @@ Status Play_Setup(void)
         samplerate = mp3_frame_info.samprate;
     if( samplerate > 96000)
         goto setup_err;
-    if(I2S_FreqConfig(LPC_I2S, samplerate, I2S_TX_MODE) != SUCCESS)
+    if(I2S_FreqConfig(LPC_I2S, samplerate*11/10, I2S_TX_MODE) != SUCCESS)
         goto setup_err;
     
     compress = samplerate*mp3_frame_info.bitsPerSample*mp3_frame_info.nChans*100/mp3_frame_info.bitrate;
@@ -442,12 +442,12 @@ void DMA_IRQHandler (void)
         if (GPDMA_IntGetStatus(GPDMA_STAT_INTERR, 0)){
             // Clear error counter Interrupt pending
             GPDMA_ClearIntPending (GPDMA_STATCLR_INTERR, 0);
-      __BUF_INCR_NUM(audio_buffer.head,play_dma_size*4,audio_buffer.buffer_size) ;
-      play_dma_size = 0;
+            __BUF_INCR_NUM(audio_buffer.head,play_dma_size*4,audio_buffer.buffer_size) ;
+            play_dma_size = 0;
 #if ERROR_LOG
-      _DBG_("DMA Error!!!");
+            _DBG_("DMA Error!!!");
 #endif            
-      DMA_Send();
+            DMA_Send();
         }
     }
     
