@@ -100,6 +100,7 @@ static void ClearBuffer(void *buf, int nBytes)
  **************************************************************************************/
 MP3DecInfo *AllocateBuffers(void)
 {
+	ClearBuffer(&s_mp3DecInfo, sizeof(MP3DecInfo));
 	s_mp3DecInfo.FrameHeaderPS =     (void *)&s_fh;
 	s_mp3DecInfo.SideInfoPS =        (void *)&s_si;
 	s_mp3DecInfo.ScaleFactorInfoPS = (void *)&s_sfi;

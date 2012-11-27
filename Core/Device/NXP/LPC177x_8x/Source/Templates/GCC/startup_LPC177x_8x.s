@@ -16,7 +16,7 @@
 // </h>
 */
 
-    .equ    Stack_Size, 0x00000100
+    .equ    Stack_Size, 0x00000400
     .section ".stack", "w"
     .align  3
     .globl  __cs3_stack_mem

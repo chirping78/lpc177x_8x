@@ -733,6 +733,7 @@ int Decoder_Decode(void)
 #if TRACE_LOG                    
                     _DBG_("-->Need more MP3 data");
 #endif                
+                    exit_flg = 1;
                     break;
                 case ERR_MP3_INVALID_FRAMEHEADER:
 #if TRACE_LOG                    
