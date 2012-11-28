@@ -1,3 +1,24 @@
+RELEASE LPC177x_8xCMSIS_121130
+
+***** Implementations and Improvements ****
+1. Update TSC2046 driver: remove delays in ReadWriteTSC2046 function & update EvalCoord function. 
+2. Remove MCR, MSR & TER from LPC_UART4_TypeDef structure. 
+3. Add uIP demo: WebClient, DHCP Client, SMTP Client, Telnet server. 
+4. Add Emac_InternetRadio & EMAC_PolarSSL example. 
+5. Update GCC target clean command & remove warnings.
+6. Update CAN_SetupAFLUT function: Don't modify input parameter. 
+7. Update Timer driver: Remove TIM_ClearIntCapturePending and TIM_GetIntCaptureStatus function. 
+8. Update I2S Frequency setting. 
+9. Make the stack size of Keil & GCC to the same to IAR.
+
+
+***** Known Issues: In this package contains some examples that can not verify now ****
+
+1./ ADC > Adc_Burst
+2./ CAN > Can_SelfTest
+Maybe they will be removed when release for customers.
+==========================================================================================================
+========================================================================================================== 
 RELEASE LPC177x_8xCMSIS_120928
 
 ***** Implementations and Improvements ****

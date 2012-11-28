@@ -261,7 +261,10 @@ void lcd_colorbars(void)
   PWM_MATCHCFG_Type PWMMatchCfgDat;
   LCD_Cursor_Config_Type cursor_config;
   LCD_Config_Type lcd_config;
-  int cursor_x = 0, cursor_y = 0, draw_cursor_x, draw_cursor_y;
+#if PAINT_ON_SCREEN  
+  int cursor_x = 0, cursor_y = 0;
+#endif  
+  int draw_cursor_x, draw_cursor_y;
 #if LOGO_DISPLAYED
   uint32_t start_pix_x, start_pix_y, pix_ofs;
 #endif
@@ -459,8 +462,10 @@ void lcd_colorbars(void)
         GetTouchCoord((int16_t*)&tmp_x, (int16_t*)&tmp_y);
         if((tmp_x >= 0) && (tmp_y >0))
         {    
+#if PAINT_ON_SCREEN            
           cursor_x = tmp_x;
           cursor_y = tmp_y;  
+#endif          
           draw_cursor_x = tmp_x - CURSOR_OFF_X;
           draw_cursor_y = tmp_y - CURSOR_OFF_Y;
         }

@@ -93,12 +93,12 @@
 #define TOUCH_AD_TOP     16
 #define TOUCH_AD_BOTTOM  240
 #else
-#define TOUCH_AD_LEFT    3842
-#define TOUCH_AD_RIGHT   205
-#define TOUCH_AD_TOP     205
+#define TOUCH_AD_LEFT    3964
+#define TOUCH_AD_RIGHT   102
+#define TOUCH_AD_TOP     184
 #define TOUCH_AD_BOTTOM  3842
 #endif
-#else  /*(_CUR_USING_LCD != _RUNNING_LCD_GFT035A320240Y)*/
+#else  /*(_CUR_USING_LCD == _RUNNING_LCD_QVGA_TFT)*/
 
 #define   LOGO_DISPLAYED                (0)
 #define   TCS_USED						(1)

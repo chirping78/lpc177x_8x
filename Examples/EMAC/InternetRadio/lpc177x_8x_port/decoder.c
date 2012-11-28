@@ -292,7 +292,7 @@ Status Play_Setup(void)
         samplerate = mp3_frame_info.samprate;
     if( samplerate > 96000)
         goto setup_err;
-    if(I2S_FreqConfig(LPC_I2S, samplerate*11/10, I2S_TX_MODE) != SUCCESS)
+    if(I2S_FreqConfig(LPC_I2S, samplerate*17/16, I2S_TX_MODE) != SUCCESS)
         goto setup_err;
     
     compress = samplerate*mp3_frame_info.bitsPerSample*mp3_frame_info.nChans*100/mp3_frame_info.bitrate;
@@ -565,8 +565,6 @@ void I2S_IRQHandler()
  * @return      None
  **********************************************************************/
 Status Decoder_Init (void) {                      
-
-    volatile uint32_t i;
 
     AudioBuf_Init(&audio_buffer);
 

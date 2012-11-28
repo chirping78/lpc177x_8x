@@ -503,7 +503,7 @@ void LCD_PutPixel (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up, LcdPixel_t c
       for(bit_ofs = 0;bit_ofs <bpp; bit_ofs++,bit_pos++)
       {
           *pByteData &= ~ (0x01 << bit_pos);
-          *pByteData |= ((*pByteSrc >> (k+bit_ofs)) & 0x01) << bit_pos; 
+          *pByteData |= ((*pByteSrc >> (bit_ofs)) & 0x01) << bit_pos; 
       }
     }
     else

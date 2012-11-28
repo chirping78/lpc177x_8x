@@ -162,8 +162,8 @@
 		- Step 6: Re-config IP address on PC so that it is in the same domain with the target board.
 		- Step 7: Reset board, monitor the status via serial display until EMAC initialized
         For Web Server application
-		- Step 8: Open command prompt window, execute 'ping 192.168.0.100' command
-		- Step 9: Open web browser, access to address "http://192.168.0.100" to display the content
+		- Step 8: Open command prompt window, execute 'ping 192.168.1.99' command
+		- Step 9: Open web browser, access to address "http://192.168.1.99" to display the content
 		           of the webpage.
         For Web Client application
         - Step 8: Observe the serial output for the web page content.

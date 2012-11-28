@@ -46,7 +46,7 @@ static  struct uip_eth_hdr *BUF = ((struct uip_eth_hdr *)&uip_buf[0]);
 #define LED2_MASK       ((1<<2) | (1<<3) | (1<<4) | (1<<5) | (1<<6))
 #define LED1_MASK       ((1<<28) | (1<<29) | (1<<31))
 
-const char EMAC_ADDR[]  = {0x00, 0x21, 0x70, 0xD7, 0x74, 0x93};
+const char EMAC_ADDR[]  = {0x0C, 0x1D, 0x12, 0xE0, 0x1F, 0x10};
 
 #if defined (DHCP_ENABLE) || defined(WEB_CLIENT) || defined(SMTP_APP)
 uint16_t     my_ipaddr[2]               = {0,0};

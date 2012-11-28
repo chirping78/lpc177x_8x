@@ -45,22 +45,22 @@
 #include "bsp.h"
 #if (TSC2046_CONVERSION_BITS == 12)
 #define TSC2046_X_COORD_MAX             (0xFFF)
-#define TSC2046_Y_COORD_MAX            (0xFFF)
-#define TSC2046_Z1_COORD_MAX           (0xFFF)
-#define TSC2046_Z2_COORD_MAX           (0xFFF)
+#define TSC2046_Y_COORD_MAX             (0xFFF)
+#define TSC2046_Z1_COORD_MAX            (0xFFF)
+#define TSC2046_Z2_COORD_MAX            (0xFFF)
 #define TSC2046_DELTA_X_VARIANCE        (0x50)
 #define TSC2046_DELTA_Y_VARIANCE        (0x50)
 #define TSC2046_DELTA_Z1_VARIANCE       (0x50)
-#define TSC2046_DELTA_Z2_VARIANCE        (0x50)
+#define TSC2046_DELTA_Z2_VARIANCE       (0x50)
 #else
-#define TSC2046_X_COORD_MAX           (0xFF)
-#define TSC2046_Y_COORD_MAX           (0xFF)
-#define TSC2046_Z1_COORD_MAX           (0xFF)
-#define TSC2046_Z2_COORD_MAX           (0xFF)
-#define TSC2046_DELTA_X_VARIANCE      (0x05)
-#define TSC2046_DELTA_Y_VARIANCE      (0x05)
-#define TSC2046_DELTA_Z1_VARIANCE      (0x05)
-#define TSC2046_DELTA_Z2_VARIANCE      (0x05)
+#define TSC2046_X_COORD_MAX             (0xFF)
+#define TSC2046_Y_COORD_MAX             (0xFF)
+#define TSC2046_Z1_COORD_MAX            (0xFF)
+#define TSC2046_Z2_COORD_MAX            (0xFF)
+#define TSC2046_DELTA_X_VARIANCE        (0x05)
+#define TSC2046_DELTA_Y_VARIANCE        (0x05)
+#define TSC2046_DELTA_Z1_VARIANCE       (0x05)
+#define TSC2046_DELTA_Z2_VARIANCE       (0x05)
 #endif
 #define COORD_GET_NUM                 (10)
 
@@ -154,7 +154,7 @@ void InitTSC2046(TSC2046_Init_Type *pConfig)
 static void ReadWriteTSC2046(uint8_t channel, uint16_t* data)
 {
     uint8_t cmd;
-    volatile uint32_t tmp;
+    //volatile uint32_t tmp;
     SSP_DATA_SETUP_Type sspCfg;
     uint8_t rx[2];
     
@@ -202,22 +202,23 @@ static int16_t EvalCoord(uint16_t* pPoints, uint32_t PointNum, uint16_t MaxVal, 
 {
    uint32_t i = 0;
    int16_t diff = 0, coord = -1;
+   uint8_t coord_valid = 0;
    
    for(i = 0; i < PointNum; i++)
    {
      // ignore values are not in range
      if(pPoints[i] >= MaxVal)
      {
-       if(i == (PointNum - 1))
-        return -1;
        coord = -1;
+       coord_valid = 0;
        continue;
      }
      
-     // the first legal coord
+     // the first valid coord
      if(coord == -1)
      {
          coord = pPoints[i];
+         coord_valid = 0;
          continue;
      }
      
@@ -226,12 +227,20 @@ static int16_t EvalCoord(uint16_t* pPoints, uint32_t PointNum, uint16_t MaxVal, 
      if(diff < 0)
        diff = 0 - diff;
      if(diff < MaxDelta)
+     {
        coord = (coord + pPoints[i])/2;  // get mean value
+       coord_valid = 1;         // at least 2 continuous coords are valid
+     }
      else
+     {
        coord = pPoints[i];      // new coord
+       coord_valid = 0;
+     }
    }
    
-   return coord;
+   if(coord_valid)
+    return coord;
+   return -1;
 }
 /*********************************************************************//**
  * @brief       Calculate the coefficient of pressure 
