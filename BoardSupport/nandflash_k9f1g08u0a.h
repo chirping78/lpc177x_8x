@@ -45,9 +45,9 @@
 /*****************************************************************************
  * Defines and typedefs
  ****************************************************************************/
-#define K9F1G_CLE   ((volatile uint8_t *)0x81100000)
-#define K9F1G_ALE   ((volatile uint8_t *)0x81080000)
-#define K9F1G_DATA  ((volatile uint8_t *)0x81000000)
+#define K9F1G_CLE   ((volatile uint8_t *)(0x90000000 | (1<<20)))
+#define K9F1G_ALE   ((volatile uint8_t *)(0x90000000 | (1<<19)))
+#define K9F1G_DATA  ((volatile uint8_t *)0x90000000)
 
 #define NANDFLASH_BASE_ADDR         0x00000000
 
@@ -107,14 +107,12 @@ extern uint32_t NandFlash_ReadId( void );
 extern Bool NandFlash_ReadStatus( uint32_t Cmd );
 extern Bool NandFlash_BlockErase( uint32_t blockNum );
 extern Bool NandFlash_ValidBlockCheck( void );
-extern Bool NandFlash_PageProgram( uint32_t pageNum, uint32_t blockNum, uint8_t *bufPtr );
-extern Bool NandFlash_PageRead( uint32_t pageNum, uint32_t blockNum, uint8_t *bufPtr );
+extern Bool NandFlash_PageProgram( uint32_t blockNum, uint32_t pageNum, uint8_t *bufPtr , Bool bSpareProgram);
+extern Bool NandFlash_PageRead( uint32_t blockNum, uint32_t pageNum, uint8_t *bufPtr );
 
-extern int NandFlash_PageReadFromBeginning(uint32_t block, uint32_t page, uint8_t* bufPtr);
+extern int NandFlash_PageReadFromBeginning(uint32_t blockNum, uint32_t pageNum, uint8_t* bufPtr);
 extern int NandFlash_PageReadFromAddr(uint32_t blockNum, uint32_t pageNum,
                                                     uint32_t addrInPage, uint8_t* bufPtr, uint32_t size);
-extern int NandFlash_ReadFromAddr(uint32_t addrInWholeNand, uint8_t* bufPtr, uint32_t size);
-
 #endif /* __NANDFLASH_K9F1G08U0A_H_ */
 
 /**

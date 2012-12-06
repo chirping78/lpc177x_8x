@@ -75,7 +75,7 @@ void NandFlash_Init( void )
     * Initialize EMC for NAND FLASH
     **************************************************************************/
     config.CSn = 1;
-    config.AddressMirror = 1;
+    config.AddressMirror = 0;
     config.ByteLane = 1;
     config.DataWidth = 8;
     config.ExtendedWait = 0;
@@ -100,7 +100,7 @@ void NandFlash_Init( void )
     /* assume all blocks are valid to begin with */
     for ( i = 0; i < NANDFLASH_NUMOF_BLOCK; i++ )
     {
-        InvalidBlockTable[i] = 0;
+        InvalidBlockTable[i] = FALSE;
     }
 
     return;
@@ -217,8 +217,7 @@ Bool NandFlash_BlockErase( uint32_t blockNum )
     pCLE  = K9F1G_CLE;
     pALE  = K9F1G_ALE;
 
-    rowAddr = (NANDFLASH_BASE_ADDR + blockNum * NANDFLASH_BLOCK_FSIZE);
-    rowAddr = rowAddr - (rowAddr % NANDFLASH_BLOCK_FSIZE);
+    rowAddr = blockNum*NANDFLASH_PAGE_PER_BLOCK;
 
     *pCLE = K9FXX_BLOCK_ERASE_1;
 
@@ -251,6 +250,7 @@ Bool NandFlash_ValidBlockCheck( void )
 
     for ( block = 0; block < NANDFLASH_NUMOF_BLOCK; block++ )
     {
+        InvalidBlockTable[block] = FALSE;
         for ( page = 0; page < 2; page++ )
         {
             /* Check column address 2048 at first page and second page */
@@ -260,7 +260,7 @@ Bool NandFlash_ValidBlockCheck( void )
             {
                 // found invalid block number, mark block number in the invalid
                 // block table
-                InvalidBlockTable[block] = 1;
+                InvalidBlockTable[block] = TRUE;
 
                 //At least one block is invalid
                 retValue = FALSE;
@@ -280,39 +280,40 @@ Bool NandFlash_ValidBlockCheck( void )
  *              be in range: 0..1023
  * @param[in]   bufPtr      pointer to the buffer that contain data will be
  *              programmed in flash memory
+ * @param[in]   bSpareProgram   enable programming spare data 
  * @return      Program status, could be:
  *                  - TRUE: success
  *                  - FALSE: fail
  **********************************************************************/
-Bool NandFlash_PageProgram( uint32_t pageNum, uint32_t blockNum, uint8_t *bufPtr )
+Bool NandFlash_PageProgram( uint32_t blockNum, uint32_t pageNum, uint8_t *bufPtr, Bool bSpareProgram  )
 {
     volatile uint8_t *pCLE;
     volatile uint8_t *pALE;
     volatile uint8_t *pDATA;
-    uint32_t i, curAddr, curColumm;
+    uint32_t i, curRow, curColumm;
+    uint16_t programSize = NANDFLASH_RW_PAGE_SIZE;
 
     pCLE  = K9F1G_CLE;
     pALE  = K9F1G_ALE;
     pDATA = K9F1G_DATA;
 
-    curAddr = NANDFLASH_BASE_ADDR + blockNum * NANDFLASH_BLOCK_FSIZE
-                                + pageNum * NANDFLASH_PAGE_FSIZE;
-
-    curColumm = curAddr % NANDFLASH_PAGE_FSIZE;
-    curAddr -= curColumm;
-
+    curColumm = 0;
+    curRow = blockNum*NANDFLASH_PAGE_PER_BLOCK + pageNum;
+    
+    if(bSpareProgram)
+        programSize = NANDFLASH_PAGE_FSIZE;
+    
     *pCLE = K9FXX_BLOCK_PROGRAM_1;
 
     *pALE =  (uint8_t)(curColumm & 0x000000FF);     /* column address low */
 
     *pALE = (uint8_t)((curColumm & 0x00000F00) >> 8);   /* column address high */
 
-    *pALE = (uint8_t)((curAddr & 0x00FF0000) >> 16);    /* row address low */
+    *pALE = (uint8_t)((curRow & 0x00FF));    /* row address low */
 
-    *pALE = (uint8_t)((curAddr & 0xFF000000) >> 24);    /* row address high */
+    *pALE = (uint8_t)((curRow & 0xFF00) >> 8);    /* row address high */
 
-    //Not write to spare area for the NandFlash valid block checking
-    for ( i = 0; i < NANDFLASH_RW_PAGE_SIZE; i++ )
+    for ( i = 0; i < programSize; i++ )
     {
         *pDATA = *bufPtr++;
     }
@@ -338,9 +339,9 @@ Bool NandFlash_PageProgram( uint32_t pageNum, uint32_t blockNum, uint8_t *bufPtr
  *                  - TRUE: success
  *                  - FALSE: fail
  **********************************************************************/
-Bool NandFlash_PageRead( uint32_t pageNum, uint32_t blockNum, uint8_t *bufPtr )
+Bool NandFlash_PageRead( uint32_t blockNum, uint32_t pageNum, uint8_t *bufPtr )
 {
-    return ((NandFlash_PageReadFromBeginning(pageNum, blockNum, bufPtr) != 0) ? TRUE:FALSE);
+    return ((NandFlash_PageReadFromBeginning(blockNum, pageNum, bufPtr) != 0) ? TRUE:FALSE);
 }
 
 /*********************************************************************//**
@@ -378,33 +379,10 @@ int NandFlash_PageReadFromBeginning(uint32_t blockNum, uint32_t pageNum, uint8_t
 int NandFlash_PageReadFromAddr(uint32_t blockNum, uint32_t pageNum,
                                             uint32_t addrInPage, uint8_t* bufPtr, uint32_t size)
 {
-    uint32_t curAddr = 0;
-
-    curAddr += NANDFLASH_BASE_ADDR + blockNum * NANDFLASH_BLOCK_FSIZE;
-
-    curAddr += pageNum * NANDFLASH_PAGE_FSIZE;
-
-    curAddr += addrInPage;
-
-    return (NandFlash_ReadFromAddr(curAddr, bufPtr, size));
-}
-
-/*********************************************************************//**
- * @brief       Read the whole NAND FLASH memory at an expected address,
- *              the data will be stored in the pointer to the buffer.
- * @param[in]   addrInWholeNand the address in NandFlash to be read,
- *                      calculated from the beginning of Nand base address 0
- * @param[in]   bufPtr  pointer to the buffer that contain data will be
- *                      read from flash memory
- * @param[in]   size    the number of byte(s) to be read and stored to the buffer
- * @return      number of byte(s) read til the end of the page
- **********************************************************************/
-int NandFlash_ReadFromAddr(uint32_t addrInWholeNand, uint8_t* bufPtr, uint32_t size)
-{
     volatile uint8_t *pCLE;
     volatile uint8_t *pALE;
     volatile uint8_t *pDATA;
-    uint32_t i, curColumm, curRow;
+    uint32_t i, curColumm, curRow;    
 
     i = 0;
 
@@ -412,18 +390,18 @@ int NandFlash_ReadFromAddr(uint32_t addrInWholeNand, uint8_t* bufPtr, uint32_t s
     pALE  = K9F1G_ALE;
     pDATA = K9F1G_DATA;
 
-    curColumm = addrInWholeNand % NANDFLASH_PAGE_FSIZE;
-    curRow = addrInWholeNand - curColumm;
+    curColumm = addrInPage;
+    curRow = blockNum*NANDFLASH_PAGE_PER_BLOCK + pageNum;
 
     *pCLE = K9FXX_READ_1;
 
-    *pALE = (uint8_t)(curColumm & 0x000000FF);          /* column address low */
+    *pALE =  (uint8_t)(curColumm & 0x000000FF);     /* column address low */
 
-    *pALE = (uint8_t)((curColumm & 0x00000F00) >> 8);       /* column address high */
+    *pALE = (uint8_t)((curColumm & 0x00000F00) >> 8);   /* column address high */
 
-    *pALE = (uint8_t)((curRow & 0x00FF0000) >> 16); /* row address low */
+    *pALE = (uint8_t)((curRow & 0x00FF));    /* row address low */
 
-    *pALE = (uint8_t)((curRow & 0xFF000000) >> 24); /* row address high */
+    *pALE = (uint8_t)((curRow & 0xFF00) >> 8);    /* row address high */
 
     *pCLE = K9FXX_READ_2;
 

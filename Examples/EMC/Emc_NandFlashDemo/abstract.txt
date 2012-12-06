@@ -29,7 +29,7 @@
 	Process:
 		NAND flash use this case is Samsung K9F1G08U0A (in case of QVGA board) and
 		Samsung K9F1G08U0C (in case of PA board).
-		NAND flash memory range will be mounted at address: 0x8000 0000 - 0x800FF FFFF.
+		NAND flash memory range will be mounted at address: 0x9000 0000 - 0x900FF FFFF.
 		First, EMC will be initialized and set up timer compatible with this NAND flash chip.
 		Then check Device ID. If not correct, process will be enter into infinite loop and
 		display error via UART.

@@ -41,6 +41,8 @@
  * @ingroup EMC_Examples
  * @{
  */
+#define TEST_BLOCK_NUM      0
+#define TEST_PAGE_NUM       0
 
 /************************** PRIVATE VARIABLES *************************/
 const unsigned char menu[] =
@@ -114,16 +116,16 @@ void c_entry(void)
     _DBG_("Checking valid block...");
     if ( NandFlash_ValidBlockCheck() == FALSE )
     {
-        _DBG_("Valid block checking error, testing terminated! At block(s): ");
-        ///while ( 1 );     // Fatal error
+        _DBG_("Valid block checking error at block(s): ");
 
         for(i = 0; i < NANDFLASH_NUMOF_BLOCK; i++)
         {
-            if (InvalidBlockTable[i] == FALSE)
+            if (InvalidBlockTable[i] == TRUE)
             {
                 _DBD32(i);_DBG("   ");
             }
         }
+        _DBG_("");
     }
 
     /**************************************************************
@@ -139,10 +141,9 @@ void c_entry(void)
     ***************************************************************/
     /* Erase the entire NAND FLASH */
     _DBG_("Erase entire NAND Flash...");
-
     for ( i = 0; i < NANDFLASH_NUMOF_BLOCK; i++ )
     {
-        if ( NandFlash_BlockErase(i) == FALSE )
+        if ( (InvalidBlockTable[i] == FALSE) && ( NandFlash_BlockErase(i) == FALSE ))
         {
             _DBG("Erase NAND Flash fail at block: ");_DBD32(i);_DBG_("");
         }
@@ -158,19 +159,17 @@ void c_entry(void)
 
     /* If it's a valid block, program all the pages of this block,
     read back, and finally validate. */
-    /* simple program to program the block 0 and page 0 */
 
-    if ( InvalidBlockTable[0] == 0 )
+    if ( InvalidBlockTable[TEST_BLOCK_NUM] == FALSE )
     {
         _DBG_("Write a block of 2K data to NAND Flash...");
-        if ( NandFlash_PageProgram( 0, 0, &WriteBuf[0] ) == FALSE )
-            {
+        if ( NandFlash_PageProgram(  TEST_BLOCK_NUM, TEST_PAGE_NUM, &WriteBuf[0],FALSE) == FALSE )
+           {
                 _DBG_("Writing fail, testing terminated!");
                 while ( 1 );    /* Fatal error */
             }
-
         _DBG_("Read back a block of 2K data from NAND Flash...");
-        if ( NandFlash_PageRead( 0, 0, &ReadBuf[0] ) == FALSE )
+        if ( NandFlash_PageRead(  TEST_BLOCK_NUM, TEST_PAGE_NUM,&ReadBuf[0] ) == FALSE )
             {
                 _DBG_("Reading fail, testing terminated!");
                 while ( 1 );    /* Fatal error */
