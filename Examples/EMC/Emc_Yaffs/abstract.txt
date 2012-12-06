@@ -1,7 +1,7 @@
  /***********************************************************************
 * $Id$		abstract.txt		2011-06-02		
-* @file		EMC\Emc_SdramDemo\abstract.txt 
-* @brief	Description of the EMC SDRAM Demo on-board demo example.
+* @file		EMC\Emc_Yaffs\abstract.txt 
+* @brief	Description of Yaffs library porting example.
 * @version	1.0
 * @date		02. June. 2011
 * @author	NXP MCU SW Application Team
@@ -24,32 +24,31 @@
   
 @Example description:
 	Purpose:
-		This example describes how to use EMC connects with On-board SDRAM on
-		LPC1788 board
+		This example describe how to port Yaffs library on EA OEM LPC1788 board. 
 	Process:
-		SDRAM use this case is K4S561632J on IAR board and IS42s32800D on EA board.
-		SDRAM  memory range will be mounted at address: 0xA000 0000 - 0xAFFF FFFF.
-		First, EMC will be initialized and set up timer compatible with this SDRAM chip.
-		Entire SDRAM will be cleared.
-		Then continue write data into SDRAM in 8-bits mode and 16-bits mode sequentially.
-		After each mode writing, data in sdram will be verify. If verify process fail, 
-		program will enter into infinite loop.
-		Pls observe terminal screen for more information.
-		 
-
+		NAND flash use this case is Samsung K9F1G08U0C (in case of EA board).
+		NAND flash memory range will be mounted at address: 0x9000 0000 - 0x900FF FFFF.
+		  
+		The Yaffs porting is done following Porting guide on the below link:
+		http://www.yaffs.net/yaffs-porting-guide
+		The library requires heap size is about 1.5MB. Therefore, the on-board SDRAM
+		IS42s32800D is also used for heap memory.
+		
 @Directory contents:
 	\EWARM: includes EWARM (IAR) project and configuration files
 	\Keil:	includes RVMDK (Keil)project and configuration files 
 	
-	Emc_SdramDemo.c: Main program
+	\yaffs2:	Yaffs library source code
+	yaffs_demo.c: Main program
 
 @How to run:
 	Hardware configuration:		
 		This example was tested on:
+			This example was tested on:
 			1. LPC1788 OEM Board rev A and OEM Base Board rev A
-				Jumpers: Optional
-			2. LPC1788 IAR Start Kit Rev.B
-				Jumpers: Optional
+				- JP2: 3-4   : ON
+					   Remain: Optional
+				- Remain jumpers: Default			
 				
 	Serial display configuration: (e.g: TeraTerm, Hyperterminal, Flash Magic...) 
 			1. LPC1788 OEM Board rev A and OEM Base Board rev A
@@ -81,7 +80,7 @@
 				+ 8 data bit 
 				+ No parity 
 				+ 1 stop bit 
-				+ No flow control 			
+				+ No flow control
 	
 	Running mode:
 		This example can run on RAM/ROM mode.
@@ -102,6 +101,6 @@
 	Step to run:
 		- Step 1: Build example.
 		- Step 2: Burn hex file into board (if run on ROM mode)
-		- Step 3: Connect UART0\1\2 on this board to COM port on your computer
+		- Step 3: Connect UART port on this board to COM port on your computer
 		- Step 4: Configure hardware and serial display as above instruction 
 		- Step 5: Run example and see result data on serial display
